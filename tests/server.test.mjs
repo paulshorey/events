@@ -17,7 +17,8 @@ test("health waits for readiness, publishes only release metadata, and exposes n
       APP_ENVIRONMENT: "dev",
       RAILWAY_GIT_COMMIT_SHA: "test-commit",
       RAILWAY_GIT_BRANCH: "main",
-      DATABASE_URL: "must-not-appear",
+      DB_EVENTS_URL: "must-not-appear",
+      DATABASE_URL: "unrelated-project-must-not-appear",
     },
   });
   t.after(() => app.close());

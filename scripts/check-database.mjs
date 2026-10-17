@@ -3,7 +3,7 @@ import { spawnSync } from "node:child_process";
 // Read-only local smoke check. Keep the URL/password out of argv, diagnostics,
 // and output. Loading .env.local is explicit in the npm command.
 try {
-  const url = new URL(process.env.DATABASE_URL);
+  const url = new URL(process.env.DB_EVENTS_URL);
   if (
     !["postgres:", "postgresql:"].includes(url.protocol) ||
     !url.hostname ||
@@ -52,7 +52,7 @@ try {
   console.log(JSON.stringify({ connected: true, ...check }, null, 2));
 } catch {
   console.error(
-    "Database check failed. Verify DATABASE_URL, public TCP access, and psql installation (or PSQL_PATH). Connection details are suppressed.",
+    "Database check failed. Verify DB_EVENTS_URL, public TCP access, and psql installation (or PSQL_PATH). Connection details are suppressed.",
   );
   process.exitCode = 1;
 }

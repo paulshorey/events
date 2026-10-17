@@ -3,6 +3,7 @@
 Read `README.md` and `_working/framework_implementation.md` before changing collection behavior. Dev and production PostgreSQL services exist, but have no event schema or importer yet; SQLite remains the crawler journal. No scheduler is installed. All registered schedules are disabled by default. Do not infer permission to activate unattended jobs or publish observations from a successful sample. `.env.local` is ignored and contains active dev and commented production credentials; never print or commit it.
 
 - Make acquisition deterministic. No LLM calls inside miners; AI work produces reviewed code/configuration and fixtures.
+- Use only `DB_EVENTS_URL` for Events database clients. In local development and both Railway app environments it points to the database's `DATABASE_PUBLIC_URL` over public TCP with TLS. Never fall back to the computer's generic `DATABASE_URL`; private-network optimization requires a later explicit change.
 - Each supplied URL has a collection ID and executable in `scrapers/`. Reuse `src/` runtime and platform parsers. Do not create 97 independent queue or browser implementations.
 - Preserve `.artifacts/framework/journal.sqlite`, its WAL state, and capture files. They are operational data, not disposable cache. Do not reset this directory to fix a failed test.
 - Use disposable directories for tests. Use fenced leases and the CLI for cancel/recovery; never edit completed observations to make a parser pass.

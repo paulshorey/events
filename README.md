@@ -6,13 +6,13 @@ No model calls occur during extraction. AI agents or engineers improve the code 
 
 ## Hosting
 
-GitHub repository: [paulshorey/events](https://github.com/paulshorey/events). Railway project: [Events](https://railway.com/project/a0315029-9b64-41a0-9c83-e4367366947d). Pushes to `main` deploy dev; pushes to `prod` deploy production after CI passes. The deployment host exposes `/api/health`, checks Chromium/SQLite/registry readiness, and runs no collection schedule. Each environment has a private `DATABASE_URL` reference to its own PostgreSQL service. The application does not yet use that connection or have durable cloud job storage.
+GitHub repository: [paulshorey/events](https://github.com/paulshorey/events). Railway project: [Events](https://railway.com/project/a0315029-9b64-41a0-9c83-e4367366947d). Pushes to `main` deploy dev; pushes to `prod` deploy production after CI passes. The deployment host exposes `/api/health`, checks Chromium/SQLite/registry readiness, and runs no collection schedule. Each environment has a project-specific `DB_EVENTS_URL` reference to its own PostgreSQL service’s `DATABASE_PUBLIC_URL`. The application does not yet use that connection or have durable cloud job storage.
 
 Run `npm start` locally to inspect the passive host on port 4500. Set `PORT` to override it. `.railway/project.json` owns target IDs and branch mapping; `.railway/railway.ts` owns applied configuration. Changes to IaC require a separate reviewed plan/apply.
 
 ## Local database access
 
-The ignored `.env.local` contains the development PostgreSQL URL as active `DATABASE_URL` and the production URL as a commented assignment. Both use Railway public TCP access with TLS; Railway services use private networking. Keep production commented during local development. `.env.example` is the credential-free template for another checkout. Ordinary framework commands need no remote database connection.
+The ignored `.env.local` contains the development PostgreSQL URL as active `DB_EVENTS_URL` and the production URL as a commented assignment. Local clients and Railway services always use the public TCP endpoints with TLS. Events clients read only `DB_EVENTS_URL`, so an unrelated global `DATABASE_URL` cannot select another project’s database. Keep production commented during local development. `.env.example` is the credential-free template for another checkout. Ordinary framework commands need no remote database connection.
 
 ```sh
 # Requires psql on PATH, or PSQL_PATH pointing to its executable.

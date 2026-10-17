@@ -21,6 +21,13 @@ export default defineRailway((ctx) => {
   // product-managed mount stay on Railway, never in this definition.
   const database = postgres(configuration.database.name);
   database.networking = { tcpProxies: { "5432": {} } };
+  database.variables = {
+    DATABASE_PUBLIC_URL: {
+      type: "literal",
+      value:
+        "postgresql://${{PGUSER}}:${{POSTGRES_PASSWORD}}@${{RAILWAY_TCP_PROXY_DOMAIN}}:${{RAILWAY_TCP_PROXY_PORT}}/${{PGDATABASE}}?sslmode=require",
+    },
+  };
   const databaseVolume = volume(configuration.database.volumeName, {
     region: "us-east4-eqdc4a",
     sizeMB: 50000,
@@ -38,7 +45,7 @@ export default defineRailway((ctx) => {
       NODE_ENV: "production",
       APP_ENVIRONMENT: environment,
       PORT: "4500",
-      DATABASE_URL: database.env.DATABASE_URL,
+      DB_EVENTS_URL: database.env.DATABASE_PUBLIC_URL,
     },
     build: { builder: "DOCKERFILE", dockerfilePath: "Dockerfile" },
     deploy: {

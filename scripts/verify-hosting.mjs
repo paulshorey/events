@@ -96,6 +96,11 @@ try {
       (resource) => resource.address === `service.${target.serviceName}`,
     );
     assert.equal(effective.build.builder, "DOCKERFILE");
+    assert.ok(
+      effective.variables?.DB_EVENTS_URL,
+      `${name}: Events connection missing`,
+    );
+    assert.equal(effective.variables?.DATABASE_URL, undefined);
     const database = plan.currentGraph.resources.find(
       (resource) => resource.address === `database.${env.database.name}`,
     );

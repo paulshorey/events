@@ -17,7 +17,7 @@ Railway project: [Events](https://railway.com/project/a0315029-9b64-41a0-9c83-e4
 | dev | `Postgres` | `postgres-volume` | PostgreSQL 18, TLS connection, read-only SQL, zero application tables |
 | production | `Postgres-production` | `postgres-production-volume` | PostgreSQL 18, TLS connection, read-only SQL, zero application tables |
 
-The instances have different service IDs, volumes and generated passwords. Their native database deployments succeeded. Each `events` service has a private `DATABASE_URL` reference to its own instance. Local clients use public TCP endpoints with TLS. The mode-0600, git-ignored `.env.local` has development active and production commented. No connection values are recorded in this document or Git.
+The instances have different service IDs, volumes and generated passwords. Their native database deployments succeeded. Each `events` service has a project-specific `DB_EVENTS_URL` reference to its own database’s `DATABASE_PUBLIC_URL`. Local and Railway clients use public TCP endpoints with TLS; private networking is deferred until explicitly requested. Events clients never fall back to generic `DATABASE_URL`. The mode-0600, git-ignored `.env.local` has development active as `DB_EVENTS_URL` and production commented. No connection values are recorded in this document or Git.
 
 Both environments have daily and weekly volume backup schedules. Infrastructure plans are clean after adoption into `.railway/railway.ts`. `hosting:verify` now checks database deployments, volume/TCP configuration and backup schedules as well as application deployment identity and runtime health. `db:check` separately executes read-only SQL using the active local URL. Backup creation/restore has not been exercised, and the application still does not query PostgreSQL. See `.railway/README.md` for ownership and commands.
 
@@ -84,7 +84,7 @@ All 97 schedules remain disabled. Database provisioning does not activate worker
 ## Validation for this review
 
 - `npm run railway:check`: passed.
-- `npm test`: 55 passed, including real Chromium runtime readiness, controlled API retry/recovery and API/browser redirect rejection.
+- `npm test`: 57 passed, including database-key isolation from unrelated global settings, real Chromium runtime readiness, controlled API retry/recovery and API/browser redirect rejection.
 - `npm run db:check`: development connection passed with TLS and read-only SQL.
 - Separate production connection check: TLS/read-only SQL passed; no application tables or writes.
 - Native Railway state: independent database volumes, successful PostgreSQL deployments, daily/weekly backup schedules and clean IaC plans in both environments.

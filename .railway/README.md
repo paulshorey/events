@@ -17,12 +17,12 @@ The service is a passive deployment host. It does not run a collection scheduler
 
 | Environment | Database service | Volume | App connection |
 | --- | --- | --- | --- |
-| dev | `Postgres` | `postgres-volume` | Private `Postgres.DATABASE_URL` reference |
-| production | `Postgres-production` | `postgres-production-volume` | Private `Postgres-production.DATABASE_URL` reference |
+| dev | `Postgres` | `postgres-volume` | `DB_EVENTS_URL` → `Postgres.DATABASE_PUBLIC_URL` |
+| production | `Postgres-production` | `postgres-production-volume` | `DB_EVENTS_URL` → `Postgres-production.DATABASE_PUBLIC_URL` |
 
 Both use Railway's official PostgreSQL 18 SSL template, independent generated credentials, separate persistent volumes mounted at `/var/lib/postgresql/data`, and public TCP access on application port 5432. `.railway/project.json` records IDs, never credentials. The native template's volume capacity is 50,000 MB in `us-east4-eqdc4a`; this is its configured capacity, not evidence of that much data being used. Do not shrink, replace or detach these volumes while reconciling IaC.
 
-The git-ignored, mode-0600 `.env.local` uses each public endpoint with `sslmode=require`: development is active and production is commented. The app's Railway variable uses the private endpoint instead. `npm run db:check` verifies the active local connection using `psql`, a read-only transaction policy and a statement timeout. SQL checks passed over TLS for both databases on October 17, 2026; neither has application tables. `/api/health` remains a runtime check and makes no database-readiness claim.
+The git-ignored, mode-0600 `.env.local` uses each public endpoint with `sslmode=require`: development is active as `DB_EVENTS_URL` and production is commented. The app’s `DB_EVENTS_URL` references the database’s `DATABASE_PUBLIC_URL`. Both local and hosted clients use the public endpoint; private-network optimization is deferred until explicitly requested. `npm run db:check` verifies the active local connection using `psql`, a read-only transaction policy and a statement timeout. SQL checks passed over TLS for both databases on October 17, 2026; neither has application tables. `/api/health` remains a runtime check and makes no database-readiness claim.
 
 Daily and weekly volume backups were enabled with Railway's native database workflow in both environments. These are volume snapshots, not an enabled PITR/HA setup. The managed database helper preserves native credentials/mounts; the TypeScript graph explicitly retains both its database and imported volume resources. Backup schedules are maintained by the native workflow and checked by `hosting:verify`, because SDK 3.15.0's `postgres()` config does not expose them. Verify a restore into an isolated environment before storing irreplaceable production data.
 
@@ -79,5 +79,7 @@ Provider references: [Railway IaC](https://docs.railway.com/infrastructure-as-co
 ```
 
 The verifier checks workspace/project identity, both branch triggers and CI gates, a clean IaC plan for both environments, the latest application deployment's successful status and exact remote branch head, HTTPS runtime readiness, PostgreSQL deployment status, retained volume configuration, public TCP configuration and daily/weekly backup schedules. It reads no secret values and starts no collection work. SQL connectivity is a separate `db:check` operation. The effective Docker builder comes from the normalized live graph and deployed service manifest; the raw ServiceInstance builder can retain its Railpack default during Dockerfile detection.
+
+The database-level `DATABASE_PUBLIC_URL` is defined from its generated user/password, public TCP host/port and database name, with `sslmode=require`. The provider’s native `DATABASE_URL` remains on the database service; it is not an Events client setting. Neither web service defines generic `DATABASE_URL`, and Events code must never fall back to a globally configured value.
 
 Provider database references: [PostgreSQL](https://docs.railway.com/databases/postgresql), [backups and restores](https://docs.railway.com/guides/postgres-backups-restores), [IaC database intent and volume lifecycle](https://docs.railway.com/infrastructure-as-code/reference).

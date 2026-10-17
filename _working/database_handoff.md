@@ -2,7 +2,7 @@
 
 The crawler framework currently uses a local SQLite operational journal and JSONL exports. Separate Railway PostgreSQL 18 services now exist in dev and production, with independent persistent volumes and credentials. Both passed read-only SQL connections over TLS on October 17, 2026, and had zero public application tables. A database URL is still not needed to run or improve a scraper.
 
-The git-ignored `.env.local` contains the active development `DATABASE_URL` and a commented production assignment. File permissions are owner-only. `npm run db:check` loads that file and checks connectivity without exposing the URL. Railway's `events` service receives a private-network database reference in each environment, but application code does not consume it yet. Provider service/volume IDs and operations are recorded in `.railway/project.json` and `.railway/README.md`. Daily and weekly volume backups are configured; a restore drill is still required before relying on production storage.
+The git-ignored `.env.local` contains the active development `DB_EVENTS_URL` and a commented production assignment. File permissions are owner-only. `npm run db:check` loads that file and checks connectivity without exposing the URL. Railway’s `events` service receives `DB_EVENTS_URL` referencing its database’s `DATABASE_PUBLIC_URL` in each environment, but application code does not consume it yet. Always use public TCP with TLS for now, and never fall back to generic `DATABASE_URL`. Provider service/volume IDs and operations are recorded in `.railway/project.json` and `.railway/README.md`. Daily and weekly volume backups are configured; a restore drill is still required before relying on production storage.
 
 ## Proposed storage boundary
 
