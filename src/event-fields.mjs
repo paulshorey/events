@@ -123,6 +123,13 @@ export function fieldSummary(records) {
   };
 }
 
+export function sameOccurrenceTime(a, b) {
+  if (!a || !b) return true;
+  const offset = (value) => /(?:Z|[+-]\d\d:\d\d)$/.test(value);
+  if (offset(a) && offset(b)) return Date.parse(a) === Date.parse(b);
+  return a.slice(0, 16) === b.slice(0, 16);
+}
+
 export function mergeDetail(
   listing,
   detail,
@@ -148,6 +155,13 @@ export function mergeDetail(
   if (
     listing.startDate !== detail.startDate &&
     !(
+      listing.startLocal &&
+      detail.startLocal &&
+      /(?:Z|[+-]\d\d:\d\d)$/.test(listing.startLocal) &&
+      /(?:Z|[+-]\d\d:\d\d)$/.test(detail.startLocal) &&
+      sameOccurrenceTime(listing.startLocal, detail.startLocal)
+    ) &&
+    !(
       allowDateRange &&
       detail.endDate &&
       listing.startDate >= detail.startDate &&
@@ -155,13 +169,7 @@ export function mergeDetail(
     )
   )
     return null;
-  if (
-    listing.startLocal &&
-    detail.startLocal &&
-    listing.startDate === detail.startDate &&
-    listing.startLocal.slice(11, 16) !== detail.startLocal.slice(11, 16)
-  )
-    return null;
+  if (!sameOccurrenceTime(listing.startLocal, detail.startLocal)) return null;
   const result = {
     ...listing,
     fieldEvidence: { ...(listing.fieldEvidence ?? {}) },

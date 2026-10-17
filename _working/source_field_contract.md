@@ -21,9 +21,9 @@ A structured `startDate` alone does not establish an end date. A visible listing
 
 This follows the [official event date/time guidance](https://developers.google.com/search/docs/appearance/structured-data/event): retain date precision when hours are unavailable and preserve accurate offsets. These are acquisition records, not website structured-data markup.
 
-Impossible dates, malformed clocks, and reversed comparable timestamps are rejected. Overnight dates and changing explicit offsets across daylight-saving transitions are retained. A zero-duration timed event is retained as a source claim and flagged for review.
+Impossible dates, malformed clocks, and reversed comparable timestamps are rejected. Same-day sessions retain separate identities; equal instants expressed with different offsets can match, while repeated daylight-saving clock times with different offsets remain separate. Overnight dates and changing explicit offsets across daylight-saving transitions are retained. A zero-duration timed event is retained as a source claim and flagged for review.
 
-The October 17 browser audit found that Boston's event JSON-LD can contain a timestamp that conflicts with the visible occurrence date. Its inspected visible date/time elements take precedence, with conflicting structured claims retained in `raw.structuredCandidates`. The verified AllEvents-owned `all.events` destination can label local clock values as UTC while displaying a different timezone. Its visible clock and abbreviation are retained without inventing an offset, and the conflict requires review.
+The October 17 browser audit found that Boston's event JSON-LD can contain a timestamp that conflicts with the visible occurrence date. Its inspected visible date/time elements take precedence, with conflicting structured claims retained in `raw.structuredCandidates`. The verified AllEvents-owned `all.events` destination can label local clock values as UTC while displaying a different timezone. Its visible clock and abbreviation are retained without inventing an offset, and the conflict requires review. If that visible clock contract disappears or becomes contradictory, the adapter fails for repair instead of accepting known-conflicting UTC markup.
 
 ## Two location properties
 

@@ -1,6 +1,6 @@
 # Events source date, time and location audit
 
-Generated 2026-10-17T23:20:09.298Z. All 97 supplied entries are accounted for.
+Generated 2026-10-17T23:26:52.592Z. All 97 supplied entries are accounted for.
 
 Each source received a bounded Playwright listing attempt. Accessible sources were inspected through their rendered DOM; a representative same-host detail was visited where discovered. Access/policy failures are recorded, not bypassed. Later focused browser checks replace earlier samples for those sources. The current parsers replay the immutable captures to measure fields.
 

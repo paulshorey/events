@@ -465,6 +465,97 @@ test("detail parsing excludes recommended events and preserves distinct occurren
   assert.equal(mergeDetail(listing, r.records[0]), null);
 });
 
+test("same-day recurring sessions remain separate detail candidates", () => {
+  const url = "https://allevents.in/event/sessions";
+  const event = (hour) => ({
+    "@type": "Event",
+    name: "Community sessions",
+    url,
+    startDate: `2026-10-17T${hour}:00:00-04:00`,
+    endDate: `2026-10-17T${Number(hour) + 1}:00:00-04:00`,
+    location: "Town Hall",
+  });
+  const html =
+    '<h1>Community sessions</h1><script type="application/ld+json">' +
+    JSON.stringify([event("10"), event("14")]) +
+    "</script>";
+  const parsed = parseDocument({ html, url, config, task: { kind: "detail" } });
+  assert.equal(parsed.records.length, 2);
+  const listing = eventRecord(
+    config,
+    {
+      title: "Community sessions",
+      url,
+      startDate: "2026-10-17T14:00:00-04:00",
+      endDate: "2026-10-17T15:00:00-04:00",
+    },
+    evidence,
+  );
+  assert.equal(parsed.records.filter((r) => mergeDetail(listing, r)).length, 1);
+});
+
+test("matching instants survive offset/day differences while DST fold occurrences stay distinct", () => {
+  const listing = eventRecord(
+    config,
+    {
+      ...input,
+      startDate: "2026-10-18T02:00:00Z",
+      endDate: "2026-10-18T04:00:00Z",
+    },
+    evidence,
+  );
+  const local = eventRecord(
+    config,
+    {
+      ...input,
+      startDate: "2026-10-17T22:00:00-04:00",
+      endDate: "2026-10-18T00:00:00-04:00",
+    },
+    evidence,
+  );
+  assert.ok(mergeDetail(listing, local));
+  const first = eventRecord(
+    config,
+    {
+      ...input,
+      startDate: "2026-11-01T01:30:00-04:00",
+      endDate: "2026-11-01T01:45:00-04:00",
+    },
+    evidence,
+  );
+  const second = eventRecord(
+    config,
+    {
+      ...input,
+      startDate: "2026-11-01T01:30:00-05:00",
+      endDate: "2026-11-01T01:45:00-05:00",
+    },
+    evidence,
+  );
+  assert.equal(mergeDetail(first, second), null);
+});
+
+test("known-conflicting UTC markup fails its adapter contract when the visible clock disappears", async () => {
+  const original = jsonLdEvents(await fixture("allevents-new-domain-detail"))
+    .events[0].event;
+  const html =
+    "<h1>" +
+    original.name +
+    '</h1><script type="application/ld+json">' +
+    JSON.stringify(original) +
+    "</script>";
+  assert.throws(
+    () =>
+      parseDocument({
+        html,
+        url: original.url,
+        config,
+        task: { kind: "detail" },
+      }),
+    { code: "contract_changed" },
+  );
+});
+
 test("detail enrichment is checkpointed separately, survives re-open and preserves original observations", async (t) => {
   const dir = await mkdtemp(join(tmpdir(), "events-field-quality-"));
   t.after(() => rm(dir, { recursive: true, force: true }));

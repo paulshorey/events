@@ -8,7 +8,11 @@ import {
   recordFromJsonLd,
 } from "../records.mjs";
 import { parseTimeRange } from "../../examples/parsers.mjs";
-import { mergeDetail, fieldQuality } from "../event-fields.mjs";
+import {
+  mergeDetail,
+  fieldQuality,
+  sameOccurrenceTime,
+} from "../event-fields.mjs";
 
 const canonical = (value) => {
   const u = new URL(value);
@@ -43,6 +47,17 @@ export function parseDetail({ html, url, config }) {
     if (record) records.push(record);
   }
   let method = "detail-jsonld";
+  if (
+    new URL(url).hostname === "all.events" &&
+    records.length > 1 &&
+    records.some((r) => /Z$/.test(r.startLocal ?? ""))
+  )
+    throw Object.assign(
+      new Error(
+        "Ambiguous AllEvents UTC markup requires a reviewed visible occurrence contract",
+      ),
+      { code: "contract_changed" },
+    );
   if (new URL(url).hostname === "all.events" && records.length === 1) {
     const visible = $("div")
       .filter(
@@ -57,6 +72,13 @@ export function parseDetail({ html, url, config }) {
       );
     const clocks = parseTimeRange(label),
       structured = records[0];
+    if (/Z$/.test(structured.startLocal ?? "") && (!match || !clocks.startTime))
+      throw Object.assign(
+        new Error(
+          "Known AllEvents UTC markup requires its visible date/time contract",
+        ),
+        { code: "contract_changed" },
+      );
     if (
       match &&
       clocks.startTime &&
@@ -110,7 +132,14 @@ export function parseDetail({ html, url, config }) {
           jsonPath: structured.evidence.jsonPath,
         },
       );
-      if (corrected) records[0] = corrected;
+      if (!corrected)
+        throw Object.assign(
+          new Error(
+            "Visible AllEvents date/time contradicts its structured boundaries",
+          ),
+          { code: "data_quality_error" },
+        );
+      records[0] = corrected;
     }
   }
   const structuredCount = records.length;
@@ -321,7 +350,8 @@ export function parseDetail({ html, url, config }) {
       (r) =>
         canonical(r.url) === canonical(record.url) &&
         r.startDate === record.startDate &&
-        r.title === record.title,
+        r.title === record.title &&
+        sameOccurrenceTime(r.startLocal, record.startLocal),
     );
     if (index >= 0)
       combined[index] = mergeDetail(combined[index], record) ?? combined[index];
