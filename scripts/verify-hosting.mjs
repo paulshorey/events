@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
+import { verifyDatabaseVolume } from "./hosting-volume.mjs";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
 const target = JSON.parse(
@@ -42,7 +43,7 @@ try {
       "Explicitly load the railway.webarts workspace profile and unset RAILWAY_TOKEN before verification.",
     );
   const data = api(
-    `query($id:String!){project(id:$id){id name workspaceId environments{edges{node{id name deploymentTriggers{edges{node{id repository branch checkSuites serviceId}}}}}}}}`,
+    `query($id:String!){project(id:$id){id name workspaceId environments{edges{node{id name volumeInstances(first:100){pageInfo{hasNextPage}edges{node{id volumeId serviceId environmentId mountPath deletedAt isPendingDeletion}}} deploymentTriggers{edges{node{id repository branch checkSuites serviceId}}}}}}}}`,
     { id: target.projectId },
   );
   assert.equal(data.project.name, "Events");
@@ -62,6 +63,11 @@ try {
       (e) => e.node.id === env.id,
     )?.node;
     assert.equal(current?.name, name);
+    const volumeAttachment = verifyDatabaseVolume(current.volumeInstances, {
+      environmentId: env.id,
+      serviceId: env.database.id,
+      volumeId: env.database.volumeId,
+    });
     const matching = current.deploymentTriggers.edges.filter(
       (e) => e.node.serviceId === target.serviceId,
     );
@@ -220,7 +226,7 @@ try {
       schedulerRunning: false,
       database: {
         serviceId: env.database.id,
-        volumeId: env.database.volumeId,
+        ...volumeAttachment,
         deploymentId: databaseDeployments[0].id,
         deploymentStatus: databaseDeployments[0].status,
         backupSchedules: backups.map((backup) => backup.kind).sort(),
