@@ -96,7 +96,11 @@ export function eventRecord(config, input, evidence) {
       : range.startDate;
   // A single structured startDate does not establish an end. A visible listing
   // date/range is retained at day precision, with its separate basis below.
-  const endDate = end.startDate ?? (input.rawDate ? range.endDate : null),
+  const visibleDateEvidence =
+    input.rawDate &&
+    input.rawDateBasis !== "start_attribute" &&
+    !/^\d{4}-\d\d-\d\dT/.test(String(input.rawDate));
+  const endDate = end.startDate ?? (visibleDateEvidence ? range.endDate : null),
     base = evidence.url ?? config.url,
     url = safeUrl(input.url, base) ?? safeUrl(input["@id"], base);
   if (
@@ -160,7 +164,7 @@ export function eventRecord(config, input, evidence) {
       start: input.startDate ? "source startDate" : "visible listing date",
       end: input.endDate
         ? "source endDate"
-        : input.rawDate
+        : visibleDateEvidence
           ? "visible listing date/range"
           : null,
     },

@@ -335,6 +335,60 @@ test("article publication metadata cannot masquerade as an event date and placeh
   assert.equal(safeUrl("/events/null", c.url), null);
 });
 
+test("generic start-only attributes do not assert an end date or time", () => {
+  const c = {
+    ...config,
+    adapter: "cards",
+    cardSelectors: [".event-card"],
+    detailPattern: "/event/",
+    maxDepth: 0,
+  };
+  for (const start of ["2026-10-17T18:00:00-05:00", "2026-10-17"]) {
+    const html = `<article class="event-card"><h3><a href="/event/example">Evening social</a></h3><time datetime="${start}">Starts</time></article>`;
+    const r = parseDocument({ html, url: c.url, config: c }).records[0];
+    assert.equal(r.startDate, "2026-10-17");
+    assert.equal(r.endDate, null);
+    assert.equal(r.endLocal, null);
+    assert.equal(r.startLocal, start.includes("T") ? start : null);
+    assert.equal(r.dateTimeBasis.end, null);
+    assert.ok(r.fieldQuality.missing.includes("end_date"));
+  }
+});
+
+test("generic explicit end attributes retain their independent timestamp and offset", () => {
+  const c = {
+    ...config,
+    adapter: "cards",
+    cardSelectors: [".event-card"],
+    detailPattern: "/event/",
+    maxDepth: 0,
+  };
+  const html =
+    '<article class="event-card"><h3><a href="/event/example">Evening social</a></h3><time itemprop="startDate" datetime="2026-10-17T18:00:00-05:00">Starts</time><time itemprop="endDate" datetime="2026-10-17T21:00:00-05:00">Ends</time></article>';
+  const r = parseDocument({ html, url: c.url, config: c }).records[0];
+  assert.equal(r.startLocal, "2026-10-17T18:00:00-05:00");
+  assert.equal(r.endLocal, "2026-10-17T21:00:00-05:00");
+  assert.equal(r.endDate, "2026-10-17");
+  assert.equal(r.dateTimeBasis.end, "end attribute");
+});
+
+test("a visible multi-day range supplies an end independently of a start attribute", () => {
+  const c = {
+    ...config,
+    adapter: "cards",
+    cardSelectors: [".event-card"],
+    detailPattern: "/event/",
+    maxDepth: 0,
+  };
+  const html =
+    '<article class="event-card"><h3><a href="/event/example">Community festival</a></h3><time datetime="2026-10-17T18:00:00-05:00">Starts</time><span class="date">Oct 17-19, 2026</span></article>';
+  const r = parseDocument({ html, url: c.url, config: c }).records[0];
+  assert.equal(r.startLocal, "2026-10-17T18:00:00-05:00");
+  assert.equal(r.endDate, "2026-10-19");
+  assert.equal(r.endLocal, null);
+  assert.equal(r.dateTimeBasis.end, "visible listing date/time range");
+});
+
 test("a department discovery page cannot publish its misleading Event metadata", async () => {
   const c = configs.find((c) => c.id === "url-055");
   const html =

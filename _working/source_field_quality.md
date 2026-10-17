@@ -1,6 +1,6 @@
 # Events source date, time and location audit
 
-Generated 2026-10-17T23:26:52.592Z. All 97 supplied entries are accounted for.
+Generated 2026-10-17T23:33:34.376Z. All 97 supplied entries are accounted for.
 
 Each source received a bounded Playwright listing attempt. Accessible sources were inspected through their rendered DOM; a representative same-host detail was visited where discovered. Access/policy failures are recorded, not bypassed. Later focused browser checks replace earlier samples for those sources. The current parsers replay the immutable captures to measure fields.
 
@@ -44,7 +44,7 @@ The listing columns include successful sampled detail enrichment. Separate detai
 | url-032 | New York City | [URL](https://cititour.com/NYC_Events/2026-New-York-City-Street-Fairs/33756) | access_blocked | 0 | 0 / 0 | 0 / 0 | 0 | 0 | 0 |
 | url-033 | New York City | [URL](https://dothisnyc.com/street-fairs-nyc/) | sample_extracted | 10 | 10 / 5 | 5 / 5 | 10 | 10 | 0 |
 | url-034 | New York City | [URL](https://www.eventbrite.com/d/ny--new-york/) | sample_extracted | 36 | 36 / 36 | 1 / 1 | 28 | 28 | 0 |
-| url-035 | Los Angeles | [URL](https://www.discoverlosangeles.com/events) | sample_extracted | 49 | 49 / 49 | 49 / 47 | 1 | 0 | 0 |
+| url-035 | Los Angeles | [URL](https://www.discoverlosangeles.com/events) | sample_extracted | 49 | 49 / 49 | 49 / 49 | 1 | 0 | 0 |
 | url-036 | Los Angeles | [URL](https://lacity.gov/calendar) | adapter_work_needed | 0 | 0 / 0 | 0 / 0 | 0 | 0 | 0 |
 | url-037 | Los Angeles | [URL](https://www.laconventioncenter.com/events) | sample_extracted | 31 | 31 / 31 | 0 / 0 | 31 | 0 | 0 |
 | url-038 | Los Angeles | [URL](https://www.laconventioncenter.com/events/all) | sample_extracted | 31 | 31 / 31 | 0 / 0 | 31 | 0 | 0 |

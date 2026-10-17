@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-10-17T23:26:52.592Z",
-  "build": "cd14724bff7b6acd38e65903131afab9e9f79033b8aab094838af5191b09fd2b",
+  "generatedAt": "2026-10-17T23:33:34.376Z",
+  "build": "5c8c367b5bb954e0ec74bcf9ca2b8b0b50f8cea7f8cf2e3db5e8c8a171faad02",
   "scope": "Bounded rendered listing and representative detail inspections; captured-page replay, not complete enumeration or semantic approval",
   "inputBuilds": [
     {
@@ -3934,12 +3934,12 @@
         "startDate": 49,
         "endDate": 49,
         "startTime": 49,
-        "endTime": 47,
+        "endTime": 49,
         "textLocation": 1,
         "city": 1,
         "coordinates": 0,
         "needsDetail": 48,
-        "needsReview": 0
+        "needsReview": 2
       },
       "standaloneDetailSamples": {
         "records": 0,
@@ -3965,12 +3965,12 @@
             "startDate": 49,
             "endDate": 49,
             "startTime": 49,
-            "endTime": 47,
+            "endTime": 49,
             "textLocation": 0,
             "city": 0,
             "coordinates": 0,
             "needsDetail": 49,
-            "needsReview": 0
+            "needsReview": 2
           },
           "issues": [
             {

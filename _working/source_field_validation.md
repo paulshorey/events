@@ -4,7 +4,7 @@ Reviewed 2026-10-17T23:09:37.908Z.
 
 - All 97 registry entries received a bounded Playwright inspection attempt; the first pass included 47 representative detail attempts. Fifteen sources received a focused follow-up, and AllEvents received a final domain check. Robots/access restrictions and HTTP 429 results were retained rather than bypassed.
 - The current parsers replayed captured documents for all 97 entries. The per-source report distinguishes field presence from semantic approval and complete enumeration.
-- `npm test`: 88 tests passed. New regressions cover structured and visible dates, missing end dates, overnight/DST clocks, venue addresses, postal codes, coordinates, graph references, publication-date false positives, source timestamp conflicts, detail identity, append-only checkpoint persistence and rollback.
+- `npm test`: 91 tests passed. New regressions cover structured and visible dates, missing end dates, overnight/DST clocks, venue addresses, postal codes, coordinates, graph references, publication-date false positives, source timestamp conflicts, detail identity, append-only checkpoint persistence and rollback.
 - Real bounded worker runs exercised AllEvents, Meet Me at the Fair, Network.Vegas API, NYC Tourism, and Downtown Orlando in separate audit storage. All were intentionally bounded; none established complete enumeration.
 - The first AllEvents worker run exposed its verified new all.events destination. After the scope/clock repair, a fresh three-request CLI run retained 24 base records, saved two separate detail enrichments, exported 24 projected observations, and recorded the new-domain timezone conflict as needs_review.
 - The initial NYC Tourism worker held a title-alias mismatch instead of attaching uncertain fields. The final configuration permits only the browser-verified “NY Auto Show” / “New York International Auto Show” alias, with the same requested-page and date guards. ConventionGrid titles now exclude adjacent date/city metadata. Boston department pages remain discovery-only even when their JSON-LD claims they are Events.
@@ -23,6 +23,8 @@ Full per-URL counts, inspected selectors, capture paths/hashes, representative v
 ## PR review follow-up
 
 The enumeration coverage check now evaluates listing/API pages independently of detail pages, while detail errors, issues and pending tasks still block completion. Pending occurrence bindings for a shared detail URL are merged across listing pages; listing/API tasks run before detail acquisition. Unexpected new bindings after a detail task was claimed fail explicitly under the atomic checkpoint rather than silently disappearing. Controlled-worker regressions cover a complete listing plus enrichment, three recurring occurrences across three listing pages with one detail fetch, a mismatched detail holding completion, and rollback on late bindings.
+
+The additional unknown-end review finding is fixed: generic start attributes no longer establish an end date, and their explicit offsets are retained. Regressions cover date-only/start-timestamp attributes, explicit end attributes, and visible multi-day ranges.
 
 ## Release and remaining validation
 

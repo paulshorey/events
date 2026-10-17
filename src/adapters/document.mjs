@@ -316,29 +316,42 @@ export function parseDocument({
           .find('time,[itemprop="startDate"],[datetime],[data-date]')
           .filter(
             (_, e) =>
-              !/datePublished|dateModified|published|updated/i.test(
+              !/datePublished|dateModified|endDate|published|updated/i.test(
                 `${$(e).attr("itemprop") ?? ""} ${$(e).attr("class") ?? ""}`,
               ),
           )
           .first();
         const dateText = text(visible.find('[class*="date"]').text());
-        const rawDate =
+        const attributeStart =
           time.attr("datetime") ??
           time.attr("content") ??
-          time.attr("data-date") ??
+          time.attr("data-date");
+        const rawDate =
+          attributeStart ??
           (dateText ||
             (["conventiongrid", "trade-table"].includes(config.adapter)
               ? text(visible.text())
               : ""));
         const range = dates(rawDate),
-          clocks = parseTimeRange(visible.text());
+          visibleRange = dates(dateText),
+          clocks = parseTimeRange(dateText || visible.text());
         const explicitEnd = visible.find('[itemprop="endDate"]').first();
-        const endDate =
+        const endAttribute =
           explicitEnd.attr("datetime") ?? explicitEnd.attr("content");
         const endClockSafe =
           clocks.endTime &&
-          (range.endDate > range.startDate ||
+          (visibleRange.endDate > range.startDate ||
             clocks.endTime >= clocks.startTime);
+        const visibleEnd =
+          visibleRange.startDate &&
+          (visibleRange.endDate !== visibleRange.startDate || endClockSafe)
+            ? visibleRange.endDate
+            : null;
+        const endDate =
+          endAttribute ??
+          (attributeStart && visibleEnd ? visibleEnd : undefined);
+        const endDay =
+          dates(endDate).startDate ?? (!attributeStart ? range.endDate : null);
         const r = eventRecord(
           config,
           {
@@ -346,15 +359,34 @@ export function parseDocument({
             title,
             url: href,
             rawDate,
-            startDate: /^\d{4}-\d\d-\d\dT/.test(rawDate) ? rawDate : undefined,
+            rawDateBasis: attributeStart
+              ? "start_attribute"
+              : "visible_listing",
+            startDate: attributeStart,
             endDate,
+            dateTimeBasis: {
+              start: attributeStart
+                ? "start attribute"
+                : "visible listing date",
+              end: endAttribute
+                ? "end attribute"
+                : attributeStart
+                  ? visibleEnd
+                    ? "visible listing date/time range"
+                    : null
+                  : "visible listing date/range",
+            },
             startLocal:
-              clocks.startTime && range.startDate
+              !/^\d{4}-\d\d-\d\dT/.test(attributeStart ?? "") &&
+              clocks.startTime &&
+              range.startDate
                 ? `${range.startDate}T${clocks.startTime}`
                 : undefined,
             endLocal:
-              endClockSafe && range.endDate
-                ? `${range.endDate}T${clocks.endTime}`
+              !/^\d{4}-\d\d-\d\dT/.test(endAttribute ?? "") &&
+              endClockSafe &&
+              endDay
+                ? `${endDay}T${clocks.endTime}`
                 : undefined,
             location: {
               venue: text(visible.find(".venue,.event-venue").first().text()),

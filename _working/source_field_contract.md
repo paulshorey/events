@@ -17,7 +17,7 @@ Every observation contains these properties, including explicit nulls:
 | `dateTimePrecision` | Separate `date`, `datetime`, or `unknown` precision for each boundary |
 | `dateTimeBasis` | The source field or inspected visible occurrence element behind each boundary |
 
-A structured `startDate` alone does not establish an end date. A visible listing date/range can establish day-level boundaries; the basis makes that distinction explicit. Missing hours are never filled with midnight, and a missing end time never receives an arbitrary duration. Date-only values are not automatically all-day events.
+A structured `startDate` or lone start attribute alone does not establish an end date. Attribute-derived start timestamps are not treated as visible date-range evidence; explicit end attributes and visible end ranges are parsed independently. A visible listing date/range can establish day-level boundaries; the basis makes that distinction explicit. Missing hours are never filled with midnight, and a missing end time never receives an arbitrary duration. Date-only values are not automatically all-day events.
 
 This follows the [official event date/time guidance](https://developers.google.com/search/docs/appearance/structured-data/event): retain date precision when hours are unavailable and preserve accurate offsets. These are acquisition records, not website structured-data markup.
 
