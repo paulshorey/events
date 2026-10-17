@@ -1,0 +1,5 @@
+[
+  {"sourceId":"network-vegas","enabled":false,"intervalHours":6,"timeZone":"America/Los_Angeles","maxPages":2,"limit":10},
+  {"sourceId":"boston-gov","enabled":false,"intervalHours":12,"timeZone":"America/New_York","maxPages":2,"limit":35},
+  {"sourceId":"la-convention-center","enabled":false,"intervalHours":24,"timeZone":"America/Los_Angeles","maxPages":1,"limit":8}
+]

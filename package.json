@@ -1,0 +1,27 @@
+{
+  "name": "events-mining-framework",
+  "private": true,
+  "version": "0.2.0",
+  "type": "module",
+  "description": "Deterministic per-source event extraction, durable local dispatch and repair evidence",
+  "scripts": {
+    "recon": "node scripts/recon.mjs",
+    "mine": "node scripts/mine.mjs",
+    "status": "node scripts/status.mjs",
+    "assess": "node scripts/build-assessment.mjs",
+    "samples": "node scripts/export-samples.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "framework": "node scripts/framework.mjs",
+    "registry:build": "node scripts/build-registry.mjs"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "dependencies": {
+    "cheerio": "1.2.0",
+    "playwright": "1.64.1"
+  },
+  "devDependencies": {
+    "prettier": "3.6.2"
+  }
+}

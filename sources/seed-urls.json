@@ -1,0 +1,875 @@
+[
+  {
+    "id": "url-001",
+    "group": "General event discovery",
+    "url": "https://www.eventbrite.com/",
+    "sourceHost": "eventbrite.com",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-002",
+    "group": "General event discovery",
+    "url": "https://allevents.in/",
+    "sourceHost": "allevents.in",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-003",
+    "group": "General event discovery",
+    "url": "https://events.com/",
+    "sourceHost": "events.com",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-004",
+    "group": "General event discovery",
+    "url": "https://eventfinder.site/",
+    "sourceHost": "eventfinder.site",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-005",
+    "group": "Festival and fair directories",
+    "url": "https://festivalnet.com/",
+    "sourceHost": "festivalnet.com",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-006",
+    "group": "Festival and fair directories",
+    "url": "https://festivaltrekker.com/",
+    "sourceHost": "festivaltrekker.com",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-007",
+    "group": "Festival and fair directories",
+    "url": "https://festivalindex.com/en-us",
+    "sourceHost": "festivalindex.com",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-008",
+    "group": "Festival and fair directories",
+    "url": "https://www.countyfairgrounds.net/",
+    "sourceHost": "countyfairgrounds.net",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-009",
+    "group": "Festival and fair directories",
+    "url": "https://meetmeatthefair.com/events/all",
+    "sourceHost": "meetmeatthefair.com",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-010",
+    "group": "Conventions and trade shows",
+    "url": "https://www.tsnn.com/trade-show-calendar",
+    "sourceHost": "tsnn.com",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-011",
+    "group": "Conventions and trade shows",
+    "url": "https://10times.com/",
+    "sourceHost": "10times.com",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-012",
+    "group": "Conventions and trade shows",
+    "url": "https://tradefest.io/",
+    "sourceHost": "tradefest.io",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-013",
+    "group": "Conventions and trade shows",
+    "url": "https://conventiongrid.com/calendar/",
+    "sourceHost": "conventiongrid.com",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-014",
+    "group": "Conventions and trade shows",
+    "url": "https://thetradeshowcalendar.com/ttn/index.php",
+    "sourceHost": "thetradeshowcalendar.com",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-015",
+    "group": "Conventions and trade shows",
+    "url": "https://conventioncalendar.com/",
+    "sourceHost": "conventioncalendar.com",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-016",
+    "group": "Las Vegas",
+    "url": "https://www.vegasmeansbusiness.com/destination-calendar/",
+    "sourceHost": "vegasmeansbusiness.com",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-017",
+    "group": "Las Vegas",
+    "url": "https://www.vegas.com/las-vegas-events/festivals-in-las-vegas/",
+    "sourceHost": "vegas.com",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-018",
+    "group": "Las Vegas",
+    "url": "https://www.lasvegasnevada.gov/Residents/Arts-Culture/Annual-Festivals",
+    "sourceHost": "lasvegasnevada.gov",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-019",
+    "group": "Las Vegas",
+    "url": "https://network.vegas/calendar/",
+    "sourceHost": "network.vegas",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-020",
+    "group": "Las Vegas",
+    "url": "https://network.vegas/calendar/category/event-type/convention/",
+    "sourceHost": "network.vegas",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-021",
+    "group": "Las Vegas",
+    "url": "https://networkinvegas.com/calendar/",
+    "sourceHost": "networkinvegas.com",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-022",
+    "group": "Las Vegas",
+    "url": "https://events.lasvegascalendars.com/lasvegascalendars/pinboard?tags=Conventions",
+    "sourceHost": "events.lasvegascalendars.com",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-023",
+    "group": "Las Vegas",
+    "url": "https://www.eventbrite.com/d/nv--las-vegas/",
+    "sourceHost": "eventbrite.com",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-024",
+    "group": "New York City",
+    "url": "https://www.nyctourism.com/events/",
+    "sourceHost": "nyctourism.com",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-025",
+    "group": "New York City",
+    "url": "https://www.nyctourism.com/things-to-do/events-and-festivals/",
+    "sourceHost": "nyctourism.com",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-026",
+    "group": "New York City",
+    "url": "https://www.nycgovparks.org/events/festivals",
+    "sourceHost": "nycgovparks.org",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-027",
+    "group": "New York City",
+    "url": "https://www.javitscenter.com/calendar",
+    "sourceHost": "javitscenter.com",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-028",
+    "group": "New York City",
+    "url": "https://conventioncalendar.com/us/ny/new-york-city/jacob-javits-center",
+    "sourceHost": "conventioncalendar.com",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-029",
+    "group": "New York City",
+    "url": "https://www.nyc.com/events/",
+    "sourceHost": "nyc.com",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-030",
+    "group": "New York City",
+    "url": "https://www.cityguideny.com/events/?catid=182",
+    "sourceHost": "cityguideny.com",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-031",
+    "group": "New York City",
+    "url": "https://nycstreetfairs.com/",
+    "sourceHost": "nycstreetfairs.com",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-032",
+    "group": "New York City",
+    "url": "https://cititour.com/NYC_Events/2026-New-York-City-Street-Fairs/33756",
+    "sourceHost": "cititour.com",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-033",
+    "group": "New York City",
+    "url": "https://dothisnyc.com/street-fairs-nyc/",
+    "sourceHost": "dothisnyc.com",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-034",
+    "group": "New York City",
+    "url": "https://www.eventbrite.com/d/ny--new-york/",
+    "sourceHost": "eventbrite.com",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-035",
+    "group": "Los Angeles",
+    "url": "https://www.discoverlosangeles.com/events",
+    "sourceHost": "discoverlosangeles.com",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-036",
+    "group": "Los Angeles",
+    "url": "https://lacity.gov/calendar",
+    "sourceHost": "lacity.gov",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-037",
+    "group": "Los Angeles",
+    "url": "https://www.laconventioncenter.com/events",
+    "sourceHost": "laconventioncenter.com",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-038",
+    "group": "Los Angeles",
+    "url": "https://www.laconventioncenter.com/events/all",
+    "sourceHost": "laconventioncenter.com",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-039",
+    "group": "Chicago",
+    "url": "https://www.choosechicago.com/events/",
+    "sourceHost": "choosechicago.com",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-040",
+    "group": "Chicago",
+    "url": "https://www.chicago.gov/city/en/depts/dca/provdrs/chicago_festivals.html",
+    "sourceHost": "chicago.gov",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-041",
+    "group": "Chicago",
+    "url": "https://www.chicago.gov/city/en/depts/dca/provdrs/attractions_eventsandexhibitions.html",
+    "sourceHost": "chicago.gov",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-042",
+    "group": "Chicago",
+    "url": "https://www.chicagoparkdistrict.com/events",
+    "sourceHost": "chicagoparkdistrict.com",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-043",
+    "group": "Houston",
+    "url": "https://www.visithoustontexas.com/events/",
+    "sourceHost": "visithoustontexas.com",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-044",
+    "group": "Houston",
+    "url": "https://www.visithoustontexas.com/events/annual-events/",
+    "sourceHost": "visithoustontexas.com",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-045",
+    "group": "Houston",
+    "url": "https://www.houstontx.gov/events/",
+    "sourceHost": "houstontx.gov",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-046",
+    "group": "Houston",
+    "url": "https://www.houstontx.gov/abouthouston/annualevents.html",
+    "sourceHost": "houstontx.gov",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-047",
+    "group": "Houston",
+    "url": "https://houston.com/events",
+    "sourceHost": "houston.com",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-048",
+    "group": "Houston",
+    "url": "https://houston.com/festivals",
+    "sourceHost": "houston.com",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-049",
+    "group": "Washington, DC",
+    "url": "https://washington.org/find-dc-listings/dc-events",
+    "sourceHost": "washington.org",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-050",
+    "group": "Washington, DC",
+    "url": "https://washington.org/press/journalist-newsletter/calendar-events",
+    "sourceHost": "washington.org",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-051",
+    "group": "Washington, DC",
+    "url": "https://eventsdc.com/",
+    "sourceHost": "eventsdc.com",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-052",
+    "group": "Washington, DC",
+    "url": "https://dc.gov/calendar/month",
+    "sourceHost": "dc.gov",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-053",
+    "group": "Boston",
+    "url": "https://www.meetboston.com/events/",
+    "sourceHost": "meetboston.com",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-054",
+    "group": "Boston",
+    "url": "https://www.boston.gov/events",
+    "sourceHost": "boston.gov",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-055",
+    "group": "Boston",
+    "url": "https://www.boston.gov/departments/tourism-sports-and-entertainment",
+    "sourceHost": "boston.gov",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-056",
+    "group": "Miami",
+    "url": "https://www.miamiandbeaches.com/events",
+    "sourceHost": "miamiandbeaches.com",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-057",
+    "group": "Miami",
+    "url": "https://www.miamiandbeaches.com/events/annual-events",
+    "sourceHost": "miamiandbeaches.com",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-058",
+    "group": "Seattle",
+    "url": "https://visitseattle.org/events/",
+    "sourceHost": "visitseattle.org",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-059",
+    "group": "Seattle",
+    "url": "https://visitseattle.org/things-to-do/events/",
+    "sourceHost": "visitseattle.org",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-060",
+    "group": "Seattle",
+    "url": "https://visitseattle.org/things-to-do/events/festivals/",
+    "sourceHost": "visitseattle.org",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-061",
+    "group": "Seattle",
+    "url": "https://visitseattle.org/about-us/citywide-calendar/",
+    "sourceHost": "visitseattle.org",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-062",
+    "group": "Seattle",
+    "url": "https://www.seattle.gov/event-calendar",
+    "sourceHost": "seattle.gov",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-063",
+    "group": "Seattle",
+    "url": "https://www.seattle.gov/special-events/plan-an-event/calendar",
+    "sourceHost": "seattle.gov",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-064",
+    "group": "San Francisco",
+    "url": "https://www.sftravel.com/explore/events",
+    "sourceHost": "sftravel.com",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-065",
+    "group": "San Francisco",
+    "url": "https://portal.sftravel.com/calendar_public/home_sfdc.cfm",
+    "sourceHost": "portal.sftravel.com",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-066",
+    "group": "San Francisco",
+    "url": "https://www.sf.gov/departments--office-mayor/events/calendar",
+    "sourceHost": "sf.gov",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-067",
+    "group": "Atlanta",
+    "url": "https://discoveratlanta.com/events/all/",
+    "sourceHost": "discoveratlanta.com",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-068",
+    "group": "Atlanta",
+    "url": "https://discoveratlanta.com/events/festivals/",
+    "sourceHost": "discoveratlanta.com",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-069",
+    "group": "Atlanta",
+    "url": "https://www.atlantaga.gov/government/mayor-s-office/executive-offices/office-of-communications/city-calendar",
+    "sourceHost": "atlantaga.gov",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-070",
+    "group": "Dallas",
+    "url": "https://www.visitdallas.com/events/",
+    "sourceHost": "visitdallas.com",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-071",
+    "group": "Dallas",
+    "url": "https://www.visitdallas.com/events/annual-events/",
+    "sourceHost": "visitdallas.com",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-072",
+    "group": "Dallas",
+    "url": "https://dallascityhall.com/calendar/Pages/default.aspx",
+    "sourceHost": "dallascityhall.com",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-073",
+    "group": "New Orleans",
+    "url": "https://www.neworleans.com/events/",
+    "sourceHost": "neworleans.com",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-074",
+    "group": "New Orleans",
+    "url": "https://www.neworleans.com/things-to-do/festivals/",
+    "sourceHost": "neworleans.com",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-075",
+    "group": "New Orleans",
+    "url": "https://www.neworleans.com/events/year-at-a-glance/",
+    "sourceHost": "neworleans.com",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-076",
+    "group": "Denver",
+    "url": "https://visitdenver.com/events/",
+    "sourceHost": "visitdenver.com",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-077",
+    "group": "Denver",
+    "url": "https://visitdenver.com/things-to-do/festivals-events/",
+    "sourceHost": "visitdenver.com",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-078",
+    "group": "Orlando",
+    "url": "https://www.visitorlando.com/events/",
+    "sourceHost": "visitorlando.com",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-079",
+    "group": "Orlando",
+    "url": "https://www.orlando.gov/Events",
+    "sourceHost": "orlando.gov",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-080",
+    "group": "Orlando",
+    "url": "https://www.downtownorlando.com/Fun/Events",
+    "sourceHost": "downtownorlando.com",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-081",
+    "group": "Orlando",
+    "url": "https://events.occc.net/",
+    "sourceHost": "events.occc.net",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-082",
+    "group": "San Diego",
+    "url": "https://www.visitsandiego.com/calendar",
+    "sourceHost": "visitsandiego.com",
+    "origin": "primary-list",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-083",
+    "group": "Conventions and trade shows",
+    "url": "https://tradefest.io/en/tag/research",
+    "sourceHost": "tradefest.io",
+    "origin": "citation-only-lead",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-084",
+    "group": "Las Vegas",
+    "url": "https://www.vegasmeansbusiness.com/destination-calendar/?bounds=false&view=grid&sort=date&filter_date_start=1/1/2026&filter_date_end=1/31/2026",
+    "sourceHost": "vegasmeansbusiness.com",
+    "origin": "citation-only-lead",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-085",
+    "group": "New York City",
+    "url": "https://www.nycgovparks.org/events/festivals/ajax/aggregate/p1",
+    "sourceHost": "nycgovparks.org",
+    "origin": "citation-only-lead",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-086",
+    "group": "Seattle",
+    "url": "https://visitseattle.org/events/?frm=events&event_type=festivals-special-events",
+    "sourceHost": "visitseattle.org",
+    "origin": "citation-only-lead",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-087",
+    "group": "Denver",
+    "url": "https://visitdenver.com/events/?filter_categories[0]=63",
+    "sourceHost": "visitdenver.com",
+    "origin": "citation-only-lead",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-088",
+    "group": "Orlando",
+    "url": "https://expofp.com/orange-county-convention-center",
+    "sourceHost": "expofp.com",
+    "origin": "citation-only-lead",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-089",
+    "group": "Orlando",
+    "url": "https://www.ramadaorlando.com/orange-county-convention-center-events/",
+    "sourceHost": "ramadaorlando.com",
+    "origin": "citation-only-lead",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-090",
+    "group": "Orlando",
+    "url": "https://conventioncalendar.com/us/fl/orlando/orange-county-convention-center",
+    "sourceHost": "conventioncalendar.com",
+    "origin": "citation-only-lead",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-091",
+    "group": "Orlando",
+    "url": "https://www.occc.net/About-Us-Media-Relations-Press-Releases",
+    "sourceHost": "occc.net",
+    "origin": "citation-only-lead",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-092",
+    "group": "Orlando",
+    "url": "https://www.wyndhamidriveresort.com/orange-county-convention-center.htm",
+    "sourceHost": "wyndhamidriveresort.com",
+    "origin": "citation-only-lead",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-093",
+    "group": "Chicago",
+    "url": "https://www.chicago.gov/city/en/sites/chicagoriverwalk/home/events.html",
+    "sourceHost": "chicago.gov",
+    "origin": "citation-only-lead",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-094",
+    "group": "Orlando",
+    "url": "https://www.orlando.gov/Home",
+    "sourceHost": "orlando.gov",
+    "origin": "citation-only-lead",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-095",
+    "group": "Orlando",
+    "url": "https://www.visitorlando.city/events",
+    "sourceHost": "visitorlando.city",
+    "origin": "citation-only-lead",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-096",
+    "group": "Chicago",
+    "url": "https://events.uchicago.edu/",
+    "sourceHost": "events.uchicago.edu",
+    "origin": "citation-only-lead",
+    "status": "candidate",
+    "scheduleEnabled": false
+  },
+  {
+    "id": "url-097",
+    "group": "Orlando",
+    "url": "https://events.occc.net/calendar-embed-source/",
+    "sourceHost": "events.occc.net",
+    "origin": "citation-only-lead",
+    "status": "candidate",
+    "scheduleEnabled": false
+  }
+]

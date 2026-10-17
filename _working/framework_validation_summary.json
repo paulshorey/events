@@ -1,0 +1,197 @@
+{
+  "generatedAt": "2026-10-17T04:16:32.735Z",
+  "build": "c424b942be741433b27e91d325ac7b2f227f7775826d1cbdb9613e2b85a4a864",
+  "testsPassed": 45,
+  "collections": 97,
+  "latestStates": {
+    "repair_needed": 42,
+    "partial": 26,
+    "blocked_access": 25,
+    "complete": 3,
+    "retry_wait": 1
+  },
+  "positiveCollections": 28,
+  "observationsAcrossLatestCollections": 1238,
+  "enabled": 0,
+  "activeRuns": 0,
+  "repairStates": {
+    "closed": 3,
+    "open": 101
+  },
+  "accessCodes": {
+    "contract_changed": 2,
+    "no_event_contract_found": 40,
+    "access_blocked": 25,
+    "rate_limited": 1
+  },
+  "bySource": [
+    {
+      "id": "url-002",
+      "url": "https://allevents.in/",
+      "records": 24,
+      "status": "partial"
+    },
+    {
+      "id": "url-004",
+      "url": "https://eventfinder.site/",
+      "records": 3,
+      "status": "partial"
+    },
+    {
+      "id": "url-007",
+      "url": "https://festivalindex.com/en-us",
+      "records": 23,
+      "status": "partial"
+    },
+    {
+      "id": "url-009",
+      "url": "https://meetmeatthefair.com/events/all",
+      "records": 10,
+      "status": "partial"
+    },
+    {
+      "id": "url-013",
+      "url": "https://conventiongrid.com/calendar/",
+      "records": 3,
+      "status": "partial"
+    },
+    {
+      "id": "url-014",
+      "url": "https://thetradeshowcalendar.com/ttn/index.php",
+      "records": 100,
+      "status": "partial"
+    },
+    {
+      "id": "url-019",
+      "url": "https://network.vegas/calendar/",
+      "records": 298,
+      "status": "complete"
+    },
+    {
+      "id": "url-020",
+      "url": "https://network.vegas/calendar/category/event-type/convention/",
+      "records": 18,
+      "status": "partial"
+    },
+    {
+      "id": "url-021",
+      "url": "https://networkinvegas.com/calendar/",
+      "records": 34,
+      "status": "partial"
+    },
+    {
+      "id": "url-023",
+      "url": "https://www.eventbrite.com/d/nv--las-vegas/",
+      "records": 30,
+      "status": "partial"
+    },
+    {
+      "id": "url-024",
+      "url": "https://www.nyctourism.com/events/",
+      "records": 12,
+      "status": "partial"
+    },
+    {
+      "id": "url-025",
+      "url": "https://www.nyctourism.com/things-to-do/events-and-festivals/",
+      "records": 12,
+      "status": "partial"
+    },
+    {
+      "id": "url-033",
+      "url": "https://dothisnyc.com/street-fairs-nyc/",
+      "records": 10,
+      "status": "partial"
+    },
+    {
+      "id": "url-034",
+      "url": "https://www.eventbrite.com/d/ny--new-york/",
+      "records": 39,
+      "status": "partial"
+    },
+    {
+      "id": "url-035",
+      "url": "https://www.discoverlosangeles.com/events",
+      "records": 27,
+      "status": "partial"
+    },
+    {
+      "id": "url-037",
+      "url": "https://www.laconventioncenter.com/events",
+      "records": 31,
+      "status": "partial"
+    },
+    {
+      "id": "url-038",
+      "url": "https://www.laconventioncenter.com/events/all",
+      "records": 31,
+      "status": "complete"
+    },
+    {
+      "id": "url-039",
+      "url": "https://www.choosechicago.com/events/",
+      "records": 24,
+      "status": "partial"
+    },
+    {
+      "id": "url-042",
+      "url": "https://www.chicagoparkdistrict.com/events",
+      "records": 1,
+      "status": "partial"
+    },
+    {
+      "id": "url-049",
+      "url": "https://washington.org/find-dc-listings/dc-events",
+      "records": 10,
+      "status": "partial"
+    },
+    {
+      "id": "url-051",
+      "url": "https://eventsdc.com/",
+      "records": 5,
+      "status": "partial"
+    },
+    {
+      "id": "url-054",
+      "url": "https://www.boston.gov/events",
+      "records": 325,
+      "status": "complete"
+    },
+    {
+      "id": "url-057",
+      "url": "https://www.miamiandbeaches.com/events/annual-events",
+      "records": 23,
+      "status": "partial"
+    },
+    {
+      "id": "url-065",
+      "url": "https://portal.sftravel.com/calendar_public/home_sfdc.cfm",
+      "records": 26,
+      "status": "partial"
+    },
+    {
+      "id": "url-079",
+      "url": "https://www.orlando.gov/Events",
+      "records": 10,
+      "status": "partial"
+    },
+    {
+      "id": "url-080",
+      "url": "https://www.downtownorlando.com/Fun/Events",
+      "records": 10,
+      "status": "partial"
+    },
+    {
+      "id": "url-082",
+      "url": "https://www.visitsandiego.com/calendar",
+      "records": 60,
+      "status": "partial"
+    },
+    {
+      "id": "url-085",
+      "url": "https://www.nycgovparks.org/events/festivals/ajax/aggregate/p1",
+      "records": 39,
+      "status": "partial"
+    }
+  ]
+}

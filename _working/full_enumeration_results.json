@@ -1,0 +1,185 @@
+{
+  "generatedAt": "2026-10-17T04:15:43.131Z",
+  "build": "c424b942be741433b27e91d325ac7b2f227f7775826d1cbdb9613e2b85a4a864",
+  "rounds": [
+    {
+      "round": 1,
+      "results": [
+        {
+          "runId": "dffcf888-91cc-4a1b-9f40-6e383860bb13",
+          "collectionId": "url-038",
+          "status": "complete",
+          "outcome": "complete",
+          "complete": true,
+          "scope": {
+            "entrypoints": [
+              "https://www.laconventioncenter.com/events/all"
+            ],
+            "asOf": "2026-10-16",
+            "transport": "browser",
+            "basis": "declared listing interface",
+            "validation": "core listing fields; not a guarantee of all events on the publisher domain"
+          },
+          "pagesDone": 1,
+          "pendingPages": 0,
+          "failedPages": 0,
+          "requests": 1,
+          "observedRecords": 31,
+          "recordCount": 31,
+          "expectedTotal": null,
+          "countMatches": true,
+          "issues": [],
+          "stopReason": "enumeration_exhausted",
+          "directory": "/Users/pshorey/git/events/.artifacts/framework/exports/dffcf888-91cc-4a1b-9f40-6e383860bb13/1",
+          "records": 31
+        },
+        {
+          "runId": "45d61a66-5a2b-4328-96d2-42b0dd887bc6",
+          "collectionId": "url-054",
+          "status": "complete",
+          "outcome": "complete",
+          "complete": true,
+          "scope": {
+            "entrypoints": [
+              "https://www.boston.gov/events"
+            ],
+            "asOf": "2026-10-16",
+            "transport": "browser",
+            "basis": "declared listing interface",
+            "validation": "core listing fields; not a guarantee of all events on the publisher domain"
+          },
+          "pagesDone": 11,
+          "pendingPages": 0,
+          "failedPages": 0,
+          "requests": 11,
+          "observedRecords": 325,
+          "recordCount": 325,
+          "expectedTotal": null,
+          "countMatches": true,
+          "issues": [],
+          "stopReason": "enumeration_exhausted",
+          "directory": "/Users/pshorey/git/events/.artifacts/framework/exports/45d61a66-5a2b-4328-96d2-42b0dd887bc6/1",
+          "records": 325
+        },
+        {
+          "runId": "3fc4010e-6f06-41e2-965b-cee0979aa285",
+          "collectionId": "url-019",
+          "status": "complete",
+          "outcome": "complete",
+          "complete": true,
+          "scope": {
+            "entrypoints": [
+              "https://network.vegas/calendar/"
+            ],
+            "asOf": "2026-10-16",
+            "transport": "api",
+            "basis": "all pages of the recorded start_date query",
+            "validation": "core listing fields; not a guarantee of all events on the publisher domain"
+          },
+          "pagesDone": 6,
+          "pendingPages": 0,
+          "failedPages": 0,
+          "requests": 6,
+          "observedRecords": 298,
+          "recordCount": 298,
+          "expectedTotal": 298,
+          "countMatches": true,
+          "issues": [],
+          "stopReason": "enumeration_exhausted",
+          "directory": "/Users/pshorey/git/events/.artifacts/framework/exports/3fc4010e-6f06-41e2-965b-cee0979aa285/1",
+          "records": 298
+        }
+      ]
+    },
+    {
+      "round": 2,
+      "results": [
+        {
+          "runId": "8ff47032-5387-4505-bf09-5bdc9278eb50",
+          "collectionId": "url-038",
+          "status": "complete",
+          "outcome": "complete",
+          "complete": true,
+          "scope": {
+            "entrypoints": [
+              "https://www.laconventioncenter.com/events/all"
+            ],
+            "asOf": "2026-10-16",
+            "transport": "browser",
+            "basis": "declared listing interface",
+            "validation": "core listing fields; not a guarantee of all events on the publisher domain"
+          },
+          "pagesDone": 1,
+          "pendingPages": 0,
+          "failedPages": 0,
+          "requests": 1,
+          "observedRecords": 31,
+          "recordCount": 31,
+          "expectedTotal": null,
+          "countMatches": true,
+          "issues": [],
+          "stopReason": "enumeration_exhausted",
+          "directory": "/Users/pshorey/git/events/.artifacts/framework/exports/8ff47032-5387-4505-bf09-5bdc9278eb50/1",
+          "records": 31
+        },
+        {
+          "runId": "67a0ec9a-0190-4ef3-a3ba-5f34671fcfca",
+          "collectionId": "url-054",
+          "status": "complete",
+          "outcome": "complete",
+          "complete": true,
+          "scope": {
+            "entrypoints": [
+              "https://www.boston.gov/events"
+            ],
+            "asOf": "2026-10-16",
+            "transport": "browser",
+            "basis": "declared listing interface",
+            "validation": "core listing fields; not a guarantee of all events on the publisher domain"
+          },
+          "pagesDone": 11,
+          "pendingPages": 0,
+          "failedPages": 0,
+          "requests": 11,
+          "observedRecords": 325,
+          "recordCount": 325,
+          "expectedTotal": null,
+          "countMatches": true,
+          "issues": [],
+          "stopReason": "enumeration_exhausted",
+          "directory": "/Users/pshorey/git/events/.artifacts/framework/exports/67a0ec9a-0190-4ef3-a3ba-5f34671fcfca/1",
+          "records": 325
+        },
+        {
+          "runId": "e4f81f3e-ab37-4424-bee5-c6ba62f89226",
+          "collectionId": "url-019",
+          "status": "complete",
+          "outcome": "complete",
+          "complete": true,
+          "scope": {
+            "entrypoints": [
+              "https://network.vegas/calendar/"
+            ],
+            "asOf": "2026-10-16",
+            "transport": "api",
+            "basis": "all pages of the recorded start_date query",
+            "validation": "core listing fields; not a guarantee of all events on the publisher domain"
+          },
+          "pagesDone": 6,
+          "pendingPages": 0,
+          "failedPages": 0,
+          "requests": 6,
+          "observedRecords": 298,
+          "recordCount": 298,
+          "expectedTotal": 298,
+          "countMatches": true,
+          "issues": [],
+          "stopReason": "enumeration_exhausted",
+          "directory": "/Users/pshorey/git/events/.artifacts/framework/exports/e4f81f3e-ab37-4424-bee5-c6ba62f89226/1",
+          "records": 298
+        }
+      ]
+    }
+  ],
+  "closed": []
+}

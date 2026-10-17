@@ -1,0 +1,3457 @@
+{
+  "generatedAt": "2026-10-17T04:16:32.142Z",
+  "purpose": "Bounded review samples; overlapping observations, not canonical unique events",
+  "perCollectionLimit": 2,
+  "collections": [
+    {
+      "collectionId": "url-002",
+      "sourceUrl": "https://allevents.in/",
+      "group": "General event discovery",
+      "marketCity": null,
+      "status": "partial",
+      "complete": false,
+      "runId": "ae4a86cb-b498-4a80-a42d-25894c73938a",
+      "build": "0d44e9b085295c1fc53269e9e63eb87e394fa30fd2e3a5702a2a71f959336035",
+      "availableObservations": 24,
+      "events": [
+        {
+          "schemaVersion": 2,
+          "collectionId": "url-002",
+          "sourceId": "allevents.in",
+          "sourceRecordId": "https://allevents.in/abilene/swenson-soir%C3%A9e-tickets/80008679980364|2026-10-24|",
+          "title": "Swenson Soirée",
+          "url": "https://allevents.in/abilene/swenson-soir%C3%A9e-tickets/80008679980364",
+          "startDate": "2026-10-24",
+          "endDate": "2026-10-24",
+          "startLocal": null,
+          "endLocal": null,
+          "timeZone": null,
+          "allDay": null,
+          "location": {
+            "venue": "Swenson House",
+            "address": "1726 Swenson St, Abilene, TX 79603, United States",
+            "locality": "Abilene",
+            "region": "TX",
+            "country": "US",
+            "basis": "upstream structured data"
+          },
+          "marketCity": null,
+          "sourceGroups": [
+            "General event discovery"
+          ],
+          "categoryTags": [
+            {
+              "label": "General event discovery",
+              "basis": "source-level hint"
+            }
+          ],
+          "validationStatus": "extracted-candidate",
+          "warnings": [],
+          "evidence": {
+            "url": "https://allevents.in/",
+            "jsonPath": "jsonld[1][6]",
+            "capture": "/Users/pshorey/git/events/.artifacts/framework/runs/ae4a86cb-b498-4a80-a42d-25894c73938a/d9020b80-c05f-4091-9008-fb95e908685a/page-127.html",
+            "contentHash": "68b12c2510e32479ce5ffeb42a55ce482453877ac2d824d7f8ce7ddb1053442b"
+          },
+          "raw": {
+            "@context": "https://schema.org",
+            "@type": "Event",
+            "name": "Swenson Soirée",
+            "image": "https://cdn-ip.allevents.in/s/rs:fill:500:250/g:sm/sh:100/aHR0cHM6Ly9jZG4yLmFsbGV2ZW50cy5pbi90aHVtYnMvdGh1bWI2YWE5NWY0NWE0NjFhLmpwZw.avif",
+            "startDate": "2026-10-24",
+            "endDate": "2026-10-24",
+            "url": "https://allevents.in/abilene/swenson-soirée-tickets/80008679980364",
+            "eventStatus": "https://schema.org/EventScheduled",
+            "location": {
+              "@type": "Place",
+              "name": "Swenson House",
+              "address": {
+                "@type": "PostalAddress",
+                "streetAddress": "1726 Swenson St, Abilene, TX 79603, United States",
+                "postalCode": "79603",
+                "addressLocality": "Abilene",
+                "addressRegion": "TX",
+                "addressCountry": "US"
+              },
+              "geo": {
+                "@type": "GeoCoordinates",
+                "latitude": "32.4695494",
+                "longitude": "-99.7414926"
+              }
+            },
+            "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+            "offers": [
+              {
+                "@type": "AggregateOffer",
+                "availability": "https://schema.org/InStock",
+                "lowPrice": "75.00",
+                "highPrice": "900.00",
+                "priceCurrency": "USD",
+                "availabilityStarts": "2026-10-15",
+                "availabilityEnds": null,
+                "validFrom": "2026-10-15",
+                "url": "https://allevents.in/abilene/swenson-soirée-tickets/80008679980364"
+              }
+            ]
+          }
+        },
+        {
+          "schemaVersion": 2,
+          "collectionId": "url-002",
+          "sourceId": "allevents.in",
+          "sourceRecordId": "https://allevents.in/ahmedabad/radhe-raas-garba-and-mandli-30-tickets/80002377157728|2026-10-16|",
+          "title": "Radhe Raas Garba & Mandli 3.0",
+          "url": "https://allevents.in/ahmedabad/radhe-raas-garba-and-mandli-30-tickets/80002377157728",
+          "startDate": "2026-10-16",
+          "endDate": "2026-10-16",
+          "startLocal": null,
+          "endLocal": null,
+          "timeZone": null,
+          "allDay": null,
+          "location": {
+            "venue": "Ahmedabad, India",
+            "address": null,
+            "locality": "Ahmedabad",
+            "region": "GJ",
+            "country": "IN",
+            "basis": "upstream structured data"
+          },
+          "marketCity": null,
+          "sourceGroups": [
+            "General event discovery"
+          ],
+          "categoryTags": [
+            {
+              "label": "General event discovery",
+              "basis": "source-level hint"
+            }
+          ],
+          "validationStatus": "extracted-candidate",
+          "warnings": [],
+          "evidence": {
+            "url": "https://allevents.in/",
+            "jsonPath": "jsonld[2][0]",
+            "capture": "/Users/pshorey/git/events/.artifacts/framework/runs/ae4a86cb-b498-4a80-a42d-25894c73938a/d9020b80-c05f-4091-9008-fb95e908685a/page-127.html",
+            "contentHash": "68b12c2510e32479ce5ffeb42a55ce482453877ac2d824d7f8ce7ddb1053442b"
+          },
+          "raw": {
+            "@context": "https://schema.org",
+            "@type": "Event",
+            "name": "Radhe Raas Garba &amp; Mandli 3.0",
+            "image": "https://cdn-ip.allevents.in/s/rs:fill:500:250/g:sm/sh:100/aHR0cHM6Ly9jZG4yLmFsbGV2ZW50cy5pbi90aHVtYnMvdGh1bWI2YWMyNzkzMDUxOTkzLmpwZw.avif",
+            "startDate": "2026-10-16",
+            "url": "https://allevents.in/ahmedabad/radhe-raas-garba-and-mandli-30-tickets/80002377157728",
+            "eventStatus": "https://schema.org/EventScheduled",
+            "location": {
+              "@type": "Place",
+              "name": "Ahmedabad, India",
+              "address": {
+                "@type": "PostalAddress",
+                "name": "Vivianna Farm, VIP Road, beside Bharat Petroleum, South Bopal, Bopal, Ahmedabad, Gujarat, India",
+                "addressLocality": "Ahmedabad",
+                "addressRegion": "GJ",
+                "addressCountry": "IN"
+              },
+              "geo": {
+                "@type": "GeoCoordinates",
+                "latitude": "23.012926",
+                "longitude": "72.463943"
+              }
+            },
+            "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+            "offers": [
+              {
+                "@type": "AggregateOffer",
+                "availability": "https://schema.org/InStock",
+                "lowPrice": "500.00",
+                "highPrice": "6000.00",
+                "priceCurrency": "INR",
+                "availabilityStarts": "2026-10-15",
+                "availabilityEnds": null,
+                "validFrom": "2026-10-15",
+                "url": "https://allevents.in/ahmedabad/radhe-raas-garba-and-mandli-30-tickets/80002377157728"
+              }
+            ],
+            "organizer": [
+              {
+                "@type": "Organization",
+                "name": "Radhe Events",
+                "url": "https://allevents.in/org/radhe-events/26429512"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "collectionId": "url-004",
+      "sourceUrl": "https://eventfinder.site/",
+      "group": "General event discovery",
+      "marketCity": null,
+      "status": "partial",
+      "complete": false,
+      "runId": "09a3b7aa-7eff-4944-92bd-0bef6677aabf",
+      "build": "0d44e9b085295c1fc53269e9e63eb87e394fa30fd2e3a5702a2a71f959336035",
+      "availableObservations": 3,
+      "events": [
+        {
+          "schemaVersion": 2,
+          "collectionId": "url-004",
+          "sourceId": "eventfinder.site",
+          "sourceRecordId": "15895",
+          "title": "HLTH",
+          "url": "https://eventfinder.site/event/15895/hlth",
+          "startDate": "2026-11-15",
+          "endDate": "2026-11-18",
+          "startLocal": null,
+          "endLocal": null,
+          "timeZone": null,
+          "allDay": null,
+          "location": null,
+          "marketCity": null,
+          "sourceGroups": [
+            "General event discovery"
+          ],
+          "categoryTags": [
+            {
+              "label": "General event discovery",
+              "basis": "source-level hint"
+            }
+          ],
+          "validationStatus": "extracted-candidate",
+          "warnings": [],
+          "evidence": {
+            "url": "https://eventfinder.site/",
+            "selector": ".event-card,.event-item,.events-item,.event-listing,[data-event-id],.views-row,article",
+            "capture": "/Users/pshorey/git/events/.artifacts/framework/runs/09a3b7aa-7eff-4944-92bd-0bef6677aabf/34ebfef5-7585-4aca-9023-51c1512a96cf/page-128.html",
+            "contentHash": "dfcd59e4203ea3277f45f591383309a70cc99fefac304f6b2ea449732e3518e9"
+          },
+          "raw": {
+            "cardText": "HLTHNov 15, 2026Las Vegas, NV, United StatesAdobe (ADBE) Technology Computer Software · AttendingIn-personMorningConferenceExpoJoin us November 15 -18, 2026, for HLTH's annual healthcare conference showcasing the latest technological innovations for the entire health ecosystem from across our suite of solutions designed to drive effective clinical decisions at scale.Duration3 daysRelated toAdobe (ADBE) Technology Computer SoftwareCategoryCorporation"
+          }
+        },
+        {
+          "schemaVersion": 2,
+          "collectionId": "url-004",
+          "sourceId": "eventfinder.site",
+          "sourceRecordId": "16947",
+          "title": "KubeCon + CloudNativeCon North America",
+          "url": "https://eventfinder.site/event/16947/kubecon-cloudnativecon-north-america",
+          "startDate": "2026-11-10",
+          "endDate": "2026-11-12",
+          "startLocal": null,
+          "endLocal": null,
+          "timeZone": null,
+          "allDay": null,
+          "location": null,
+          "marketCity": null,
+          "sourceGroups": [
+            "General event discovery"
+          ],
+          "categoryTags": [
+            {
+              "label": "General event discovery",
+              "basis": "source-level hint"
+            }
+          ],
+          "validationStatus": "extracted-candidate",
+          "warnings": [],
+          "evidence": {
+            "url": "https://eventfinder.site/",
+            "selector": ".event-card,.event-item,.events-item,.event-listing,[data-event-id],.views-row,article",
+            "capture": "/Users/pshorey/git/events/.artifacts/framework/runs/09a3b7aa-7eff-4944-92bd-0bef6677aabf/34ebfef5-7585-4aca-9023-51c1512a96cf/page-128.html",
+            "contentHash": "dfcd59e4203ea3277f45f591383309a70cc99fefac304f6b2ea449732e3518e9"
+          },
+          "raw": {
+            "cardText": "KubeCon + CloudNativeCon North AmericaNov 9, 2026Virtual EventAntigen Security LLC · AttendingHybridMorningConferenceExpoKubeCon + CloudNativeCon North America brings together the maintainers, platform teams, AI infrastructure engineers, and end users solving the hardest production problems across Kubernetes, cloud native, and AI. Meet Dynatrace at KubeCon NA: Evan Bradley, Sr. Software Engineer November 10, 2026; 11:30 am Session: OpenTelemetry Contribfest Henrik Rexed, Cloud Native Advocate & CNCF Ambassador November 10, 2026; 03:40 pm Talk: Just Keep Swimming: Benchmarking OSS Agent Memory on Kubernetes with OpenTelemetry Evan Bradley, Sr. Software Engineer November 11, 2026; 11:00 am HandsOn Tutorial: Filter, Transform, Route: Mastering OTTL in the OpenTelemetry Collector Todd Baert, Principal Software Engineer November 12, 2026; 11:50 am Talk: Hope Is Not a Rollout Strategy: Balancing (AI) Quality, Cost and Risk Through Experimentation Todd Baert, Principal Software Engineer; Jonathan Norris, Director, Software Engineering November 12, 2026; 01:50 pm Talk: OpenFeature Update from the Maintainers And visit Dynatrace at the booth! ---- Registration and details: LINKDuration3 daysRelated toAntigen Security LLCCategoryTech CompanyVirtual"
+          }
+        }
+      ]
+    },
+    {
+      "collectionId": "url-007",
+      "sourceUrl": "https://festivalindex.com/en-us",
+      "group": "Festival and fair directories",
+      "marketCity": null,
+      "status": "partial",
+      "complete": false,
+      "runId": "14d2abd2-ff4f-43a8-90bd-422456955adb",
+      "build": "0d44e9b085295c1fc53269e9e63eb87e394fa30fd2e3a5702a2a71f959336035",
+      "availableObservations": 23,
+      "events": [
+        {
+          "schemaVersion": 2,
+          "collectionId": "url-007",
+          "sourceId": "festivalindex.com",
+          "sourceRecordId": "27706",
+          "title": "Hazleton Farmer’s Night Market",
+          "url": "https://festivalindex.com/en-us/events/27706-hazleton-farmer-s-night-market-2026",
+          "startDate": "2026-07-31",
+          "endDate": "2026-10-31",
+          "startLocal": null,
+          "endLocal": null,
+          "timeZone": null,
+          "allDay": null,
+          "location": {
+            "locality": "West Hazleton",
+            "country": "US",
+            "basis": "upstream card payload"
+          },
+          "marketCity": null,
+          "sourceGroups": [
+            "Festival and fair directories"
+          ],
+          "categoryTags": [
+            {
+              "label": "Farmers Market",
+              "slug": "farmers-market",
+              "basis": "upstream topic"
+            },
+            {
+              "label": "Local Produce",
+              "slug": "local-produce",
+              "basis": "upstream topic"
+            },
+            {
+              "label": "Food & drink",
+              "slug": "food",
+              "basis": "upstream topic"
+            },
+            {
+              "label": "West Hazleton",
+              "slug": "",
+              "basis": "upstream topic"
+            },
+            {
+              "label": "Community Market",
+              "slug": "community-market",
+              "basis": "upstream topic"
+            },
+            {
+              "label": "Night Market",
+              "slug": "night-market",
+              "basis": "upstream topic"
+            }
+          ],
+          "validationStatus": "extracted-candidate",
+          "warnings": [],
+          "evidence": {
+            "url": "https://festivalindex.com/en-us",
+            "selector": "[data-event-payload]",
+            "capture": "/Users/pshorey/git/events/.artifacts/framework/runs/14d2abd2-ff4f-43a8-90bd-422456955adb/61e54fee-43bd-4fb2-8b99-5b6028e6f764/page-129.html",
+            "contentHash": "5bc379481b58f218ea9b3ae02044e358ae74e277afb673a95582d944539da7f9"
+          },
+          "raw": {
+            "id": 27706,
+            "title": "Hazleton Farmer’s Night Market",
+            "url": "/en-us/events/27706-hazleton-farmer-s-night-market-2026",
+            "summary": "The Hazleton Farmer’s Night Market runs from July 31 through the end of October at Hazle Park on Washington Avenue in West Hazleton, Pennsylvania. The market is open on Mondays, Wednesdays, and Fridays from 2 p.m. to 6 p.m., offering fresh local produce directly from farms.",
+            "date_text": "Jul 31 - Oct 31, 2026",
+            "location_text": "West Hazleton",
+            "location_url": "/en-us/locations/west-hazleton-l308820",
+            "country_code": "US",
+            "country_label": "United States",
+            "image_url": "/uploads/event_images/2026/08/e9baa93d8a4a2f1d623e8d3ac9c9b1d00398cc7f0b5b8646fe1479fcd93d3ecc.webp",
+            "image_variants": [
+              {
+                "url": "/uploads/event_images/2026/08/4615ff830ab966b3c038364ad18e12a104e1a84cf8e65d7ddb32905d59e658c2.webp",
+                "width": 640,
+                "height": 360,
+                "bytes": 45046
+              },
+              {
+                "url": "/uploads/event_images/2026/08/e0f8a221f934b12db5a0d4cf04055bd684e41334c363e0520a4b804c81d5d948.webp",
+                "width": 1200,
+                "height": 674,
+                "bytes": 123428
+              }
+            ],
+            "topic_label": "Farmers Market",
+            "topics": [
+              {
+                "label": "Farmers Market",
+                "slug": "farmers-market",
+                "url": "/en-us/topics/farmers-market"
+              },
+              {
+                "label": "Local Produce",
+                "slug": "local-produce",
+                "url": "/en-us/topics/local-produce"
+              },
+              {
+                "label": "Food & drink",
+                "slug": "food",
+                "url": "/en-us/topics/food"
+              },
+              {
+                "label": "West Hazleton",
+                "slug": "",
+                "url": ""
+              },
+              {
+                "label": "Community Market",
+                "slug": "community-market",
+                "url": "/en-us/topics/community-market"
+              },
+              {
+                "label": "Night Market",
+                "slug": "night-market",
+                "url": "/en-us/topics/night-market"
+              }
+            ]
+          }
+        },
+        {
+          "schemaVersion": 2,
+          "collectionId": "url-007",
+          "sourceId": "festivalindex.com",
+          "sourceRecordId": "35157",
+          "title": "State Fair of Texas",
+          "url": "https://festivalindex.com/en-us/events/35157-state-fair-of-texas-2026",
+          "startDate": "2026-09-25",
+          "endDate": "2026-10-18",
+          "startLocal": null,
+          "endLocal": null,
+          "timeZone": null,
+          "allDay": null,
+          "location": {
+            "locality": "Texas",
+            "country": "US",
+            "basis": "upstream card payload"
+          },
+          "marketCity": null,
+          "sourceGroups": [
+            "Festival and fair directories"
+          ],
+          "categoryTags": [
+            {
+              "label": "Fair",
+              "slug": "fair",
+              "basis": "upstream topic"
+            },
+            {
+              "label": "Amusement Rides",
+              "slug": "amusement-rides",
+              "basis": "upstream topic"
+            },
+            {
+              "label": "Food & drink",
+              "slug": "food",
+              "basis": "upstream topic"
+            },
+            {
+              "label": "Family friendly",
+              "slug": "family-friendly",
+              "basis": "upstream topic"
+            },
+            {
+              "label": "Dallas",
+              "slug": "",
+              "basis": "upstream topic"
+            },
+            {
+              "label": "Tradition",
+              "slug": "tradition",
+              "basis": "upstream topic"
+            }
+          ],
+          "validationStatus": "extracted-candidate",
+          "warnings": [],
+          "evidence": {
+            "url": "https://festivalindex.com/en-us",
+            "selector": "[data-event-payload]",
+            "capture": "/Users/pshorey/git/events/.artifacts/framework/runs/14d2abd2-ff4f-43a8-90bd-422456955adb/61e54fee-43bd-4fb2-8b99-5b6028e6f764/page-129.html",
+            "contentHash": "5bc379481b58f218ea9b3ae02044e358ae74e277afb673a95582d944539da7f9"
+          },
+          "raw": {
+            "id": 35157,
+            "title": "State Fair of Texas",
+            "url": "/en-us/events/35157-state-fair-of-texas-2026",
+            "summary": "The 2026 State Fair of Texas is scheduled to run from September 25 through October 18 in Dallas. This annual 24-day event features a wide array of entertainment, including new amusement rides, regional culinary offerings, and a specific focus on affordability through its \"Every Day Values\" program.",
+            "date_text": "Sep 25 - Oct 18, 2026",
+            "location_text": "Texas",
+            "location_url": "/en-us/locations/texas-l293874",
+            "country_code": "US",
+            "country_label": "United States",
+            "image_url": "/uploads/event_images/2026/09/0e63746f30ba404731fa518721542a110d65b8e15c23b616ae653b8a78e2dcd7.jpg",
+            "image_variants": [
+              {
+                "url": "/uploads/event_images/2026/09/3ac50ea208a8dc2cc3494b7d0b21e017c9c82461476b640e80307af0908d03cb.webp",
+                "width": 640,
+                "height": 427,
+                "bytes": 32948
+              },
+              {
+                "url": "/uploads/event_images/2026/09/13e72e232a95ef09b6c3285e01844637a7092ee64ab87783760278c321853b23.webp",
+                "width": 1200,
+                "height": 800,
+                "bytes": 69576
+              }
+            ],
+            "topic_label": "Fair",
+            "topics": [
+              {
+                "label": "Fair",
+                "slug": "fair",
+                "url": "/en-us/topics/fair"
+              },
+              {
+                "label": "Amusement Rides",
+                "slug": "amusement-rides",
+                "url": "/en-us/topics/amusement-rides"
+              },
+              {
+                "label": "Food & drink",
+                "slug": "food",
+                "url": "/en-us/topics/food"
+              },
+              {
+                "label": "Family friendly",
+                "slug": "family-friendly",
+                "url": "/en-us/topics/family-friendly"
+              },
+              {
+                "label": "Dallas",
+                "slug": "",
+                "url": ""
+              },
+              {
+                "label": "Tradition",
+                "slug": "tradition",
+                "url": "/en-us/topics/tradition"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "collectionId": "url-009",
+      "sourceUrl": "https://meetmeatthefair.com/events/all",
+      "group": "Festival and fair directories",
+      "marketCity": null,
+      "status": "partial",
+      "complete": false,
+      "runId": "175f09bb-0b04-43a9-8dac-a7d12d0ec954",
+      "build": "0d44e9b085295c1fc53269e9e63eb87e394fa30fd2e3a5702a2a71f959336035",
+      "availableObservations": 10,
+      "events": [
+        {
+          "schemaVersion": 2,
+          "collectionId": "url-009",
+          "sourceId": "meetmeatthefair.com",
+          "sourceRecordId": "https://meetmeatthefair.com/events/arts-center-east-holiday-artisan-craft-fair-2026|2026-11-12|2026-11-12T13:00:00-05:00",
+          "title": "Arts Center East Holiday Artisan Craft Fair 2026",
+          "url": "https://meetmeatthefair.com/events/arts-center-east-holiday-artisan-craft-fair-2026",
+          "startDate": "2026-11-12",
+          "endDate": "2026-11-22",
+          "startLocal": "2026-11-12T13:00:00-05:00",
+          "endLocal": "2026-11-22T14:00:00-05:00",
+          "timeZone": null,
+          "allDay": null,
+          "location": {
+            "venue": "Arts Center East",
+            "address": "709 Hartford Turnpike",
+            "locality": "Vernon",
+            "region": "CT",
+            "country": "US",
+            "basis": "upstream structured data"
+          },
+          "marketCity": null,
+          "sourceGroups": [
+            "Festival and fair directories"
+          ],
+          "categoryTags": [
+            {
+              "label": "Festival and fair directories",
+              "basis": "source-level hint"
+            }
+          ],
+          "validationStatus": "extracted-candidate",
+          "warnings": [],
+          "evidence": {
+            "url": "https://meetmeatthefair.com/events/arts-center-east-holiday-artisan-craft-fair-2026",
+            "jsonPath": "jsonld[1]",
+            "capture": "/Users/pshorey/git/events/.artifacts/framework/runs/175f09bb-0b04-43a9-8dac-a7d12d0ec954/d09967b4-2256-48fb-82b2-7ef3e674b88a/page-193.html",
+            "contentHash": "adad3e55dce9d2213f88e7af36110431efa8abdcaf481707077948abed9f3a9d"
+          },
+          "raw": {
+            "@context": "https://schema.org",
+            "@type": "Festival",
+            "name": "Arts Center East Holiday Artisan Craft Fair 2026",
+            "description": "Arts Center East's Annual Holiday Artisan Craft Fair returns to 709 Hartford Turnpike in Vernon for its 12th year, showcasing work from over 60 local and regional artisans — soaps, lotions, candles, jewelry, stationery, ceramics, wood crafts, textiles, home decor and gift items. The fair is open two full Thursday-to-Sunday weekends in November: November 12–15 and November 19–22, closed the days in between. Hours are 1–5pm Thursday and Friday, 9am–4pm Saturday and 10am–2pm Sunday. Note for makers: this is a consignment fair rather than a booth show — Arts Center East handles all selling, restocking and sales tax and retains a 35% commission (25% for artist members), with artisans buying a half table at $40 or a full table at $80 rather than staffing a booth.",
+            "startDate": "2026-11-12T13:00:00-05:00",
+            "endDate": "2026-11-22T14:00:00-05:00",
+            "image": "https://meetmeatthefair.com/og-default.png",
+            "url": "https://meetmeatthefair.com/events/arts-center-east-holiday-artisan-craft-fair-2026",
+            "eventStatus": "https://schema.org/EventScheduled",
+            "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+            "isAccessibleForFree": true,
+            "about": [
+              {
+                "@type": "Thing",
+                "name": "Craft Fair"
+              },
+              {
+                "@type": "Thing",
+                "name": "Holiday Market"
+              },
+              {
+                "@type": "Thing",
+                "name": "Art Show"
+              }
+            ],
+            "location": {
+              "@type": "Place",
+              "name": "Arts Center East",
+              "address": {
+                "@type": "PostalAddress",
+                "streetAddress": "709 Hartford Turnpike",
+                "addressLocality": "Vernon",
+                "addressRegion": "CT",
+                "postalCode": "06066",
+                "addressCountry": "US"
+              },
+              "geo": {
+                "@type": "GeoCoordinates",
+                "latitude": 41.8389196,
+                "longitude": -72.4663855
+              }
+            },
+            "subEvent": [
+              {
+                "@type": "Event",
+                "name": "Arts Center East Holiday Artisan Craft Fair 2026 - Day 1",
+                "startDate": "2026-11-12T13:00:00-05:00",
+                "endDate": "2026-11-12T17:00:00-05:00",
+                "description": "First weekend, Thursday.",
+                "location": {
+                  "@type": "Place",
+                  "name": "Arts Center East",
+                  "address": {
+                    "@type": "PostalAddress",
+                    "streetAddress": "709 Hartford Turnpike",
+                    "addressLocality": "Vernon",
+                    "addressRegion": "CT",
+                    "postalCode": "06066",
+                    "addressCountry": "US"
+                  },
+                  "geo": {
+                    "@type": "GeoCoordinates",
+                    "latitude": 41.8389196,
+                    "longitude": -72.4663855
+                  }
+                },
+                "image": "https://meetmeatthefair.com/og-default.png",
+                "eventStatus": "https://schema.org/EventScheduled",
+                "offers": {
+                  "@type": "Offer",
+                  "url": "https://meetmeatthefair.com/events/arts-center-east-holiday-artisan-craft-fair-2026",
+                  "price": 0,
+                  "priceCurrency": "USD",
+                  "availability": "https://schema.org/InStock",
+                  "validFrom": "2026-07-14T12:47:59.000Z"
+                },
+                "organizer": {
+                  "@type": "Organization",
+                  "name": "Arts Center East",
+                  "url": "https://artscentereast.org"
+                }
+              },
+              {
+                "@type": "Event",
+                "name": "Arts Center East Holiday Artisan Craft Fair 2026 - Day 2",
+                "startDate": "2026-11-13T13:00:00-05:00",
+                "endDate": "2026-11-13T17:00:00-05:00",
+                "description": "First weekend, Friday.",
+                "location": {
+                  "@type": "Place",
+                  "name": "Arts Center East",
+                  "address": {
+                    "@type": "PostalAddress",
+                    "streetAddress": "709 Hartford Turnpike",
+                    "addressLocality": "Vernon",
+                    "addressRegion": "CT",
+                    "postalCode": "06066",
+                    "addressCountry": "US"
+                  },
+                  "geo": {
+                    "@type": "GeoCoordinates",
+                    "latitude": 41.8389196,
+                    "longitude": -72.4663855
+                  }
+                },
+                "image": "https://meetmeatthefair.com/og-default.png",
+                "eventStatus": "https://schema.org/EventScheduled",
+                "offers": {
+                  "@type": "Offer",
+                  "url": "https://meetmeatthefair.com/events/arts-center-east-holiday-artisan-craft-fair-2026",
+                  "price": 0,
+                  "priceCurrency": "USD",
+                  "availability": "https://schema.org/InStock",
+                  "validFrom": "2026-07-14T12:47:59.000Z"
+                },
+                "organizer": {
+                  "@type": "Organization",
+                  "name": "Arts Center East",
+                  "url": "https://artscentereast.org"
+                }
+              },
+              {
+                "@type": "Event",
+                "name": "Arts Center East Holiday Artisan Craft Fair 2026 - Day 3",
+                "startDate": "2026-11-14T09:00:00-05:00",
+                "endDate": "2026-11-14T16:00:00-05:00",
+                "description": "First weekend, Saturday.",
+                "location": {
+                  "@type": "Place",
+                  "name": "Arts Center East",
+                  "address": {
+                    "@type": "PostalAddress",
+                    "streetAddress": "709 Hartford Turnpike",
+                    "addressLocality": "Vernon",
+                    "addressRegion": "CT",
+                    "postalCode": "06066",
+                    "addressCountry": "US"
+                  },
+                  "geo": {
+                    "@type": "GeoCoordinates",
+                    "latitude": 41.8389196,
+                    "longitude": -72.4663855
+                  }
+                },
+                "image": "https://meetmeatthefair.com/og-default.png",
+                "eventStatus": "https://schema.org/EventScheduled",
+                "offers": {
+                  "@type": "Offer",
+                  "url": "https://meetmeatthefair.com/events/arts-center-east-holiday-artisan-craft-fair-2026",
+                  "price": 0,
+                  "priceCurrency": "USD",
+                  "availability": "https://schema.org/InStock",
+                  "validFrom": "2026-07-14T12:47:59.000Z"
+                },
+                "organizer": {
+                  "@type": "Organization",
+                  "name": "Arts Center East",
+                  "url": "https://artscentereast.org"
+                }
+              },
+              {
+                "@type": "Event",
+                "name": "Arts Center East Holiday Artisan Craft Fair 2026 - Day 4",
+                "startDate": "2026-11-15T10:00:00-05:00",
+                "endDate": "2026-11-15T14:00:00-05:00",
+                "description": "First weekend, Sunday. Fair closed Nov 16–18.",
+                "location": {
+                  "@type": "Place",
+                  "name": "Arts Center East",
+                  "address": {
+                    "@type": "PostalAddress",
+                    "streetAddress": "709 Hartford Turnpike",
+                    "addressLocality": "Vernon",
+                    "addressRegion": "CT",
+                    "postalCode": "06066",
+                    "addressCountry": "US"
+                  },
+                  "geo": {
+                    "@type": "GeoCoordinates",
+                    "latitude": 41.8389196,
+                    "longitude": -72.4663855
+                  }
+                },
+                "image": "https://meetmeatthefair.com/og-default.png",
+                "eventStatus": "https://schema.org/EventScheduled",
+                "offers": {
+                  "@type": "Offer",
+                  "url": "https://meetmeatthefair.com/events/arts-center-east-holiday-artisan-craft-fair-2026",
+                  "price": 0,
+                  "priceCurrency": "USD",
+                  "availability": "https://schema.org/InStock",
+                  "validFrom": "2026-07-14T12:47:59.000Z"
+                },
+                "organizer": {
+                  "@type": "Organization",
+                  "name": "Arts Center East",
+                  "url": "https://artscentereast.org"
+                }
+              },
+              {
+                "@type": "Event",
+                "name": "Arts Center East Holiday Artisan Craft Fair 2026 - Day 5",
+                "startDate": "2026-11-19T13:00:00-05:00",
+                "endDate": "2026-11-19T17:00:00-05:00",
+                "description": "Second weekend, Thursday.",
+                "location": {
+                  "@type": "Place",
+                  "name": "Arts Center East",
+                  "address": {
+                    "@type": "PostalAddress",
+                    "streetAddress": "709 Hartford Turnpike",
+                    "addressLocality": "Vernon",
+                    "addressRegion": "CT",
+                    "postalCode": "06066",
+                    "addressCountry": "US"
+                  },
+                  "geo": {
+                    "@type": "GeoCoordinates",
+                    "latitude": 41.8389196,
+                    "longitude": -72.4663855
+                  }
+                },
+                "image": "https://meetmeatthefair.com/og-default.png",
+                "eventStatus": "https://schema.org/EventScheduled",
+                "offers": {
+                  "@type": "Offer",
+                  "url": "https://meetmeatthefair.com/events/arts-center-east-holiday-artisan-craft-fair-2026",
+                  "price": 0,
+                  "priceCurrency": "USD",
+                  "availability": "https://schema.org/InStock",
+                  "validFrom": "2026-07-14T12:47:59.000Z"
+                },
+                "organizer": {
+                  "@type": "Organization",
+                  "name": "Arts Center East",
+                  "url": "https://artscentereast.org"
+                }
+              },
+              {
+                "@type": "Event",
+                "name": "Arts Center East Holiday Artisan Craft Fair 2026 - Day 6",
+                "startDate": "2026-11-20T13:00:00-05:00",
+                "endDate": "2026-11-20T17:00:00-05:00",
+                "description": "Second weekend, Friday.",
+                "location": {
+                  "@type": "Place",
+                  "name": "Arts Center East",
+                  "address": {
+                    "@type": "PostalAddress",
+                    "streetAddress": "709 Hartford Turnpike",
+                    "addressLocality": "Vernon",
+                    "addressRegion": "CT",
+                    "postalCode": "06066",
+                    "addressCountry": "US"
+                  },
+                  "geo": {
+                    "@type": "GeoCoordinates",
+                    "latitude": 41.8389196,
+                    "longitude": -72.4663855
+                  }
+                },
+                "image": "https://meetmeatthefair.com/og-default.png",
+                "eventStatus": "https://schema.org/EventScheduled",
+                "offers": {
+                  "@type": "Offer",
+                  "url": "https://meetmeatthefair.com/events/arts-center-east-holiday-artisan-craft-fair-2026",
+                  "price": 0,
+                  "priceCurrency": "USD",
+                  "availability": "https://schema.org/InStock",
+                  "validFrom": "2026-07-14T12:47:59.000Z"
+                },
+                "organizer": {
+                  "@type": "Organization",
+                  "name": "Arts Center East",
+                  "url": "https://artscentereast.org"
+                }
+              },
+              {
+                "@type": "Event",
+                "name": "Arts Center East Holiday Artisan Craft Fair 2026 - Day 7",
+                "startDate": "2026-11-21T09:00:00-05:00",
+                "endDate": "2026-11-21T16:00:00-05:00",
+                "description": "Second weekend, Saturday.",
+                "location": {
+                  "@type": "Place",
+                  "name": "Arts Center East",
+                  "address": {
+                    "@type": "PostalAddress",
+                    "streetAddress": "709 Hartford Turnpike",
+                    "addressLocality": "Vernon",
+                    "addressRegion": "CT",
+                    "postalCode": "06066",
+                    "addressCountry": "US"
+                  },
+                  "geo": {
+                    "@type": "GeoCoordinates",
+                    "latitude": 41.8389196,
+                    "longitude": -72.4663855
+                  }
+                },
+                "image": "https://meetmeatthefair.com/og-default.png",
+                "eventStatus": "https://schema.org/EventScheduled",
+                "offers": {
+                  "@type": "Offer",
+                  "url": "https://meetmeatthefair.com/events/arts-center-east-holiday-artisan-craft-fair-2026",
+                  "price": 0,
+                  "priceCurrency": "USD",
+                  "availability": "https://schema.org/InStock",
+                  "validFrom": "2026-07-14T12:47:59.000Z"
+                },
+                "organizer": {
+                  "@type": "Organization",
+                  "name": "Arts Center East",
+                  "url": "https://artscentereast.org"
+                }
+              },
+              {
+                "@type": "Event",
+                "name": "Arts Center East Holiday Artisan Craft Fair 2026 - Day 8",
+                "startDate": "2026-11-22T10:00:00-05:00",
+                "endDate": "2026-11-22T14:00:00-05:00",
+                "description": "Second weekend, Sunday — final day.",
+                "location": {
+                  "@type": "Place",
+                  "name": "Arts Center East",
+                  "address": {
+                    "@type": "PostalAddress",
+                    "streetAddress": "709 Hartford Turnpike",
+                    "addressLocality": "Vernon",
+                    "addressRegion": "CT",
+                    "postalCode": "06066",
+                    "addressCountry": "US"
+                  },
+                  "geo": {
+                    "@type": "GeoCoordinates",
+                    "latitude": 41.8389196,
+                    "longitude": -72.4663855
+                  }
+                },
+                "image": "https://meetmeatthefair.com/og-default.png",
+                "eventStatus": "https://schema.org/EventScheduled",
+                "offers": {
+                  "@type": "Offer",
+                  "url": "https://meetmeatthefair.com/events/arts-center-east-holiday-artisan-craft-fair-2026",
+                  "price": 0,
+                  "priceCurrency": "USD",
+                  "availability": "https://schema.org/InStock",
+                  "validFrom": "2026-07-14T12:47:59.000Z"
+                },
+                "organizer": {
+                  "@type": "Organization",
+                  "name": "Arts Center East",
+                  "url": "https://artscentereast.org"
+                }
+              }
+            ],
+            "organizer": {
+              "@type": "Organization",
+              "name": "Arts Center East",
+              "url": "https://artscentereast.org"
+            },
+            "offers": {
+              "@type": "Offer",
+              "url": "https://meetmeatthefair.com/events/arts-center-east-holiday-artisan-craft-fair-2026",
+              "price": 0,
+              "priceCurrency": "USD",
+              "availability": "https://schema.org/InStock",
+              "validFrom": "2026-07-14T12:47:59.000Z"
+            }
+          }
+        },
+        {
+          "schemaVersion": 2,
+          "collectionId": "url-009",
+          "sourceId": "meetmeatthefair.com",
+          "sourceRecordId": "https://meetmeatthefair.com/events/berlin-fair/2027|2027-09-16|",
+          "title": "Berlin Fair 2027",
+          "url": "https://meetmeatthefair.com/events/berlin-fair/2027",
+          "startDate": "2027-09-16",
+          "endDate": "2027-09-19",
+          "startLocal": null,
+          "endLocal": null,
+          "timeZone": null,
+          "allDay": null,
+          "location": {
+            "venue": "Berlin Fairgrounds",
+            "address": "430 Beckley Road",
+            "locality": "Berlin",
+            "region": "CT",
+            "country": "US",
+            "basis": "upstream structured data"
+          },
+          "marketCity": null,
+          "sourceGroups": [
+            "Festival and fair directories"
+          ],
+          "categoryTags": [
+            {
+              "label": "Festival and fair directories",
+              "basis": "source-level hint"
+            }
+          ],
+          "validationStatus": "extracted-candidate",
+          "warnings": [],
+          "evidence": {
+            "url": "https://meetmeatthefair.com/events/berlin-fair/2027",
+            "jsonPath": "jsonld[1]",
+            "capture": "/Users/pshorey/git/events/.artifacts/framework/runs/175f09bb-0b04-43a9-8dac-a7d12d0ec954/d09967b4-2256-48fb-82b2-7ef3e674b88a/page-194.html",
+            "contentHash": "48197f4f8d3b436825c819acfa938cfcc4bf2a029268a2cd4b094ce1192d991f"
+          },
+          "raw": {
+            "@context": "https://schema.org",
+            "@type": "Festival",
+            "name": "Berlin Fair 2027",
+            "superEvent": {
+              "@type": "EventSeries",
+              "name": "Berlin Fair",
+              "url": "https://meetmeatthefair.com/events/berlin-fair"
+            },
+            "description": "The 2026 Berlin Fair runs Sep 17–20 at the Berlin Fairgrounds in Berlin, CT — four-day agricultural fair with livestock exhibitions, handmade crafts, food concessions, midway rides, tractor pulls, and family entertainment.",
+            "startDate": "2027-09-16",
+            "endDate": "2027-09-19",
+            "image": "https://meetmeatthefair.com/og-default.png",
+            "url": "https://meetmeatthefair.com/events/berlin-fair/2027",
+            "eventStatus": "https://schema.org/EventScheduled",
+            "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+            "about": [
+              {
+                "@type": "Thing",
+                "name": "Fair"
+              },
+              {
+                "@type": "Thing",
+                "name": "Agricultural Fair"
+              }
+            ],
+            "location": {
+              "@type": "Place",
+              "name": "Berlin Fairgrounds",
+              "address": {
+                "@type": "PostalAddress",
+                "streetAddress": "430 Beckley Road",
+                "addressLocality": "Berlin",
+                "addressRegion": "CT",
+                "postalCode": "06037",
+                "addressCountry": "US"
+              },
+              "geo": {
+                "@type": "GeoCoordinates",
+                "latitude": 41.6034,
+                "longitude": -72.7761
+              }
+            },
+            "organizer": {
+              "@type": "Organization",
+              "name": "Berlin Lions Club Agricultural Fair",
+              "url": "https://www.ctberlinfair.com"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "collectionId": "url-013",
+      "sourceUrl": "https://conventiongrid.com/calendar/",
+      "group": "Conventions and trade shows",
+      "marketCity": null,
+      "status": "partial",
+      "complete": false,
+      "runId": "eee92734-8a91-45cd-9e05-53c012ce8c44",
+      "build": "0d44e9b085295c1fc53269e9e63eb87e394fa30fd2e3a5702a2a71f959336035",
+      "availableObservations": 3,
+      "events": [
+        {
+          "schemaVersion": 2,
+          "collectionId": "url-013",
+          "sourceId": "conventiongrid.com",
+          "sourceRecordId": "https://conventiongrid.com/shows/ata-management-conference-exhibition/2026/charlotte/|2026-10-17|",
+          "title": "ATA Management Conference & Exhibition 2026-10-17 · Charlotte",
+          "url": "https://conventiongrid.com/shows/ata-management-conference-exhibition/2026/charlotte/",
+          "startDate": "2026-10-17",
+          "endDate": "2026-10-17",
+          "startLocal": null,
+          "endLocal": null,
+          "timeZone": null,
+          "allDay": null,
+          "location": null,
+          "marketCity": null,
+          "sourceGroups": [
+            "Conventions and trade shows"
+          ],
+          "categoryTags": [
+            {
+              "label": "Conventions and trade shows",
+              "basis": "source-level hint"
+            }
+          ],
+          "validationStatus": "extracted-candidate",
+          "warnings": [],
+          "evidence": {
+            "url": "https://conventiongrid.com/calendar/",
+            "selector": "a[href^=/shows/]",
+            "capture": "/Users/pshorey/git/events/.artifacts/framework/runs/eee92734-8a91-45cd-9e05-53c012ce8c44/3c78088c-e3fa-4113-9991-7bfd91fd6aa8/page-130.html",
+            "contentHash": "bfcdcf2b599262f02ec78e2769a436b18cf86dbe7181502030dba8df67cdaee2"
+          },
+          "raw": {
+            "cardText": "ATA Management Conference & Exhibition 2026-10-17 · Charlotte"
+          }
+        },
+        {
+          "schemaVersion": 2,
+          "collectionId": "url-013",
+          "sourceId": "conventiongrid.com",
+          "sourceRecordId": "https://conventiongrid.com/shows/jis-fall/2026/miami-beach/|2026-10-16|",
+          "title": "JIS Fall 2026-10-16 · Miami Beach",
+          "url": "https://conventiongrid.com/shows/jis-fall/2026/miami-beach/",
+          "startDate": "2026-10-16",
+          "endDate": "2026-10-16",
+          "startLocal": null,
+          "endLocal": null,
+          "timeZone": null,
+          "allDay": null,
+          "location": null,
+          "marketCity": null,
+          "sourceGroups": [
+            "Conventions and trade shows"
+          ],
+          "categoryTags": [
+            {
+              "label": "Conventions and trade shows",
+              "basis": "source-level hint"
+            }
+          ],
+          "validationStatus": "extracted-candidate",
+          "warnings": [],
+          "evidence": {
+            "url": "https://conventiongrid.com/calendar/",
+            "selector": "a[href^=/shows/]",
+            "capture": "/Users/pshorey/git/events/.artifacts/framework/runs/eee92734-8a91-45cd-9e05-53c012ce8c44/3c78088c-e3fa-4113-9991-7bfd91fd6aa8/page-130.html",
+            "contentHash": "bfcdcf2b599262f02ec78e2769a436b18cf86dbe7181502030dba8df67cdaee2"
+          },
+          "raw": {
+            "cardText": "JIS Fall 2026-10-16 · Miami Beach"
+          }
+        }
+      ]
+    },
+    {
+      "collectionId": "url-014",
+      "sourceUrl": "https://thetradeshowcalendar.com/ttn/index.php",
+      "group": "Conventions and trade shows",
+      "marketCity": null,
+      "status": "partial",
+      "complete": false,
+      "runId": "4fe5c6ef-2d6e-48dd-8dee-720afcfe7917",
+      "build": "0d44e9b085295c1fc53269e9e63eb87e394fa30fd2e3a5702a2a71f959336035",
+      "availableObservations": 100,
+      "events": [
+        {
+          "schemaVersion": 2,
+          "collectionId": "url-014",
+          "sourceId": "thetradeshowcalendar.com",
+          "sourceRecordId": "http://en.milipolqatar.com/|2026-10-20|",
+          "title": "MILIPOL Qatar - International Exhibition of Internal State Security",
+          "url": "http://en.milipolqatar.com/",
+          "startDate": "2026-10-20",
+          "endDate": "2026-10-22",
+          "startLocal": null,
+          "endLocal": null,
+          "timeZone": null,
+          "allDay": null,
+          "location": {
+            "locality": "Doha",
+            "country": "Qatar",
+            "basis": "upstream table cells"
+          },
+          "marketCity": null,
+          "sourceGroups": [
+            "Conventions and trade shows"
+          ],
+          "categoryTags": [
+            {
+              "label": "Conventions and trade shows",
+              "basis": "source-level hint"
+            }
+          ],
+          "validationStatus": "extracted-candidate",
+          "warnings": [],
+          "evidence": {
+            "url": "https://thetradeshowcalendar.com/ttn/index.php",
+            "selector": "tr.row .r-Name/.r-Dates/.r-City/.r-Ctry",
+            "capture": "/Users/pshorey/git/events/.artifacts/framework/runs/4fe5c6ef-2d6e-48dd-8dee-720afcfe7917/c9f23607-4e90-4c5b-8b77-67220696a08f/page-145.html",
+            "contentHash": "23fd05672fb5c373b080618ab8a4400cbea25329e4864a9749a8334d5ae2522a"
+          },
+          "raw": {
+            "date": "OCT/20 - OCT/22/2026"
+          }
+        },
+        {
+          "schemaVersion": 2,
+          "collectionId": "url-014",
+          "sourceId": "thetradeshowcalendar.com",
+          "sourceRecordId": "http://oct.chinagiftsfair.com/|2026-10-20|",
+          "title": "China (Shenzhen) International Gifts and Home Products Fair",
+          "url": "http://oct.chinagiftsfair.com/",
+          "startDate": "2026-10-20",
+          "endDate": "2026-10-23",
+          "startLocal": null,
+          "endLocal": null,
+          "timeZone": null,
+          "allDay": null,
+          "location": {
+            "locality": "Shenzhen",
+            "country": "China",
+            "basis": "upstream table cells"
+          },
+          "marketCity": null,
+          "sourceGroups": [
+            "Conventions and trade shows"
+          ],
+          "categoryTags": [
+            {
+              "label": "Conventions and trade shows",
+              "basis": "source-level hint"
+            }
+          ],
+          "validationStatus": "extracted-candidate",
+          "warnings": [],
+          "evidence": {
+            "url": "https://thetradeshowcalendar.com/ttn/index.php",
+            "selector": "tr.row .r-Name/.r-Dates/.r-City/.r-Ctry",
+            "capture": "/Users/pshorey/git/events/.artifacts/framework/runs/4fe5c6ef-2d6e-48dd-8dee-720afcfe7917/c9f23607-4e90-4c5b-8b77-67220696a08f/page-145.html",
+            "contentHash": "23fd05672fb5c373b080618ab8a4400cbea25329e4864a9749a8334d5ae2522a"
+          },
+          "raw": {
+            "date": "OCT/20 - OCT/23/2026"
+          }
+        }
+      ]
+    },
+    {
+      "collectionId": "url-019",
+      "sourceUrl": "https://network.vegas/calendar/",
+      "group": "Las Vegas",
+      "marketCity": "Las Vegas",
+      "status": "complete",
+      "complete": true,
+      "runId": "e4f81f3e-ab37-4424-bee5-c6ba62f89226",
+      "build": "c424b942be741433b27e91d325ac7b2f227f7775826d1cbdb9613e2b85a4a864",
+      "availableObservations": 298,
+      "events": [
+        {
+          "sourceId": "network.vegas",
+          "sourceRecordId": "39269",
+          "title": "Identity & Access Management Summit 2026",
+          "url": "https://network.vegas/calendar/identity-access-management-summit-2026/",
+          "startDate": "2026-12-01",
+          "endDate": "2026-12-01",
+          "startLocal": null,
+          "endLocal": null,
+          "timeZone": "America/Los_Angeles",
+          "allDay": true,
+          "location": {
+            "venue": null,
+            "address": null,
+            "locality": null,
+            "region": null,
+            "country": null,
+            "basis": "source venue"
+          },
+          "marketCity": "Las Vegas",
+          "sourceGroups": [
+            "Las Vegas"
+          ],
+          "categoryTags": [
+            {
+              "label": "Convention",
+              "slug": "convention",
+              "basis": "upstream category"
+            },
+            {
+              "label": "Company",
+              "slug": "company",
+              "basis": "upstream category"
+            },
+            {
+              "label": "Technology",
+              "slug": "technology",
+              "basis": "upstream category"
+            }
+          ],
+          "raw": {
+            "start_date": "2026-12-01 00:00:00",
+            "end_date": "2026-12-01 23:59:59",
+            "all_day": true,
+            "description": "Introduction The Identity & Access Management Summit 2026 is a premier event focused on the critical aspects of identity management and cybersecurity. Scheduled to take place in Las Vegas, this summit will bring together industry leaders and technology innovators to discuss and explore groundbreaking strategies in identity governance. Las Vegas, known for its vibrant atmosphere and cutting-edge technology scene, serves as the perfect backdrop for such an important conference. Attendees will have the opportunity to network, learn, and gain insights that can transform their approach to identity and access management. Event Overview Organized by Gartner, a global leader in research and advisory services, the summit draws professionals from diverse sectors including information technology, cybersecurity, and business management. Typically, attendees range from CIOs and IT security experts to compliance officers and system integrators. Local residents and visitors in Las Vegas should attend to stay ahead of the curve in identity management trends, gain insights from thought leaders, and discover best practices to enhance organizational security postures. Unique Features/Events The Identity & Access Management Summit 2026 will feature a lineup of distinguished speakers who are experts in the field. These keynotes will address pressing issues such as digital transformation in identity management, the role of artificial intelligence, and compliance challenges. In addition to keynote presentations, attendees can expect interactive sessions, panel discussions, and workshops that facilitate knowledge sharing and collaboration. The event offers unique networking opportunities, allowing participants to connect with peers and reshape their understanding of identity management solutions. Call-to-Action Don’t miss your chance to be part of the Identity & Access Management Summit 2026 in Las Vegas. Gain valuable insights, network with industry leaders, and deepen your understanding of identity governance. Get your tickets now and join the conversation that will shape the future of identity management! For more information and ticket purchases, visit http://www.gartner.com/.",
+            "cost": "",
+            "venue": []
+          },
+          "evidence": {
+            "jsonPath": "$.events[id=39269]",
+            "url": "https://network.vegas/wp-json/tribe/events/v1/events?per_page=50&page=4&start_date=2026-10-16",
+            "capture": "/Users/pshorey/git/events/.artifacts/framework/runs/e4f81f3e-ab37-4424-bee5-c6ba62f89226/2273c077-50cc-4c72-830b-65e8d75faa48/page-924.json",
+            "contentHash": "a34b2376505ea5cbdf21194805d4dc67b0aae5aff984611d994aaffee3567ccd"
+          },
+          "warnings": [],
+          "schemaVersion": 2,
+          "collectionId": "url-019",
+          "validationStatus": "parser-validated"
+        },
+        {
+          "sourceId": "network.vegas",
+          "sourceRecordId": "39270",
+          "title": "2027 Annual Medical Education Conference (AMEC)",
+          "url": "https://network.vegas/calendar/2027-annual-medical-education-conference-amec/",
+          "startDate": "2027-03-23",
+          "endDate": "2027-03-28",
+          "startLocal": null,
+          "endLocal": null,
+          "timeZone": "America/Los_Angeles",
+          "allDay": true,
+          "location": {
+            "venue": null,
+            "address": null,
+            "locality": null,
+            "region": null,
+            "country": null,
+            "basis": "source venue"
+          },
+          "marketCity": "Las Vegas",
+          "sourceGroups": [
+            "Las Vegas"
+          ],
+          "categoryTags": [
+            {
+              "label": "Convention",
+              "slug": "convention",
+              "basis": "upstream category"
+            }
+          ],
+          "raw": {
+            "start_date": "2027-03-23 00:00:00",
+            "end_date": "2027-03-28 23:59:59",
+            "all_day": true,
+            "description": "The 2027 Annual Medical Education Conference (AMEC) is set to take place in the vibrant city of Las Vegas, creating an ideal backdrop for the exchange of innovative ideas in medical education. This prestigious event, hosted by the Student National Medical Association (SNMA), gathers medical students, educators, and healthcare professionals from across the country to engage in thought-provoking discussions and workshops dedicated to advancing medical education. The AMEC is known for its commitment to diversity, equity, and inclusion in the field of medicine. Participants will benefit from a rich agenda aimed at enhancing their understanding of various educational methodologies and best practices. Las Vegas locals or visitors seeking to expand their professional network and knowledge in medical education will find this conference particularly beneficial. With opportunities to connect with peers, mentors, and industry leaders, attendees can forge valuable relationships that may enhance their careers and contribute to their personal growth. The conference is typically attended by medical students from various institutions, faculty members, and healthcare professionals. This diverse mix fosters a collaborative environment where participants can share their experiences and insights into the challenges and triumphs of medical education. Furthermore, the conference offers numerous networking opportunities, making it an essential gathering for anyone involved in the medical field. Unique features of the AMEC include keynote speeches from renowned leaders in medical education and engaging workshops that delve into the latest trends and research. Participants can expect thought-provoking sessions that cover a wide range of topics relevant to the future of healthcare education. The event thrives on interactive discussions, allowing attendees to engage directly with experts and ask questions that concern their individual academic and professional journeys. Don’t miss out on this major event in the medical education calendar! Mark your calendars and get your tickets now to be a part of this transformative experience at the 2027 Annual Medical Education Conference in Las Vegas! Visit http://www.snma.org/ for more information and to secure your spot today.",
+            "cost": "",
+            "venue": []
+          },
+          "evidence": {
+            "jsonPath": "$.events[id=39270]",
+            "url": "https://network.vegas/wp-json/tribe/events/v1/events?per_page=50&page=5&start_date=2026-10-16",
+            "capture": "/Users/pshorey/git/events/.artifacts/framework/runs/e4f81f3e-ab37-4424-bee5-c6ba62f89226/2273c077-50cc-4c72-830b-65e8d75faa48/page-926.json",
+            "contentHash": "a345fb726d29f0a611bea59456b4e95d02479828cc3349142cf32cfe5d611562"
+          },
+          "warnings": [],
+          "schemaVersion": 2,
+          "collectionId": "url-019",
+          "validationStatus": "parser-validated"
+        }
+      ]
+    },
+    {
+      "collectionId": "url-020",
+      "sourceUrl": "https://network.vegas/calendar/category/event-type/convention/",
+      "group": "Las Vegas",
+      "marketCity": "Las Vegas",
+      "status": "partial",
+      "complete": false,
+      "runId": "19d7d685-e861-4c9b-9c0e-979445e82c6c",
+      "build": "0d44e9b085295c1fc53269e9e63eb87e394fa30fd2e3a5702a2a71f959336035",
+      "availableObservations": 18,
+      "events": [
+        {
+          "schemaVersion": 2,
+          "collectionId": "url-020",
+          "sourceId": "network.vegas",
+          "sourceRecordId": "https://network.vegas/calendar/2026-namb-annual-convention/|2026-10-16|2026-10-16T00:00:00-07:00",
+          "title": "2026 NAMB Annual Convention",
+          "url": "https://network.vegas/calendar/2026-namb-annual-convention/",
+          "startDate": "2026-10-16",
+          "endDate": "2026-10-19",
+          "startLocal": "2026-10-16T00:00:00-07:00",
+          "endLocal": "2026-10-19T23:59:59-07:00",
+          "timeZone": "America/Los_Angeles",
+          "allDay": null,
+          "location": null,
+          "marketCity": "Las Vegas",
+          "sourceGroups": [
+            "Las Vegas"
+          ],
+          "categoryTags": [],
+          "validationStatus": "extracted-candidate",
+          "warnings": [],
+          "evidence": {
+            "url": "https://network.vegas/calendar/category/event-type/convention/",
+            "jsonPath": "jsonld[1][2]",
+            "capture": "/Users/pshorey/git/events/.artifacts/framework/runs/19d7d685-e861-4c9b-9c0e-979445e82c6c/b52a9a30-3563-4ea0-b888-b68375489c42/page-131.html",
+            "contentHash": "b8729763635e64d8046fbe73a849db342cd90f3fa25d5aac0b600f4645b3ef86"
+          },
+          "raw": {
+            "@context": "http://schema.org",
+            "@type": "Event",
+            "name": "2026 NAMB Annual Convention",
+            "description": "&lt;p&gt;The NAMB Annual Convention 2026, hosted by the National Association of Mortgage Brokers, takes place at Caesars Palace as a leading national event for mortgage professionals. Known as NAMB National, the convention gathers thousands of members, partners, exhibitors and sponsors, occupying an entire level of the resort\\'s conference tower. Mortgage brokers, loan originators, lenders and [&hellip;]&lt;/p&gt;\\n",
+            "image": "https://network.vegas/wp-content/uploads/2026/05/2026-namb-annual-convention-YlGQDi.png",
+            "url": "https://network.vegas/calendar/2026-namb-annual-convention/",
+            "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+            "eventStatus": "https://schema.org/EventScheduled",
+            "startDate": "2026-10-16T00:00:00-07:00",
+            "endDate": "2026-10-19T23:59:59-07:00",
+            "performer": "Organization"
+          }
+        },
+        {
+          "schemaVersion": 2,
+          "collectionId": "url-020",
+          "sourceId": "network.vegas",
+          "sourceRecordId": "https://network.vegas/calendar/2026-national-council-of-exchangors-fall-conference/|2026-10-19|2026-10-19T08:30:00-07:00",
+          "title": "2026 National Council of Exchangors – Fall Conference",
+          "url": "https://network.vegas/calendar/2026-national-council-of-exchangors-fall-conference/",
+          "startDate": "2026-10-19",
+          "endDate": "2026-10-22",
+          "startLocal": "2026-10-19T08:30:00-07:00",
+          "endLocal": "2026-10-22T14:00:00-07:00",
+          "timeZone": "America/Los_Angeles",
+          "allDay": null,
+          "location": {
+            "venue": "Paris Las Vegas",
+            "address": "3655 South Las Vegas Boulevard",
+            "locality": "Las Vegas",
+            "region": "NV",
+            "country": "United States",
+            "basis": "upstream structured data"
+          },
+          "marketCity": "Las Vegas",
+          "sourceGroups": [
+            "Las Vegas"
+          ],
+          "categoryTags": [],
+          "validationStatus": "extracted-candidate",
+          "warnings": [],
+          "evidence": {
+            "url": "https://network.vegas/calendar/category/event-type/convention/",
+            "jsonPath": "jsonld[1][11]",
+            "capture": "/Users/pshorey/git/events/.artifacts/framework/runs/19d7d685-e861-4c9b-9c0e-979445e82c6c/b52a9a30-3563-4ea0-b888-b68375489c42/page-131.html",
+            "contentHash": "b8729763635e64d8046fbe73a849db342cd90f3fa25d5aac0b600f4645b3ef86"
+          },
+          "raw": {
+            "@context": "http://schema.org",
+            "@type": "Event",
+            "name": "2026 National Council of Exchangors  &#8211; Fall Conference",
+            "description": "&lt;p&gt;Get ready to connect and swap ideas with fellow exchangors at the coolest fall meetup around!Join Us at NCE Fall 2026The National Council of Exchangors Fall Conference brings together a rare mix of professionals who do more than discuss real estate — they structure solutions.Over four days in Las Vegas, exchangors, investors, brokers, intermediaries, and [&hellip;]&lt;/p&gt;\\n",
+            "image": "https://network.vegas/wp-content/uploads/2026/08/82ae9df715de29e3cc5206383312df64.jpg",
+            "url": "https://network.vegas/calendar/2026-national-council-of-exchangors-fall-conference/",
+            "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+            "eventStatus": "https://schema.org/EventScheduled",
+            "startDate": "2026-10-19T08:30:00-07:00",
+            "endDate": "2026-10-22T14:00:00-07:00",
+            "location": {
+              "@type": "Place",
+              "name": "Paris Las Vegas",
+              "description": "",
+              "url": "https://network.vegas/venue/paris-las-vegas/",
+              "address": {
+                "@type": "PostalAddress",
+                "streetAddress": "3655 South Las Vegas Boulevard",
+                "addressLocality": "Las Vegas",
+                "addressRegion": "NV",
+                "postalCode": "89109",
+                "addressCountry": "United States"
+              },
+              "telephone": "",
+              "sameAs": ""
+            },
+            "organizer": {
+              "@type": "Person",
+              "name": "National Council of Exchangors",
+              "description": "",
+              "url": "http://www.NCExchangors.com",
+              "telephone": "",
+              "email": "",
+              "sameAs": "http://www.NCExchangors.com"
+            },
+            "performer": "Organization"
+          }
+        }
+      ]
+    },
+    {
+      "collectionId": "url-021",
+      "sourceUrl": "https://networkinvegas.com/calendar/",
+      "group": "Las Vegas",
+      "marketCity": "Las Vegas",
+      "status": "partial",
+      "complete": false,
+      "runId": "7d94dc07-9df9-468a-87c4-256af09030b9",
+      "build": "0d44e9b085295c1fc53269e9e63eb87e394fa30fd2e3a5702a2a71f959336035",
+      "availableObservations": 34,
+      "events": [
+        {
+          "schemaVersion": 2,
+          "collectionId": "url-021",
+          "sourceId": "networkinvegas.com",
+          "sourceRecordId": "https://networkinvegas.com/event/credit-union-call-center-conference/#event|2026-10-19|2026-10-19T00:00:00-07:00",
+          "title": "Credit Union Call Center Conference",
+          "url": "https://networkinvegas.com/event/credit-union-call-center-conference/",
+          "startDate": "2026-10-19",
+          "endDate": "2026-10-20",
+          "startLocal": "2026-10-19T00:00:00-07:00",
+          "endLocal": "2026-10-20T23:59:59-07:00",
+          "timeZone": "America/Los_Angeles",
+          "allDay": null,
+          "location": {
+            "venue": "PARK MGM",
+            "address": "3370 S Las Vegas Blvd",
+            "locality": "Las Vegas",
+            "region": "NV",
+            "country": "United States",
+            "basis": "upstream structured data"
+          },
+          "marketCity": "Las Vegas",
+          "sourceGroups": [
+            "Las Vegas"
+          ],
+          "categoryTags": [],
+          "validationStatus": "extracted-candidate",
+          "warnings": [],
+          "evidence": {
+            "url": "https://networkinvegas.com/calendar/",
+            "jsonPath": "jsonld[0].@graph[24]",
+            "capture": "/Users/pshorey/git/events/.artifacts/framework/runs/7d94dc07-9df9-468a-87c4-256af09030b9/dd60c5c4-724a-41e5-8956-59de3adf62f0/page-132.html",
+            "contentHash": "c6328059bd1e08ee0c88c8a6cdebe0c20cd4867b02bdb112c45b092c18b56d20"
+          },
+          "raw": {
+            "@type": "Event",
+            "name": "Credit Union Call Center Conference",
+            "description": "At the International Credit Union Contact Center Conference (ICUCCC), attendees will participate in interactive workshops with subject-matter experts from leading contact center technology providers.",
+            "url": "https://networkinvegas.com/event/credit-union-call-center-conference/",
+            "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+            "eventStatus": "https://schema.org/EventScheduled",
+            "startDate": "2026-10-19T00:00:00-07:00",
+            "endDate": "2026-10-20T23:59:59-07:00",
+            "location": {
+              "@type": "Place",
+              "name": "PARK MGM",
+              "description": "Music, entertainment and luxury hospitality are re-imagined.  Park MGM is a new concept by MGM, conceived to target a younger, well-traveled demographic seeking unique experiences and innovative design. Park MGM appeals to this growing audience’s desire to be more social, connected and culturally aware. With its unrivaled central location, Park MGM will offer guests direct [&hellip;]",
+              "image": "https://networkinvegas.com/wp-content/uploads/parkmgm.jpg",
+              "url": "https://networkinvegas.com/venue/park-mgm/",
+              "address": {
+                "@type": "PostalAddress",
+                "streetAddress": "3370 S Las Vegas Blvd",
+                "addressLocality": "Las Vegas",
+                "addressRegion": "NV",
+                "postalCode": "89109",
+                "addressCountry": "United States"
+              },
+              "geo": {
+                "@type": "GeoCoordinates",
+                "latitude": 36.1214822,
+                "longitude": -115.1720537
+              },
+              "telephone": "(702) 730-7777",
+              "sameAs": ""
+            },
+            "@id": "https://networkinvegas.com/event/credit-union-call-center-conference/#event"
+          }
+        },
+        {
+          "schemaVersion": 2,
+          "collectionId": "url-021",
+          "sourceId": "networkinvegas.com",
+          "sourceRecordId": "https://networkinvegas.com/event/credit-union-call-center-conference/|2026-10-19|2026-10-19T00:00:00-07:00",
+          "title": "Credit Union Call Center Conference",
+          "url": "https://networkinvegas.com/event/credit-union-call-center-conference/",
+          "startDate": "2026-10-19",
+          "endDate": "2026-10-20",
+          "startLocal": "2026-10-19T00:00:00-07:00",
+          "endLocal": "2026-10-20T23:59:59-07:00",
+          "timeZone": "America/Los_Angeles",
+          "allDay": null,
+          "location": {
+            "venue": "PARK MGM",
+            "address": "3370 S Las Vegas Blvd",
+            "locality": "Las Vegas",
+            "region": "NV",
+            "country": "United States",
+            "basis": "upstream structured data"
+          },
+          "marketCity": "Las Vegas",
+          "sourceGroups": [
+            "Las Vegas"
+          ],
+          "categoryTags": [],
+          "validationStatus": "extracted-candidate",
+          "warnings": [],
+          "evidence": {
+            "url": "https://networkinvegas.com/calendar/",
+            "jsonPath": "jsonld[1][21]",
+            "capture": "/Users/pshorey/git/events/.artifacts/framework/runs/7d94dc07-9df9-468a-87c4-256af09030b9/dd60c5c4-724a-41e5-8956-59de3adf62f0/page-132.html",
+            "contentHash": "c6328059bd1e08ee0c88c8a6cdebe0c20cd4867b02bdb112c45b092c18b56d20"
+          },
+          "raw": {
+            "@context": "http://schema.org",
+            "@type": "Event",
+            "name": "Credit Union Call Center Conference",
+            "description": "&lt;p&gt;At the International Credit Union Contact Center Conference (ICUCCC), attendees will participate in interactive workshops with subject-matter experts from leading contact center technology providers.&lt;/p&gt;\\n",
+            "url": "https://networkinvegas.com/event/credit-union-call-center-conference/",
+            "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+            "eventStatus": "https://schema.org/EventScheduled",
+            "startDate": "2026-10-19T00:00:00-07:00",
+            "endDate": "2026-10-20T23:59:59-07:00",
+            "location": {
+              "@type": "Place",
+              "name": "PARK MGM",
+              "description": "&lt;p&gt;Music, entertainment and luxury hospitality are re-imagined.  Park MGM is a new concept by MGM, conceived to target a younger, well-traveled demographic seeking unique experiences and innovative design. Park MGM appeals to this growing audience’s desire to be more social, connected and culturally aware. With its unrivaled central location, Park MGM will offer guests direct [&hellip;]&lt;/p&gt;\\n",
+              "image": "https://networkinvegas.com/wp-content/uploads/parkmgm.jpg",
+              "url": "https://networkinvegas.com/venue/park-mgm/",
+              "address": {
+                "@type": "PostalAddress",
+                "streetAddress": "3370 S Las Vegas Blvd",
+                "addressLocality": "Las Vegas",
+                "addressRegion": "NV",
+                "postalCode": "89109",
+                "addressCountry": "United States"
+              },
+              "geo": {
+                "@type": "GeoCoordinates",
+                "latitude": 36.1214822,
+                "longitude": -115.1720537
+              },
+              "telephone": "(702) 730-7777",
+              "sameAs": ""
+            },
+            "performer": "Organization"
+          }
+        }
+      ]
+    },
+    {
+      "collectionId": "url-023",
+      "sourceUrl": "https://www.eventbrite.com/d/nv--las-vegas/",
+      "group": "Las Vegas",
+      "marketCity": "Las Vegas",
+      "status": "partial",
+      "complete": false,
+      "runId": "d79e1a6d-597a-4bc0-abd3-30d64aeb7c0d",
+      "build": "0d44e9b085295c1fc53269e9e63eb87e394fa30fd2e3a5702a2a71f959336035",
+      "availableObservations": 30,
+      "events": [
+        {
+          "schemaVersion": 2,
+          "collectionId": "url-023",
+          "sourceId": "eventbrite.com",
+          "sourceRecordId": "https://www.eventbrite.ca/e/biodiversity-law-and-governance-day-2026-tickets-1999653502455|2026-10-24|",
+          "title": "Biodiversity Law and Governance Day 2026",
+          "url": "https://www.eventbrite.ca/e/biodiversity-law-and-governance-day-2026-tickets-1999653502455",
+          "startDate": "2026-10-24",
+          "endDate": "2026-10-24",
+          "startLocal": null,
+          "endLocal": null,
+          "timeZone": "America/Los_Angeles",
+          "allDay": null,
+          "location": {
+            "venue": null,
+            "address": null,
+            "locality": null,
+            "region": null,
+            "country": null,
+            "basis": "upstream structured data"
+          },
+          "marketCity": "Las Vegas",
+          "sourceGroups": [
+            "Las Vegas"
+          ],
+          "categoryTags": [],
+          "validationStatus": "extracted-candidate",
+          "warnings": [],
+          "evidence": {
+            "url": "https://www.eventbrite.com/d/nv--las-vegas/events/",
+            "jsonPath": "jsonld[1].itemListElement[17].item",
+            "capture": "/Users/pshorey/git/events/.artifacts/framework/runs/d79e1a6d-597a-4bc0-abd3-30d64aeb7c0d/55f22126-2260-4e31-b887-4e2146f7a400/page-133.html",
+            "contentHash": "9046457518722d56a6891974cd94d3592bc3a525aff9fa2e6610ed9bcb2509df"
+          },
+          "raw": {
+            "name": "Biodiversity Law and Governance Day 2026",
+            "endDate": "2026-10-24",
+            "url": "https://www.eventbrite.ca/e/biodiversity-law-and-governance-day-2026-tickets-1999653502455",
+            "location": {
+              "url": "https://www.eventbrite.ca/e/biodiversity-law-and-governance-day-2026-tickets-1999653502455",
+              "@type": "VirtualLocation"
+            },
+            "image": "https://img.evbuc.com/https%3A%2F%2Fcdn.evbuc.com%2Fimages%2F1194265220%2F6651695199%2F1%2Foriginal.20260924-092119?crop=focalpoint&fit=crop&w=400&auto=format%2Ccompress&q=75&sharp=10&fp-x=0.5&fp-y=0.5&s=f61b84605a3406a938be844e93078d89",
+            "startDate": "2026-10-24",
+            "@type": "Event",
+            "eventAttendanceMode": "https://schema.org/OnlineEventAttendanceMode"
+          }
+        },
+        {
+          "schemaVersion": 2,
+          "collectionId": "url-023",
+          "sourceId": "eventbrite.com",
+          "sourceRecordId": "https://www.eventbrite.co.uk/e/no-title-no-permission-no-problem-harnessing-the-power-of-influence-tickets-1993676700680|2026-11-05|",
+          "title": "No Title, No Permission, No Problem: Harnessing the Power of Influence",
+          "url": "https://www.eventbrite.co.uk/e/no-title-no-permission-no-problem-harnessing-the-power-of-influence-tickets-1993676700680",
+          "startDate": "2026-11-05",
+          "endDate": "2026-11-05",
+          "startLocal": null,
+          "endLocal": null,
+          "timeZone": "America/Los_Angeles",
+          "allDay": null,
+          "location": {
+            "venue": null,
+            "address": null,
+            "locality": null,
+            "region": null,
+            "country": null,
+            "basis": "upstream structured data"
+          },
+          "marketCity": "Las Vegas",
+          "sourceGroups": [
+            "Las Vegas"
+          ],
+          "categoryTags": [],
+          "validationStatus": "extracted-candidate",
+          "warnings": [],
+          "evidence": {
+            "url": "https://www.eventbrite.com/d/nv--las-vegas/events/",
+            "jsonPath": "jsonld[1].itemListElement[19].item",
+            "capture": "/Users/pshorey/git/events/.artifacts/framework/runs/d79e1a6d-597a-4bc0-abd3-30d64aeb7c0d/55f22126-2260-4e31-b887-4e2146f7a400/page-133.html",
+            "contentHash": "9046457518722d56a6891974cd94d3592bc3a525aff9fa2e6610ed9bcb2509df"
+          },
+          "raw": {
+            "name": "No Title, No Permission, No Problem: Harnessing the Power of Influence",
+            "endDate": "2026-11-05",
+            "url": "https://www.eventbrite.co.uk/e/no-title-no-permission-no-problem-harnessing-the-power-of-influence-tickets-1993676700680",
+            "location": {
+              "url": "https://www.eventbrite.co.uk/e/no-title-no-permission-no-problem-harnessing-the-power-of-influence-tickets-1993676700680",
+              "@type": "VirtualLocation"
+            },
+            "image": "https://img.evbuc.com/https%3A%2F%2Fcdn.evbuc.com%2Fimages%2F1189702495%2F63677645%2F1%2Foriginal.20260727-143754?crop=focalpoint&fit=crop&w=400&auto=format%2Ccompress&q=75&sharp=10&fp-x=0.691&fp-y=0.467&s=4cecfb6251578f3fb72868ac85ba0db0",
+            "startDate": "2026-11-05",
+            "@type": "Event",
+            "eventAttendanceMode": "https://schema.org/OnlineEventAttendanceMode"
+          }
+        }
+      ]
+    },
+    {
+      "collectionId": "url-024",
+      "sourceUrl": "https://www.nyctourism.com/events/",
+      "group": "New York City",
+      "marketCity": "New York City",
+      "status": "partial",
+      "complete": false,
+      "runId": "3e34b6de-34b5-4f7e-b79d-3dd3f773b81c",
+      "build": "0d44e9b085295c1fc53269e9e63eb87e394fa30fd2e3a5702a2a71f959336035",
+      "availableObservations": 12,
+      "events": [
+        {
+          "schemaVersion": 2,
+          "collectionId": "url-024",
+          "sourceId": "nyctourism.com",
+          "sourceRecordId": "https://www.nyctourism.com/events/alvin-ailey-new-york-city-center|2026-12-02|",
+          "title": "Alvin Ailey at New York City Center",
+          "url": "https://www.nyctourism.com/events/alvin-ailey-new-york-city-center",
+          "startDate": "2026-12-02",
+          "endDate": "2027-01-03",
+          "startLocal": null,
+          "endLocal": null,
+          "timeZone": "America/New_York",
+          "allDay": null,
+          "location": null,
+          "marketCity": "New York City",
+          "sourceGroups": [
+            "New York City"
+          ],
+          "categoryTags": [
+            {
+              "label": "Performing Arts",
+              "basis": "upstream card category"
+            }
+          ],
+          "validationStatus": "extracted-candidate",
+          "warnings": [],
+          "evidence": {
+            "url": "https://www.nyctourism.com/events/",
+            "selector": "[class*=Card_card__] with ContentCard_headerLink",
+            "capture": "/Users/pshorey/git/events/.artifacts/framework/runs/3e34b6de-34b5-4f7e-b79d-3dd3f773b81c/f3fcef25-d9b1-4cc5-9c49-aa5a7fcc0746/page-146.html",
+            "contentHash": "bbf91e6056c88b32608690d9a0196acb3511e0bce686b12a90a96f82d68675e6"
+          },
+          "raw": {
+            "date": "Dec 2, 2026 - Jan 3, 2027"
+          }
+        },
+        {
+          "schemaVersion": 2,
+          "collectionId": "url-024",
+          "sourceId": "nyctourism.com",
+          "sourceRecordId": "https://www.nyctourism.com/events/brooklyn-nets-basketball|2026-10-21|",
+          "title": "Brooklyn Nets Basketball",
+          "url": "https://www.nyctourism.com/events/brooklyn-nets-basketball",
+          "startDate": "2026-10-21",
+          "endDate": "2027-04-11",
+          "startLocal": null,
+          "endLocal": null,
+          "timeZone": "America/New_York",
+          "allDay": null,
+          "location": null,
+          "marketCity": "New York City",
+          "sourceGroups": [
+            "New York City"
+          ],
+          "categoryTags": [
+            {
+              "label": "Sports",
+              "basis": "upstream card category"
+            }
+          ],
+          "validationStatus": "extracted-candidate",
+          "warnings": [],
+          "evidence": {
+            "url": "https://www.nyctourism.com/events/",
+            "selector": "[class*=Card_card__] with ContentCard_headerLink",
+            "capture": "/Users/pshorey/git/events/.artifacts/framework/runs/3e34b6de-34b5-4f7e-b79d-3dd3f773b81c/f3fcef25-d9b1-4cc5-9c49-aa5a7fcc0746/page-146.html",
+            "contentHash": "bbf91e6056c88b32608690d9a0196acb3511e0bce686b12a90a96f82d68675e6"
+          },
+          "raw": {
+            "date": "Oct 21, 2026 - Apr 11, 2027"
+          }
+        }
+      ]
+    },
+    {
+      "collectionId": "url-025",
+      "sourceUrl": "https://www.nyctourism.com/things-to-do/events-and-festivals/",
+      "group": "New York City",
+      "marketCity": "New York City",
+      "status": "partial",
+      "complete": false,
+      "runId": "dbebba84-47f6-48b6-b509-b9800faa28e9",
+      "build": "0d44e9b085295c1fc53269e9e63eb87e394fa30fd2e3a5702a2a71f959336035",
+      "availableObservations": 12,
+      "events": [
+        {
+          "schemaVersion": 2,
+          "collectionId": "url-025",
+          "sourceId": "nyctourism.com",
+          "sourceRecordId": "https://www.nyctourism.com/events/alvin-ailey-new-york-city-center|2026-12-02|",
+          "title": "Alvin Ailey at New York City Center",
+          "url": "https://www.nyctourism.com/events/alvin-ailey-new-york-city-center",
+          "startDate": "2026-12-02",
+          "endDate": "2027-01-03",
+          "startLocal": null,
+          "endLocal": null,
+          "timeZone": "America/New_York",
+          "allDay": null,
+          "location": null,
+          "marketCity": "New York City",
+          "sourceGroups": [
+            "New York City"
+          ],
+          "categoryTags": [
+            {
+              "label": "Performing Arts",
+              "basis": "upstream card category"
+            }
+          ],
+          "validationStatus": "extracted-candidate",
+          "warnings": [],
+          "evidence": {
+            "url": "https://www.nyctourism.com/things-to-do/events-and-festivals/",
+            "selector": "[class*=Card_card__] with ContentCard_headerLink",
+            "capture": "/Users/pshorey/git/events/.artifacts/framework/runs/dbebba84-47f6-48b6-b509-b9800faa28e9/1a7ddb70-bb03-4d12-b07a-569fa08cab26/page-147.html",
+            "contentHash": "71503412eea53272bde1d6726d11d04e564235cb2a1ca711fd3466ce1e7ecbd8"
+          },
+          "raw": {
+            "date": "Dec 2, 2026 - Jan 3, 2027"
+          }
+        },
+        {
+          "schemaVersion": 2,
+          "collectionId": "url-025",
+          "sourceId": "nyctourism.com",
+          "sourceRecordId": "https://www.nyctourism.com/events/brooklyn-nets-basketball|2026-10-21|",
+          "title": "Brooklyn Nets Basketball",
+          "url": "https://www.nyctourism.com/events/brooklyn-nets-basketball",
+          "startDate": "2026-10-21",
+          "endDate": "2027-04-11",
+          "startLocal": null,
+          "endLocal": null,
+          "timeZone": "America/New_York",
+          "allDay": null,
+          "location": null,
+          "marketCity": "New York City",
+          "sourceGroups": [
+            "New York City"
+          ],
+          "categoryTags": [
+            {
+              "label": "Sports",
+              "basis": "upstream card category"
+            }
+          ],
+          "validationStatus": "extracted-candidate",
+          "warnings": [],
+          "evidence": {
+            "url": "https://www.nyctourism.com/things-to-do/events-and-festivals/",
+            "selector": "[class*=Card_card__] with ContentCard_headerLink",
+            "capture": "/Users/pshorey/git/events/.artifacts/framework/runs/dbebba84-47f6-48b6-b509-b9800faa28e9/1a7ddb70-bb03-4d12-b07a-569fa08cab26/page-147.html",
+            "contentHash": "71503412eea53272bde1d6726d11d04e564235cb2a1ca711fd3466ce1e7ecbd8"
+          },
+          "raw": {
+            "date": "Oct 21, 2026 - Apr 11, 2027"
+          }
+        }
+      ]
+    },
+    {
+      "collectionId": "url-033",
+      "sourceUrl": "https://dothisnyc.com/street-fairs-nyc/",
+      "group": "New York City",
+      "marketCity": "New York City",
+      "status": "partial",
+      "complete": false,
+      "runId": "15a6c485-ea1d-467e-90bb-1d34f121dd76",
+      "build": "0d44e9b085295c1fc53269e9e63eb87e394fa30fd2e3a5702a2a71f959336035",
+      "availableObservations": 10,
+      "events": [
+        {
+          "schemaVersion": 2,
+          "collectionId": "url-033",
+          "sourceId": "dothisnyc.com",
+          "sourceRecordId": "https://dothisnyc.com/street-fairs-nyc/#e=college-point-blvd|2026-10-18|",
+          "title": "College Point Blvd",
+          "url": "https://dothisnyc.com/street-fairs-nyc/#e=college-point-blvd",
+          "startDate": "2026-10-18",
+          "endDate": "2026-10-18",
+          "startLocal": null,
+          "endLocal": null,
+          "timeZone": "America/New_York",
+          "allDay": null,
+          "location": {
+            "venue": "College Point Boulevard",
+            "address": "College Point Blvd, 20th Ave to 14th Ave",
+            "locality": "New York",
+            "region": "NY",
+            "country": "US",
+            "basis": "upstream structured data"
+          },
+          "marketCity": "New York City",
+          "sourceGroups": [
+            "New York City"
+          ],
+          "categoryTags": [],
+          "validationStatus": "extracted-candidate",
+          "warnings": [],
+          "evidence": {
+            "url": "https://dothisnyc.com/street-fairs-nyc/",
+            "jsonPath": "jsonld[0].itemListElement[3].item",
+            "capture": "/Users/pshorey/git/events/.artifacts/framework/runs/15a6c485-ea1d-467e-90bb-1d34f121dd76/d61560e7-2354-4343-8b8e-d48634ed3e3a/page-134.html",
+            "contentHash": "0561e869455b8decf4f664f96e7f6800b69687cff3edc2330809e6a1ca57ce30"
+          },
+          "raw": {
+            "@type": "Event",
+            "name": "College Point Blvd",
+            "description": "A neighborhood street fair takes over College Point Boulevard between 20th and 14th Avenues in Queens.",
+            "startDate": "2026-10-18",
+            "eventStatus": "https://schema.org/EventScheduled",
+            "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+            "url": "https://dothisnyc.com/street-fairs-nyc/#e=college-point-blvd",
+            "location": {
+              "@type": "Place",
+              "name": "College Point Boulevard",
+              "address": {
+                "@type": "PostalAddress",
+                "addressLocality": "New York",
+                "addressRegion": "NY",
+                "addressCountry": "US",
+                "streetAddress": "College Point Blvd, 20th Ave to 14th Ave"
+              },
+              "geo": {
+                "@type": "GeoCoordinates",
+                "latitude": 40.783698,
+                "longitude": -73.845852
+              }
+            },
+            "isAccessibleForFree": true,
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD",
+              "url": "https://www.streetfairsny.com/event-calendar.html"
+            }
+          }
+        },
+        {
+          "schemaVersion": 2,
+          "collectionId": "url-033",
+          "sourceId": "dothisnyc.com",
+          "sourceRecordId": "https://dothisnyc.com/street-fairs-nyc/#e=eighth-avenue-fall-fair|2026-10-17|2026-10-17T10:00:00-04:00",
+          "title": "Eighth Avenue Fall Fair",
+          "url": "https://dothisnyc.com/street-fairs-nyc/#e=eighth-avenue-fall-fair",
+          "startDate": "2026-10-17",
+          "endDate": "2026-10-17",
+          "startLocal": "2026-10-17T10:00:00-04:00",
+          "endLocal": "2026-10-17T18:00:00-04:00",
+          "timeZone": "America/New_York",
+          "allDay": null,
+          "location": {
+            "venue": "8th Avenue, 42nd to 52nd St",
+            "address": "8th Avenue from 42nd to 52nd St",
+            "locality": "New York",
+            "region": "NY",
+            "country": "US",
+            "basis": "upstream structured data"
+          },
+          "marketCity": "New York City",
+          "sourceGroups": [
+            "New York City"
+          ],
+          "categoryTags": [],
+          "validationStatus": "extracted-candidate",
+          "warnings": [],
+          "evidence": {
+            "url": "https://dothisnyc.com/street-fairs-nyc/",
+            "jsonPath": "jsonld[0].itemListElement[0].item",
+            "capture": "/Users/pshorey/git/events/.artifacts/framework/runs/15a6c485-ea1d-467e-90bb-1d34f121dd76/d61560e7-2354-4343-8b8e-d48634ed3e3a/page-134.html",
+            "contentHash": "0561e869455b8decf4f664f96e7f6800b69687cff3edc2330809e6a1ca57ce30"
+          },
+          "raw": {
+            "@type": "Event",
+            "name": "Eighth Avenue Fall Fair",
+            "description": "Eighth Avenue hosts a fall street fair.",
+            "startDate": "2026-10-17T10:00:00-04:00",
+            "eventStatus": "https://schema.org/EventScheduled",
+            "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+            "url": "https://dothisnyc.com/street-fairs-nyc/#e=eighth-avenue-fall-fair",
+            "endDate": "2026-10-17T18:00:00-04:00",
+            "location": {
+              "@type": "Place",
+              "name": "8th Avenue, 42nd to 52nd St",
+              "address": {
+                "@type": "PostalAddress",
+                "addressLocality": "New York",
+                "addressRegion": "NY",
+                "addressCountry": "US",
+                "streetAddress": "8th Avenue from 42nd to 52nd St"
+              },
+              "geo": {
+                "@type": "GeoCoordinates",
+                "latitude": 40.760395,
+                "longitude": -73.987493
+              }
+            },
+            "isAccessibleForFree": true,
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD",
+              "url": "https://nycstreetfairs.com/event-schedule/"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "collectionId": "url-034",
+      "sourceUrl": "https://www.eventbrite.com/d/ny--new-york/",
+      "group": "New York City",
+      "marketCity": "New York City",
+      "status": "partial",
+      "complete": false,
+      "runId": "e086d8fb-f5f7-4cb9-be1d-c2d691ed48e7",
+      "build": "0d44e9b085295c1fc53269e9e63eb87e394fa30fd2e3a5702a2a71f959336035",
+      "availableObservations": 39,
+      "events": [
+        {
+          "schemaVersion": 2,
+          "collectionId": "url-034",
+          "sourceId": "eventbrite.com",
+          "sourceRecordId": "https://www.eventbrite.ca/e/biodiversity-law-and-governance-day-2026-tickets-1999653502455|2026-10-24|",
+          "title": "Biodiversity Law and Governance Day 2026",
+          "url": "https://www.eventbrite.ca/e/biodiversity-law-and-governance-day-2026-tickets-1999653502455",
+          "startDate": "2026-10-24",
+          "endDate": "2026-10-24",
+          "startLocal": null,
+          "endLocal": null,
+          "timeZone": "America/New_York",
+          "allDay": null,
+          "location": {
+            "venue": null,
+            "address": null,
+            "locality": null,
+            "region": null,
+            "country": null,
+            "basis": "upstream structured data"
+          },
+          "marketCity": "New York City",
+          "sourceGroups": [
+            "New York City"
+          ],
+          "categoryTags": [],
+          "validationStatus": "extracted-candidate",
+          "warnings": [],
+          "evidence": {
+            "url": "https://www.eventbrite.com/d/ny--new-york/events/",
+            "jsonPath": "jsonld[1].itemListElement[26].item",
+            "capture": "/Users/pshorey/git/events/.artifacts/framework/runs/e086d8fb-f5f7-4cb9-be1d-c2d691ed48e7/bf828ca8-7450-4eda-80d0-0c28df7874fe/page-135.html",
+            "contentHash": "5804364e6c6d51c612f3849ee0d641fe68b1ccdd88f298537ad45cd83a420e74"
+          },
+          "raw": {
+            "@type": "Event",
+            "url": "https://www.eventbrite.ca/e/biodiversity-law-and-governance-day-2026-tickets-1999653502455",
+            "endDate": "2026-10-24",
+            "name": "Biodiversity Law and Governance Day 2026",
+            "startDate": "2026-10-24",
+            "eventAttendanceMode": "https://schema.org/OnlineEventAttendanceMode",
+            "image": "https://img.evbuc.com/https%3A%2F%2Fcdn.evbuc.com%2Fimages%2F1194265220%2F6651695199%2F1%2Foriginal.20260924-092119?crop=focalpoint&fit=crop&w=512&auto=format%2Ccompress&q=75&sharp=10&fp-x=0.5&fp-y=0.5&s=a49fe87f7023a1c94b0244a65dc520c3",
+            "location": {
+              "@type": "VirtualLocation",
+              "url": "https://www.eventbrite.ca/e/biodiversity-law-and-governance-day-2026-tickets-1999653502455"
+            }
+          }
+        },
+        {
+          "schemaVersion": 2,
+          "collectionId": "url-034",
+          "sourceId": "eventbrite.com",
+          "sourceRecordId": "https://www.eventbrite.ca/e/mackage-sample-sale-2026-new-york-tickets-2003259824060|2026-11-03|",
+          "title": "MACKAGE SAMPLE SALE 2026 - NEW YORK",
+          "url": "https://www.eventbrite.ca/e/mackage-sample-sale-2026-new-york-tickets-2003259824060",
+          "startDate": "2026-11-03",
+          "endDate": "2026-11-05",
+          "startLocal": null,
+          "endLocal": null,
+          "timeZone": "America/New_York",
+          "allDay": null,
+          "location": {
+            "venue": "Metropolitan Pavilion",
+            "address": "125 West 18th Street",
+            "locality": "New York",
+            "region": "NY",
+            "country": "US",
+            "basis": "upstream structured data"
+          },
+          "marketCity": "New York City",
+          "sourceGroups": [
+            "New York City"
+          ],
+          "categoryTags": [],
+          "validationStatus": "extracted-candidate",
+          "warnings": [],
+          "evidence": {
+            "url": "https://www.eventbrite.com/d/ny--new-york/events/",
+            "jsonPath": "jsonld[1].itemListElement[21].item",
+            "capture": "/Users/pshorey/git/events/.artifacts/framework/runs/e086d8fb-f5f7-4cb9-be1d-c2d691ed48e7/bf828ca8-7450-4eda-80d0-0c28df7874fe/page-135.html",
+            "contentHash": "5804364e6c6d51c612f3849ee0d641fe68b1ccdd88f298537ad45cd83a420e74"
+          },
+          "raw": {
+            "@type": "Event",
+            "url": "https://www.eventbrite.ca/e/mackage-sample-sale-2026-new-york-tickets-2003259824060",
+            "endDate": "2026-11-05",
+            "name": "MACKAGE SAMPLE SALE 2026 - NEW YORK",
+            "startDate": "2026-11-03",
+            "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+            "image": "https://img.evbuc.com/https%3A%2F%2Fcdn.evbuc.com%2Fimages%2F1176924843%2F268075365174%2F1%2Foriginal.20260207-001043?w=512&auto=format%2Ccompress&q=75&sharp=10&rect=0%2C12%2C1952%2C976&s=8518d3a468c3c65623f4215354bb5ccb",
+            "location": {
+              "name": "Metropolitan Pavilion",
+              "address": {
+                "streetAddress": "125 West 18th Street",
+                "@type": "PostalAddress",
+                "addressRegion": "NY",
+                "addressLocality": "New York",
+                "addressCountry": "US",
+                "postalCode": "10011"
+              },
+              "@type": "Place",
+              "geo": {
+                "latitude": "40.7404282",
+                "@type": "GeoCoordinates",
+                "longitude": "-73.9960263"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "collectionId": "url-035",
+      "sourceUrl": "https://www.discoverlosangeles.com/events",
+      "group": "Los Angeles",
+      "marketCity": "Los Angeles",
+      "status": "partial",
+      "complete": false,
+      "runId": "97b368d4-ccca-472c-8b7c-3d2e69f57a96",
+      "build": "0d44e9b085295c1fc53269e9e63eb87e394fa30fd2e3a5702a2a71f959336035",
+      "availableObservations": 27,
+      "events": [
+        {
+          "schemaVersion": 2,
+          "collectionId": "url-035",
+          "sourceId": "discoverlosangeles.com",
+          "sourceRecordId": "https://www.discoverlosangeles.com/event/2026/10/16/miley|2026-10-16|",
+          "title": "Miley",
+          "url": "https://www.discoverlosangeles.com/event/2026/10/16/miley",
+          "startDate": "2026-10-16",
+          "endDate": "2026-10-16",
+          "startLocal": null,
+          "endLocal": null,
+          "timeZone": "America/Los_Angeles",
+          "allDay": null,
+          "location": null,
+          "marketCity": "Los Angeles",
+          "sourceGroups": [
+            "Los Angeles"
+          ],
+          "categoryTags": [],
+          "validationStatus": "extracted-candidate",
+          "warnings": [],
+          "evidence": {
+            "url": "https://www.discoverlosangeles.com/events",
+            "selector": "article.node--type-event,.views-row",
+            "capture": "/Users/pshorey/git/events/.artifacts/framework/runs/97b368d4-ccca-472c-8b7c-3d2e69f57a96/b62ecf4b-da46-4df4-9a20-46a8da6d8ee2/page-136.html",
+            "contentHash": "0a031c8f469c585dce5c08bcd170083ab2303ac68052ee2ec40e259dbdadc175"
+          },
+          "raw": {
+            "cardText": "Miley Oct 16, 2026 7:30PM - 10:30PM"
+          }
+        },
+        {
+          "schemaVersion": 2,
+          "collectionId": "url-035",
+          "sourceId": "discoverlosangeles.com",
+          "sourceRecordId": "https://www.discoverlosangeles.com/event/2026/10/17/infinite-challenge-5k10k-run|2026-10-17|",
+          "title": "Infinite Challenge 5K/10K Run",
+          "url": "https://www.discoverlosangeles.com/event/2026/10/17/infinite-challenge-5k10k-run",
+          "startDate": "2026-10-17",
+          "endDate": "2026-10-17",
+          "startLocal": null,
+          "endLocal": null,
+          "timeZone": "America/Los_Angeles",
+          "allDay": null,
+          "location": null,
+          "marketCity": "Los Angeles",
+          "sourceGroups": [
+            "Los Angeles"
+          ],
+          "categoryTags": [],
+          "validationStatus": "extracted-candidate",
+          "warnings": [],
+          "evidence": {
+            "url": "https://www.discoverlosangeles.com/events",
+            "selector": "article.node--type-event,.views-row",
+            "capture": "/Users/pshorey/git/events/.artifacts/framework/runs/97b368d4-ccca-472c-8b7c-3d2e69f57a96/b62ecf4b-da46-4df4-9a20-46a8da6d8ee2/page-136.html",
+            "contentHash": "0a031c8f469c585dce5c08bcd170083ab2303ac68052ee2ec40e259dbdadc175"
+          },
+          "raw": {
+            "cardText": "Infinite Challenge 5K/10K Run Oct 17, 2026 7AM - 4PM"
+          }
+        }
+      ]
+    },
+    {
+      "collectionId": "url-037",
+      "sourceUrl": "https://www.laconventioncenter.com/events",
+      "group": "Los Angeles",
+      "marketCity": "Los Angeles",
+      "status": "partial",
+      "complete": false,
+      "runId": "cf5707b4-167e-4fb0-adb9-b89513a40400",
+      "build": "0d44e9b085295c1fc53269e9e63eb87e394fa30fd2e3a5702a2a71f959336035",
+      "availableObservations": 31,
+      "events": [
+        {
+          "sourceId": "laconventioncenter.com",
+          "sourceRecordId": "/events/detail/2026-nmsdc-annual-conference-exchange",
+          "title": "2026 NMSDC Annual Conference & Exchange",
+          "url": "https://www.laconventioncenter.com/events/detail/2026-nmsdc-annual-conference-exchange",
+          "startDate": "2026-10-25",
+          "endDate": "2026-10-28",
+          "startLocal": null,
+          "endLocal": null,
+          "timeZone": "America/Los_Angeles",
+          "allDay": null,
+          "location": {
+            "venue": "Los Angeles Convention Center",
+            "locality": "Los Angeles",
+            "region": "CA",
+            "country": "US",
+            "basis": "single-venue source"
+          },
+          "marketCity": "Los Angeles",
+          "sourceGroups": [
+            "Los Angeles"
+          ],
+          "categoryTags": [
+            {
+              "label": "convention-center-events",
+              "basis": "source-level hint"
+            }
+          ],
+          "raw": {
+            "date": "Oct 25 - 28, 2026"
+          },
+          "evidence": {
+            "selector": ".eventItem h3.title a; .eventItem .date",
+            "url": "https://www.laconventioncenter.com/events/all",
+            "capture": "/Users/pshorey/git/events/.artifacts/framework/runs/cf5707b4-167e-4fb0-adb9-b89513a40400/070ccdc8-2327-4a0f-b8d0-4feeff759680/page-137.html",
+            "contentHash": "4ede9d601940a7e4bf5202ad426f3b5e03d275c411cbac3d08ea827d4b8efe5f"
+          },
+          "warnings": [],
+          "schemaVersion": 2,
+          "collectionId": "url-037",
+          "validationStatus": "parser-validated"
+        },
+        {
+          "sourceId": "laconventioncenter.com",
+          "sourceRecordId": "/events/detail/aats-annual-mtg-2027",
+          "title": "American Association of Thoracic Surgery Annual Meeting",
+          "url": "https://www.laconventioncenter.com/events/detail/aats-annual-mtg-2027",
+          "startDate": "2027-05-01",
+          "endDate": "2027-05-04",
+          "startLocal": null,
+          "endLocal": null,
+          "timeZone": "America/Los_Angeles",
+          "allDay": null,
+          "location": {
+            "venue": "Los Angeles Convention Center",
+            "locality": "Los Angeles",
+            "region": "CA",
+            "country": "US",
+            "basis": "single-venue source"
+          },
+          "marketCity": "Los Angeles",
+          "sourceGroups": [
+            "Los Angeles"
+          ],
+          "categoryTags": [
+            {
+              "label": "convention-center-events",
+              "basis": "source-level hint"
+            }
+          ],
+          "raw": {
+            "date": "May 1 - 4, 2027"
+          },
+          "evidence": {
+            "selector": ".eventItem h3.title a; .eventItem .date",
+            "url": "https://www.laconventioncenter.com/events/all",
+            "capture": "/Users/pshorey/git/events/.artifacts/framework/runs/cf5707b4-167e-4fb0-adb9-b89513a40400/070ccdc8-2327-4a0f-b8d0-4feeff759680/page-137.html",
+            "contentHash": "4ede9d601940a7e4bf5202ad426f3b5e03d275c411cbac3d08ea827d4b8efe5f"
+          },
+          "warnings": [],
+          "schemaVersion": 2,
+          "collectionId": "url-037",
+          "validationStatus": "parser-validated"
+        }
+      ]
+    },
+    {
+      "collectionId": "url-038",
+      "sourceUrl": "https://www.laconventioncenter.com/events/all",
+      "group": "Los Angeles",
+      "marketCity": "Los Angeles",
+      "status": "complete",
+      "complete": true,
+      "runId": "8ff47032-5387-4505-bf09-5bdc9278eb50",
+      "build": "c424b942be741433b27e91d325ac7b2f227f7775826d1cbdb9613e2b85a4a864",
+      "availableObservations": 31,
+      "events": [
+        {
+          "sourceId": "laconventioncenter.com",
+          "sourceRecordId": "/events/detail/2026-nmsdc-annual-conference-exchange",
+          "title": "2026 NMSDC Annual Conference & Exchange",
+          "url": "https://www.laconventioncenter.com/events/detail/2026-nmsdc-annual-conference-exchange",
+          "startDate": "2026-10-25",
+          "endDate": "2026-10-28",
+          "startLocal": null,
+          "endLocal": null,
+          "timeZone": "America/Los_Angeles",
+          "allDay": null,
+          "location": {
+            "venue": "Los Angeles Convention Center",
+            "locality": "Los Angeles",
+            "region": "CA",
+            "country": "US",
+            "basis": "single-venue source"
+          },
+          "marketCity": "Los Angeles",
+          "sourceGroups": [
+            "Los Angeles"
+          ],
+          "categoryTags": [
+            {
+              "label": "convention-center-events",
+              "basis": "source-level hint"
+            }
+          ],
+          "raw": {
+            "date": "Oct 25 - 28, 2026"
+          },
+          "evidence": {
+            "selector": ".eventItem h3.title a; .eventItem .date",
+            "url": "https://www.laconventioncenter.com/events/all",
+            "capture": "/Users/pshorey/git/events/.artifacts/framework/runs/8ff47032-5387-4505-bf09-5bdc9278eb50/a7e13c14-b3c8-45d3-af87-6ff278757de0/page-910.html",
+            "contentHash": "e465e6c3b6e30328c7b276dc8fbcc226fead6ae3ebee9c8dc8c2068eaaeddb87"
+          },
+          "warnings": [],
+          "schemaVersion": 2,
+          "collectionId": "url-038",
+          "validationStatus": "parser-validated"
+        },
+        {
+          "sourceId": "laconventioncenter.com",
+          "sourceRecordId": "/events/detail/aats-annual-mtg-2027",
+          "title": "American Association of Thoracic Surgery Annual Meeting",
+          "url": "https://www.laconventioncenter.com/events/detail/aats-annual-mtg-2027",
+          "startDate": "2027-05-01",
+          "endDate": "2027-05-04",
+          "startLocal": null,
+          "endLocal": null,
+          "timeZone": "America/Los_Angeles",
+          "allDay": null,
+          "location": {
+            "venue": "Los Angeles Convention Center",
+            "locality": "Los Angeles",
+            "region": "CA",
+            "country": "US",
+            "basis": "single-venue source"
+          },
+          "marketCity": "Los Angeles",
+          "sourceGroups": [
+            "Los Angeles"
+          ],
+          "categoryTags": [
+            {
+              "label": "convention-center-events",
+              "basis": "source-level hint"
+            }
+          ],
+          "raw": {
+            "date": "May 1 - 4, 2027"
+          },
+          "evidence": {
+            "selector": ".eventItem h3.title a; .eventItem .date",
+            "url": "https://www.laconventioncenter.com/events/all",
+            "capture": "/Users/pshorey/git/events/.artifacts/framework/runs/8ff47032-5387-4505-bf09-5bdc9278eb50/a7e13c14-b3c8-45d3-af87-6ff278757de0/page-910.html",
+            "contentHash": "e465e6c3b6e30328c7b276dc8fbcc226fead6ae3ebee9c8dc8c2068eaaeddb87"
+          },
+          "warnings": [],
+          "schemaVersion": 2,
+          "collectionId": "url-038",
+          "validationStatus": "parser-validated"
+        }
+      ]
+    },
+    {
+      "collectionId": "url-039",
+      "sourceUrl": "https://www.choosechicago.com/events/",
+      "group": "Chicago",
+      "marketCity": "Chicago",
+      "status": "partial",
+      "complete": false,
+      "runId": "24de2bab-feaa-4e63-9176-af9742a65e9d",
+      "build": "0d44e9b085295c1fc53269e9e63eb87e394fa30fd2e3a5702a2a71f959336035",
+      "availableObservations": 24,
+      "events": [
+        {
+          "schemaVersion": 2,
+          "collectionId": "url-039",
+          "sourceId": "choosechicago.com",
+          "sourceRecordId": "https://www.choosechicago.com/event/62nd-chicago-international-film-festival/2026-10-16/|2026-10-16|2026-10-16T00:00:00-05:00",
+          "title": "62nd Chicago International Film Festival",
+          "url": "https://www.choosechicago.com/event/62nd-chicago-international-film-festival/2026-10-16/",
+          "startDate": "2026-10-16",
+          "endDate": "2026-10-16",
+          "startLocal": "2026-10-16T00:00:00-05:00",
+          "endLocal": "2026-10-16T23:59:59-05:00",
+          "timeZone": "America/Chicago",
+          "allDay": null,
+          "location": {
+            "venue": "Multiple Locations",
+            "address": null,
+            "locality": null,
+            "region": "NY",
+            "country": "United States",
+            "basis": "upstream structured data"
+          },
+          "marketCity": "Chicago",
+          "sourceGroups": [
+            "Chicago"
+          ],
+          "categoryTags": [],
+          "validationStatus": "extracted-candidate",
+          "warnings": [],
+          "evidence": {
+            "url": "https://www.choosechicago.com/events/",
+            "jsonPath": "jsonld[1][3]",
+            "capture": "/Users/pshorey/git/events/.artifacts/framework/runs/24de2bab-feaa-4e63-9176-af9742a65e9d/19a985ae-e967-4184-90fc-b77647b393ac/page-138.html",
+            "contentHash": "25403091b2c92850ad1754310f437284917c9adc98fde2d065f31106be26532b"
+          },
+          "raw": {
+            "@context": "http://schema.org",
+            "@type": "Event",
+            "name": "62nd Chicago International Film Festival",
+            "description": "&lt;p&gt;As the longest-running competitive film festival in North America, The Chicago International Film Festival brings more than 150 films from around the world to Chicago.…&lt;/p&gt;\\n",
+            "image": "https://cdn.choosechicago.com/uploads/2026/01/62_FF_1200x600_General-1.jpg",
+            "url": "https://www.choosechicago.com/event/62nd-chicago-international-film-festival/2026-10-16/",
+            "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+            "eventStatus": "https://schema.org/EventScheduled",
+            "startDate": "2026-10-16T00:00:00-05:00",
+            "endDate": "2026-10-16T23:59:59-05:00",
+            "location": {
+              "@type": "Place",
+              "name": "Multiple Locations",
+              "description": "",
+              "url": "https://www.choosechicago.com/venue/multiple-locations/",
+              "address": {
+                "@type": "PostalAddress",
+                "addressRegion": "NY",
+                "addressCountry": "United States"
+              },
+              "telephone": "",
+              "sameAs": ""
+            },
+            "organizer": {
+              "@type": "Person",
+              "name": "Chicago International Film Festival",
+              "description": "",
+              "url": "",
+              "telephone": "",
+              "email": "",
+              "sameAs": ""
+            },
+            "performer": "Organization"
+          }
+        },
+        {
+          "schemaVersion": 2,
+          "collectionId": "url-039",
+          "sourceId": "choosechicago.com",
+          "sourceRecordId": "https://www.choosechicago.com/event/62nd-chicago-international-film-festival/2026-10-17/|2026-10-17|2026-10-17T00:00:00-05:00",
+          "title": "62nd Chicago International Film Festival",
+          "url": "https://www.choosechicago.com/event/62nd-chicago-international-film-festival/2026-10-17/",
+          "startDate": "2026-10-17",
+          "endDate": "2026-10-17",
+          "startLocal": "2026-10-17T00:00:00-05:00",
+          "endLocal": "2026-10-17T23:59:59-05:00",
+          "timeZone": "America/Chicago",
+          "allDay": null,
+          "location": {
+            "venue": "Multiple Locations",
+            "address": null,
+            "locality": null,
+            "region": "NY",
+            "country": "United States",
+            "basis": "upstream structured data"
+          },
+          "marketCity": "Chicago",
+          "sourceGroups": [
+            "Chicago"
+          ],
+          "categoryTags": [],
+          "validationStatus": "extracted-candidate",
+          "warnings": [],
+          "evidence": {
+            "url": "https://www.choosechicago.com/events/",
+            "jsonPath": "jsonld[1][22]",
+            "capture": "/Users/pshorey/git/events/.artifacts/framework/runs/24de2bab-feaa-4e63-9176-af9742a65e9d/19a985ae-e967-4184-90fc-b77647b393ac/page-138.html",
+            "contentHash": "25403091b2c92850ad1754310f437284917c9adc98fde2d065f31106be26532b"
+          },
+          "raw": {
+            "@context": "http://schema.org",
+            "@type": "Event",
+            "name": "62nd Chicago International Film Festival",
+            "description": "&lt;p&gt;As the longest-running competitive film festival in North America, The Chicago International Film Festival brings more than 150 films from around the world to Chicago.…&lt;/p&gt;\\n",
+            "image": "https://cdn.choosechicago.com/uploads/2026/01/62_FF_1200x600_General-1.jpg",
+            "url": "https://www.choosechicago.com/event/62nd-chicago-international-film-festival/2026-10-17/",
+            "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+            "eventStatus": "https://schema.org/EventScheduled",
+            "startDate": "2026-10-17T00:00:00-05:00",
+            "endDate": "2026-10-17T23:59:59-05:00",
+            "location": {
+              "@type": "Place",
+              "name": "Multiple Locations",
+              "description": "",
+              "url": "https://www.choosechicago.com/venue/multiple-locations/",
+              "address": {
+                "@type": "PostalAddress",
+                "addressRegion": "NY",
+                "addressCountry": "United States"
+              },
+              "telephone": "",
+              "sameAs": ""
+            },
+            "organizer": {
+              "@type": "Person",
+              "name": "Chicago International Film Festival",
+              "description": "",
+              "url": "",
+              "telephone": "",
+              "email": "",
+              "sameAs": ""
+            },
+            "performer": "Organization"
+          }
+        }
+      ]
+    },
+    {
+      "collectionId": "url-042",
+      "sourceUrl": "https://www.chicagoparkdistrict.com/events",
+      "group": "Chicago",
+      "marketCity": "Chicago",
+      "status": "partial",
+      "complete": false,
+      "runId": "9fe71d38-f4a1-476e-87b8-4aa9a5652c2e",
+      "build": "0d44e9b085295c1fc53269e9e63eb87e394fa30fd2e3a5702a2a71f959336035",
+      "availableObservations": 1,
+      "events": [
+        {
+          "schemaVersion": 2,
+          "collectionId": "url-042",
+          "sourceId": "chicagoparkdistrict.com",
+          "sourceRecordId": "https://www.chicagoparkdistrict.com/events/community-climb-steelworkers-14|2026-04-25|2026-04-25T10:00:00Z",
+          "title": "Community Climb at Steelworkers",
+          "url": "https://www.chicagoparkdistrict.com/events/community-climb-steelworkers-14",
+          "startDate": "2026-04-25",
+          "endDate": "2026-10-31",
+          "startLocal": "2026-04-25T10:00:00Z",
+          "endLocal": "2026-10-31T18:00:00Z",
+          "timeZone": "America/Chicago",
+          "allDay": null,
+          "location": {
+            "address": "87th at S. Lake Shore Dr. Chicago, IL 60617",
+            "basis": "upstream card location"
+          },
+          "marketCity": "Chicago",
+          "sourceGroups": [
+            "Chicago"
+          ],
+          "categoryTags": [],
+          "validationStatus": "extracted-candidate",
+          "warnings": [],
+          "evidence": {
+            "url": "https://www.chicagoparkdistrict.com/events",
+            "selector": ".node--type-event.node--view-mode-card time",
+            "capture": "/Users/pshorey/git/events/.artifacts/framework/runs/9fe71d38-f4a1-476e-87b8-4aa9a5652c2e/0c3cc03e-2088-477a-ae23-e1c3b11d4858/page-139.html",
+            "contentHash": "35693061b85ab4061176e39effd4774890550417584cdd7d0505b7ed64f54026"
+          },
+          "raw": {
+            "date": "April 25, 2026 - October 31, 2026"
+          }
+        }
+      ]
+    },
+    {
+      "collectionId": "url-049",
+      "sourceUrl": "https://washington.org/find-dc-listings/dc-events",
+      "group": "Washington, DC",
+      "marketCity": "Washington, DC",
+      "status": "partial",
+      "complete": false,
+      "runId": "67d26b4d-6f98-47f3-a6ef-10039702ffd3",
+      "build": "0d44e9b085295c1fc53269e9e63eb87e394fa30fd2e3a5702a2a71f959336035",
+      "availableObservations": 10,
+      "events": [
+        {
+          "schemaVersion": 2,
+          "collectionId": "url-049",
+          "sourceId": "washington.org",
+          "sourceRecordId": "https://washington.org/event/americas-250th-passport-fairfax-museum-and-visitor-center|2026-10-17|",
+          "title": "America's 250th Passport at Fairfax Museum and Visitor Center",
+          "url": "https://washington.org/event/americas-250th-passport-fairfax-museum-and-visitor-center",
+          "startDate": "2026-10-17",
+          "endDate": "2026-10-17",
+          "startLocal": null,
+          "endLocal": null,
+          "timeZone": "America/New_York",
+          "allDay": null,
+          "location": {
+            "venue": "Virginia",
+            "basis": "source event card"
+          },
+          "marketCity": "Washington, DC",
+          "sourceGroups": [
+            "Washington, DC"
+          ],
+          "categoryTags": [],
+          "validationStatus": "extracted-candidate",
+          "warnings": [],
+          "evidence": {
+            "url": "https://washington.org/find-dc-listings/dc-events",
+            "selector": ".event-wrapper",
+            "capture": "/Users/pshorey/git/events/.artifacts/framework/runs/67d26b4d-6f98-47f3-a6ef-10039702ffd3/d13a9923-8271-4a99-808e-4ce1825672b1/page-140.html",
+            "contentHash": "686aeeb1301610143da957375c3a5b17dbed971673c92d5e9ba82cf650fc5e99"
+          },
+          "raw": {
+            "title": "\n      America's 250th Passport at Fairfax Museum and Visitor Center\n\n  ",
+            "url": "/event/americas-250th-passport-fairfax-museum-and-visitor-center",
+            "rawDate": "Oct 17, 2026",
+            "location": {
+              "venue": "Virginia",
+              "basis": "source event card"
+            }
+          }
+        },
+        {
+          "schemaVersion": 2,
+          "collectionId": "url-049",
+          "sourceId": "washington.org",
+          "sourceRecordId": "https://washington.org/event/americas-presidents|2026-10-17|",
+          "title": "America's Presidents",
+          "url": "https://washington.org/event/americas-presidents",
+          "startDate": "2026-10-17",
+          "endDate": "2026-10-17",
+          "startLocal": null,
+          "endLocal": null,
+          "timeZone": "America/New_York",
+          "allDay": null,
+          "location": {
+            "venue": "Downtown",
+            "basis": "source event card"
+          },
+          "marketCity": "Washington, DC",
+          "sourceGroups": [
+            "Washington, DC"
+          ],
+          "categoryTags": [],
+          "validationStatus": "extracted-candidate",
+          "warnings": [],
+          "evidence": {
+            "url": "https://washington.org/find-dc-listings/dc-events",
+            "selector": ".event-wrapper",
+            "capture": "/Users/pshorey/git/events/.artifacts/framework/runs/67d26b4d-6f98-47f3-a6ef-10039702ffd3/d13a9923-8271-4a99-808e-4ce1825672b1/page-140.html",
+            "contentHash": "686aeeb1301610143da957375c3a5b17dbed971673c92d5e9ba82cf650fc5e99"
+          },
+          "raw": {
+            "title": "\n      America's Presidents\n\n  ",
+            "url": "/event/americas-presidents",
+            "rawDate": "Oct 17, 2026",
+            "location": {
+              "venue": "Downtown",
+              "basis": "source event card"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "collectionId": "url-051",
+      "sourceUrl": "https://eventsdc.com/",
+      "group": "Washington, DC",
+      "marketCity": "Washington, DC",
+      "status": "partial",
+      "complete": false,
+      "runId": "fd5de9e3-c22d-4049-93ca-107a9d931e6e",
+      "build": "0d44e9b085295c1fc53269e9e63eb87e394fa30fd2e3a5702a2a71f959336035",
+      "availableObservations": 5,
+      "events": [
+        {
+          "schemaVersion": 2,
+          "collectionId": "url-051",
+          "sourceId": "eventsdc.com",
+          "sourceRecordId": "https://eventsdc.com/events/costume-carnival-1|2026-10-30|",
+          "title": "Costume Carnival",
+          "url": "https://eventsdc.com/events/costume-carnival-1",
+          "startDate": "2026-10-30",
+          "endDate": "2026-10-30",
+          "startLocal": null,
+          "endLocal": null,
+          "timeZone": "America/New_York",
+          "allDay": null,
+          "location": null,
+          "marketCity": "Washington, DC",
+          "sourceGroups": [
+            "Washington, DC"
+          ],
+          "categoryTags": [],
+          "validationStatus": "extracted-candidate",
+          "warnings": [],
+          "evidence": {
+            "url": "https://eventsdc.com/",
+            "selector": ".views-row",
+            "capture": "/Users/pshorey/git/events/.artifacts/framework/runs/fd5de9e3-c22d-4049-93ca-107a9d931e6e/1b80ac1e-9fe4-4fe9-b3d1-0f63bc344846/page-141.html",
+            "contentHash": "adb3e8367ccf62fa1e885ea3fa67f14096fb976df3f21a6df1afadc6aafc1eb6"
+          },
+          "raw": {
+            "cardText": "October 30, 2026 | 5:00pm - 7:00pm Costume Carnival Share"
+          }
+        },
+        {
+          "schemaVersion": 2,
+          "collectionId": "url-051",
+          "sourceId": "eventsdc.com",
+          "sourceRecordId": "https://eventsdc.com/events/legends-game-night-0|2026-11-12|",
+          "title": "Legends Game Night!",
+          "url": "https://eventsdc.com/events/legends-game-night-0",
+          "startDate": "2026-11-12",
+          "endDate": "2026-11-12",
+          "startLocal": null,
+          "endLocal": null,
+          "timeZone": "America/New_York",
+          "allDay": null,
+          "location": null,
+          "marketCity": "Washington, DC",
+          "sourceGroups": [
+            "Washington, DC"
+          ],
+          "categoryTags": [],
+          "validationStatus": "extracted-candidate",
+          "warnings": [],
+          "evidence": {
+            "url": "https://eventsdc.com/",
+            "selector": ".views-row",
+            "capture": "/Users/pshorey/git/events/.artifacts/framework/runs/fd5de9e3-c22d-4049-93ca-107a9d931e6e/1b80ac1e-9fe4-4fe9-b3d1-0f63bc344846/page-141.html",
+            "contentHash": "adb3e8367ccf62fa1e885ea3fa67f14096fb976df3f21a6df1afadc6aafc1eb6"
+          },
+          "raw": {
+            "cardText": "November 12, 2026 | 5:00pm - 8:00pm Legends Game Night! Share"
+          }
+        }
+      ]
+    },
+    {
+      "collectionId": "url-054",
+      "sourceUrl": "https://www.boston.gov/events",
+      "group": "Boston",
+      "marketCity": "Boston",
+      "status": "complete",
+      "complete": true,
+      "runId": "67a0ec9a-0190-4ef3-a3ba-5f34671fcfca",
+      "build": "c424b942be741433b27e91d325ac7b2f227f7775826d1cbdb9613e2b85a4a864",
+      "availableObservations": 325,
+      "events": [
+        {
+          "sourceId": "boston.gov",
+          "sourceRecordId": "node-10836:2026-11-28:17:00:00",
+          "title": "2026 Lighting of the Ship at Martin's Park",
+          "url": "https://www.boston.gov/node/10836",
+          "startDate": "2026-11-28",
+          "endDate": "2026-11-28",
+          "startLocal": "2026-11-28T17:00:00",
+          "endLocal": "2026-11-28T18:00:00",
+          "timeZone": "America/New_York",
+          "allDay": null,
+          "location": {
+            "venue": null,
+            "address": "Martins Park 64 Sleeper Street",
+            "locality": "Boston",
+            "region": "MA",
+            "country": "United States",
+            "basis": "source address"
+          },
+          "marketCity": "Boston",
+          "sourceGroups": [
+            "Boston"
+          ],
+          "categoryTags": [
+            {
+              "label": "municipal-events",
+              "basis": "source-level hint"
+            }
+          ],
+          "raw": {
+            "date": "November 28, 2026",
+            "time": "5:00pm-6:00pm",
+            "nodeId": "node-10836",
+            "price": "Price: Free"
+          },
+          "evidence": {
+            "selector": "article.calendar-listing-wrapper + preceding h2.listing-group-title",
+            "url": "https://www.boston.gov/events?page=4",
+            "capture": "/Users/pshorey/git/events/.artifacts/framework/runs/67a0ec9a-0190-4ef3-a3ba-5f34671fcfca/fded545f-db5a-4c2f-962f-21f705909096/page-917.html",
+            "contentHash": "40b3f73a710d97077b119fbd9ede3683fd33c7b19109ca50b004993aae983ad6"
+          },
+          "warnings": [],
+          "schemaVersion": 2,
+          "collectionId": "url-054",
+          "validationStatus": "parser-validated"
+        },
+        {
+          "sourceId": "boston.gov",
+          "sourceRecordId": "node-15769941:2026-11-07:12:00:00",
+          "title": "Boston Veterans Parade",
+          "url": "https://www.boston.gov/node/15769941",
+          "startDate": "2026-11-07",
+          "endDate": "2026-11-07",
+          "startLocal": "2026-11-07T12:00:00",
+          "endLocal": "2026-11-07T15:00:00",
+          "timeZone": "America/New_York",
+          "allDay": null,
+          "location": {
+            "venue": null,
+            "address": "Boston Public Library located on Boylston Street and marching to the corner of Park and Tremont St to 1 City Hall Plaza",
+            "locality": "Boston",
+            "region": "MA",
+            "country": "United States",
+            "basis": "source address"
+          },
+          "marketCity": "Boston",
+          "sourceGroups": [
+            "Boston"
+          ],
+          "categoryTags": [
+            {
+              "label": "municipal-events",
+              "basis": "source-level hint"
+            }
+          ],
+          "raw": {
+            "date": "November 7, 2026",
+            "time": "12:00pm-3:00pm",
+            "nodeId": "node-15769941",
+            "price": "Price: FREE"
+          },
+          "evidence": {
+            "selector": "article.calendar-listing-wrapper + preceding h2.listing-group-title",
+            "url": "https://www.boston.gov/events?page=3",
+            "capture": "/Users/pshorey/git/events/.artifacts/framework/runs/67a0ec9a-0190-4ef3-a3ba-5f34671fcfca/fded545f-db5a-4c2f-962f-21f705909096/page-915.html",
+            "contentHash": "cf813c5028ac6c00657d289125a9cd668f1bc02aaf2c3522bc901bf538345fbc"
+          },
+          "warnings": [],
+          "schemaVersion": 2,
+          "collectionId": "url-054",
+          "validationStatus": "parser-validated"
+        }
+      ]
+    },
+    {
+      "collectionId": "url-057",
+      "sourceUrl": "https://www.miamiandbeaches.com/events/annual-events",
+      "group": "Miami",
+      "marketCity": "Miami",
+      "status": "partial",
+      "complete": false,
+      "runId": "f0224f0a-74a7-4bef-aa80-191abdac9265",
+      "build": "0d44e9b085295c1fc53269e9e63eb87e394fa30fd2e3a5702a2a71f959336035",
+      "availableObservations": 23,
+      "events": [
+        {
+          "schemaVersion": 2,
+          "collectionId": "url-057",
+          "sourceId": "miamiandbeaches.com",
+          "sourceRecordId": "https://www.miamiandbeaches.com/event/art-basel-miami-beach/49|2026-12-04|",
+          "title": "Art Basel Miami Beach",
+          "url": "https://www.miamiandbeaches.com/event/art-basel-miami-beach/49",
+          "startDate": "2026-12-04",
+          "endDate": "2026-12-06",
+          "startLocal": null,
+          "endLocal": null,
+          "timeZone": "America/New_York",
+          "allDay": null,
+          "location": null,
+          "marketCity": "Miami",
+          "sourceGroups": [
+            "Miami"
+          ],
+          "categoryTags": [],
+          "validationStatus": "extracted-candidate",
+          "warnings": [],
+          "evidence": {
+            "url": "https://www.miamiandbeaches.com/events/annual-events",
+            "selector": "article.ys-card",
+            "capture": "/Users/pshorey/git/events/.artifacts/framework/runs/f0224f0a-74a7-4bef-aa80-191abdac9265/d88d0890-2e5e-4950-9dd8-c4a0bb337419/page-142.html",
+            "contentHash": "2034736b8ae9ed439189c648e1dee8853da4ab69f540dea3fe48000bb70c4dc4"
+          },
+          "raw": {
+            "cardText": "Added to your favorites Art Basel Miami Beach Dec 04, 2026 - Dec 06, 2026 Daily through Dec 06, 2026 North America's largest and most prestigious international contemporary art fair, returns to the Miami Beach Convention Center (MBCC) in South Beach with over 280 galleries from more than 40 countries showcasing works by thousands of emerging, mid-career, established and blue-chip artists. Arts & Culture"
+          }
+        },
+        {
+          "schemaVersion": 2,
+          "collectionId": "url-057",
+          "sourceId": "miamiandbeaches.com",
+          "sourceRecordId": "https://www.miamiandbeaches.com/event/art-deco-weekend/95|2027-01-15|",
+          "title": "Art Deco Weekend",
+          "url": "https://www.miamiandbeaches.com/event/art-deco-weekend/95",
+          "startDate": "2027-01-15",
+          "endDate": "2027-01-17",
+          "startLocal": null,
+          "endLocal": null,
+          "timeZone": "America/New_York",
+          "allDay": null,
+          "location": null,
+          "marketCity": "Miami",
+          "sourceGroups": [
+            "Miami"
+          ],
+          "categoryTags": [],
+          "validationStatus": "extracted-candidate",
+          "warnings": [],
+          "evidence": {
+            "url": "https://www.miamiandbeaches.com/events/annual-events",
+            "selector": "article.ys-card",
+            "capture": "/Users/pshorey/git/events/.artifacts/framework/runs/f0224f0a-74a7-4bef-aa80-191abdac9265/d88d0890-2e5e-4950-9dd8-c4a0bb337419/page-142.html",
+            "contentHash": "2034736b8ae9ed439189c648e1dee8853da4ab69f540dea3fe48000bb70c4dc4"
+          },
+          "raw": {
+            "cardText": "Added to your favorites Art Deco Weekend Jan 15, 2027 - Jan 17, 2027 Daily through Jan 17, 2027 Art Deco Weekend returns for its 50th edition, transforming Ocean Drive into a celebration of all things design, culture and community on Jan. Festival"
+          }
+        }
+      ]
+    },
+    {
+      "collectionId": "url-065",
+      "sourceUrl": "https://portal.sftravel.com/calendar_public/home_sfdc.cfm",
+      "group": "San Francisco",
+      "marketCity": "San Francisco",
+      "status": "partial",
+      "complete": false,
+      "runId": "62111d50-2381-4b1f-a425-d2d20a05f5c8",
+      "build": "0d44e9b085295c1fc53269e9e63eb87e394fa30fd2e3a5702a2a71f959336035",
+      "availableObservations": 26,
+      "events": [
+        {
+          "schemaVersion": 2,
+          "collectionId": "url-065",
+          "sourceId": "portal.sftravel.com",
+          "sourceRecordId": "https://portal.sftravel.com/calendar_public/home_sfdc.cfm#event=2027%20Girls%20National%20Qualifier&date=2027-02-19|2027-02-19|",
+          "title": "2027 Girls National Qualifier",
+          "url": "https://portal.sftravel.com/calendar_public/home_sfdc.cfm#event=2027%20Girls%20National%20Qualifier&date=2027-02-19",
+          "startDate": "2027-02-19",
+          "endDate": "2027-02-21",
+          "startLocal": null,
+          "endLocal": null,
+          "timeZone": "America/Los_Angeles",
+          "allDay": null,
+          "location": {
+            "venue": "Moscone Center",
+            "locality": "San Francisco",
+            "region": "CA",
+            "country": "US",
+            "basis": "source convention calendar"
+          },
+          "marketCity": "San Francisco",
+          "sourceGroups": [
+            "San Francisco"
+          ],
+          "categoryTags": [],
+          "validationStatus": "extracted-candidate",
+          "warnings": [],
+          "evidence": {
+            "url": "https://portal.sftravel.com/calendar_public/home_sfdc.cfm",
+            "selector": "tr.resultlist",
+            "capture": "/Users/pshorey/git/events/.artifacts/framework/runs/62111d50-2381-4b1f-a425-d2d20a05f5c8/93a0c435-45ed-45df-8eca-38f16b335cd2/page-148.html",
+            "contentHash": "a62436259640b1d6350645540033d11f4cd4c1a0b3965e29c0d75d6cd22fe863"
+          },
+          "raw": {
+            "rowText": "2027 Girls National Qualifier USA Volleyball Feb 19, 2027 - Feb 21, 2027 Venue Type: Moscone Center"
+          }
+        },
+        {
+          "schemaVersion": 2,
+          "collectionId": "url-065",
+          "sourceId": "portal.sftravel.com",
+          "sourceRecordId": "https://portal.sftravel.com/calendar_public/home_sfdc.cfm#event=2027%20ISSCR%20Annual%20International%20Scientific%20Meeting&date=2027-06-15|2027-06-15|",
+          "title": "2027 ISSCR Annual International Scientific Meeting",
+          "url": "https://portal.sftravel.com/calendar_public/home_sfdc.cfm#event=2027%20ISSCR%20Annual%20International%20Scientific%20Meeting&date=2027-06-15",
+          "startDate": "2027-06-15",
+          "endDate": "2027-06-18",
+          "startLocal": null,
+          "endLocal": null,
+          "timeZone": "America/Los_Angeles",
+          "allDay": null,
+          "location": {
+            "venue": "Moscone Center",
+            "locality": "San Francisco",
+            "region": "CA",
+            "country": "US",
+            "basis": "source convention calendar"
+          },
+          "marketCity": "San Francisco",
+          "sourceGroups": [
+            "San Francisco"
+          ],
+          "categoryTags": [],
+          "validationStatus": "extracted-candidate",
+          "warnings": [],
+          "evidence": {
+            "url": "https://portal.sftravel.com/calendar_public/home_sfdc.cfm",
+            "selector": "tr.resultlist",
+            "capture": "/Users/pshorey/git/events/.artifacts/framework/runs/62111d50-2381-4b1f-a425-d2d20a05f5c8/93a0c435-45ed-45df-8eca-38f16b335cd2/page-148.html",
+            "contentHash": "a62436259640b1d6350645540033d11f4cd4c1a0b3965e29c0d75d6cd22fe863"
+          },
+          "raw": {
+            "rowText": "2027 ISSCR Annual International Scientific Meeting International Society for Stem Cell Research Jun 15, 2027 - Jun 18, 2027 Venue Type: Moscone Center"
+          }
+        }
+      ]
+    },
+    {
+      "collectionId": "url-079",
+      "sourceUrl": "https://www.orlando.gov/Events",
+      "group": "Orlando",
+      "marketCity": "Orlando",
+      "status": "partial",
+      "complete": false,
+      "runId": "b26715c0-7f0c-40f9-b266-95a40ae4dd2e",
+      "build": "0d44e9b085295c1fc53269e9e63eb87e394fa30fd2e3a5702a2a71f959336035",
+      "availableObservations": 10,
+      "events": [
+        {
+          "schemaVersion": 2,
+          "collectionId": "url-079",
+          "sourceId": "orlando.gov",
+          "sourceRecordId": "https://www.orlando.gov/Events/Call-to-Artists-Birds-in-Focus-District-3|2026-10-17|",
+          "title": "Call to Artists: Birds in Focus - District 3",
+          "url": "https://www.orlando.gov/Events/Call-to-Artists-Birds-in-Focus-District-3",
+          "startDate": "2026-10-17",
+          "endDate": "2026-10-17",
+          "startLocal": null,
+          "endLocal": null,
+          "timeZone": "America/New_York",
+          "allDay": null,
+          "location": null,
+          "marketCity": "Orlando",
+          "sourceGroups": [
+            "Orlando"
+          ],
+          "categoryTags": [
+            {
+              "label": "Music & arts",
+              "basis": "upstream category"
+            }
+          ],
+          "validationStatus": "extracted-candidate",
+          "warnings": [
+            "listing_date_only_detail_duration_unverified"
+          ],
+          "evidence": {
+            "url": "https://www.orlando.gov/Events",
+            "selector": ".list-item-container .list-item-block-date",
+            "capture": "/Users/pshorey/git/events/.artifacts/framework/runs/b26715c0-7f0c-40f9-b266-95a40ae4dd2e/c4b4f25b-66a8-4710-bc45-0f627e89a5f2/page-149.html",
+            "contentHash": "ff228841355227ec1d61a024368883a0166ff3eea611039ae1fe08d0545a7d84"
+          },
+          "raw": {
+            "date": "17 Oct 2026"
+          }
+        },
+        {
+          "schemaVersion": 2,
+          "collectionId": "url-079",
+          "sourceId": "orlando.gov",
+          "sourceRecordId": "https://www.orlando.gov/Events/Call-to-Artists-Monumental-Public-Art-Sculpture|2026-10-17|",
+          "title": "Call to Artists: Monumental Public Art Sculpture",
+          "url": "https://www.orlando.gov/Events/Call-to-Artists-Monumental-Public-Art-Sculpture",
+          "startDate": "2026-10-17",
+          "endDate": "2026-10-17",
+          "startLocal": null,
+          "endLocal": null,
+          "timeZone": "America/New_York",
+          "allDay": null,
+          "location": null,
+          "marketCity": "Orlando",
+          "sourceGroups": [
+            "Orlando"
+          ],
+          "categoryTags": [
+            {
+              "label": "Music & arts",
+              "basis": "upstream category"
+            }
+          ],
+          "validationStatus": "extracted-candidate",
+          "warnings": [
+            "listing_date_only_detail_duration_unverified"
+          ],
+          "evidence": {
+            "url": "https://www.orlando.gov/Events",
+            "selector": ".list-item-container .list-item-block-date",
+            "capture": "/Users/pshorey/git/events/.artifacts/framework/runs/b26715c0-7f0c-40f9-b266-95a40ae4dd2e/c4b4f25b-66a8-4710-bc45-0f627e89a5f2/page-149.html",
+            "contentHash": "ff228841355227ec1d61a024368883a0166ff3eea611039ae1fe08d0545a7d84"
+          },
+          "raw": {
+            "date": "17 Oct 2026"
+          }
+        }
+      ]
+    },
+    {
+      "collectionId": "url-080",
+      "sourceUrl": "https://www.downtownorlando.com/Fun/Events",
+      "group": "Orlando",
+      "marketCity": "Orlando",
+      "status": "partial",
+      "complete": false,
+      "runId": "e033b247-cca2-41d7-b751-22c9797abb85",
+      "build": "0d44e9b085295c1fc53269e9e63eb87e394fa30fd2e3a5702a2a71f959336035",
+      "availableObservations": 10,
+      "events": [
+        {
+          "schemaVersion": 2,
+          "collectionId": "url-080",
+          "sourceId": "downtownorlando.com",
+          "sourceRecordId": "https://www.downtownorlando.com/Fun/Events/By-Heart-and-By-Hand|2026-10-17|",
+          "title": "By Heart and By Hand",
+          "url": "https://www.downtownorlando.com/Fun/Events/By-Heart-and-By-Hand",
+          "startDate": "2026-10-17",
+          "endDate": "2026-10-17",
+          "startLocal": null,
+          "endLocal": null,
+          "timeZone": "America/New_York",
+          "allDay": null,
+          "location": null,
+          "marketCity": "Orlando",
+          "sourceGroups": [
+            "Orlando"
+          ],
+          "categoryTags": [
+            {
+              "label": "Downtown Events",
+              "basis": "upstream category"
+            }
+          ],
+          "validationStatus": "extracted-candidate",
+          "warnings": [
+            "listing_date_only_detail_duration_unverified"
+          ],
+          "evidence": {
+            "url": "https://www.downtownorlando.com/Fun/Events",
+            "selector": ".list-item-container .list-item-block-date",
+            "capture": "/Users/pshorey/git/events/.artifacts/framework/runs/e033b247-cca2-41d7-b751-22c9797abb85/81e7db58-4c5a-4951-bb75-3a5960a0962c/page-150.html",
+            "contentHash": "ce1843d6e60905d174b9f91525b1be34535d67e6da7b53cb2034b48540bb4e53"
+          },
+          "raw": {
+            "date": "17 Oct 2026"
+          }
+        },
+        {
+          "schemaVersion": 2,
+          "collectionId": "url-080",
+          "sourceId": "downtownorlando.com",
+          "sourceRecordId": "https://www.downtownorlando.com/Fun/Events/Come-Out-With-Pride-2026|2026-10-17|",
+          "title": "Come Out With Pride",
+          "url": "https://www.downtownorlando.com/Fun/Events/Come-Out-With-Pride-2026",
+          "startDate": "2026-10-17",
+          "endDate": "2026-10-17",
+          "startLocal": null,
+          "endLocal": null,
+          "timeZone": "America/New_York",
+          "allDay": null,
+          "location": null,
+          "marketCity": "Orlando",
+          "sourceGroups": [
+            "Orlando"
+          ],
+          "categoryTags": [
+            {
+              "label": "Downtown Events",
+              "basis": "upstream category"
+            }
+          ],
+          "validationStatus": "extracted-candidate",
+          "warnings": [
+            "listing_date_only_detail_duration_unverified"
+          ],
+          "evidence": {
+            "url": "https://www.downtownorlando.com/Fun/Events",
+            "selector": ".list-item-container .list-item-block-date",
+            "capture": "/Users/pshorey/git/events/.artifacts/framework/runs/e033b247-cca2-41d7-b751-22c9797abb85/81e7db58-4c5a-4951-bb75-3a5960a0962c/page-150.html",
+            "contentHash": "ce1843d6e60905d174b9f91525b1be34535d67e6da7b53cb2034b48540bb4e53"
+          },
+          "raw": {
+            "date": "17 Oct 2026"
+          }
+        }
+      ]
+    },
+    {
+      "collectionId": "url-082",
+      "sourceUrl": "https://www.visitsandiego.com/calendar",
+      "group": "San Diego",
+      "marketCity": "San Diego",
+      "status": "partial",
+      "complete": false,
+      "runId": "4c70d342-e9c2-43cd-afb8-5d2b9d37a7cd",
+      "build": "0d44e9b085295c1fc53269e9e63eb87e394fa30fd2e3a5702a2a71f959336035",
+      "availableObservations": 60,
+      "events": [
+        {
+          "schemaVersion": 2,
+          "collectionId": "url-082",
+          "sourceId": "visitsandiego.com",
+          "sourceRecordId": "https://www.visitsandiego.com/calendar/2209233-american-society-of-anesthesiologists-annual-meeting|2026-10-16|",
+          "title": "AMERICAN SOCIETY OF ANESTHESIOLOGISTS ANNUAL MEETING",
+          "url": "https://www.visitsandiego.com/calendar/2209233-american-society-of-anesthesiologists-annual-meeting",
+          "startDate": "2026-10-16",
+          "endDate": "2026-10-20",
+          "startLocal": null,
+          "endLocal": null,
+          "timeZone": "America/Los_Angeles",
+          "allDay": null,
+          "location": {
+            "venue": "San Diego Convention Center",
+            "locality": "San Diego",
+            "region": "CA",
+            "country": "US",
+            "basis": "single-venue calendar"
+          },
+          "marketCity": "San Diego",
+          "sourceGroups": [
+            "San Diego"
+          ],
+          "categoryTags": [
+            {
+              "label": "Convention with Trade Show",
+              "basis": "upstream event type"
+            }
+          ],
+          "validationStatus": "extracted-candidate",
+          "warnings": [],
+          "evidence": {
+            "url": "https://www.visitsandiego.com/calendar",
+            "selector": ".event-row .row.data span",
+            "capture": "/Users/pshorey/git/events/.artifacts/framework/runs/4c70d342-e9c2-43cd-afb8-5d2b9d37a7cd/ff6ca15d-48ec-4428-a1d8-a2558a9a9a7a/page-151.html",
+            "contentHash": "eaf47ad046f4973a3cc12644e6faa6d723260301a995d499a69b9a8399be3a8d"
+          },
+          "raw": {
+            "tableValues": [
+              "AMERICAN SOCIETY OF ANESTHESIOLOGISTS ANNUAL MEETING",
+              "Convention with Trade Show",
+              "10/16/2026",
+              "10/20/2026",
+              "16,000"
+            ]
+          }
+        },
+        {
+          "schemaVersion": 2,
+          "collectionId": "url-082",
+          "sourceId": "visitsandiego.com",
+          "sourceRecordId": "https://www.visitsandiego.com/calendar/2209234-crf-2026-transcatheter-cardiovascular-therapeutics|2026-10-31|",
+          "title": "CRF 2026 TRANSCATHETER CARDIOVASCULAR THERAPEUTICS",
+          "url": "https://www.visitsandiego.com/calendar/2209234-crf-2026-transcatheter-cardiovascular-therapeutics",
+          "startDate": "2026-10-31",
+          "endDate": "2026-11-03",
+          "startLocal": null,
+          "endLocal": null,
+          "timeZone": "America/Los_Angeles",
+          "allDay": null,
+          "location": {
+            "venue": "San Diego Convention Center",
+            "locality": "San Diego",
+            "region": "CA",
+            "country": "US",
+            "basis": "single-venue calendar"
+          },
+          "marketCity": "San Diego",
+          "sourceGroups": [
+            "San Diego"
+          ],
+          "categoryTags": [
+            {
+              "label": "Convention with Trade Show",
+              "basis": "upstream event type"
+            }
+          ],
+          "validationStatus": "extracted-candidate",
+          "warnings": [],
+          "evidence": {
+            "url": "https://www.visitsandiego.com/calendar",
+            "selector": ".event-row .row.data span",
+            "capture": "/Users/pshorey/git/events/.artifacts/framework/runs/4c70d342-e9c2-43cd-afb8-5d2b9d37a7cd/ff6ca15d-48ec-4428-a1d8-a2558a9a9a7a/page-151.html",
+            "contentHash": "eaf47ad046f4973a3cc12644e6faa6d723260301a995d499a69b9a8399be3a8d"
+          },
+          "raw": {
+            "tableValues": [
+              "CRF 2026 TRANSCATHETER CARDIOVASCULAR THERAPEUTICS",
+              "Convention with Trade Show",
+              "10/31/2026",
+              "11/03/2026",
+              "11,000"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "collectionId": "url-085",
+      "sourceUrl": "https://www.nycgovparks.org/events/festivals/ajax/aggregate/p1",
+      "group": "New York City",
+      "marketCity": "New York City",
+      "status": "partial",
+      "complete": false,
+      "runId": "61e8cfb3-add1-463a-9f1a-64317f2392df",
+      "build": "0d44e9b085295c1fc53269e9e63eb87e394fa30fd2e3a5702a2a71f959336035",
+      "availableObservations": 39,
+      "events": [
+        {
+          "schemaVersion": 2,
+          "collectionId": "url-085",
+          "sourceId": "nycgovparks.org",
+          "sourceRecordId": "https://www.nycgovparks.org/events/2026/10/17/brooklyn-bridge-parks-harvest-festival|2026-10-17|2026-10-17T11:00:00-04:00",
+          "title": "Brooklyn Bridge Park's Harvest Festival",
+          "url": "https://www.nycgovparks.org/events/2026/10/17/brooklyn-bridge-parks-harvest-festival",
+          "startDate": "2026-10-17",
+          "endDate": "2026-10-17",
+          "startLocal": "2026-10-17T11:00:00-04:00",
+          "endLocal": "2026-10-17T15:00:00-04:00",
+          "timeZone": "America/New_York",
+          "allDay": null,
+          "location": {
+            "locality": "Brooklyn",
+            "venue": "at Brooklyn Bridge Park, Brooklyn",
+            "basis": "microdata"
+          },
+          "marketCity": "New York City",
+          "sourceGroups": [
+            "New York City"
+          ],
+          "categoryTags": [],
+          "validationStatus": "extracted-candidate",
+          "warnings": [],
+          "evidence": {
+            "url": "https://www.nycgovparks.org/events/festivals/ajax/aggregate/p1",
+            "selector": "[itemtype*=schema.org/Event]",
+            "capture": "/Users/pshorey/git/events/.artifacts/framework/runs/61e8cfb3-add1-463a-9f1a-64317f2392df/7504539a-a44d-4070-b180-e36b9230d64b/page-143.html",
+            "contentHash": "1c22f240b4776b61c9ea7db36b9af7d42a6144a6bf68acaffdd01e4a8dd01724"
+          },
+          "raw": {
+            "title": "Brooklyn Bridge Park's Harvest Festival",
+            "url": "/events/2026/10/17/brooklyn-bridge-parks-harvest-festival",
+            "startDate": "2026-10-17T11:00:00-04:00",
+            "endDate": "2026-10-17T15:00:00-04:00",
+            "location": {
+              "locality": "Brooklyn",
+              "venue": "at Brooklyn Bridge Park, Brooklyn",
+              "basis": "microdata"
+            }
+          }
+        },
+        {
+          "schemaVersion": 2,
+          "collectionId": "url-085",
+          "sourceId": "nycgovparks.org",
+          "sourceRecordId": "https://www.nycgovparks.org/events/2026/10/17/faber-park-fright-fest|2026-10-17|2026-10-17T12:00:00-04:00",
+          "title": "Faber Park Fright Fest",
+          "url": "https://www.nycgovparks.org/events/2026/10/17/faber-park-fright-fest",
+          "startDate": "2026-10-17",
+          "endDate": "2026-10-17",
+          "startLocal": "2026-10-17T12:00:00-04:00",
+          "endLocal": "2026-10-17T15:00:00-04:00",
+          "timeZone": "America/New_York",
+          "allDay": null,
+          "location": {
+            "locality": "Staten Island",
+            "venue": "at Outdoors at Faber Park Recreation Center (in Faber Park Recreation Center), Staten Island",
+            "basis": "microdata"
+          },
+          "marketCity": "New York City",
+          "sourceGroups": [
+            "New York City"
+          ],
+          "categoryTags": [],
+          "validationStatus": "extracted-candidate",
+          "warnings": [],
+          "evidence": {
+            "url": "https://www.nycgovparks.org/events/festivals/ajax/aggregate/p1",
+            "selector": "[itemtype*=schema.org/Event]",
+            "capture": "/Users/pshorey/git/events/.artifacts/framework/runs/61e8cfb3-add1-463a-9f1a-64317f2392df/7504539a-a44d-4070-b180-e36b9230d64b/page-143.html",
+            "contentHash": "1c22f240b4776b61c9ea7db36b9af7d42a6144a6bf68acaffdd01e4a8dd01724"
+          },
+          "raw": {
+            "title": "Faber Park Fright Fest",
+            "url": "/events/2026/10/17/faber-park-fright-fest",
+            "startDate": "2026-10-17T12:00:00-04:00",
+            "endDate": "2026-10-17T15:00:00-04:00",
+            "location": {
+              "locality": "Staten Island",
+              "venue": "at Outdoors at Faber Park Recreation Center (in Faber Park Recreation Center), Staten Island",
+              "basis": "microdata"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

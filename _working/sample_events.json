@@ -1,0 +1,2905 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-10-17T03:11:21.787Z",
+  "kind": "bounded live samples; not a canonical database",
+  "count": 53,
+  "indexingNotes": "Market cities and source-level category hints are discovery metadata; physical localities and upstream categories remain separately attributed.",
+  "indexes": {
+    "cityMarkets": {
+      "Los Angeles": [
+        "la-convention-center//events/detail/american-academy-of-otolaryngology-2026-aao-oto-expo",
+        "la-convention-center//events/detail/2026-nmsdc-annual-conference-exchange",
+        "la-convention-center//events/detail/la-comic-con-2026",
+        "la-convention-center//events/detail/build-expo-2026",
+        "la-convention-center//events/detail/tonights-conversation-live-uncut-los-angeles-1",
+        "la-convention-center//events/detail/st-johns-holiday-party",
+        "la-convention-center//events/detail/spirit-royale-cheer-marquee-los-angeles",
+        "la-convention-center//events/detail/copa-toque-festival-2026"
+      ],
+      "Boston": [
+        "boston-gov/node-16045056:2026-10-17:08:00:00",
+        "boston-gov/node-16629681:2026-10-17:10:00:00",
+        "boston-gov/node-16576656:2026-10-17:10:00:00",
+        "boston-gov/node-16576221:2026-10-17:10:00:00",
+        "boston-gov/node-16576651:2026-10-17:12:00:00",
+        "boston-gov/node-16576226:2026-10-17:12:00:00",
+        "boston-gov/node-16603571:2026-10-17:14:00:00",
+        "boston-gov/node-16626336:2026-10-18:10:30:00",
+        "boston-gov/node-16611831:2026-10-18:14:00:00",
+        "boston-gov/node-16601256:2026-10-19:09:00:00",
+        "boston-gov/node-16626196:2026-10-19:10:00:00",
+        "boston-gov/node-16627126:2026-10-19:14:00:00",
+        "boston-gov/node-16629916:2026-10-19:18:00:00",
+        "boston-gov/node-16625776:2026-10-19:18:00:00",
+        "boston-gov/node-16629321:2026-10-19:18:00:00",
+        "boston-gov/node-16626201:2026-10-20:10:00:00",
+        "boston-gov/node-16275546:2026-10-20:15:30:00",
+        "boston-gov/node-16571771:2026-10-20:16:30:00",
+        "boston-gov/node-16629931:2026-10-20:18:00:00",
+        "boston-gov/node-16629661:2026-10-20:18:00:00",
+        "boston-gov/node-16627201:2026-10-20:18:30:00",
+        "boston-gov/node-16629666:2026-10-20:19:00:00",
+        "boston-gov/node-16601256:2026-10-21:09:00:00",
+        "boston-gov/node-16499221:2026-10-21:10:00:00",
+        "boston-gov/node-16632846:2026-10-21:11:00:00",
+        "boston-gov/node-17706:2026-10-21:12:00:00",
+        "boston-gov/node-16604671:2026-10-21:12:00:00",
+        "boston-gov/node-16389106:2026-10-21:13:30:00",
+        "boston-gov/node-16601811:2026-10-21:15:30:00",
+        "boston-gov/node-16633281:2026-10-21:18:00:00",
+        "boston-gov/node-16629751:2026-10-21:18:00:00",
+        "boston-gov/node-16629816:2026-10-21:19:00:00",
+        "boston-gov/node-16629746:2026-10-21:19:00:00",
+        "boston-gov/node-16603576:2026-10-22:00:00:00",
+        "boston-gov/node-16628706:2026-10-22:10:00:00"
+      ],
+      "Las Vegas": [
+        "network-vegas/57848",
+        "network-vegas/54840",
+        "network-vegas/57307",
+        "network-vegas/56976",
+        "network-vegas/58528",
+        "network-vegas/57667",
+        "network-vegas/58529",
+        "network-vegas/57226",
+        "network-vegas/58816",
+        "network-vegas/57669"
+      ]
+    },
+    "sourceLocalities": {
+      "Los Angeles": [
+        "la-convention-center//events/detail/american-academy-of-otolaryngology-2026-aao-oto-expo",
+        "la-convention-center//events/detail/2026-nmsdc-annual-conference-exchange",
+        "la-convention-center//events/detail/la-comic-con-2026",
+        "la-convention-center//events/detail/build-expo-2026",
+        "la-convention-center//events/detail/tonights-conversation-live-uncut-los-angeles-1",
+        "la-convention-center//events/detail/st-johns-holiday-party",
+        "la-convention-center//events/detail/spirit-royale-cheer-marquee-los-angeles",
+        "la-convention-center//events/detail/copa-toque-festival-2026"
+      ],
+      "Dorchester": [
+        "boston-gov/node-16045056:2026-10-17:08:00:00",
+        "boston-gov/node-16576656:2026-10-17:10:00:00"
+      ],
+      "Mattapan": [
+        "boston-gov/node-16629681:2026-10-17:10:00:00"
+      ],
+      "Boston": [
+        "boston-gov/node-16576221:2026-10-17:10:00:00",
+        "boston-gov/node-16576226:2026-10-17:12:00:00",
+        "boston-gov/node-16603571:2026-10-17:14:00:00",
+        "boston-gov/node-16611831:2026-10-18:14:00:00",
+        "boston-gov/node-16627126:2026-10-19:14:00:00",
+        "boston-gov/node-16275546:2026-10-20:15:30:00",
+        "boston-gov/node-16571771:2026-10-20:16:30:00",
+        "boston-gov/node-16627201:2026-10-20:18:30:00",
+        "boston-gov/node-16499221:2026-10-21:10:00:00",
+        "boston-gov/node-17706:2026-10-21:12:00:00",
+        "boston-gov/node-16604671:2026-10-21:12:00:00",
+        "boston-gov/node-16601811:2026-10-21:15:30:00",
+        "boston-gov/node-16603576:2026-10-22:00:00:00",
+        "boston-gov/node-16628706:2026-10-22:10:00:00"
+      ],
+      "Jamaica Plain": [
+        "boston-gov/node-16576651:2026-10-17:12:00:00"
+      ],
+      "Roslindale": [
+        "boston-gov/node-16626336:2026-10-18:10:30:00"
+      ],
+      "Roxbury": [
+        "boston-gov/node-16601256:2026-10-19:09:00:00",
+        "boston-gov/node-16601256:2026-10-21:09:00:00",
+        "boston-gov/node-16389106:2026-10-21:13:30:00"
+      ],
+      "Brighton": [
+        "boston-gov/node-16626196:2026-10-19:10:00:00"
+      ],
+      "VIA ZOOM": [
+        "boston-gov/node-16629916:2026-10-19:18:00:00",
+        "boston-gov/node-16625776:2026-10-19:18:00:00",
+        "boston-gov/node-16629321:2026-10-19:18:00:00",
+        "boston-gov/node-16629931:2026-10-20:18:00:00",
+        "boston-gov/node-16629661:2026-10-20:18:00:00",
+        "boston-gov/node-16629666:2026-10-20:19:00:00",
+        "boston-gov/node-16633281:2026-10-21:18:00:00",
+        "boston-gov/node-16629751:2026-10-21:18:00:00",
+        "boston-gov/node-16629816:2026-10-21:19:00:00",
+        "boston-gov/node-16629746:2026-10-21:19:00:00"
+      ],
+      "East Boston": [
+        "boston-gov/node-16626201:2026-10-20:10:00:00"
+      ],
+      "Virtual": [
+        "boston-gov/node-16632846:2026-10-21:11:00:00"
+      ],
+      "Las Vegas": [
+        "network-vegas/57848",
+        "network-vegas/56976",
+        "network-vegas/58528",
+        "network-vegas/57667",
+        "network-vegas/57226"
+      ]
+    },
+    "categoryLabels": {
+      "convention-center-events": [
+        "la-convention-center//events/detail/american-academy-of-otolaryngology-2026-aao-oto-expo",
+        "la-convention-center//events/detail/2026-nmsdc-annual-conference-exchange",
+        "la-convention-center//events/detail/la-comic-con-2026",
+        "la-convention-center//events/detail/build-expo-2026",
+        "la-convention-center//events/detail/tonights-conversation-live-uncut-los-angeles-1",
+        "la-convention-center//events/detail/st-johns-holiday-party",
+        "la-convention-center//events/detail/spirit-royale-cheer-marquee-los-angeles",
+        "la-convention-center//events/detail/copa-toque-festival-2026"
+      ],
+      "municipal-events": [
+        "boston-gov/node-16045056:2026-10-17:08:00:00",
+        "boston-gov/node-16629681:2026-10-17:10:00:00",
+        "boston-gov/node-16576656:2026-10-17:10:00:00",
+        "boston-gov/node-16576221:2026-10-17:10:00:00",
+        "boston-gov/node-16576651:2026-10-17:12:00:00",
+        "boston-gov/node-16576226:2026-10-17:12:00:00",
+        "boston-gov/node-16603571:2026-10-17:14:00:00",
+        "boston-gov/node-16626336:2026-10-18:10:30:00",
+        "boston-gov/node-16611831:2026-10-18:14:00:00",
+        "boston-gov/node-16601256:2026-10-19:09:00:00",
+        "boston-gov/node-16626196:2026-10-19:10:00:00",
+        "boston-gov/node-16627126:2026-10-19:14:00:00",
+        "boston-gov/node-16629916:2026-10-19:18:00:00",
+        "boston-gov/node-16625776:2026-10-19:18:00:00",
+        "boston-gov/node-16629321:2026-10-19:18:00:00",
+        "boston-gov/node-16626201:2026-10-20:10:00:00",
+        "boston-gov/node-16275546:2026-10-20:15:30:00",
+        "boston-gov/node-16571771:2026-10-20:16:30:00",
+        "boston-gov/node-16629931:2026-10-20:18:00:00",
+        "boston-gov/node-16629661:2026-10-20:18:00:00",
+        "boston-gov/node-16627201:2026-10-20:18:30:00",
+        "boston-gov/node-16629666:2026-10-20:19:00:00",
+        "boston-gov/node-16601256:2026-10-21:09:00:00",
+        "boston-gov/node-16499221:2026-10-21:10:00:00",
+        "boston-gov/node-16632846:2026-10-21:11:00:00",
+        "boston-gov/node-17706:2026-10-21:12:00:00",
+        "boston-gov/node-16604671:2026-10-21:12:00:00",
+        "boston-gov/node-16389106:2026-10-21:13:30:00",
+        "boston-gov/node-16601811:2026-10-21:15:30:00",
+        "boston-gov/node-16633281:2026-10-21:18:00:00",
+        "boston-gov/node-16629751:2026-10-21:18:00:00",
+        "boston-gov/node-16629816:2026-10-21:19:00:00",
+        "boston-gov/node-16629746:2026-10-21:19:00:00",
+        "boston-gov/node-16603576:2026-10-22:00:00:00",
+        "boston-gov/node-16628706:2026-10-22:10:00:00"
+      ],
+      "Fundraiser/ Benefit": [
+        "network-vegas/57848",
+        "network-vegas/57226"
+      ],
+      "Community": [
+        "network-vegas/57848",
+        "network-vegas/57307"
+      ],
+      "Las Vegas Business": [
+        "network-vegas/57848",
+        "network-vegas/57307",
+        "network-vegas/56976",
+        "network-vegas/58528",
+        "network-vegas/58529"
+      ],
+      "Convention": [
+        "network-vegas/54840",
+        "network-vegas/56976",
+        "network-vegas/57667",
+        "network-vegas/57669"
+      ],
+      "Professional Association": [
+        "network-vegas/54840",
+        "network-vegas/56976",
+        "network-vegas/57226",
+        "network-vegas/58816"
+      ],
+      "Legal, Financial & Government": [
+        "network-vegas/54840",
+        "network-vegas/56976",
+        "network-vegas/57226"
+      ],
+      "Networking": [
+        "network-vegas/57307",
+        "network-vegas/58528",
+        "network-vegas/58529",
+        "network-vegas/58816"
+      ],
+      "Chamber": [
+        "network-vegas/57307"
+      ],
+      "Featured": [
+        "network-vegas/56976"
+      ],
+      "Education": [
+        "network-vegas/56976",
+        "network-vegas/58529",
+        "network-vegas/58816"
+      ],
+      "Company": [
+        "network-vegas/58528",
+        "network-vegas/57667",
+        "network-vegas/57669"
+      ],
+      "Health & Wellness": [
+        "network-vegas/57667",
+        "network-vegas/57226"
+      ],
+      "Government & Education": [
+        "network-vegas/58529"
+      ],
+      "Real Estate & Construction": [
+        "network-vegas/58529",
+        "network-vegas/58816"
+      ],
+      "Hospitality": [
+        "network-vegas/57669"
+      ]
+    }
+  },
+  "events": [
+    {
+      "sourceId": "la-convention-center",
+      "sourceRecordId": "/events/detail/american-academy-of-otolaryngology-2026-aao-oto-expo",
+      "title": "AAO-HNSF 2026 Annual Meeting & OTO EXPO",
+      "url": "https://www.laconventioncenter.com/events/detail/american-academy-of-otolaryngology-2026-aao-oto-expo",
+      "startDate": "2026-10-17",
+      "endDate": "2026-10-20",
+      "startLocal": null,
+      "endLocal": null,
+      "timeZone": "America/Los_Angeles",
+      "allDay": null,
+      "location": {
+        "venue": "Los Angeles Convention Center",
+        "locality": "Los Angeles",
+        "region": "CA",
+        "country": "US",
+        "basis": "single-venue source"
+      },
+      "marketCity": "Los Angeles",
+      "sourceGroups": [
+        "Los Angeles"
+      ],
+      "categoryTags": [
+        {
+          "label": "convention-center-events",
+          "basis": "source-level hint"
+        }
+      ],
+      "raw": {
+        "date": "Oct 17 - 20, 2026"
+      },
+      "evidence": {
+        "selector": ".eventItem h3.title a; .eventItem .date",
+        "capture": "/Users/pshorey/git/events/.artifacts/runs/2026-10-17T03-02-18-913Z-la-convention-center-5f4ff816/calendar.html"
+      },
+      "warnings": [],
+      "sampleKey": "la-convention-center//events/detail/american-academy-of-otolaryngology-2026-aao-oto-expo",
+      "runId": "2026-10-17T03-02-18-913Z-la-convention-center-5f4ff816",
+      "collectedAt": "2026-10-17T03:02:19.978Z",
+      "sourceCompletenessVerified": false
+    },
+    {
+      "sourceId": "la-convention-center",
+      "sourceRecordId": "/events/detail/2026-nmsdc-annual-conference-exchange",
+      "title": "2026 NMSDC Annual Conference & Exchange",
+      "url": "https://www.laconventioncenter.com/events/detail/2026-nmsdc-annual-conference-exchange",
+      "startDate": "2026-10-25",
+      "endDate": "2026-10-28",
+      "startLocal": null,
+      "endLocal": null,
+      "timeZone": "America/Los_Angeles",
+      "allDay": null,
+      "location": {
+        "venue": "Los Angeles Convention Center",
+        "locality": "Los Angeles",
+        "region": "CA",
+        "country": "US",
+        "basis": "single-venue source"
+      },
+      "marketCity": "Los Angeles",
+      "sourceGroups": [
+        "Los Angeles"
+      ],
+      "categoryTags": [
+        {
+          "label": "convention-center-events",
+          "basis": "source-level hint"
+        }
+      ],
+      "raw": {
+        "date": "Oct 25 - 28, 2026"
+      },
+      "evidence": {
+        "selector": ".eventItem h3.title a; .eventItem .date",
+        "capture": "/Users/pshorey/git/events/.artifacts/runs/2026-10-17T03-02-18-913Z-la-convention-center-5f4ff816/calendar.html"
+      },
+      "warnings": [],
+      "sampleKey": "la-convention-center//events/detail/2026-nmsdc-annual-conference-exchange",
+      "runId": "2026-10-17T03-02-18-913Z-la-convention-center-5f4ff816",
+      "collectedAt": "2026-10-17T03:02:19.978Z",
+      "sourceCompletenessVerified": false
+    },
+    {
+      "sourceId": "la-convention-center",
+      "sourceRecordId": "/events/detail/la-comic-con-2026",
+      "title": "L.A. Comic Con 2026",
+      "url": "https://www.laconventioncenter.com/events/detail/la-comic-con-2026",
+      "startDate": "2026-10-30",
+      "endDate": "2026-11-01",
+      "startLocal": null,
+      "endLocal": null,
+      "timeZone": "America/Los_Angeles",
+      "allDay": null,
+      "location": {
+        "venue": "Los Angeles Convention Center",
+        "locality": "Los Angeles",
+        "region": "CA",
+        "country": "US",
+        "basis": "single-venue source"
+      },
+      "marketCity": "Los Angeles",
+      "sourceGroups": [
+        "Los Angeles"
+      ],
+      "categoryTags": [
+        {
+          "label": "convention-center-events",
+          "basis": "source-level hint"
+        }
+      ],
+      "raw": {
+        "date": "Oct 30 - Nov 1, 2026"
+      },
+      "evidence": {
+        "selector": ".eventItem h3.title a; .eventItem .date",
+        "capture": "/Users/pshorey/git/events/.artifacts/runs/2026-10-17T03-02-18-913Z-la-convention-center-5f4ff816/calendar.html"
+      },
+      "warnings": [],
+      "sampleKey": "la-convention-center//events/detail/la-comic-con-2026",
+      "runId": "2026-10-17T03-02-18-913Z-la-convention-center-5f4ff816",
+      "collectedAt": "2026-10-17T03:02:19.978Z",
+      "sourceCompletenessVerified": false
+    },
+    {
+      "sourceId": "la-convention-center",
+      "sourceRecordId": "/events/detail/build-expo-2026",
+      "title": "Build Expo 2026",
+      "url": "https://www.laconventioncenter.com/events/detail/build-expo-2026",
+      "startDate": "2026-11-04",
+      "endDate": "2026-11-05",
+      "startLocal": null,
+      "endLocal": null,
+      "timeZone": "America/Los_Angeles",
+      "allDay": null,
+      "location": {
+        "venue": "Los Angeles Convention Center",
+        "locality": "Los Angeles",
+        "region": "CA",
+        "country": "US",
+        "basis": "single-venue source"
+      },
+      "marketCity": "Los Angeles",
+      "sourceGroups": [
+        "Los Angeles"
+      ],
+      "categoryTags": [
+        {
+          "label": "convention-center-events",
+          "basis": "source-level hint"
+        }
+      ],
+      "raw": {
+        "date": "Nov 4 - 5, 2026"
+      },
+      "evidence": {
+        "selector": ".eventItem h3.title a; .eventItem .date",
+        "capture": "/Users/pshorey/git/events/.artifacts/runs/2026-10-17T03-02-18-913Z-la-convention-center-5f4ff816/calendar.html"
+      },
+      "warnings": [],
+      "sampleKey": "la-convention-center//events/detail/build-expo-2026",
+      "runId": "2026-10-17T03-02-18-913Z-la-convention-center-5f4ff816",
+      "collectedAt": "2026-10-17T03:02:19.978Z",
+      "sourceCompletenessVerified": false
+    },
+    {
+      "sourceId": "la-convention-center",
+      "sourceRecordId": "/events/detail/tonights-conversation-live-uncut-los-angeles-1",
+      "title": "Tonight's Conversation: LIVE & UNCUT Los Angeles",
+      "url": "https://www.laconventioncenter.com/events/detail/tonights-conversation-live-uncut-los-angeles-1",
+      "startDate": "2026-12-05",
+      "endDate": "2026-12-05",
+      "startLocal": null,
+      "endLocal": null,
+      "timeZone": "America/Los_Angeles",
+      "allDay": null,
+      "location": {
+        "venue": "Los Angeles Convention Center",
+        "locality": "Los Angeles",
+        "region": "CA",
+        "country": "US",
+        "basis": "single-venue source"
+      },
+      "marketCity": "Los Angeles",
+      "sourceGroups": [
+        "Los Angeles"
+      ],
+      "categoryTags": [
+        {
+          "label": "convention-center-events",
+          "basis": "source-level hint"
+        }
+      ],
+      "raw": {
+        "date": "Dec 5, 2026"
+      },
+      "evidence": {
+        "selector": ".eventItem h3.title a; .eventItem .date",
+        "capture": "/Users/pshorey/git/events/.artifacts/runs/2026-10-17T03-02-18-913Z-la-convention-center-5f4ff816/calendar.html"
+      },
+      "warnings": [],
+      "sampleKey": "la-convention-center//events/detail/tonights-conversation-live-uncut-los-angeles-1",
+      "runId": "2026-10-17T03-02-18-913Z-la-convention-center-5f4ff816",
+      "collectedAt": "2026-10-17T03:02:19.978Z",
+      "sourceCompletenessVerified": false
+    },
+    {
+      "sourceId": "la-convention-center",
+      "sourceRecordId": "/events/detail/st-johns-holiday-party",
+      "title": "St. John's Holiday Party",
+      "url": "https://www.laconventioncenter.com/events/detail/st-johns-holiday-party",
+      "startDate": "2026-12-10",
+      "endDate": "2026-12-10",
+      "startLocal": null,
+      "endLocal": null,
+      "timeZone": "America/Los_Angeles",
+      "allDay": null,
+      "location": {
+        "venue": "Los Angeles Convention Center",
+        "locality": "Los Angeles",
+        "region": "CA",
+        "country": "US",
+        "basis": "single-venue source"
+      },
+      "marketCity": "Los Angeles",
+      "sourceGroups": [
+        "Los Angeles"
+      ],
+      "categoryTags": [
+        {
+          "label": "convention-center-events",
+          "basis": "source-level hint"
+        }
+      ],
+      "raw": {
+        "date": "Dec 10, 2026"
+      },
+      "evidence": {
+        "selector": ".eventItem h3.title a; .eventItem .date",
+        "capture": "/Users/pshorey/git/events/.artifacts/runs/2026-10-17T03-02-18-913Z-la-convention-center-5f4ff816/calendar.html"
+      },
+      "warnings": [],
+      "sampleKey": "la-convention-center//events/detail/st-johns-holiday-party",
+      "runId": "2026-10-17T03-02-18-913Z-la-convention-center-5f4ff816",
+      "collectedAt": "2026-10-17T03:02:19.978Z",
+      "sourceCompletenessVerified": false
+    },
+    {
+      "sourceId": "la-convention-center",
+      "sourceRecordId": "/events/detail/spirit-royale-cheer-marquee-los-angeles",
+      "title": "Spirit Royale Cheer: Marquee Championship Los Angeles",
+      "url": "https://www.laconventioncenter.com/events/detail/spirit-royale-cheer-marquee-los-angeles",
+      "startDate": "2026-12-12",
+      "endDate": "2026-12-13",
+      "startLocal": null,
+      "endLocal": null,
+      "timeZone": "America/Los_Angeles",
+      "allDay": null,
+      "location": {
+        "venue": "Los Angeles Convention Center",
+        "locality": "Los Angeles",
+        "region": "CA",
+        "country": "US",
+        "basis": "single-venue source"
+      },
+      "marketCity": "Los Angeles",
+      "sourceGroups": [
+        "Los Angeles"
+      ],
+      "categoryTags": [
+        {
+          "label": "convention-center-events",
+          "basis": "source-level hint"
+        }
+      ],
+      "raw": {
+        "date": "Dec 12 - 13, 2026"
+      },
+      "evidence": {
+        "selector": ".eventItem h3.title a; .eventItem .date",
+        "capture": "/Users/pshorey/git/events/.artifacts/runs/2026-10-17T03-02-18-913Z-la-convention-center-5f4ff816/calendar.html"
+      },
+      "warnings": [],
+      "sampleKey": "la-convention-center//events/detail/spirit-royale-cheer-marquee-los-angeles",
+      "runId": "2026-10-17T03-02-18-913Z-la-convention-center-5f4ff816",
+      "collectedAt": "2026-10-17T03:02:19.978Z",
+      "sourceCompletenessVerified": false
+    },
+    {
+      "sourceId": "la-convention-center",
+      "sourceRecordId": "/events/detail/copa-toque-festival-2026",
+      "title": "Copa Toque Futsal Festival",
+      "url": "https://www.laconventioncenter.com/events/detail/copa-toque-festival-2026",
+      "startDate": "2026-12-18",
+      "endDate": "2026-12-20",
+      "startLocal": null,
+      "endLocal": null,
+      "timeZone": "America/Los_Angeles",
+      "allDay": null,
+      "location": {
+        "venue": "Los Angeles Convention Center",
+        "locality": "Los Angeles",
+        "region": "CA",
+        "country": "US",
+        "basis": "single-venue source"
+      },
+      "marketCity": "Los Angeles",
+      "sourceGroups": [
+        "Los Angeles"
+      ],
+      "categoryTags": [
+        {
+          "label": "convention-center-events",
+          "basis": "source-level hint"
+        }
+      ],
+      "raw": {
+        "date": "Dec 18 - 20, 2026"
+      },
+      "evidence": {
+        "selector": ".eventItem h3.title a; .eventItem .date",
+        "capture": "/Users/pshorey/git/events/.artifacts/runs/2026-10-17T03-02-18-913Z-la-convention-center-5f4ff816/calendar.html"
+      },
+      "warnings": [],
+      "sampleKey": "la-convention-center//events/detail/copa-toque-festival-2026",
+      "runId": "2026-10-17T03-02-18-913Z-la-convention-center-5f4ff816",
+      "collectedAt": "2026-10-17T03:02:19.978Z",
+      "sourceCompletenessVerified": false
+    },
+    {
+      "sourceId": "boston-gov",
+      "sourceRecordId": "node-16045056:2026-10-17:08:00:00",
+      "title": "Parks Fitness: Walking Group with Brandy",
+      "url": "https://www.boston.gov/node/16045056",
+      "startDate": "2026-10-17",
+      "endDate": "2026-10-17",
+      "startLocal": "2026-10-17T08:00:00",
+      "endLocal": "2026-10-17T09:00:00",
+      "timeZone": "America/New_York",
+      "allDay": null,
+      "location": {
+        "venue": null,
+        "address": "Wiiliam J. Devine Golf Clubhouse 1 Circuit Drive",
+        "locality": "Dorchester",
+        "region": "MA",
+        "country": "United States",
+        "basis": "source address"
+      },
+      "marketCity": "Boston",
+      "sourceGroups": [
+        "Boston"
+      ],
+      "categoryTags": [
+        {
+          "label": "municipal-events",
+          "basis": "source-level hint"
+        }
+      ],
+      "raw": {
+        "date": "October 17, 2026",
+        "time": "8:00am-9:00am",
+        "nodeId": "node-16045056",
+        "price": "Price: FREE"
+      },
+      "evidence": {
+        "selector": "article.calendar-listing-wrapper + preceding h2.listing-group-title",
+        "capture": "/Users/pshorey/git/events/.artifacts/runs/2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0/page-1.html"
+      },
+      "warnings": [],
+      "sampleKey": "boston-gov/node-16045056:2026-10-17:08:00:00",
+      "runId": "2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0",
+      "collectedAt": "2026-10-17T03:10:19.792Z",
+      "sourceCompletenessVerified": false
+    },
+    {
+      "sourceId": "boston-gov",
+      "sourceRecordId": "node-16629681:2026-10-17:10:00:00",
+      "title": "MattaHAUNT Woods Discovery Day",
+      "url": "https://thetrustees.org/event/450255/",
+      "startDate": "2026-10-17",
+      "endDate": "2026-10-17",
+      "startLocal": "2026-10-17T10:00:00",
+      "endLocal": "2026-10-17T11:30:00",
+      "timeZone": "America/New_York",
+      "allDay": null,
+      "location": {
+        "venue": null,
+        "address": "Mattahunt Woods Urban Wilds 206 Colorado Street",
+        "locality": "Mattapan",
+        "region": null,
+        "country": "United States",
+        "basis": "source address"
+      },
+      "marketCity": "Boston",
+      "sourceGroups": [
+        "Boston"
+      ],
+      "categoryTags": [
+        {
+          "label": "municipal-events",
+          "basis": "source-level hint"
+        }
+      ],
+      "raw": {
+        "date": "October 17, 2026",
+        "time": "10:00am-11:30am",
+        "nodeId": "node-16629681",
+        "price": "Price: FREE"
+      },
+      "evidence": {
+        "selector": "article.calendar-listing-wrapper + preceding h2.listing-group-title",
+        "capture": "/Users/pshorey/git/events/.artifacts/runs/2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0/page-1.html"
+      },
+      "warnings": [],
+      "sampleKey": "boston-gov/node-16629681:2026-10-17:10:00:00",
+      "runId": "2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0",
+      "collectedAt": "2026-10-17T03:10:19.792Z",
+      "sourceCompletenessVerified": false
+    },
+    {
+      "sourceId": "boston-gov",
+      "sourceRecordId": "node-16576656:2026-10-17:10:00:00",
+      "title": "Parks Fitness: Yoga with Karma",
+      "url": "https://www.boston.gov/node/16576656",
+      "startDate": "2026-10-17",
+      "endDate": "2026-10-17",
+      "startLocal": "2026-10-17T10:00:00",
+      "endLocal": "2026-10-17T11:00:00",
+      "timeZone": "America/New_York",
+      "allDay": null,
+      "location": {
+        "venue": null,
+        "address": "Savin Hill Park 25 Caspian Way",
+        "locality": "Dorchester",
+        "region": "MA",
+        "country": "United States",
+        "basis": "source address"
+      },
+      "marketCity": "Boston",
+      "sourceGroups": [
+        "Boston"
+      ],
+      "categoryTags": [
+        {
+          "label": "municipal-events",
+          "basis": "source-level hint"
+        }
+      ],
+      "raw": {
+        "date": "October 17, 2026",
+        "time": "10:00am-11:00am",
+        "nodeId": "node-16576656",
+        "price": "Price: FREE"
+      },
+      "evidence": {
+        "selector": "article.calendar-listing-wrapper + preceding h2.listing-group-title",
+        "capture": "/Users/pshorey/git/events/.artifacts/runs/2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0/page-1.html"
+      },
+      "warnings": [],
+      "sampleKey": "boston-gov/node-16576656:2026-10-17:10:00:00",
+      "runId": "2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0",
+      "collectedAt": "2026-10-17T03:10:19.792Z",
+      "sourceCompletenessVerified": false
+    },
+    {
+      "sourceId": "boston-gov",
+      "sourceRecordId": "node-16576221:2026-10-17:10:00:00",
+      "title": "Learn-to-Bike for Adults: Basic Skills",
+      "url": "https://www.eventbrite.com/e/oct-17-10am-learn-to-bike-for-all-adults-basic-skills-tickets-1986805962116?aff=oddtdtcreator",
+      "startDate": "2026-10-17",
+      "endDate": "2026-10-17",
+      "startLocal": "2026-10-17T10:00:00",
+      "endLocal": "2026-10-17T12:00:00",
+      "timeZone": "America/New_York",
+      "allDay": null,
+      "location": {
+        "venue": null,
+        "address": "Parking Lot 1 at BWSC 980 Harrison Ave",
+        "locality": "Boston",
+        "region": "MA",
+        "country": "United States",
+        "basis": "source address"
+      },
+      "marketCity": "Boston",
+      "sourceGroups": [
+        "Boston"
+      ],
+      "categoryTags": [
+        {
+          "label": "municipal-events",
+          "basis": "source-level hint"
+        }
+      ],
+      "raw": {
+        "date": "October 17, 2026",
+        "time": "10:00am-12:00pm",
+        "nodeId": "node-16576221",
+        "price": "Price: FREE"
+      },
+      "evidence": {
+        "selector": "article.calendar-listing-wrapper + preceding h2.listing-group-title",
+        "capture": "/Users/pshorey/git/events/.artifacts/runs/2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0/page-1.html"
+      },
+      "warnings": [],
+      "sampleKey": "boston-gov/node-16576221:2026-10-17:10:00:00",
+      "runId": "2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0",
+      "collectedAt": "2026-10-17T03:10:19.792Z",
+      "sourceCompletenessVerified": false
+    },
+    {
+      "sourceId": "boston-gov",
+      "sourceRecordId": "node-16576651:2026-10-17:12:00:00",
+      "title": "Parks Fitness: Dancehall Bootcamp with Miciyiaah",
+      "url": "https://www.boston.gov/node/16576651",
+      "startDate": "2026-10-17",
+      "endDate": "2026-10-17",
+      "startLocal": "2026-10-17T12:00:00",
+      "endLocal": "2026-10-17T13:00:00",
+      "timeZone": "America/New_York",
+      "allDay": null,
+      "location": {
+        "venue": null,
+        "address": "Mission Hill Playground 60 Smith Street",
+        "locality": "Jamaica Plain",
+        "region": "MA",
+        "country": "United States",
+        "basis": "source address"
+      },
+      "marketCity": "Boston",
+      "sourceGroups": [
+        "Boston"
+      ],
+      "categoryTags": [
+        {
+          "label": "municipal-events",
+          "basis": "source-level hint"
+        }
+      ],
+      "raw": {
+        "date": "October 17, 2026",
+        "time": "12:00pm-1:00pm",
+        "nodeId": "node-16576651",
+        "price": "Price: FREE"
+      },
+      "evidence": {
+        "selector": "article.calendar-listing-wrapper + preceding h2.listing-group-title",
+        "capture": "/Users/pshorey/git/events/.artifacts/runs/2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0/page-1.html"
+      },
+      "warnings": [],
+      "sampleKey": "boston-gov/node-16576651:2026-10-17:12:00:00",
+      "runId": "2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0",
+      "collectedAt": "2026-10-17T03:10:19.792Z",
+      "sourceCompletenessVerified": false
+    },
+    {
+      "sourceId": "boston-gov",
+      "sourceRecordId": "node-16576226:2026-10-17:12:00:00",
+      "title": "Learn-to-Bike for Adults: Combined Level 3 and 4",
+      "url": "https://www.eventbrite.com/e/1986806218884?aff=oddtdtcreator",
+      "startDate": "2026-10-17",
+      "endDate": "2026-10-17",
+      "startLocal": "2026-10-17T12:00:00",
+      "endLocal": "2026-10-17T14:00:00",
+      "timeZone": "America/New_York",
+      "allDay": null,
+      "location": {
+        "venue": null,
+        "address": "Parking Lot 1 at BWSC 980 Harrison Ave",
+        "locality": "Boston",
+        "region": "MA",
+        "country": "United States",
+        "basis": "source address"
+      },
+      "marketCity": "Boston",
+      "sourceGroups": [
+        "Boston"
+      ],
+      "categoryTags": [
+        {
+          "label": "municipal-events",
+          "basis": "source-level hint"
+        }
+      ],
+      "raw": {
+        "date": "October 17, 2026",
+        "time": "12:00pm-2:00pm",
+        "nodeId": "node-16576226",
+        "price": "Price: FREE"
+      },
+      "evidence": {
+        "selector": "article.calendar-listing-wrapper + preceding h2.listing-group-title",
+        "capture": "/Users/pshorey/git/events/.artifacts/runs/2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0/page-1.html"
+      },
+      "warnings": [],
+      "sampleKey": "boston-gov/node-16576226:2026-10-17:12:00:00",
+      "runId": "2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0",
+      "collectedAt": "2026-10-17T03:10:19.792Z",
+      "sourceCompletenessVerified": false
+    },
+    {
+      "sourceId": "boston-gov",
+      "sourceRecordId": "node-16603571:2026-10-17:14:00:00",
+      "title": "Sweater Weather Fest",
+      "url": "https://www.boston.gov/node/16603571",
+      "startDate": "2026-10-17",
+      "endDate": "2026-10-17",
+      "startLocal": "2026-10-17T14:00:00",
+      "endLocal": "2026-10-17T23:00:00",
+      "timeZone": "America/New_York",
+      "allDay": null,
+      "location": {
+        "venue": null,
+        "address": "Boston City Hall Plaza 1 City Hall Square",
+        "locality": "Boston",
+        "region": "MA",
+        "country": "United States",
+        "basis": "source address"
+      },
+      "marketCity": "Boston",
+      "sourceGroups": [
+        "Boston"
+      ],
+      "categoryTags": [
+        {
+          "label": "municipal-events",
+          "basis": "source-level hint"
+        }
+      ],
+      "raw": {
+        "date": "October 17, 2026",
+        "time": "2:00pm-11:00pm",
+        "nodeId": "node-16603571",
+        "price": "Price: FREE"
+      },
+      "evidence": {
+        "selector": "article.calendar-listing-wrapper + preceding h2.listing-group-title",
+        "capture": "/Users/pshorey/git/events/.artifacts/runs/2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0/page-1.html"
+      },
+      "warnings": [],
+      "sampleKey": "boston-gov/node-16603571:2026-10-17:14:00:00",
+      "runId": "2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0",
+      "collectedAt": "2026-10-17T03:10:19.792Z",
+      "sourceCompletenessVerified": false
+    },
+    {
+      "sourceId": "boston-gov",
+      "sourceRecordId": "node-16626336:2026-10-18:10:30:00",
+      "title": "Open Streets Roslindale",
+      "url": "https://www.boston.gov/node/16626336",
+      "startDate": "2026-10-18",
+      "endDate": "2026-10-18",
+      "startLocal": "2026-10-18T10:30:00",
+      "endLocal": "2026-10-18T15:00:00",
+      "timeZone": "America/New_York",
+      "allDay": null,
+      "location": {
+        "venue": null,
+        "address": "Roslindale Square",
+        "locality": "Roslindale",
+        "region": "MA",
+        "country": "United States",
+        "basis": "source address"
+      },
+      "marketCity": "Boston",
+      "sourceGroups": [
+        "Boston"
+      ],
+      "categoryTags": [
+        {
+          "label": "municipal-events",
+          "basis": "source-level hint"
+        }
+      ],
+      "raw": {
+        "date": "October 18, 2026",
+        "time": "10:30am-3:00pm",
+        "nodeId": "node-16626336",
+        "price": "Price: FREE"
+      },
+      "evidence": {
+        "selector": "article.calendar-listing-wrapper + preceding h2.listing-group-title",
+        "capture": "/Users/pshorey/git/events/.artifacts/runs/2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0/page-1.html"
+      },
+      "warnings": [],
+      "sampleKey": "boston-gov/node-16626336:2026-10-18:10:30:00",
+      "runId": "2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0",
+      "collectedAt": "2026-10-17T03:10:19.792Z",
+      "sourceCompletenessVerified": false
+    },
+    {
+      "sourceId": "boston-gov",
+      "sourceRecordId": "node-16611831:2026-10-18:14:00:00",
+      "title": "Public Presentation of the White Pine Gathering Circle",
+      "url": "https://www.boston.gov/node/16611831",
+      "startDate": "2026-10-18",
+      "endDate": "2026-10-18",
+      "startLocal": "2026-10-18T14:00:00",
+      "endLocal": "2026-10-18T16:00:00",
+      "timeZone": "America/New_York",
+      "allDay": null,
+      "location": {
+        "venue": null,
+        "address": "TBD",
+        "locality": "Boston",
+        "region": null,
+        "country": "United States",
+        "basis": "source address"
+      },
+      "marketCity": "Boston",
+      "sourceGroups": [
+        "Boston"
+      ],
+      "categoryTags": [
+        {
+          "label": "municipal-events",
+          "basis": "source-level hint"
+        }
+      ],
+      "raw": {
+        "date": "October 18, 2026",
+        "time": "2:00pm-4:00pm",
+        "nodeId": "node-16611831",
+        "price": "Price: FREE"
+      },
+      "evidence": {
+        "selector": "article.calendar-listing-wrapper + preceding h2.listing-group-title",
+        "capture": "/Users/pshorey/git/events/.artifacts/runs/2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0/page-1.html"
+      },
+      "warnings": [],
+      "sampleKey": "boston-gov/node-16611831:2026-10-18:14:00:00",
+      "runId": "2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0",
+      "collectedAt": "2026-10-17T03:10:19.792Z",
+      "sourceCompletenessVerified": false
+    },
+    {
+      "sourceId": "boston-gov",
+      "sourceRecordId": "node-16601256:2026-10-19:09:00:00",
+      "title": "Digital Literacy Workshop",
+      "url": "https://forms.gle/H14sp3DVuKu4kvcx5",
+      "startDate": "2026-10-19",
+      "endDate": "2026-10-19",
+      "startLocal": "2026-10-19T09:00:00",
+      "endLocal": "2026-10-19T17:00:00",
+      "timeZone": "America/New_York",
+      "allDay": null,
+      "location": {
+        "venue": null,
+        "address": "7 palmer street",
+        "locality": "Roxbury",
+        "region": "MA",
+        "country": "United States",
+        "basis": "source address"
+      },
+      "marketCity": "Boston",
+      "sourceGroups": [
+        "Boston"
+      ],
+      "categoryTags": [
+        {
+          "label": "municipal-events",
+          "basis": "source-level hint"
+        }
+      ],
+      "raw": {
+        "date": "October 19, 2026",
+        "time": "9:00am-5:00pm",
+        "nodeId": "node-16601256",
+        "price": "Price: FREE"
+      },
+      "evidence": {
+        "selector": "article.calendar-listing-wrapper + preceding h2.listing-group-title",
+        "capture": "/Users/pshorey/git/events/.artifacts/runs/2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0/page-1.html"
+      },
+      "warnings": [],
+      "sampleKey": "boston-gov/node-16601256:2026-10-19:09:00:00",
+      "runId": "2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0",
+      "collectedAt": "2026-10-17T03:10:19.792Z",
+      "sourceCompletenessVerified": false
+    },
+    {
+      "sourceId": "boston-gov",
+      "sourceRecordId": "node-16626196:2026-10-19:10:00:00",
+      "title": "Age Strong's Medicare Open Enrollment Clinics - Brighton",
+      "url": "https://www.boston.gov/node/16626196",
+      "startDate": "2026-10-19",
+      "endDate": "2026-10-19",
+      "startLocal": "2026-10-19T10:00:00",
+      "endLocal": "2026-10-19T15:00:00",
+      "timeZone": "America/New_York",
+      "allDay": null,
+      "location": {
+        "venue": null,
+        "address": "BrightonOne 77 Warren St",
+        "locality": "Brighton",
+        "region": null,
+        "country": "United States",
+        "basis": "source address"
+      },
+      "marketCity": "Boston",
+      "sourceGroups": [
+        "Boston"
+      ],
+      "categoryTags": [
+        {
+          "label": "municipal-events",
+          "basis": "source-level hint"
+        }
+      ],
+      "raw": {
+        "date": "October 19, 2026",
+        "time": "10:00am-3:00pm",
+        "nodeId": "node-16626196",
+        "price": "Price: FREE"
+      },
+      "evidence": {
+        "selector": "article.calendar-listing-wrapper + preceding h2.listing-group-title",
+        "capture": "/Users/pshorey/git/events/.artifacts/runs/2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0/page-1.html"
+      },
+      "warnings": [],
+      "sampleKey": "boston-gov/node-16626196:2026-10-19:10:00:00",
+      "runId": "2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0",
+      "collectedAt": "2026-10-17T03:10:19.792Z",
+      "sourceCompletenessVerified": false
+    },
+    {
+      "sourceId": "boston-gov",
+      "sourceRecordId": "node-16627126:2026-10-19:14:00:00",
+      "title": "Building a Strong Digital Foundation for Small Businesses #1: Websites 101",
+      "url": "https://www.zoomgov.com/webinar/register/WN_99CcawFKS_WCQdsrFJvkEQ#/registration",
+      "startDate": "2026-10-19",
+      "endDate": "2026-10-19",
+      "startLocal": "2026-10-19T14:00:00",
+      "endLocal": "2026-10-19T15:30:00",
+      "timeZone": "America/New_York",
+      "allDay": null,
+      "location": {
+        "venue": null,
+        "address": "Virtual Event",
+        "locality": "Boston",
+        "region": "MA",
+        "country": "United States",
+        "basis": "source address"
+      },
+      "marketCity": "Boston",
+      "sourceGroups": [
+        "Boston"
+      ],
+      "categoryTags": [
+        {
+          "label": "municipal-events",
+          "basis": "source-level hint"
+        }
+      ],
+      "raw": {
+        "date": "October 19, 2026",
+        "time": "2:00pm-3:30pm",
+        "nodeId": "node-16627126",
+        "price": "Price: FREE"
+      },
+      "evidence": {
+        "selector": "article.calendar-listing-wrapper + preceding h2.listing-group-title",
+        "capture": "/Users/pshorey/git/events/.artifacts/runs/2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0/page-1.html"
+      },
+      "warnings": [],
+      "sampleKey": "boston-gov/node-16627126:2026-10-19:14:00:00",
+      "runId": "2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0",
+      "collectedAt": "2026-10-17T03:10:19.792Z",
+      "sourceCompletenessVerified": false
+    },
+    {
+      "sourceId": "boston-gov",
+      "sourceRecordId": "node-16629916:2026-10-19:18:00:00",
+      "title": "South End: 321-323 Columbus Avenue Abutters Meeting",
+      "url": "https://www.boston.gov/node/16629916",
+      "startDate": "2026-10-19",
+      "endDate": "2026-10-19",
+      "startLocal": "2026-10-19T18:00:00",
+      "endLocal": "2026-10-19T19:00:00",
+      "timeZone": "America/New_York",
+      "allDay": null,
+      "location": {
+        "venue": null,
+        "address": "VIRTUAL",
+        "locality": "VIA ZOOM",
+        "region": null,
+        "country": "United States",
+        "basis": "source address"
+      },
+      "marketCity": "Boston",
+      "sourceGroups": [
+        "Boston"
+      ],
+      "categoryTags": [
+        {
+          "label": "municipal-events",
+          "basis": "source-level hint"
+        }
+      ],
+      "raw": {
+        "date": "October 19, 2026",
+        "time": "6:00pm-7:00pm",
+        "nodeId": "node-16629916",
+        "price": "Price: FREE"
+      },
+      "evidence": {
+        "selector": "article.calendar-listing-wrapper + preceding h2.listing-group-title",
+        "capture": "/Users/pshorey/git/events/.artifacts/runs/2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0/page-1.html"
+      },
+      "warnings": [],
+      "sampleKey": "boston-gov/node-16629916:2026-10-19:18:00:00",
+      "runId": "2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0",
+      "collectedAt": "2026-10-17T03:10:19.792Z",
+      "sourceCompletenessVerified": false
+    },
+    {
+      "sourceId": "boston-gov",
+      "sourceRecordId": "node-16625776:2026-10-19:18:00:00",
+      "title": "Dorchester: 125-139 Harvard Street Abutters Meeting",
+      "url": "https://www.boston.gov/node/16625776",
+      "startDate": "2026-10-19",
+      "endDate": "2026-10-19",
+      "startLocal": "2026-10-19T18:00:00",
+      "endLocal": "2026-10-19T19:00:00",
+      "timeZone": "America/New_York",
+      "allDay": null,
+      "location": {
+        "venue": null,
+        "address": "VIRTUAL",
+        "locality": "VIA ZOOM",
+        "region": null,
+        "country": "United States",
+        "basis": "source address"
+      },
+      "marketCity": "Boston",
+      "sourceGroups": [
+        "Boston"
+      ],
+      "categoryTags": [
+        {
+          "label": "municipal-events",
+          "basis": "source-level hint"
+        }
+      ],
+      "raw": {
+        "date": "October 19, 2026",
+        "time": "6:00pm-7:00pm",
+        "nodeId": "node-16625776",
+        "price": "Price: FREE"
+      },
+      "evidence": {
+        "selector": "article.calendar-listing-wrapper + preceding h2.listing-group-title",
+        "capture": "/Users/pshorey/git/events/.artifacts/runs/2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0/page-1.html"
+      },
+      "warnings": [],
+      "sampleKey": "boston-gov/node-16625776:2026-10-19:18:00:00",
+      "runId": "2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0",
+      "collectedAt": "2026-10-17T03:10:19.792Z",
+      "sourceCompletenessVerified": false
+    },
+    {
+      "sourceId": "boston-gov",
+      "sourceRecordId": "node-16629321:2026-10-19:18:00:00",
+      "title": "Charlestown: 86 Pearl St Abutters Meeting",
+      "url": "https://www.boston.gov/node/16629321",
+      "startDate": "2026-10-19",
+      "endDate": "2026-10-19",
+      "startLocal": "2026-10-19T18:00:00",
+      "endLocal": "2026-10-19T19:00:00",
+      "timeZone": "America/New_York",
+      "allDay": null,
+      "location": {
+        "venue": null,
+        "address": "VIRTUAL",
+        "locality": "VIA ZOOM",
+        "region": null,
+        "country": "United States",
+        "basis": "source address"
+      },
+      "marketCity": "Boston",
+      "sourceGroups": [
+        "Boston"
+      ],
+      "categoryTags": [
+        {
+          "label": "municipal-events",
+          "basis": "source-level hint"
+        }
+      ],
+      "raw": {
+        "date": "October 19, 2026",
+        "time": "6:00pm-7:00pm",
+        "nodeId": "node-16629321",
+        "price": "Price: FREE"
+      },
+      "evidence": {
+        "selector": "article.calendar-listing-wrapper + preceding h2.listing-group-title",
+        "capture": "/Users/pshorey/git/events/.artifacts/runs/2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0/page-1.html"
+      },
+      "warnings": [],
+      "sampleKey": "boston-gov/node-16629321:2026-10-19:18:00:00",
+      "runId": "2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0",
+      "collectedAt": "2026-10-17T03:10:19.792Z",
+      "sourceCompletenessVerified": false
+    },
+    {
+      "sourceId": "boston-gov",
+      "sourceRecordId": "node-16626201:2026-10-20:10:00:00",
+      "title": "Age Strong's Medicare Open Enrollment Clinics - East Boston",
+      "url": "https://www.boston.gov/node/16626201",
+      "startDate": "2026-10-20",
+      "endDate": "2026-10-20",
+      "startLocal": "2026-10-20T10:00:00",
+      "endLocal": "2026-10-20T15:00:00",
+      "timeZone": "America/New_York",
+      "allDay": null,
+      "location": {
+        "venue": null,
+        "address": "East Boston Senior Center 7 Bayswater St",
+        "locality": "East Boston",
+        "region": null,
+        "country": "United States",
+        "basis": "source address"
+      },
+      "marketCity": "Boston",
+      "sourceGroups": [
+        "Boston"
+      ],
+      "categoryTags": [
+        {
+          "label": "municipal-events",
+          "basis": "source-level hint"
+        }
+      ],
+      "raw": {
+        "date": "October 20, 2026",
+        "time": "10:00am-3:00pm",
+        "nodeId": "node-16626201",
+        "price": "Price: FREE"
+      },
+      "evidence": {
+        "selector": "article.calendar-listing-wrapper + preceding h2.listing-group-title",
+        "capture": "/Users/pshorey/git/events/.artifacts/runs/2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0/page-1.html"
+      },
+      "warnings": [],
+      "sampleKey": "boston-gov/node-16626201:2026-10-20:10:00:00",
+      "runId": "2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0",
+      "collectedAt": "2026-10-17T03:10:19.792Z",
+      "sourceCompletenessVerified": false
+    },
+    {
+      "sourceId": "boston-gov",
+      "sourceRecordId": "node-16275546:2026-10-20:15:30:00",
+      "title": "Free Bike Repair Workshop at BPL East Boston",
+      "url": "https://www.boston.gov/node/16275546",
+      "startDate": "2026-10-20",
+      "endDate": "2026-10-20",
+      "startLocal": "2026-10-20T15:30:00",
+      "endLocal": "2026-10-20T17:30:00",
+      "timeZone": "America/New_York",
+      "allDay": null,
+      "location": {
+        "venue": null,
+        "address": "365 Bremen St",
+        "locality": "Boston",
+        "region": "MA",
+        "country": "United States",
+        "basis": "source address"
+      },
+      "marketCity": "Boston",
+      "sourceGroups": [
+        "Boston"
+      ],
+      "categoryTags": [
+        {
+          "label": "municipal-events",
+          "basis": "source-level hint"
+        }
+      ],
+      "raw": {
+        "date": "October 20, 2026",
+        "time": "3:30pm-5:30pm",
+        "nodeId": "node-16275546",
+        "price": "Price: FREE"
+      },
+      "evidence": {
+        "selector": "article.calendar-listing-wrapper + preceding h2.listing-group-title",
+        "capture": "/Users/pshorey/git/events/.artifacts/runs/2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0/page-1.html"
+      },
+      "warnings": [],
+      "sampleKey": "boston-gov/node-16275546:2026-10-20:15:30:00",
+      "runId": "2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0",
+      "collectedAt": "2026-10-17T03:10:19.792Z",
+      "sourceCompletenessVerified": false
+    },
+    {
+      "sourceId": "boston-gov",
+      "sourceRecordId": "node-16571771:2026-10-20:16:30:00",
+      "title": "Homeownership Drop-in Sessions",
+      "url": "https://www.boston.gov/node/16571771",
+      "startDate": "2026-10-20",
+      "endDate": "2026-10-20",
+      "startLocal": "2026-10-20T16:30:00",
+      "endLocal": "2026-10-20T18:30:00",
+      "timeZone": "America/New_York",
+      "allDay": null,
+      "location": {
+        "venue": null,
+        "address": "26 Court Street MOH Constituent Center (First Floor)",
+        "locality": "Boston",
+        "region": "MA",
+        "country": "United States",
+        "basis": "source address"
+      },
+      "marketCity": "Boston",
+      "sourceGroups": [
+        "Boston"
+      ],
+      "categoryTags": [
+        {
+          "label": "municipal-events",
+          "basis": "source-level hint"
+        }
+      ],
+      "raw": {
+        "date": "October 20, 2026",
+        "time": "4:30pm-6:30pm",
+        "nodeId": "node-16571771",
+        "price": "Price: FREE"
+      },
+      "evidence": {
+        "selector": "article.calendar-listing-wrapper + preceding h2.listing-group-title",
+        "capture": "/Users/pshorey/git/events/.artifacts/runs/2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0/page-1.html"
+      },
+      "warnings": [],
+      "sampleKey": "boston-gov/node-16571771:2026-10-20:16:30:00",
+      "runId": "2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0",
+      "collectedAt": "2026-10-17T03:10:19.792Z",
+      "sourceCompletenessVerified": false
+    },
+    {
+      "sourceId": "boston-gov",
+      "sourceRecordId": "node-16629931:2026-10-20:18:00:00",
+      "title": "East Boston: 90-92 Maverick Street Abutters Meeting",
+      "url": "https://www.boston.gov/node/16629931",
+      "startDate": "2026-10-20",
+      "endDate": "2026-10-20",
+      "startLocal": "2026-10-20T18:00:00",
+      "endLocal": "2026-10-20T19:00:00",
+      "timeZone": "America/New_York",
+      "allDay": null,
+      "location": {
+        "venue": null,
+        "address": "VIRTUAL",
+        "locality": "VIA ZOOM",
+        "region": null,
+        "country": "United States",
+        "basis": "source address"
+      },
+      "marketCity": "Boston",
+      "sourceGroups": [
+        "Boston"
+      ],
+      "categoryTags": [
+        {
+          "label": "municipal-events",
+          "basis": "source-level hint"
+        }
+      ],
+      "raw": {
+        "date": "October 20, 2026",
+        "time": "6:00pm-7:00pm",
+        "nodeId": "node-16629931",
+        "price": "Price: FREE"
+      },
+      "evidence": {
+        "selector": "article.calendar-listing-wrapper + preceding h2.listing-group-title",
+        "capture": "/Users/pshorey/git/events/.artifacts/runs/2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0/page-1.html"
+      },
+      "warnings": [],
+      "sampleKey": "boston-gov/node-16629931:2026-10-20:18:00:00",
+      "runId": "2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0",
+      "collectedAt": "2026-10-17T03:10:19.792Z",
+      "sourceCompletenessVerified": false
+    },
+    {
+      "sourceId": "boston-gov",
+      "sourceRecordId": "node-16629661:2026-10-20:18:00:00",
+      "title": "South Boston: 526 E Third St Abutters Meeting",
+      "url": "https://www.boston.gov/node/16629661",
+      "startDate": "2026-10-20",
+      "endDate": "2026-10-20",
+      "startLocal": "2026-10-20T18:00:00",
+      "endLocal": "2026-10-20T19:00:00",
+      "timeZone": "America/New_York",
+      "allDay": null,
+      "location": {
+        "venue": null,
+        "address": "VIRTUAL",
+        "locality": "VIA ZOOM",
+        "region": null,
+        "country": "United States",
+        "basis": "source address"
+      },
+      "marketCity": "Boston",
+      "sourceGroups": [
+        "Boston"
+      ],
+      "categoryTags": [
+        {
+          "label": "municipal-events",
+          "basis": "source-level hint"
+        }
+      ],
+      "raw": {
+        "date": "October 20, 2026",
+        "time": "6:00pm-7:00pm",
+        "nodeId": "node-16629661",
+        "price": "Price: FREE"
+      },
+      "evidence": {
+        "selector": "article.calendar-listing-wrapper + preceding h2.listing-group-title",
+        "capture": "/Users/pshorey/git/events/.artifacts/runs/2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0/page-1.html"
+      },
+      "warnings": [],
+      "sampleKey": "boston-gov/node-16629661:2026-10-20:18:00:00",
+      "runId": "2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0",
+      "collectedAt": "2026-10-17T03:10:19.792Z",
+      "sourceCompletenessVerified": false
+    },
+    {
+      "sourceId": "boston-gov",
+      "sourceRecordId": "node-16627201:2026-10-20:18:30:00",
+      "title": "Wood Avenue Safety Improvements Design Update - Digital",
+      "url": "https://www.boston.gov/node/16627201",
+      "startDate": "2026-10-20",
+      "endDate": "2026-10-20",
+      "startLocal": "2026-10-20T18:30:00",
+      "endLocal": "2026-10-20T20:00:00",
+      "timeZone": "America/New_York",
+      "allDay": null,
+      "location": {
+        "venue": null,
+        "address": "1 City Hall Square",
+        "locality": "Boston",
+        "region": "MA",
+        "country": "United States",
+        "basis": "source address"
+      },
+      "marketCity": "Boston",
+      "sourceGroups": [
+        "Boston"
+      ],
+      "categoryTags": [
+        {
+          "label": "municipal-events",
+          "basis": "source-level hint"
+        }
+      ],
+      "raw": {
+        "date": "October 20, 2026",
+        "time": "6:30pm-8:00pm",
+        "nodeId": "node-16627201",
+        "price": "Price: FREE"
+      },
+      "evidence": {
+        "selector": "article.calendar-listing-wrapper + preceding h2.listing-group-title",
+        "capture": "/Users/pshorey/git/events/.artifacts/runs/2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0/page-1.html"
+      },
+      "warnings": [],
+      "sampleKey": "boston-gov/node-16627201:2026-10-20:18:30:00",
+      "runId": "2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0",
+      "collectedAt": "2026-10-17T03:10:19.792Z",
+      "sourceCompletenessVerified": false
+    },
+    {
+      "sourceId": "boston-gov",
+      "sourceRecordId": "node-16629666:2026-10-20:19:00:00",
+      "title": "Mission Hill: 68 Wensley St Abutters Meeting",
+      "url": "https://www.boston.gov/node/16629666",
+      "startDate": "2026-10-20",
+      "endDate": "2026-10-20",
+      "startLocal": "2026-10-20T19:00:00",
+      "endLocal": "2026-10-20T20:00:00",
+      "timeZone": "America/New_York",
+      "allDay": null,
+      "location": {
+        "venue": null,
+        "address": "VIRTUAL",
+        "locality": "VIA ZOOM",
+        "region": null,
+        "country": "United States",
+        "basis": "source address"
+      },
+      "marketCity": "Boston",
+      "sourceGroups": [
+        "Boston"
+      ],
+      "categoryTags": [
+        {
+          "label": "municipal-events",
+          "basis": "source-level hint"
+        }
+      ],
+      "raw": {
+        "date": "October 20, 2026",
+        "time": "7:00pm-8:00pm",
+        "nodeId": "node-16629666",
+        "price": "Price: FREE"
+      },
+      "evidence": {
+        "selector": "article.calendar-listing-wrapper + preceding h2.listing-group-title",
+        "capture": "/Users/pshorey/git/events/.artifacts/runs/2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0/page-1.html"
+      },
+      "warnings": [],
+      "sampleKey": "boston-gov/node-16629666:2026-10-20:19:00:00",
+      "runId": "2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0",
+      "collectedAt": "2026-10-17T03:10:19.792Z",
+      "sourceCompletenessVerified": false
+    },
+    {
+      "sourceId": "boston-gov",
+      "sourceRecordId": "node-16601256:2026-10-21:09:00:00",
+      "title": "Digital Literacy Workshop",
+      "url": "https://forms.gle/H14sp3DVuKu4kvcx5",
+      "startDate": "2026-10-21",
+      "endDate": "2026-10-21",
+      "startLocal": "2026-10-21T09:00:00",
+      "endLocal": "2026-10-21T17:00:00",
+      "timeZone": "America/New_York",
+      "allDay": null,
+      "location": {
+        "venue": null,
+        "address": "7 palmer street",
+        "locality": "Roxbury",
+        "region": "MA",
+        "country": "United States",
+        "basis": "source address"
+      },
+      "marketCity": "Boston",
+      "sourceGroups": [
+        "Boston"
+      ],
+      "categoryTags": [
+        {
+          "label": "municipal-events",
+          "basis": "source-level hint"
+        }
+      ],
+      "raw": {
+        "date": "October 21, 2026",
+        "time": "9:00am-5:00pm",
+        "nodeId": "node-16601256",
+        "price": "Price: FREE"
+      },
+      "evidence": {
+        "selector": "article.calendar-listing-wrapper + preceding h2.listing-group-title",
+        "capture": "/Users/pshorey/git/events/.artifacts/runs/2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0/page-1.html"
+      },
+      "warnings": [],
+      "sampleKey": "boston-gov/node-16601256:2026-10-21:09:00:00",
+      "runId": "2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0",
+      "collectedAt": "2026-10-17T03:10:19.792Z",
+      "sourceCompletenessVerified": false
+    },
+    {
+      "sourceId": "boston-gov",
+      "sourceRecordId": "node-16499221:2026-10-21:10:00:00",
+      "title": "Business Certification Office Hours",
+      "url": "https://www.boston.gov/node/16499221",
+      "startDate": "2026-10-21",
+      "endDate": "2026-10-21",
+      "startLocal": "2026-10-21T10:00:00",
+      "endLocal": "2026-10-21T13:00:00",
+      "timeZone": "America/New_York",
+      "allDay": null,
+      "location": {
+        "venue": null,
+        "address": "Virtual",
+        "locality": "Boston",
+        "region": "MA",
+        "country": "United States",
+        "basis": "source address"
+      },
+      "marketCity": "Boston",
+      "sourceGroups": [
+        "Boston"
+      ],
+      "categoryTags": [
+        {
+          "label": "municipal-events",
+          "basis": "source-level hint"
+        }
+      ],
+      "raw": {
+        "date": "October 21, 2026",
+        "time": "10:00am-1:00pm",
+        "nodeId": "node-16499221",
+        "price": "Price: FREE"
+      },
+      "evidence": {
+        "selector": "article.calendar-listing-wrapper + preceding h2.listing-group-title",
+        "capture": "/Users/pshorey/git/events/.artifacts/runs/2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0/page-1.html"
+      },
+      "warnings": [],
+      "sampleKey": "boston-gov/node-16499221:2026-10-21:10:00:00",
+      "runId": "2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0",
+      "collectedAt": "2026-10-17T03:10:19.792Z",
+      "sourceCompletenessVerified": false
+    },
+    {
+      "sourceId": "boston-gov",
+      "sourceRecordId": "node-16632846:2026-10-21:11:00:00",
+      "title": "Building Decarbonization Advisor Program Info Session",
+      "url": "https://www.boston.gov/node/16632846",
+      "startDate": "2026-10-21",
+      "endDate": "2026-10-21",
+      "startLocal": "2026-10-21T11:00:00",
+      "endLocal": "2026-10-21T12:00:00",
+      "timeZone": "America/New_York",
+      "allDay": null,
+      "location": {
+        "venue": null,
+        "address": "Zoom",
+        "locality": "Virtual",
+        "region": null,
+        "country": "United States",
+        "basis": "source address"
+      },
+      "marketCity": "Boston",
+      "sourceGroups": [
+        "Boston"
+      ],
+      "categoryTags": [
+        {
+          "label": "municipal-events",
+          "basis": "source-level hint"
+        }
+      ],
+      "raw": {
+        "date": "October 21, 2026",
+        "time": "11:00am-12:00pm",
+        "nodeId": "node-16632846",
+        "price": "Price: FREE"
+      },
+      "evidence": {
+        "selector": "article.calendar-listing-wrapper + preceding h2.listing-group-title",
+        "capture": "/Users/pshorey/git/events/.artifacts/runs/2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0/page-1.html"
+      },
+      "warnings": [],
+      "sampleKey": "boston-gov/node-16632846:2026-10-21:11:00:00",
+      "runId": "2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0",
+      "collectedAt": "2026-10-17T03:10:19.792Z",
+      "sourceCompletenessVerified": false
+    },
+    {
+      "sourceId": "boston-gov",
+      "sourceRecordId": "node-17706:2026-10-21:12:00:00",
+      "title": "Free Immigration Consultations",
+      "url": "https://www.boston.gov/node/17706",
+      "startDate": "2026-10-21",
+      "endDate": "2026-10-21",
+      "startLocal": "2026-10-21T12:00:00",
+      "endLocal": "2026-10-21T15:00:00",
+      "timeZone": "America/New_York",
+      "allDay": null,
+      "location": {
+        "venue": null,
+        "address": "By phone only",
+        "locality": "Boston",
+        "region": "MA",
+        "country": "United States",
+        "basis": "source address"
+      },
+      "marketCity": "Boston",
+      "sourceGroups": [
+        "Boston"
+      ],
+      "categoryTags": [
+        {
+          "label": "municipal-events",
+          "basis": "source-level hint"
+        }
+      ],
+      "raw": {
+        "date": "October 21, 2026",
+        "time": "12:00pm-3:00pm",
+        "nodeId": "node-17706",
+        "price": "Price: FREE"
+      },
+      "evidence": {
+        "selector": "article.calendar-listing-wrapper + preceding h2.listing-group-title",
+        "capture": "/Users/pshorey/git/events/.artifacts/runs/2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0/page-1.html"
+      },
+      "warnings": [],
+      "sampleKey": "boston-gov/node-17706:2026-10-21:12:00:00",
+      "runId": "2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0",
+      "collectedAt": "2026-10-17T03:10:19.792Z",
+      "sourceCompletenessVerified": false
+    },
+    {
+      "sourceId": "boston-gov",
+      "sourceRecordId": "node-16604671:2026-10-21:12:00:00",
+      "title": "St. Vincent and the Grenadines Flag Raising",
+      "url": "https://www.boston.gov/node/16604671",
+      "startDate": "2026-10-21",
+      "endDate": "2026-10-21",
+      "startLocal": "2026-10-21T12:00:00",
+      "endLocal": "2026-10-21T13:30:00",
+      "timeZone": "America/New_York",
+      "allDay": null,
+      "location": {
+        "venue": null,
+        "address": "1 City Hall Square",
+        "locality": "Boston",
+        "region": "MA",
+        "country": "United States",
+        "basis": "source address"
+      },
+      "marketCity": "Boston",
+      "sourceGroups": [
+        "Boston"
+      ],
+      "categoryTags": [
+        {
+          "label": "municipal-events",
+          "basis": "source-level hint"
+        }
+      ],
+      "raw": {
+        "date": "October 21, 2026",
+        "time": "12:00pm-1:30pm",
+        "nodeId": "node-16604671",
+        "price": "Price: FREE"
+      },
+      "evidence": {
+        "selector": "article.calendar-listing-wrapper + preceding h2.listing-group-title",
+        "capture": "/Users/pshorey/git/events/.artifacts/runs/2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0/page-1.html"
+      },
+      "warnings": [],
+      "sampleKey": "boston-gov/node-16604671:2026-10-21:12:00:00",
+      "runId": "2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0",
+      "collectedAt": "2026-10-17T03:10:19.792Z",
+      "sourceCompletenessVerified": false
+    },
+    {
+      "sourceId": "boston-gov",
+      "sourceRecordId": "node-16389106:2026-10-21:13:30:00",
+      "title": "BPL Career Services",
+      "url": "https://www.boston.gov/node/16389106",
+      "startDate": "2026-10-21",
+      "endDate": "2026-10-21",
+      "startLocal": "2026-10-21T13:30:00",
+      "endLocal": "2026-10-21T14:30:00",
+      "timeZone": "America/New_York",
+      "allDay": null,
+      "location": {
+        "venue": null,
+        "address": "30 Dimock Street",
+        "locality": "Roxbury",
+        "region": "MA",
+        "country": "United States",
+        "basis": "source address"
+      },
+      "marketCity": "Boston",
+      "sourceGroups": [
+        "Boston"
+      ],
+      "categoryTags": [
+        {
+          "label": "municipal-events",
+          "basis": "source-level hint"
+        }
+      ],
+      "raw": {
+        "date": "October 21, 2026",
+        "time": "1:30pm-2:30pm",
+        "nodeId": "node-16389106",
+        "price": "Price: FREE"
+      },
+      "evidence": {
+        "selector": "article.calendar-listing-wrapper + preceding h2.listing-group-title",
+        "capture": "/Users/pshorey/git/events/.artifacts/runs/2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0/page-1.html"
+      },
+      "warnings": [],
+      "sampleKey": "boston-gov/node-16389106:2026-10-21:13:30:00",
+      "runId": "2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0",
+      "collectedAt": "2026-10-17T03:10:19.792Z",
+      "sourceCompletenessVerified": false
+    },
+    {
+      "sourceId": "boston-gov",
+      "sourceRecordId": "node-16601811:2026-10-21:15:30:00",
+      "title": "Free Bike Repair Workshop at BPL Mattapan",
+      "url": "https://www.boston.gov/node/16601811",
+      "startDate": "2026-10-21",
+      "endDate": "2026-10-21",
+      "startLocal": "2026-10-21T15:30:00",
+      "endLocal": "2026-10-21T17:39:00",
+      "timeZone": "America/New_York",
+      "allDay": null,
+      "location": {
+        "venue": null,
+        "address": "BPL Mattapan 1350 Blue Hill Ave",
+        "locality": "Boston",
+        "region": "MA",
+        "country": "United States",
+        "basis": "source address"
+      },
+      "marketCity": "Boston",
+      "sourceGroups": [
+        "Boston"
+      ],
+      "categoryTags": [
+        {
+          "label": "municipal-events",
+          "basis": "source-level hint"
+        }
+      ],
+      "raw": {
+        "date": "October 21, 2026",
+        "time": "3:30pm-5:39pm",
+        "nodeId": "node-16601811",
+        "price": "Price: FREE"
+      },
+      "evidence": {
+        "selector": "article.calendar-listing-wrapper + preceding h2.listing-group-title",
+        "capture": "/Users/pshorey/git/events/.artifacts/runs/2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0/page-1.html"
+      },
+      "warnings": [],
+      "sampleKey": "boston-gov/node-16601811:2026-10-21:15:30:00",
+      "runId": "2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0",
+      "collectedAt": "2026-10-17T03:10:19.792Z",
+      "sourceCompletenessVerified": false
+    },
+    {
+      "sourceId": "boston-gov",
+      "sourceRecordId": "node-16633281:2026-10-21:18:00:00",
+      "title": "Jamaica Plain: 3575-3579 Washington Street Abutters Meeting",
+      "url": "https://www.boston.gov/node/16633281",
+      "startDate": "2026-10-21",
+      "endDate": "2026-10-21",
+      "startLocal": "2026-10-21T18:00:00",
+      "endLocal": "2026-10-21T19:00:00",
+      "timeZone": "America/New_York",
+      "allDay": null,
+      "location": {
+        "venue": null,
+        "address": "VIRTUAL",
+        "locality": "VIA ZOOM",
+        "region": null,
+        "country": "United States",
+        "basis": "source address"
+      },
+      "marketCity": "Boston",
+      "sourceGroups": [
+        "Boston"
+      ],
+      "categoryTags": [
+        {
+          "label": "municipal-events",
+          "basis": "source-level hint"
+        }
+      ],
+      "raw": {
+        "date": "October 21, 2026",
+        "time": "6:00pm-7:00pm",
+        "nodeId": "node-16633281",
+        "price": "Price: FREE"
+      },
+      "evidence": {
+        "selector": "article.calendar-listing-wrapper + preceding h2.listing-group-title",
+        "capture": "/Users/pshorey/git/events/.artifacts/runs/2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0/page-1.html"
+      },
+      "warnings": [],
+      "sampleKey": "boston-gov/node-16633281:2026-10-21:18:00:00",
+      "runId": "2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0",
+      "collectedAt": "2026-10-17T03:10:19.792Z",
+      "sourceCompletenessVerified": false
+    },
+    {
+      "sourceId": "boston-gov",
+      "sourceRecordId": "node-16629751:2026-10-21:18:00:00",
+      "title": "Mission Hill: 1478 Tremont St Abutters Meeting",
+      "url": "https://www.boston.gov/node/16629751",
+      "startDate": "2026-10-21",
+      "endDate": "2026-10-21",
+      "startLocal": "2026-10-21T18:00:00",
+      "endLocal": "2026-10-21T19:00:00",
+      "timeZone": "America/New_York",
+      "allDay": null,
+      "location": {
+        "venue": null,
+        "address": "VIRTUAL",
+        "locality": "VIA ZOOM",
+        "region": null,
+        "country": "United States",
+        "basis": "source address"
+      },
+      "marketCity": "Boston",
+      "sourceGroups": [
+        "Boston"
+      ],
+      "categoryTags": [
+        {
+          "label": "municipal-events",
+          "basis": "source-level hint"
+        }
+      ],
+      "raw": {
+        "date": "October 21, 2026",
+        "time": "6:00pm-7:00pm",
+        "nodeId": "node-16629751",
+        "price": "Price: FREE"
+      },
+      "evidence": {
+        "selector": "article.calendar-listing-wrapper + preceding h2.listing-group-title",
+        "capture": "/Users/pshorey/git/events/.artifacts/runs/2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0/page-2.html"
+      },
+      "warnings": [],
+      "sampleKey": "boston-gov/node-16629751:2026-10-21:18:00:00",
+      "runId": "2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0",
+      "collectedAt": "2026-10-17T03:10:19.792Z",
+      "sourceCompletenessVerified": false
+    },
+    {
+      "sourceId": "boston-gov",
+      "sourceRecordId": "node-16629816:2026-10-21:19:00:00",
+      "title": "Dorchester: 887 Washington Street Abutters Meeting",
+      "url": "https://www.boston.gov/node/16629816",
+      "startDate": "2026-10-21",
+      "endDate": "2026-10-21",
+      "startLocal": "2026-10-21T19:00:00",
+      "endLocal": "2026-10-21T20:00:00",
+      "timeZone": "America/New_York",
+      "allDay": null,
+      "location": {
+        "venue": null,
+        "address": "VIRTUAL",
+        "locality": "VIA ZOOM",
+        "region": null,
+        "country": "United States",
+        "basis": "source address"
+      },
+      "marketCity": "Boston",
+      "sourceGroups": [
+        "Boston"
+      ],
+      "categoryTags": [
+        {
+          "label": "municipal-events",
+          "basis": "source-level hint"
+        }
+      ],
+      "raw": {
+        "date": "October 21, 2026",
+        "time": "7:00pm-8:00pm",
+        "nodeId": "node-16629816",
+        "price": "Price: FREE"
+      },
+      "evidence": {
+        "selector": "article.calendar-listing-wrapper + preceding h2.listing-group-title",
+        "capture": "/Users/pshorey/git/events/.artifacts/runs/2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0/page-2.html"
+      },
+      "warnings": [],
+      "sampleKey": "boston-gov/node-16629816:2026-10-21:19:00:00",
+      "runId": "2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0",
+      "collectedAt": "2026-10-17T03:10:19.792Z",
+      "sourceCompletenessVerified": false
+    },
+    {
+      "sourceId": "boston-gov",
+      "sourceRecordId": "node-16629746:2026-10-21:19:00:00",
+      "title": "South Boston: 219 E St Abutters Meeting",
+      "url": "https://www.boston.gov/node/16629746",
+      "startDate": "2026-10-21",
+      "endDate": "2026-10-21",
+      "startLocal": "2026-10-21T19:00:00",
+      "endLocal": "2026-10-21T20:00:00",
+      "timeZone": "America/New_York",
+      "allDay": null,
+      "location": {
+        "venue": null,
+        "address": "VIRTUAL",
+        "locality": "VIA ZOOM",
+        "region": null,
+        "country": "United States",
+        "basis": "source address"
+      },
+      "marketCity": "Boston",
+      "sourceGroups": [
+        "Boston"
+      ],
+      "categoryTags": [
+        {
+          "label": "municipal-events",
+          "basis": "source-level hint"
+        }
+      ],
+      "raw": {
+        "date": "October 21, 2026",
+        "time": "7:00pm-8:00pm",
+        "nodeId": "node-16629746",
+        "price": "Price: FREE"
+      },
+      "evidence": {
+        "selector": "article.calendar-listing-wrapper + preceding h2.listing-group-title",
+        "capture": "/Users/pshorey/git/events/.artifacts/runs/2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0/page-2.html"
+      },
+      "warnings": [],
+      "sampleKey": "boston-gov/node-16629746:2026-10-21:19:00:00",
+      "runId": "2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0",
+      "collectedAt": "2026-10-17T03:10:19.792Z",
+      "sourceCompletenessVerified": false
+    },
+    {
+      "sourceId": "boston-gov",
+      "sourceRecordId": "node-16603576:2026-10-22:00:00:00",
+      "title": "FreeVerse Collective",
+      "url": "https://www.freeversecollective.us/",
+      "startDate": "2026-10-22",
+      "endDate": "2026-10-22",
+      "startLocal": "2026-10-22T00:00:00",
+      "endLocal": "2026-10-22T23:59:00",
+      "timeZone": "America/New_York",
+      "allDay": null,
+      "location": {
+        "venue": null,
+        "address": "Civic Pavilion 5 Congress Street",
+        "locality": "Boston",
+        "region": "MA",
+        "country": "United States",
+        "basis": "source address"
+      },
+      "marketCity": "Boston",
+      "sourceGroups": [
+        "Boston"
+      ],
+      "categoryTags": [
+        {
+          "label": "municipal-events",
+          "basis": "source-level hint"
+        }
+      ],
+      "raw": {
+        "date": "October 22, 2026",
+        "time": "12:00am-11:59pm",
+        "nodeId": "node-16603576",
+        "price": "Price: FREE"
+      },
+      "evidence": {
+        "selector": "article.calendar-listing-wrapper + preceding h2.listing-group-title",
+        "capture": "/Users/pshorey/git/events/.artifacts/runs/2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0/page-2.html"
+      },
+      "warnings": [],
+      "sampleKey": "boston-gov/node-16603576:2026-10-22:00:00:00",
+      "runId": "2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0",
+      "collectedAt": "2026-10-17T03:10:19.792Z",
+      "sourceCompletenessVerified": false
+    },
+    {
+      "sourceId": "boston-gov",
+      "sourceRecordId": "node-16628706:2026-10-22:10:00:00",
+      "title": "Roxbury Coffee Hour",
+      "url": "https://www.boston.gov/node/16628706",
+      "startDate": "2026-10-22",
+      "endDate": "2026-10-22",
+      "startLocal": "2026-10-22T10:00:00",
+      "endLocal": "2026-10-22T11:00:00",
+      "timeZone": "America/New_York",
+      "allDay": null,
+      "location": {
+        "venue": null,
+        "address": "Malcolm X Park 131 Dale Street",
+        "locality": "Boston",
+        "region": null,
+        "country": "United States",
+        "basis": "source address"
+      },
+      "marketCity": "Boston",
+      "sourceGroups": [
+        "Boston"
+      ],
+      "categoryTags": [
+        {
+          "label": "municipal-events",
+          "basis": "source-level hint"
+        }
+      ],
+      "raw": {
+        "date": "October 22, 2026",
+        "time": "10:00am-11:00am",
+        "nodeId": "node-16628706",
+        "price": "Price: FREE"
+      },
+      "evidence": {
+        "selector": "article.calendar-listing-wrapper + preceding h2.listing-group-title",
+        "capture": "/Users/pshorey/git/events/.artifacts/runs/2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0/page-2.html"
+      },
+      "warnings": [],
+      "sampleKey": "boston-gov/node-16628706:2026-10-22:10:00:00",
+      "runId": "2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0",
+      "collectedAt": "2026-10-17T03:10:19.792Z",
+      "sourceCompletenessVerified": false
+    },
+    {
+      "sourceId": "network-vegas",
+      "sourceRecordId": "57848",
+      "title": "Nothin’ but a Good Time — Project 150’s 80s Rock Benefit",
+      "url": "https://network.vegas/calendar/nothin-but-a-good-time-project-150s-80s-rock-benefit/",
+      "startDate": "2026-10-16",
+      "endDate": "2026-10-16",
+      "startLocal": null,
+      "endLocal": null,
+      "timeZone": "America/Los_Angeles",
+      "allDay": true,
+      "location": {
+        "venue": "the INDUSTRIAL event space",
+        "address": "2330 S Industrial Rd",
+        "locality": "Las Vegas",
+        "region": "NV",
+        "country": "United States",
+        "basis": "source venue"
+      },
+      "marketCity": "Las Vegas",
+      "sourceGroups": [
+        "Las Vegas"
+      ],
+      "categoryTags": [
+        {
+          "label": "Fundraiser/ Benefit",
+          "slug": "fundraiser-benefit",
+          "basis": "upstream category"
+        },
+        {
+          "label": "Community",
+          "slug": "community",
+          "basis": "upstream category"
+        },
+        {
+          "label": "Las Vegas Business",
+          "slug": "las-vegas-business",
+          "basis": "upstream category"
+        }
+      ],
+      "raw": {
+        "start_date": "2026-10-16 00:00:00",
+        "end_date": "2026-10-16 23:59:59",
+        "all_day": true,
+        "description": "Project 150 throws its annual benefit as a full 80s rock throwback at the INDUSTRIAL event space on South Industrial Road. Doors open at 6:30 p.m. and the party starts at 7:00 p.m. on Friday, October 16. Dress code is spandex, band tees, leather, neon and denim — best 80s rock band attire encouraged — and valet parking is available. Project 150 is a Las Vegas nonprofit supporting homeless, displaced and disadvantaged high school students across Southern Nevada, providing food, clothing, school supplies and scholarship support. The benefit is one of its larger annual fundraisers and pairs the party with a silent auction. Tickets are on sale now, with the organization asking guests to be on the list by October 10. Supporters who cannot attend can still bid in the silent auction online by texting PROJECT150 to 76278. Tickets and auction access are at Project150.givesmart.com.",
+        "cost": "",
+        "venue": {
+          "id": 24200,
+          "author": "1",
+          "status": "publish",
+          "date": "2022-09-01 06:34:44",
+          "date_utc": "2022-09-01 13:34:44",
+          "modified": "2026-09-09 04:34:17",
+          "modified_utc": "2026-09-09 11:34:17",
+          "url": "https://network.vegas/venue/the-industrial-event-space/",
+          "venue": "the INDUSTRIAL event space",
+          "slug": "the-industrial-event-space",
+          "address": "2330 S Industrial Rd",
+          "city": "Las Vegas",
+          "country": "United States",
+          "province": "NV",
+          "state": "NV",
+          "zip": "89102",
+          "website": "https://www.aialasvegas.org/venue/the-industrial-event-space/",
+          "stateprovince": "NV",
+          "show_map": true,
+          "show_map_link": true,
+          "global_id": "network.vegas?id=24200",
+          "global_id_lineage": [
+            "network.vegas?id=24200"
+          ]
+        }
+      },
+      "evidence": {
+        "jsonPath": "$.events[id=57848]",
+        "capture": "/Users/pshorey/git/events/.artifacts/runs/2026-10-17T03-02-18-913Z-network-vegas-a868319d/api-1.json"
+      },
+      "warnings": [
+        "source_all_day_flag_conflicts_with_timed_description"
+      ],
+      "sampleKey": "network-vegas/57848",
+      "runId": "2026-10-17T03-02-18-913Z-network-vegas-a868319d",
+      "collectedAt": "2026-10-17T03:02:26.133Z",
+      "sourceCompletenessVerified": false
+    },
+    {
+      "sourceId": "network-vegas",
+      "sourceRecordId": "54840",
+      "title": "2026 NAMB Annual Convention",
+      "url": "https://network.vegas/calendar/2026-namb-annual-convention/",
+      "startDate": "2026-10-16",
+      "endDate": "2026-10-19",
+      "startLocal": null,
+      "endLocal": null,
+      "timeZone": "America/Los_Angeles",
+      "allDay": true,
+      "location": {
+        "venue": null,
+        "address": null,
+        "locality": null,
+        "region": null,
+        "country": null,
+        "basis": "source venue"
+      },
+      "marketCity": "Las Vegas",
+      "sourceGroups": [
+        "Las Vegas"
+      ],
+      "categoryTags": [
+        {
+          "label": "Convention",
+          "slug": "convention",
+          "basis": "upstream category"
+        },
+        {
+          "label": "Professional Association",
+          "slug": "professional-association",
+          "basis": "upstream category"
+        },
+        {
+          "label": "Legal, Financial & Government",
+          "slug": "legal-financial-government",
+          "basis": "upstream category"
+        }
+      ],
+      "raw": {
+        "start_date": "2026-10-16 00:00:00",
+        "end_date": "2026-10-19 23:59:59",
+        "all_day": true,
+        "description": "The NAMB Annual Convention 2026, hosted by the National Association of Mortgage Brokers, takes place at Caesars Palace as a leading national event for mortgage professionals. Known as NAMB National, the convention gathers thousands of members, partners, exhibitors and sponsors, occupying an entire level of the resort’s conference tower. Mortgage brokers, loan originators, lenders and industry vendors attend to explore the latest products, technology and services, sharpen their skills through education, and build relationships across the mortgage profession. The program pairs a sold-out trade show floor with sessions and networking designed to help originators grow their businesses, stay compliant and navigate a changing lending environment. As the association advocating for mortgage brokers nationwide, NAMB positions the event as a premier destination for professionals seeking connection, continuing education and exposure to the partners that support their work. Held at one of the most iconic resorts on the Las Vegas Strip, NAMB National combines a major exhibition with robust learning and a lively atmosphere, making it a key annual gathering for the mortgage broker community.",
+        "cost": "",
+        "venue": []
+      },
+      "evidence": {
+        "jsonPath": "$.events[id=54840]",
+        "capture": "/Users/pshorey/git/events/.artifacts/runs/2026-10-17T03-02-18-913Z-network-vegas-a868319d/api-1.json"
+      },
+      "warnings": [],
+      "sampleKey": "network-vegas/54840",
+      "runId": "2026-10-17T03-02-18-913Z-network-vegas-a868319d",
+      "collectedAt": "2026-10-17T03:02:26.133Z",
+      "sourceCompletenessVerified": false
+    },
+    {
+      "sourceId": "network-vegas",
+      "sourceRecordId": "57307",
+      "title": "Non-Profits & Friends",
+      "url": "https://network.vegas/calendar/non-profits-friends-9/",
+      "startDate": "2026-10-16",
+      "endDate": "2026-10-16",
+      "startLocal": "2026-10-16T08:00:00",
+      "endLocal": "2026-10-16T09:30:00",
+      "timeZone": "America/Los_Angeles",
+      "allDay": false,
+      "location": {
+        "venue": null,
+        "address": null,
+        "locality": null,
+        "region": null,
+        "country": null,
+        "basis": "source venue"
+      },
+      "marketCity": "Las Vegas",
+      "sourceGroups": [
+        "Las Vegas"
+      ],
+      "categoryTags": [
+        {
+          "label": "Networking",
+          "slug": "networking",
+          "basis": "upstream category"
+        },
+        {
+          "label": "Chamber",
+          "slug": "chamber",
+          "basis": "upstream category"
+        },
+        {
+          "label": "Community",
+          "slug": "community",
+          "basis": "upstream category"
+        },
+        {
+          "label": "Las Vegas Business",
+          "slug": "las-vegas-business",
+          "basis": "upstream category"
+        }
+      ],
+      "raw": {
+        "start_date": "2026-10-16 08:00:00",
+        "end_date": "2026-10-16 09:30:00",
+        "all_day": false,
+        "description": "Have you heard about the fastest growing industry specific networking groups at the Vegas Chamber? No!! Well, let me fill you in! And Friends is an industry specific networking group that allows those within the industry to connect and form power partnerships to grow their sphere of influence and business. The And Friends part is where we permit those who want to market or partner with the industry to join the group. This makes this series a powerhouse of networking possibilities. Paid Vegas Chamber Members in good standing will receive a copy of the Attendee List to help in fostering lasting business relationships. Non-Vegas Chamber members may attend as a one-time And Friends Guest by reaching out to Lita Stein via email: lstein@VegasChamber.com",
+        "cost": "",
+        "venue": []
+      },
+      "evidence": {
+        "jsonPath": "$.events[id=57307]",
+        "capture": "/Users/pshorey/git/events/.artifacts/runs/2026-10-17T03-02-18-913Z-network-vegas-a868319d/api-1.json"
+      },
+      "warnings": [],
+      "sampleKey": "network-vegas/57307",
+      "runId": "2026-10-17T03-02-18-913Z-network-vegas-a868319d",
+      "collectedAt": "2026-10-17T03:02:26.133Z",
+      "sourceCompletenessVerified": false
+    },
+    {
+      "sourceId": "network-vegas",
+      "sourceRecordId": "56976",
+      "title": "Nevada Employers Summit",
+      "url": "https://network.vegas/calendar/nevada-employers-summit/",
+      "startDate": "2026-10-16",
+      "endDate": "2026-10-16",
+      "startLocal": "2026-10-16T08:00:00",
+      "endLocal": "2026-10-16T14:00:00",
+      "timeZone": "America/Los_Angeles",
+      "allDay": false,
+      "location": {
+        "venue": "Suncoast Hotel & Casino Grand Ballroom",
+        "address": "9090 Alta Drive",
+        "locality": "Las Vegas",
+        "region": "NV",
+        "country": "United States",
+        "basis": "source venue"
+      },
+      "marketCity": "Las Vegas",
+      "sourceGroups": [
+        "Las Vegas"
+      ],
+      "categoryTags": [
+        {
+          "label": "Convention",
+          "slug": "convention",
+          "basis": "upstream category"
+        },
+        {
+          "label": "Featured",
+          "slug": "featured",
+          "basis": "upstream category"
+        },
+        {
+          "label": "Professional Association",
+          "slug": "professional-association",
+          "basis": "upstream category"
+        },
+        {
+          "label": "Education",
+          "slug": "education",
+          "basis": "upstream category"
+        },
+        {
+          "label": "Las Vegas Business",
+          "slug": "las-vegas-business",
+          "basis": "upstream category"
+        },
+        {
+          "label": "Legal, Financial & Government",
+          "slug": "legal-financial-government",
+          "basis": "upstream category"
+        }
+      ],
+      "raw": {
+        "start_date": "2026-10-16 08:00:00",
+        "end_date": "2026-10-16 14:00:00",
+        "all_day": false,
+        "description": "@ Join NAE for a dynamic and engaging event featuring multiple impactful sessions that provide valuable insights into the complexities of navigating state and federal laws, as well as practical solutions to common workplace challenges. Attendees will explore how to work more effectively with different personality styles and gain valuable leadership and communication strategies, hear directly from the Nevada Labor Commissioner on the latest Nevada wage and hour developments, receive important Form I-9 compliance and employer best practices guidance, and learn about evolving California employment law requirements that impact many multi-state employers. Don’t miss this opportunity to gain the knowledge and tools necessary to effectively mitigate risks and cultivate a positive and productive work environment. Add to calendar Google Calendar iCalendar Outlook 365 Outlook Live Details Date: Time:",
+        "cost": "",
+        "venue": {
+          "id": 2838,
+          "author": "1",
+          "status": "publish",
+          "date": "2016-01-19 20:24:04",
+          "date_utc": "2016-01-19 20:24:04",
+          "modified": "2016-01-19 20:24:04",
+          "modified_utc": "2016-01-19 20:24:04",
+          "url": "https://network.vegas/venue/suncoast-hotel-casino-grand-ballroom/",
+          "venue": "Suncoast Hotel &#038; Casino Grand Ballroom",
+          "slug": "suncoast-hotel-casino-grand-ballroom",
+          "address": "9090 Alta Drive",
+          "city": "Las Vegas",
+          "country": "United States",
+          "state": "NV",
+          "zip": "89145",
+          "stateprovince": "NV",
+          "geo_lat": 36.1691108,
+          "geo_lng": -115.2913032,
+          "show_map": true,
+          "show_map_link": true,
+          "global_id": "network.vegas?id=2838",
+          "global_id_lineage": [
+            "network.vegas?id=2838"
+          ]
+        }
+      },
+      "evidence": {
+        "jsonPath": "$.events[id=56976]",
+        "capture": "/Users/pshorey/git/events/.artifacts/runs/2026-10-17T03-02-18-913Z-network-vegas-a868319d/api-1.json"
+      },
+      "warnings": [],
+      "sampleKey": "network-vegas/56976",
+      "runId": "2026-10-17T03-02-18-913Z-network-vegas-a868319d",
+      "collectedAt": "2026-10-17T03:02:26.133Z",
+      "sourceCompletenessVerified": false
+    },
+    {
+      "sourceId": "network-vegas",
+      "sourceRecordId": "58528",
+      "title": "Las Vegas Hiring Event",
+      "url": "https://network.vegas/calendar/las-vegas-hiring-event-2/",
+      "startDate": "2026-10-16",
+      "endDate": "2026-10-16",
+      "startLocal": "2026-10-16T09:30:00",
+      "endLocal": "2026-10-16T12:30:00",
+      "timeZone": "America/Los_Angeles",
+      "allDay": false,
+      "location": {
+        "venue": "Las Vegas Marriott",
+        "address": "325 Convention Center dr.",
+        "locality": "Las Vegas",
+        "region": "NV",
+        "country": null,
+        "basis": "source venue"
+      },
+      "marketCity": "Las Vegas",
+      "sourceGroups": [
+        "Las Vegas"
+      ],
+      "categoryTags": [
+        {
+          "label": "Networking",
+          "slug": "networking",
+          "basis": "upstream category"
+        },
+        {
+          "label": "Company",
+          "slug": "company",
+          "basis": "upstream category"
+        },
+        {
+          "label": "Las Vegas Business",
+          "slug": "las-vegas-business",
+          "basis": "upstream category"
+        }
+      ],
+      "raw": {
+        "start_date": "2026-10-16 09:30:00",
+        "end_date": "2026-10-16 12:30:00",
+        "all_day": false,
+        "description": "The Recruiting Network holds a hiring event for entry-level, skilled and experienced job seekers. Attendees can meet recruiting teams about full-time and part-time positions. Admission is free for job seekers; employers and staffing organizations use a separate registration process. The listed event runs October 16 from 9:30 a.m. to 12:30 p.m. at the Marriott, 2989 Paradise Road. The organizer sends its employer list and location confirmation to registered attendees approximately 72 hours beforehand and notes that dates or locations can change. Job seekers should register and confirm those details before traveling.",
+        "cost": "Free",
+        "venue": {
+          "id": 29353,
+          "author": "1",
+          "status": "publish",
+          "date": "2023-04-09 14:37:19",
+          "date_utc": "2023-04-09 21:37:19",
+          "modified": "2023-04-09 14:37:19",
+          "modified_utc": "2023-04-09 21:37:19",
+          "url": "https://network.vegas/venue/las-vegas-marriott/",
+          "venue": "Las Vegas Marriott",
+          "slug": "las-vegas-marriott",
+          "address": "325 Convention Center dr.",
+          "city": "Las Vegas",
+          "province": "NV",
+          "zip": "89109",
+          "website": "https://www.aialasvegas.org/venue/las-vegas-marriott/",
+          "stateprovince": "NV",
+          "show_map": false,
+          "show_map_link": false,
+          "global_id": "network.vegas?id=29353",
+          "global_id_lineage": [
+            "network.vegas?id=29353",
+            "www.aialasvegas.org?id=3640"
+          ]
+        }
+      },
+      "evidence": {
+        "jsonPath": "$.events[id=58528]",
+        "capture": "/Users/pshorey/git/events/.artifacts/runs/2026-10-17T03-02-18-913Z-network-vegas-a868319d/api-1.json"
+      },
+      "warnings": [],
+      "sampleKey": "network-vegas/58528",
+      "runId": "2026-10-17T03-02-18-913Z-network-vegas-a868319d",
+      "collectedAt": "2026-10-17T03:02:26.133Z",
+      "sourceCompletenessVerified": false
+    },
+    {
+      "sourceId": "network-vegas",
+      "sourceRecordId": "57667",
+      "title": "BIOMED EXPO Las Vegas 2026",
+      "url": "https://network.vegas/calendar/biomed-expo-las-vegas-2026/",
+      "startDate": "2026-10-16",
+      "endDate": "2026-10-18",
+      "startLocal": "2026-10-16T10:00:00",
+      "endLocal": "2026-10-18T18:00:00",
+      "timeZone": "America/Los_Angeles",
+      "allDay": false,
+      "location": {
+        "venue": "Alexis Park Resort",
+        "address": "375 East Harmon Avenue",
+        "locality": "Las Vegas",
+        "region": "NV",
+        "country": "United States",
+        "basis": "source venue"
+      },
+      "marketCity": "Las Vegas",
+      "sourceGroups": [
+        "Las Vegas"
+      ],
+      "categoryTags": [
+        {
+          "label": "Convention",
+          "slug": "convention",
+          "basis": "upstream category"
+        },
+        {
+          "label": "Company",
+          "slug": "company",
+          "basis": "upstream category"
+        },
+        {
+          "label": "Health & Wellness",
+          "slug": "health-wellness",
+          "basis": "upstream category"
+        }
+      ],
+      "raw": {
+        "start_date": "2026-10-16 10:00:00",
+        "end_date": "2026-10-18 18:00:00",
+        "all_day": false,
+        "description": "BIOMED EXPO Las Vegas 2026 is scheduled for October 16–18 at Alexis Park Resort and is organized by BIOMED EXPO as part of the 5D Events series. The three-day program combines a public-facing health and wellness exposition with paid conference programming for professional and consumer audiences. Its stated subject areas include biohacking, biomedical technology, functional wellness, regenerative medicine, longevity, nutrition, energy-based wellness practices, consciousness, and selected space- and technology-related topics. The audience identified by the organizer includes physicians, dentists, chiropractors, scientists, researchers, naturopaths, herbalists, nutrition professionals, physical therapists, biomedical companies, technology suppliers, wellness practitioners, and consumers interested in the program’s themes. Event overview The organizer describes a program of lectures, workshops, panels, exhibits, professional networking, speaker meetings, and evening banquet functions. Exhibit categories include biomedical devices, wellness products, nutritional products, skincare, biohacking systems, and related services. Conference subjects range from stem-cell research, peptides, cellular therapy, biomolecular technologies, bioelectronics, and brain-health technologies to alternative-health practices, scalar-energy concepts, consciousness, and speculative science topics. These subjects represent the organizer’s published program; their inclusion in the event does not constitute an evaluation of medical efficacy or scientific consensus. BIOMED EXPO is structured as both a business-to-business and business-to-consumer event. The exhibit component provides space for manufacturers, practitioners, researchers, and service organizations to present products or discuss their work, while the conference program provides longer-form presentations and panels. The official ticket listing identifies the event as restricted to people age 18 and older. It also distinguishes free expo access from paid conference, streaming, and banquet products. Main public hours are listed as 10:00 a.m. to 6:00 p.m. across the published event dates, with registration opening before the program and separate dinner-and-dance banquets scheduled Friday and Saturday evenings. The technology content makes the event relevant to organizations working in biomedical products, digital and device-supported wellness, biotechnology, bioelectronics, diagnostics, research, and emerging health systems. At the same time, the agenda extends beyond conventional biomedical subjects into alternative medicine, personal-development, consciousness, and extraterrestrial or disclosure themes presented through the co-located Alien Event Cosmic Command program. Admission levels and room access may therefore differ by expo, conference, banquet, streaming, or co-located-event credential. The organizer’s current schedule and registration terms control final access and timing. History in Las Vegas The organizer characterizes the 2026 gathering as the fortieth event in the broader 5D Events series, which it dates to 2009. Available Las Vegas records document BIOMED EXPO at Alexis Park All Suite Resort in October 2024, and the organizer’s Eventbrite archive identifies another edition at Alexis Park in September 2025. Those records establish a recent pattern at the same Las Vegas property, although they do not demonstrate that every event in the overall series occurred in Las Vegas. The 2026 edition continues that verified local sequence at Alexis Park. Location Alexis Park Resort is located at 375 East Harmon Avenue in Las Vegas. The official property information describes an all-suite, non-gaming resort with meeting and banquet facilities, lodging, wireless internet in most public areas, and complimentary on-site parking. Its conference inventory includes the Apollo, Parthenon, and Zeus ballrooms along with smaller meeting rooms. That range of spaces can support the expo floor, simultaneous presentations, panels, registration, and banquet functions on one resort campus. Final ballroom assignments and access arrangements should be taken from the organizer’s event materials. BIOMED EXPO Las Vegas 2026 functions as a mixed professional and consumer gathering where biomedical, wellness, technology, alternative-health, and consciousness communities share exhibit and conference space under a single three-day program.",
+        "cost": "$499",
+        "venue": {
+          "id": 43517,
+          "author": "3",
+          "status": "publish",
+          "date": "2025-01-16 13:47:45",
+          "date_utc": "2025-01-16 21:47:45",
+          "modified": "2025-01-28 18:58:23",
+          "modified_utc": "2025-01-29 02:58:23",
+          "url": "https://network.vegas/venue/alexis-park-resort/",
+          "venue": "Alexis Park Resort",
+          "slug": "alexis-park-resort",
+          "address": "375 East Harmon Avenue",
+          "city": "Las Vegas",
+          "country": "United States",
+          "province": "NV",
+          "state": "NV",
+          "zip": "89169",
+          "stateprovince": "NV",
+          "show_map": true,
+          "show_map_link": true,
+          "global_id": "network.vegas?id=43517",
+          "global_id_lineage": [
+            "network.vegas?id=43517"
+          ]
+        }
+      },
+      "evidence": {
+        "jsonPath": "$.events[id=57667]",
+        "capture": "/Users/pshorey/git/events/.artifacts/runs/2026-10-17T03-02-18-913Z-network-vegas-a868319d/api-2.json"
+      },
+      "warnings": [],
+      "sampleKey": "network-vegas/57667",
+      "runId": "2026-10-17T03-02-18-913Z-network-vegas-a868319d",
+      "collectedAt": "2026-10-17T03:02:26.133Z",
+      "sourceCompletenessVerified": false
+    },
+    {
+      "sourceId": "network-vegas",
+      "sourceRecordId": "58529",
+      "title": "Molasky Family Department of Economics & Real Estate Seminar Series: Ed Coulson, UC-Irvine",
+      "url": "https://network.vegas/calendar/molasky-family-department-of-economics-real-estate-seminar-series-ed-coulson-uc-irvine/",
+      "startDate": "2026-10-16",
+      "endDate": "2026-10-16",
+      "startLocal": "2026-10-16T10:30:00",
+      "endLocal": "2026-10-16T12:00:00",
+      "timeZone": "America/Los_Angeles",
+      "allDay": false,
+      "location": {
+        "venue": null,
+        "address": null,
+        "locality": null,
+        "region": null,
+        "country": null,
+        "basis": "source venue"
+      },
+      "marketCity": "Las Vegas",
+      "sourceGroups": [
+        "Las Vegas"
+      ],
+      "categoryTags": [
+        {
+          "label": "Networking",
+          "slug": "networking",
+          "basis": "upstream category"
+        },
+        {
+          "label": "Government & Education",
+          "slug": "government-education",
+          "basis": "upstream category"
+        },
+        {
+          "label": "Education",
+          "slug": "education",
+          "basis": "upstream category"
+        },
+        {
+          "label": "Las Vegas Business",
+          "slug": "las-vegas-business",
+          "basis": "upstream category"
+        },
+        {
+          "label": "Real Estate & Construction",
+          "slug": "real-estate-construction",
+          "basis": "upstream category"
+        }
+      ],
+      "raw": {
+        "start_date": "2026-10-16 10:30:00",
+        "end_date": "2026-10-16 12:00:00",
+        "all_day": false,
+        "description": "UNLV’s Molasky Family Department of Economics and Real Estate hosts a public research seminar with Ed Coulson. Coulson is a professor of economics and public policy at the University of California, Irvine and directs research at its Center for Real Estate. His research includes housing and rental markets, affordability, inflation and appraisals; he previously directed UNLV’s Lied Center for Real Estate. The seminar is free and open to the general public, and no registration is required. It takes place from 10:30 a.m. to noon in Hospitality Hall, Room 210, on UNLV’s Maryland Parkway campus. The department’s official event page provides contact information and any schedule updates.",
+        "cost": "Free",
+        "venue": []
+      },
+      "evidence": {
+        "jsonPath": "$.events[id=58529]",
+        "capture": "/Users/pshorey/git/events/.artifacts/runs/2026-10-17T03-02-18-913Z-network-vegas-a868319d/api-2.json"
+      },
+      "warnings": [],
+      "sampleKey": "network-vegas/58529",
+      "runId": "2026-10-17T03-02-18-913Z-network-vegas-a868319d",
+      "collectedAt": "2026-10-17T03:02:26.133Z",
+      "sourceCompletenessVerified": false
+    },
+    {
+      "sourceId": "network-vegas",
+      "sourceRecordId": "57226",
+      "title": "2026 Walk to End Alzheimer’s",
+      "url": "https://network.vegas/calendar/2026-walk-to-end-alzheimers-2/",
+      "startDate": "2026-10-17",
+      "endDate": "2026-10-17",
+      "startLocal": null,
+      "endLocal": null,
+      "timeZone": "America/Los_Angeles",
+      "allDay": true,
+      "location": {
+        "venue": "Town Square Las Vegas",
+        "address": "6605 S. Las Vegas Blvd. Las Vegas, Nevada 89110",
+        "locality": "Las Vegas",
+        "region": null,
+        "country": null,
+        "basis": "source venue"
+      },
+      "marketCity": "Las Vegas",
+      "sourceGroups": [
+        "Las Vegas"
+      ],
+      "categoryTags": [
+        {
+          "label": "Fundraiser/ Benefit",
+          "slug": "fundraiser-benefit",
+          "basis": "upstream category"
+        },
+        {
+          "label": "Professional Association",
+          "slug": "professional-association",
+          "basis": "upstream category"
+        },
+        {
+          "label": "Health & Wellness",
+          "slug": "health-wellness",
+          "basis": "upstream category"
+        },
+        {
+          "label": "Legal, Financial & Government",
+          "slug": "legal-financial-government",
+          "basis": "upstream category"
+        }
+      ],
+      "raw": {
+        "start_date": "2026-10-17 00:00:00",
+        "end_date": "2026-10-17 23:59:59",
+        "all_day": true,
+        "description": "For event details and registration, visit the event website.",
+        "cost": "",
+        "venue": {
+          "id": 21805,
+          "author": "1",
+          "status": "publish",
+          "date": "2022-03-31 10:29:27",
+          "date_utc": "2022-03-31 17:29:27",
+          "modified": "2022-03-31 10:29:27",
+          "modified_utc": "2022-03-31 17:29:27",
+          "url": "https://network.vegas/venue/town-square-las-vegas/",
+          "venue": "Town Square Las Vegas",
+          "slug": "town-square-las-vegas",
+          "address": "6605 S. Las Vegas Blvd. Las Vegas, Nevada 89110",
+          "city": "Las Vegas",
+          "show_map": true,
+          "show_map_link": true,
+          "global_id": "network.vegas?id=21805",
+          "global_id_lineage": [
+            "network.vegas?id=21805"
+          ]
+        }
+      },
+      "evidence": {
+        "jsonPath": "$.events[id=57226]",
+        "capture": "/Users/pshorey/git/events/.artifacts/runs/2026-10-17T03-02-18-913Z-network-vegas-a868319d/api-2.json"
+      },
+      "warnings": [],
+      "sampleKey": "network-vegas/57226",
+      "runId": "2026-10-17T03-02-18-913Z-network-vegas-a868319d",
+      "collectedAt": "2026-10-17T03:02:26.133Z",
+      "sourceCompletenessVerified": false
+    },
+    {
+      "sourceId": "network-vegas",
+      "sourceRecordId": "58816",
+      "title": "Knowhere, No Boundaries 2026",
+      "url": "https://network.vegas/calendar/knowhere-no-boundaries-2026/",
+      "startDate": "2026-10-17",
+      "endDate": "2026-10-17",
+      "startLocal": "2026-10-17T09:00:00",
+      "endLocal": "2026-10-17T16:30:00",
+      "timeZone": "America/Los_Angeles",
+      "allDay": false,
+      "location": {
+        "venue": null,
+        "address": null,
+        "locality": null,
+        "region": null,
+        "country": null,
+        "basis": "source venue"
+      },
+      "marketCity": "Las Vegas",
+      "sourceGroups": [
+        "Las Vegas"
+      ],
+      "categoryTags": [
+        {
+          "label": "Networking",
+          "slug": "networking",
+          "basis": "upstream category"
+        },
+        {
+          "label": "Professional Association",
+          "slug": "professional-association",
+          "basis": "upstream category"
+        },
+        {
+          "label": "Education",
+          "slug": "education",
+          "basis": "upstream category"
+        },
+        {
+          "label": "Real Estate & Construction",
+          "slug": "real-estate-construction",
+          "basis": "upstream category"
+        }
+      ],
+      "raw": {
+        "start_date": "2026-10-17 09:00:00",
+        "end_date": "2026-10-17 16:30:00",
+        "all_day": false,
+        "description": "Join us for the 3rd annual Knowhere, No Boundaries a creative convergence hosted by AIA Northern Nevada, AIA Las Vegas and AIA Nevada. Made possible with the support of: Title Sponsor | CORE Construction and Nevada Sales, xyz, and AS VWB CS FG What happens when creators, visionaries, and masters of diverse mediums convene to explore a shared mission? Moving beyond the traditional framework of any single creative discipline, this event is a catalyst for unexpected cross-disciplinary connection and an interactive venue. Boundaries limit us, but “Knowhere” frees us. This is a space where a photographer’s lens influences a sculptor’s hands, and a dancer’s movement redefines an architect’s understanding of space. Six (6) Speakers representing various disciplines will share their unique process, inspiration, and their specific journey of bringing vision and creativity to the world. Step into an environment where creative boundaries do not exist and our shared passions are celebrated. Join us to challenge your perspective, engage in vibrant dialogue, and discover how our collective art disciplines shape and impact the human experience. Details to Know: Registration: $50 (includes catered lunch on Saturday) Speakers and presenters: To be announced Many attendees will be arriving Friday and staying two nights, with most lodging at the Mizpah Hotel (other options available in town) Optional activities include a haunted hotel tour, group dinner at the local brewery, and drinks at the hotel bar",
+        "cost": "",
+        "venue": []
+      },
+      "evidence": {
+        "jsonPath": "$.events[id=58816]",
+        "capture": "/Users/pshorey/git/events/.artifacts/runs/2026-10-17T03-02-18-913Z-network-vegas-a868319d/api-2.json"
+      },
+      "warnings": [],
+      "sampleKey": "network-vegas/58816",
+      "runId": "2026-10-17T03-02-18-913Z-network-vegas-a868319d",
+      "collectedAt": "2026-10-17T03:02:26.133Z",
+      "sourceCompletenessVerified": false
+    },
+    {
+      "sourceId": "network-vegas",
+      "sourceRecordId": "57669",
+      "title": "Chili Cook Off / Car Show & Tradeshow",
+      "url": "https://network.vegas/calendar/chili-cook-off-car-show-tradeshow/",
+      "startDate": "2026-10-17",
+      "endDate": "2026-10-17",
+      "startLocal": "2026-10-17T12:00:00",
+      "endLocal": "2026-10-17T16:00:00",
+      "timeZone": "America/Los_Angeles",
+      "allDay": false,
+      "location": {
+        "venue": null,
+        "address": null,
+        "locality": null,
+        "region": null,
+        "country": null,
+        "basis": "source venue"
+      },
+      "marketCity": "Las Vegas",
+      "sourceGroups": [
+        "Las Vegas"
+      ],
+      "categoryTags": [
+        {
+          "label": "Convention",
+          "slug": "convention",
+          "basis": "upstream category"
+        },
+        {
+          "label": "Company",
+          "slug": "company",
+          "basis": "upstream category"
+        },
+        {
+          "label": "Hospitality",
+          "slug": "hospitality",
+          "basis": "upstream category"
+        }
+      ],
+      "raw": {
+        "start_date": "2026-10-17 12:00:00",
+        "end_date": "2026-10-17 16:00:00",
+        "all_day": false,
+        "description": "12:00 pm – 3:00 pm 252 Sunpac Ave. Henderson NV",
+        "cost": "",
+        "venue": []
+      },
+      "evidence": {
+        "jsonPath": "$.events[id=57669]",
+        "capture": "/Users/pshorey/git/events/.artifacts/runs/2026-10-17T03-02-18-913Z-network-vegas-a868319d/api-2.json"
+      },
+      "warnings": [],
+      "sampleKey": "network-vegas/57669",
+      "runId": "2026-10-17T03-02-18-913Z-network-vegas-a868319d",
+      "collectedAt": "2026-10-17T03:02:26.133Z",
+      "sourceCompletenessVerified": false
+    }
+  ]
+}

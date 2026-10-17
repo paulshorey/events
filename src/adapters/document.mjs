@@ -1,0 +1,379 @@
+import { load } from "cheerio";
+import { inspectedAdapters, parseInspected } from "./inspected.mjs";
+import {
+  parseLaCalendar,
+  parseBostonCalendar,
+} from "../../examples/parsers.mjs";
+import {
+  text,
+  dates,
+  safeUrl,
+  eventRecord,
+  jsonLdEvents,
+  recordFromJsonLd,
+  dedupe,
+} from "../records.mjs";
+
+const paginationSelectors =
+  'a[rel="next"],.pager__item--next a,.tribe-events-c-nav__next a,a.tribe-events-c-nav__next,.pagination .next a,a.next.page-numbers,.pagination-next a';
+const sameHost = (a, b) =>
+  new URL(a).hostname.replace(/^www\./, "") ===
+  new URL(b).hostname.replace(/^www\./, "");
+function navigation($, url, config, task) {
+  const requests = [];
+  $(paginationSelectors).each((_, e) => {
+    const href = $(e).attr("href"),
+      u = href && !href.startsWith("#") ? safeUrl(href, url) : null;
+    if (u && sameHost(u, config.url) && u !== url)
+      requests.push({
+        url: u,
+        kind: "listing",
+        depth: task.depth,
+        meta: { pagination: true },
+      });
+  });
+  return requests;
+}
+function normalizedLegacy(config, records, url) {
+  return records.map((r) => ({
+    ...r,
+    schemaVersion: 2,
+    collectionId: config.id,
+    sourceId: config.sourceKey,
+    sourceRecordId: r.sourceRecordId,
+    validationStatus: "parser-validated",
+    evidence: { ...r.evidence, url },
+  }));
+}
+export function parseDocument({
+  html,
+  url,
+  config,
+  task = { depth: 0, kind: "listing", meta: {} },
+}) {
+  if (task.kind === "detail" && config.adapter !== "jsonld")
+    return parseDocument({
+      html,
+      url,
+      config: { ...config, adapter: "jsonld", coverage: "unverified" },
+      task,
+    });
+  const $ = load(html),
+    issues = [],
+    all = [],
+    nextRequests = navigation($, url, config, task);
+  let coverage = config.coverage,
+    terminal = false,
+    observedCount = 0,
+    method = "jsonld",
+    rejected = 0;
+  if (inspectedAdapters.has(config.adapter)) {
+    const parsed = parseInspected({ html, url, config });
+    all.push(...parsed.records);
+    issues.push(
+      ...parsed.issues.filter(
+        (issue) => issue.code !== "records_require_parse_review",
+      ),
+    );
+    observedCount = parsed.observedCount;
+    method = parsed.method;
+    rejected = parsed.rejected;
+    coverage = parsed.coverage;
+    terminal = parsed.terminal;
+  } else if (config.adapter === "la") {
+    const parsed = parseLaCalendar(html, url);
+    all.push(...normalizedLegacy(config, parsed.records, url));
+    observedCount = parsed.observedCount;
+    terminal = true;
+    method = "la-event-cards";
+  } else if (config.adapter === "boston") {
+    const parsed = parseBostonCalendar(html, url);
+    all.push(...normalizedLegacy(config, parsed.records, url));
+    observedCount = parsed.observedCount;
+    if (parsed.nextUrl && !nextRequests.some((p) => p.url === parsed.nextUrl))
+      nextRequests.push({
+        url: parsed.nextUrl,
+        kind: "listing",
+        depth: task.depth,
+        meta: { pagination: true },
+      });
+    terminal = !parsed.nextUrl;
+    method = "boston-occurrence-cards";
+  } else if (config.adapter === "festivalindex") {
+    const cards = $("[data-event-payload]");
+    observedCount = cards.length;
+    method = "festivalindex-payload";
+    cards.each((_, e) => {
+      try {
+        const v = JSON.parse($(e).attr("data-event-payload"));
+        const r = eventRecord(
+          config,
+          {
+            id: String(v.id),
+            title: v.title,
+            url: v.url,
+            rawDate: v.date_text,
+            location: {
+              locality: v.location_text,
+              country: v.country_code,
+              basis: "upstream card payload",
+            },
+            categoryTags: (v.topics ?? []).map((t) => ({
+              label: t.label,
+              slug: t.slug,
+              basis: "upstream topic",
+            })),
+            raw: v,
+          },
+          { url, selector: "[data-event-payload]" },
+        );
+        r ? all.push(r) : rejected++;
+      } catch {
+        rejected++;
+      }
+    });
+  } else if (config.adapter === "dc-tourism") {
+    method = "dc-calendar-cards";
+    const cards = $(".event-wrapper");
+    observedCount = cards.length;
+    cards.each((_, e) => {
+      const c = $(e),
+        a = c.find(".event-title a").first();
+      const rawDate = `${text(c.find(".date__input--month").text())} ${text(c.find(".date__input--day").text())}, ${text(c.find(".date__input--year").text())}`;
+      const r = eventRecord(
+        config,
+        {
+          title: a.text(),
+          url: a.attr("href"),
+          rawDate,
+          location: {
+            venue: text(c.find(".event-location").text()),
+            basis: "source event card",
+          },
+        },
+        { url, selector: ".event-wrapper" },
+      );
+      r ? all.push(r) : rejected++;
+    });
+  } else if (config.adapter === "javits") {
+    method = "javits-calendar-cards";
+    const titles = $("h3.uppercase");
+    observedCount = titles.length;
+    titles.each((_, e) => {
+      const h = $(e),
+        parent = h.parent(),
+        rawDate = text(h.prev().text()),
+        a = parent.find("a[href]").first();
+      const r = eventRecord(
+        config,
+        {
+          title: h.text(),
+          url: a.attr("href") ?? `${url}#${encodeURIComponent(text(h.text()))}`,
+          rawDate,
+          location: {
+            venue: "Jacob K. Javits Convention Center",
+            locality: "New York City",
+            region: "NY",
+            country: "US",
+            basis: "single-venue source",
+          },
+        },
+        { url, selector: "h3.uppercase and previous date element" },
+      );
+      r ? all.push(r) : rejected++;
+    });
+  } else if (config.adapter === "microdata") {
+    method = "microdata-event";
+    const cards = $('[itemtype*="schema.org/Event"]');
+    observedCount = cards.length;
+    cards.each((_, e) => {
+      const c = $(e),
+        prop = (name) => {
+          const x = c.find(`[itemprop="${name}"]`).first();
+          return (
+            x.attr("content") ??
+            x.attr("datetime") ??
+            x.attr("href") ??
+            text(x.text())
+          );
+        };
+      const r = eventRecord(
+        config,
+        {
+          title: prop("name"),
+          url: prop("url") || c.find("a[href]").first().attr("href"),
+          startDate: prop("startDate"),
+          endDate: prop("endDate"),
+          location: {
+            locality: prop("addressLocality"),
+            venue: prop("location"),
+            basis: "microdata",
+          },
+        },
+        { url, selector: "[itemtype*=schema.org/Event]" },
+      );
+      r ? all.push(r) : rejected++;
+    });
+  } else {
+    const ld = jsonLdEvents(html);
+    observedCount = ld.events.length;
+    for (const { event, path } of ld.events) {
+      const r = recordFromJsonLd(config, event, { url, jsonPath: path });
+      r ? all.push(r) : rejected++;
+    }
+    if (ld.parseErrors.length)
+      issues.push({
+        code: "malformed_structured_data",
+        count: ld.parseErrors.length,
+      });
+    if (
+      !all.length ||
+      config.adapter === "cards" ||
+      config.adapter === "conventiongrid" ||
+      config.adapter === "trade-table"
+    ) {
+      const pattern = new RegExp(config.detailPattern),
+        selectors = config.cardSelectors ?? [
+          ".event-card",
+          ".event-item",
+          ".views-row",
+          "article",
+          "table tr",
+        ];
+      let roots = [];
+      if (config.adapter === "conventiongrid") {
+        roots = $('a[href^="/shows/"]')
+          .filter((_, e) => dates($(e).text()).startDate)
+          .toArray();
+      } else if (config.adapter === "trade-table") {
+        roots = $("table tr")
+          .filter(
+            (_, e) =>
+              $(e).find("table").length === 0 && dates($(e).text()).startDate,
+          )
+          .toArray();
+      } else
+        for (const selector of selectors) {
+          const found = $(selector).toArray();
+          if (found.length) {
+            roots = found;
+            break;
+          }
+        }
+      observedCount += roots.length;
+      for (const el of roots) {
+        const c = $(el),
+          a =
+            el.tagName === "a"
+              ? c
+              : c
+                  .find("a[href]")
+                  .filter((_, a) => pattern.test($(a).attr("href")))
+                  .first();
+        const href = a.attr("href");
+        if (!href) continue;
+        const title =
+          text(c.find('h2,h3,h4,[class*="title"]').first().text()) ||
+          text(a.text()).slice(0, 200);
+        const time = c
+          .find('time,[itemprop="startDate"],[datetime],[data-date]')
+          .first();
+        const rawDate =
+          time.attr("datetime") ??
+          time.attr("content") ??
+          time.attr("data-date") ??
+          (text(c.find('[class*="date"]').text()) || text(c.text()));
+        const r = eventRecord(
+          config,
+          {
+            id: c.attr("data-event-id"),
+            title,
+            url: href,
+            rawDate,
+            raw: { cardText: text(c.text()).slice(0, 4000) },
+          },
+          {
+            url,
+            selector:
+              config.adapter === "conventiongrid"
+                ? "a[href^=/shows/]"
+                : selectors.join(","),
+          },
+        );
+        if (r) {
+          all.push(r);
+          method = "semantic-event-cards";
+        } else rejected++;
+      }
+    }
+    if (config.adapter === "tribe") {
+      method = "tribe-list-jsonld";
+      if (
+        !$(".tribe-events-view").length &&
+        !$(".tribe-events").length &&
+        !ld.events.length
+      ) {
+        const e = new Error("Expected TEC calendar or Event JSON-LD missing");
+        e.code = "contract_changed";
+        throw e;
+      }
+      const interactive =
+        $(".tribe-events-c-nav__next:not([disabled])").length &&
+        !nextRequests.length;
+      terminal = !nextRequests.length && !interactive;
+      if (interactive) {
+        issues.push({ code: "interactive_pagination_unresolved" });
+        coverage = "unverified";
+      }
+    }
+  }
+  if (rejected)
+    issues.push({ code: "records_require_parse_review", count: rejected });
+  const pattern = new RegExp(config.detailPattern),
+    discovered = [];
+  $(
+    "main a[href],article a[href],.view-content a[href],.event-card a[href],a[href]",
+  ).each((_, e) => {
+    const href = $(e).attr("href");
+    if (!href || href.startsWith("#") || !pattern.test(href)) return;
+    const u = safeUrl(href, url);
+    if (!u || !sameHost(u, config.url) || u === url) return;
+    if (/\/wp-admin\/|\/user\/|\/login|\/cart|\.pdf(?:\?|$)/i.test(u)) return;
+    discovered.push({
+      url: u,
+      kind: "detail",
+      depth: task.depth + 1,
+      meta: { discoveredOn: url, titleHint: text($(e).text()).slice(0, 150) },
+    });
+  });
+  // Never label unknown discovery navigation as a complete event catalogue.
+  if (
+    !["la", "boston", "tribe"].includes(config.adapter) &&
+    task.depth < config.maxDepth
+  ) {
+    const knownUrls = new Set(all.map((r) => r.url));
+    nextRequests.push(...discovered.filter((r) => !knownUrls.has(r.url)));
+  }
+  if (!all.length && !nextRequests.length)
+    issues.push({
+      code: "no_event_contract_found",
+      message:
+        "Inspect source, embeds, network calls and event-specific sections",
+    });
+  if (
+    $('iframe[src*="calendar"],iframe[src*="trumba"],iframe[src*="event"]')
+      .length
+  )
+    issues.push({ code: "embedded_calendar_requires_validation" });
+  return {
+    records: dedupe(all),
+    nextRequests: [...new Map(nextRequests.map((r) => [r.url, r])).values()],
+    method,
+    observedCount,
+    rejected,
+    issues,
+    coverage,
+    terminal,
+    discoveryLinks: [...new Set(discovered.map((r) => r.url))].slice(0, 100),
+  };
+}

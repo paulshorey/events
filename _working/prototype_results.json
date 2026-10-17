@@ -1,0 +1,126 @@
+{
+  "recordedAt": "2026-10-17T03:11:21.787Z",
+  "localObservationDate": "2026-10-16",
+  "observationTimeZone": "America/Chicago",
+  "checkedEnvironment": {
+    "node": "26.9.0",
+    "playwright": "1.64.1",
+    "browser": "headless Chromium on this Mac"
+  },
+  "offlineValidation": {
+    "command": "npm test",
+    "observedPassedTests": 13,
+    "observedFailedTests": 0,
+    "automaticRevalidationOnExport": false
+  },
+  "liveSamples": [
+    {
+      "sourceId": "la-convention-center",
+      "runId": "2026-10-17T03-02-18-913Z-la-convention-center-5f4ff816",
+      "finishedAt": "2026-10-17T03:02:19.978Z",
+      "outcome": "sample_passed",
+      "recordCount": 8,
+      "enumeration": {
+        "complete": false,
+        "scope": "one rendered /events/all page; bounded record sample; no detail enrichment",
+        "observedRecords": 31,
+        "pagesVisited": 1,
+        "stopReason": "prototype_sample",
+        "detailPagesVisited": 0
+      },
+      "warnings": [],
+      "resultPath": ".artifacts/runs/2026-10-17T03-02-18-913Z-la-convention-center-5f4ff816/result.json"
+    },
+    {
+      "sourceId": "boston-gov",
+      "runId": "2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0",
+      "finishedAt": "2026-10-17T03:10:19.792Z",
+      "outcome": "sample_passed",
+      "recordCount": 35,
+      "enumeration": {
+        "complete": false,
+        "scope": "bounded calendar pages; visible grouped dates and times",
+        "pagesVisited": 2,
+        "observedRecords": 60,
+        "nextUrl": "https://www.boston.gov/events?page=2",
+        "stopReason": "prototype_sample",
+        "detailPagesVisited": 0
+      },
+      "warnings": [],
+      "resultPath": ".artifacts/runs/2026-10-17T03-10-15-067Z-boston-gov-ea2b23b0/result.json"
+    },
+    {
+      "sourceId": "network-vegas",
+      "runId": "2026-10-17T03-02-18-913Z-network-vegas-a868319d",
+      "finishedAt": "2026-10-17T03:02:26.133Z",
+      "outcome": "sample_passed",
+      "recordCount": 10,
+      "enumeration": {
+        "complete": false,
+        "scope": "events starting on/after asOf; API sample; ongoing events starting earlier need a separate strategy",
+        "pagesVisited": 2,
+        "upstreamTotal": 298,
+        "upstreamPages": 60,
+        "stopReason": "prototype_sample"
+      },
+      "warnings": [
+        {
+          "id": "57848",
+          "warnings": [
+            "source_all_day_flag_conflicts_with_timed_description"
+          ]
+        }
+      ],
+      "resultPath": ".artifacts/runs/2026-10-17T03-02-18-913Z-network-vegas-a868319d/result.json"
+    }
+  ],
+  "failedAttempts": [
+    {
+      "sourceId": "boston-gov",
+      "runId": "2026-10-17T03-02-18-913Z-boston-gov-d705f13b",
+      "error": {
+        "code": "contract_changed",
+        "message": "Boston date grouping, title, node ID or detail link changed"
+      },
+      "nextAction": {
+        "action": "repair_adapter",
+        "reason": "Inspect evidence and fix or validate extraction before another normal run"
+      },
+      "resultPath": ".artifacts/runs/2026-10-17T03-02-18-913Z-boston-gov-d705f13b/result.json"
+    }
+  ],
+  "browserInspections": [
+    {
+      "id": "url-027",
+      "url": "https://www.javitscenter.com/calendar",
+      "statusCode": 200,
+      "outcome": "inspection_succeeded",
+      "path": ".artifacts/browser-probes/url-027-1792206236420/inspection.json"
+    },
+    {
+      "id": "url-062",
+      "url": "https://www.seattle.gov/event-calendar",
+      "statusCode": 403,
+      "outcome": "failed",
+      "error": {
+        "code": "access_blocked",
+        "message": "Access challenge or denial (HTTP 403)"
+      },
+      "path": ".artifacts/browser-probes/url-062-1792206236419/inspection.json"
+    },
+    {
+      "id": "url-081",
+      "url": "https://events.occc.net/",
+      "statusCode": 403,
+      "outcome": "failed",
+      "error": {
+        "code": "access_blocked",
+        "message": "Access challenge or denial (HTTP 403)"
+      },
+      "path": ".artifacts/browser-probes/url-081-1792206236427/inspection.json"
+    }
+  ],
+  "databaseConnected": false,
+  "recurringAutomationCreated": false,
+  "productionDispatchImplemented": false
+}

@@ -1,0 +1,187 @@
+{
+  "events": [
+    {
+      "id": 57848,
+      "global_id": "network.vegas?id=57848",
+      "global_id_lineage": [
+        "network.vegas?id=57848"
+      ],
+      "author": "3",
+      "status": "publish",
+      "date": "2026-09-09 14:17:38",
+      "date_utc": "2026-09-09 21:17:38",
+      "modified": "2026-10-08 10:53:21",
+      "modified_utc": "2026-10-08 17:53:21",
+      "url": "https://network.vegas/calendar/nothin-but-a-good-time-project-150s-80s-rock-benefit/",
+      "rest_url": "https://network.vegas/wp-json/tribe/events/v1/events/57848",
+      "title": "Nothin&#8217; but a Good Time — Project 150&#8217;s 80s Rock Benefit",
+      "description": "<p>Project 150 throws its annual benefit as a full 80s rock throwback at the INDUSTRIAL event space on South Industrial Road. Doors open at 6:30 p.m. and the party starts at 7:00 p.m. on Friday, October 16. Dress code is spandex, band tees, leather, neon and denim — best 80s rock band attire encouraged — and valet parking is available.</p>\n<p>Project 150 is a Las Vegas nonprofit supporting homeless, displaced and disadvantaged high school students across Southern Nevada, providing food, clothing, school supplies and scholarship support. The benefit is one of its larger annual fundraisers and pairs the party with a silent auction.</p>\n<p>Tickets are on sale now, with the organization asking guests to be on the list by October 10. Supporters who cannot attend can still bid in the silent auction online by texting PROJECT150 to 76278. Tickets and auction access are at Project150.givesmart.com.</p>",
+      "excerpt": "",
+      "slug": "nothin-but-a-good-time-project-150s-80s-rock-benefit",
+      "all_day": true,
+      "start_date": "2026-10-16 00:00:00",
+      "start_date_details": {
+        "year": "2026",
+        "month": "10",
+        "day": "16",
+        "hour": "00",
+        "minutes": "00",
+        "seconds": "00"
+      },
+      "end_date": "2026-10-16 23:59:59",
+      "end_date_details": {
+        "year": "2026",
+        "month": "10",
+        "day": "16",
+        "hour": "23",
+        "minutes": "59",
+        "seconds": "59"
+      },
+      "utc_start_date": "2026-10-16 07:00:00",
+      "utc_start_date_details": {
+        "year": "2026",
+        "month": "10",
+        "day": "16",
+        "hour": "07",
+        "minutes": "00",
+        "seconds": "00"
+      },
+      "utc_end_date": "2026-10-17 06:59:59",
+      "utc_end_date_details": {
+        "year": "2026",
+        "month": "10",
+        "day": "17",
+        "hour": "06",
+        "minutes": "59",
+        "seconds": "59"
+      },
+      "timezone": "America/Los_Angeles",
+      "timezone_abbr": "PDT",
+      "cost": "",
+      "cost_details": {
+        "currency_symbol": "",
+        "currency_code": "",
+        "currency_position": "",
+        "values": []
+      },
+      "website": "https://Project150.givesmart.com",
+      "show_map": false,
+      "show_map_link": false,
+      "hide_from_listings": false,
+      "sticky": false,
+      "featured": false,
+      "categories": [
+        {
+          "name": "Fundraiser/ Benefit",
+          "slug": "fundraiser-benefit",
+          "term_group": 0,
+          "term_taxonomy_id": 302,
+          "taxonomy": "tribe_events_cat",
+          "description": "",
+          "parent": 99,
+          "count": 40,
+          "filter": "raw",
+          "term_order": "4",
+          "meta": [],
+          "id": 302,
+          "urls": {
+            "self": "https://network.vegas/wp-json/tribe/events/v1/categories/302",
+            "collection": "https://network.vegas/wp-json/tribe/events/v1/categories",
+            "up": "https://network.vegas/wp-json/tribe/events/v1/categories/99"
+          }
+        },
+        {
+          "name": "Community",
+          "slug": "community",
+          "term_group": 0,
+          "term_taxonomy_id": 84,
+          "taxonomy": "tribe_events_cat",
+          "description": "",
+          "parent": 102,
+          "count": 117,
+          "filter": "raw",
+          "term_order": "11",
+          "meta": [],
+          "id": 84,
+          "urls": {
+            "self": "https://network.vegas/wp-json/tribe/events/v1/categories/84",
+            "collection": "https://network.vegas/wp-json/tribe/events/v1/categories",
+            "up": "https://network.vegas/wp-json/tribe/events/v1/categories/102"
+          }
+        },
+        {
+          "name": "Las Vegas Business",
+          "slug": "las-vegas-business",
+          "term_group": 0,
+          "term_taxonomy_id": 43,
+          "taxonomy": "tribe_events_cat",
+          "description": "",
+          "parent": 362,
+          "count": 801,
+          "filter": "raw",
+          "term_order": "20",
+          "meta": [],
+          "id": 43,
+          "urls": {
+            "self": "https://network.vegas/wp-json/tribe/events/v1/categories/43",
+            "collection": "https://network.vegas/wp-json/tribe/events/v1/categories",
+            "up": "https://network.vegas/wp-json/tribe/events/v1/categories/362"
+          }
+        }
+      ],
+      "tags": [],
+      "venue": {
+        "id": 24200,
+        "author": "1",
+        "status": "publish",
+        "date": "2022-09-01 06:34:44",
+        "date_utc": "2022-09-01 13:34:44",
+        "modified": "2026-09-09 04:34:17",
+        "modified_utc": "2026-09-09 11:34:17",
+        "url": "https://network.vegas/venue/the-industrial-event-space/",
+        "venue": "the INDUSTRIAL event space",
+        "slug": "the-industrial-event-space",
+        "address": "2330 S Industrial Rd",
+        "city": "Las Vegas",
+        "country": "United States",
+        "province": "NV",
+        "state": "NV",
+        "zip": "89102",
+        "website": "https://www.aialasvegas.org/venue/the-industrial-event-space/",
+        "stateprovince": "NV",
+        "show_map": true,
+        "show_map_link": true,
+        "global_id": "network.vegas?id=24200",
+        "global_id_lineage": [
+          "network.vegas?id=24200"
+        ]
+      },
+      "organizer": [
+        {
+          "id": 18048,
+          "author": "1",
+          "status": "publish",
+          "date": "2021-08-11 13:42:33",
+          "date_utc": "2021-08-11 20:42:33",
+          "modified": "2021-08-11 13:42:33",
+          "modified_utc": "2021-08-11 20:42:33",
+          "url": "https://network.vegas/organizer/project-150/",
+          "organizer": "Project 150",
+          "slug": "project-150",
+          "phone": "(702) 721-7150",
+          "website": "https://www.project150.org/",
+          "global_id": "network.vegas?id=18048",
+          "global_id_lineage": [
+            "network.vegas?id=18048"
+          ]
+        }
+      ],
+      "custom_fields": [],
+      "is_virtual": false,
+      "virtual_url": null,
+      "virtual_video_source": ""
+    }
+  ],
+  "total": 298,
+  "total_pages": 60
+}

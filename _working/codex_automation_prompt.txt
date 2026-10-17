@@ -1,0 +1,24 @@
+Proposed events-mining coordinator
+
+Destination: this local events project and its existing chat.
+Pilot cadence: every 5 minutes, only after explicit activation and the dispatch/claim implementation described in the plan is complete.
+Current status: proposal only. The project currently provides bounded manual miners and a read-only status preview. No dispatching scheduler or recurring task is installed.
+
+Saved prompt for the future task:
+
+Work in /Users/pshorey/git/events. Read README.md and _working/initial_data_mining_framework.md. Read the current machine-readable mining status and use its persisted source state; chat memory is not the work queue. Preserve unrelated changes.
+
+First check for an active run or repair claim. Do not overlap an existing owner or recreate a job whose launch outcome is unknown. Reconcile its recorded run ID and terminal evidence first.
+
+Select at most one authorized action during this turn:
+- An overdue enabled collection with no unresolved adapter defect: invoke its registered deterministic CLI miner with the saved scope and budgets. Its per-source schedule determines when it is due; the five-minute coordinator interval does not mean every source runs every five minutes.
+- A source whose last attempt has a confirmed parser, pagination, or contract defect: claim one repair task, inspect the exact failure capture and last-good fixture, reproduce the problem, repair only that adapter or its reviewed configuration, and add a regression test. Do not just run the same failing miner again.
+- A throttling or transient transport failure: honor the recorded retry-after time and retry budget. Do not rewrite extraction code as a response to a temporary outage.
+- A credential or access challenge: keep it blocked with a concrete next action. Do not bypass a challenge or broaden access.
+- No eligible work: stop quietly.
+
+For a repair, use offline fixtures first, then one bounded live probe. A passing sample does not establish complete-source recovery. Keep the collection in probation until its required complete runs pass. Never weaken validation to turn an empty or malformed result into success. If a bounded repair is inconclusive, preserve the evidence and record a next retry/diagnosis time instead of starting another unbounded loop.
+
+Until the dispatch implementation exists, npm run status is read-only. Do not infer that setting enabled=true creates a scheduler. Do not start recurring scraping from these proposal instructions.
+
+Report only a meaningful repair, changed blocking condition, completed onboarding, or required human action. Stay quiet for unchanged healthy state, unchanged blocked sources, and routine successful collections. Do not ask for or print secrets in reports. Do not construct or apply the central database schema until the user supplies the intended development database configuration and authorizes that pipeline phase.

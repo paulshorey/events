@@ -1,0 +1,2612 @@
+{
+  "generatedAt": "2026-10-17T04:16:32.044Z",
+  "build": "c424b942be741433b27e91d325ac7b2f227f7775826d1cbdb9613e2b85a4a864",
+  "rows": [
+    {
+      "id": "url-001",
+      "group": "General event discovery",
+      "url": "https://www.eventbrite.com/",
+      "script": "scrapers/url-001.mjs",
+      "adapter": "jsonld",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "dc03e38c-5df4-4686-aaf8-4a65aba122b3",
+        "status": "repair_needed",
+        "records": 0,
+        "pages": 0,
+        "requests": 1,
+        "stopReason": "contract_changed",
+        "error": "contract_changed",
+        "build": "accb6b6a641d40c91a91d0aa083e63bafa526e3187179d5219336d742e677bae"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "65e1f917-66f2-4fcd-aec5-c78318981feb",
+          "code": "contract_changed",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-002",
+      "group": "General event discovery",
+      "url": "https://allevents.in/",
+      "script": "scrapers/url-002.mjs",
+      "adapter": "jsonld",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "ae4a86cb-b498-4a80-a42d-25894c73938a",
+        "status": "partial",
+        "records": 24,
+        "pages": 1,
+        "requests": 1,
+        "stopReason": "probe_only",
+        "build": "0d44e9b085295c1fc53269e9e63eb87e394fa30fd2e3a5702a2a71f959336035"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "fa9f0bdf-d2ca-4d7b-a065-4d64582eb999",
+          "code": "coverage_unverified",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-003",
+      "group": "General event discovery",
+      "url": "https://events.com/",
+      "script": "scrapers/url-003.mjs",
+      "adapter": "discovery",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "3ef9b726-c9d7-4842-b9ae-ca624c069d7f",
+        "status": "repair_needed",
+        "records": 0,
+        "pages": 1,
+        "requests": 1,
+        "stopReason": "probe_only",
+        "error": "no_event_contract_found",
+        "build": "accb6b6a641d40c91a91d0aa083e63bafa526e3187179d5219336d742e677bae"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "876d205f-022e-4f12-a219-eee4120425af",
+          "code": "no_event_contract_found",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-004",
+      "group": "General event discovery",
+      "url": "https://eventfinder.site/",
+      "script": "scrapers/url-004.mjs",
+      "adapter": "discovery",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "09a3b7aa-7eff-4944-92bd-0bef6677aabf",
+        "status": "partial",
+        "records": 3,
+        "pages": 1,
+        "requests": 1,
+        "stopReason": "probe_only",
+        "build": "0d44e9b085295c1fc53269e9e63eb87e394fa30fd2e3a5702a2a71f959336035"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "87ee6107-a25c-447d-9918-12c5efd05d60",
+          "code": "coverage_unverified",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-005",
+      "group": "Festival and fair directories",
+      "url": "https://festivalnet.com/",
+      "script": "scrapers/url-005.mjs",
+      "adapter": "discovery",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "40c7b213-95ad-4805-9ab4-ae647e347b1c",
+        "status": "repair_needed",
+        "records": 0,
+        "pages": 1,
+        "requests": 1,
+        "stopReason": "probe_only",
+        "error": "no_event_contract_found",
+        "build": "accb6b6a641d40c91a91d0aa083e63bafa526e3187179d5219336d742e677bae"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "46f2c873-9782-4c87-9551-d029bb86f50c",
+          "code": "no_event_contract_found",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-006",
+      "group": "Festival and fair directories",
+      "url": "https://festivaltrekker.com/",
+      "script": "scrapers/url-006.mjs",
+      "adapter": "discovery",
+      "coverage": "discovery",
+      "enabled": false,
+      "latest": {
+        "runId": "ec2e7a0f-d63a-4053-a489-e2c85022d79b",
+        "status": "repair_needed",
+        "records": 0,
+        "pages": 1,
+        "requests": 1,
+        "stopReason": "probe_only",
+        "error": "no_event_contract_found",
+        "build": "accb6b6a641d40c91a91d0aa083e63bafa526e3187179d5219336d742e677bae"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "3ca940f2-110e-43e3-b038-1e9c23e75832",
+          "code": "no_event_contract_found",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-007",
+      "group": "Festival and fair directories",
+      "url": "https://festivalindex.com/en-us",
+      "script": "scrapers/url-007.mjs",
+      "adapter": "festivalindex",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "14d2abd2-ff4f-43a8-90bd-422456955adb",
+        "status": "partial",
+        "records": 23,
+        "pages": 1,
+        "requests": 1,
+        "stopReason": "probe_only",
+        "build": "0d44e9b085295c1fc53269e9e63eb87e394fa30fd2e3a5702a2a71f959336035"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "e0e87f4b-2e39-499a-9d1e-1ec2787fd25e",
+          "code": "coverage_unverified",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-008",
+      "group": "Festival and fair directories",
+      "url": "https://www.countyfairgrounds.net/",
+      "script": "scrapers/url-008.mjs",
+      "adapter": "discovery",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "fe4c72e5-9fe2-44e4-9f84-3d51b470d3a0",
+        "status": "repair_needed",
+        "records": 0,
+        "pages": 1,
+        "requests": 1,
+        "stopReason": "probe_only",
+        "error": "no_event_contract_found",
+        "build": "accb6b6a641d40c91a91d0aa083e63bafa526e3187179d5219336d742e677bae"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "0f158aee-c27d-4cbc-a4cb-1d38fa12727c",
+          "code": "no_event_contract_found",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-009",
+      "group": "Festival and fair directories",
+      "url": "https://meetmeatthefair.com/events/all",
+      "script": "scrapers/url-009.mjs",
+      "adapter": "discovery",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "175f09bb-0b04-43a9-8dac-a7d12d0ec954",
+        "status": "partial",
+        "records": 10,
+        "pages": 4,
+        "requests": 4,
+        "stopReason": "request_budget",
+        "build": "0d44e9b085295c1fc53269e9e63eb87e394fa30fd2e3a5702a2a71f959336035"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "7d6b53de-118e-4b76-b0e4-eee5319135ad",
+          "code": "coverage_unverified",
+          "status": "open"
+        },
+        {
+          "id": "8f86f558-6d06-4963-832d-477cdec86e0b",
+          "code": "no_event_contract_found",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-010",
+      "group": "Conventions and trade shows",
+      "url": "https://www.tsnn.com/trade-show-calendar",
+      "script": "scrapers/url-010.mjs",
+      "adapter": "discovery",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "60ad0d1d-97df-4ea3-91dd-57a37b194e38",
+        "status": "repair_needed",
+        "records": 0,
+        "pages": 1,
+        "requests": 1,
+        "stopReason": "probe_only",
+        "error": "no_event_contract_found",
+        "build": "accb6b6a641d40c91a91d0aa083e63bafa526e3187179d5219336d742e677bae"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "6415931c-7e54-429f-afa4-1a1f6c7f8697",
+          "code": "no_event_contract_found",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-011",
+      "group": "Conventions and trade shows",
+      "url": "https://10times.com/",
+      "script": "scrapers/url-011.mjs",
+      "adapter": "discovery",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "ab3b9adc-cc40-4daa-9e57-0fd6d0be60fe",
+        "status": "blocked_access",
+        "records": 0,
+        "pages": 0,
+        "requests": 1,
+        "stopReason": "access_blocked",
+        "error": "access_blocked",
+        "build": "accb6b6a641d40c91a91d0aa083e63bafa526e3187179d5219336d742e677bae"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "00164f82-3003-4d8d-a234-5964b36d65ba",
+          "code": "access_blocked",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-012",
+      "group": "Conventions and trade shows",
+      "url": "https://tradefest.io/",
+      "script": "scrapers/url-012.mjs",
+      "adapter": "discovery",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "2de449d6-71a8-4891-986c-987332e35325",
+        "status": "repair_needed",
+        "records": 0,
+        "pages": 1,
+        "requests": 1,
+        "stopReason": "probe_only",
+        "error": "no_event_contract_found",
+        "build": "accb6b6a641d40c91a91d0aa083e63bafa526e3187179d5219336d742e677bae"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "6eb3d46b-5148-4790-8c54-cc82dabc137d",
+          "code": "no_event_contract_found",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-013",
+      "group": "Conventions and trade shows",
+      "url": "https://conventiongrid.com/calendar/",
+      "script": "scrapers/url-013.mjs",
+      "adapter": "conventiongrid",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "eee92734-8a91-45cd-9e05-53c012ce8c44",
+        "status": "partial",
+        "records": 3,
+        "pages": 1,
+        "requests": 1,
+        "stopReason": "probe_only",
+        "build": "0d44e9b085295c1fc53269e9e63eb87e394fa30fd2e3a5702a2a71f959336035"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "a6e30495-6073-4371-8077-34bf9b02bc7f",
+          "code": "coverage_unverified",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-014",
+      "group": "Conventions and trade shows",
+      "url": "https://thetradeshowcalendar.com/ttn/index.php",
+      "script": "scrapers/url-014.mjs",
+      "adapter": "trade-table",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "4fe5c6ef-2d6e-48dd-8dee-720afcfe7917",
+        "status": "partial",
+        "records": 100,
+        "pages": 1,
+        "requests": 1,
+        "stopReason": "probe_only",
+        "build": "0d44e9b085295c1fc53269e9e63eb87e394fa30fd2e3a5702a2a71f959336035"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "6cfeb772-9b96-4fd9-a7a8-3a30ce902006",
+          "code": "coverage_unverified",
+          "status": "open"
+        },
+        {
+          "id": "3e23cc58-1871-48d8-a1e4-8d6290f2c115",
+          "code": "no_event_contract_found",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-015",
+      "group": "Conventions and trade shows",
+      "url": "https://conventioncalendar.com/",
+      "script": "scrapers/url-015.mjs",
+      "adapter": "discovery",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "642ac297-4092-4973-a80b-97148985b289",
+        "status": "repair_needed",
+        "records": 0,
+        "pages": 1,
+        "requests": 1,
+        "stopReason": "probe_only",
+        "error": "no_event_contract_found",
+        "build": "accb6b6a641d40c91a91d0aa083e63bafa526e3187179d5219336d742e677bae"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "915df7f7-eff8-445e-86ae-2fd0171880fc",
+          "code": "no_event_contract_found",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-016",
+      "group": "Las Vegas",
+      "url": "https://www.vegasmeansbusiness.com/destination-calendar/",
+      "script": "scrapers/url-016.mjs",
+      "adapter": "jsonld",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "f4ee259f-27c9-4866-8ad6-1ef27f9d459f",
+        "status": "blocked_access",
+        "records": 0,
+        "pages": 0,
+        "requests": 1,
+        "stopReason": "access_blocked",
+        "error": "access_blocked",
+        "build": "accb6b6a641d40c91a91d0aa083e63bafa526e3187179d5219336d742e677bae"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "b3de4284-9e3c-4a48-af03-b99665fb216d",
+          "code": "access_blocked",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-017",
+      "group": "Las Vegas",
+      "url": "https://www.vegas.com/las-vegas-events/festivals-in-las-vegas/",
+      "script": "scrapers/url-017.mjs",
+      "adapter": "discovery",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "26774f93-448e-4237-bf9c-78de3eba1726",
+        "status": "repair_needed",
+        "records": 0,
+        "pages": 1,
+        "requests": 1,
+        "stopReason": "probe_only",
+        "error": "no_event_contract_found",
+        "build": "accb6b6a641d40c91a91d0aa083e63bafa526e3187179d5219336d742e677bae"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "bbe6afbd-51df-49bf-8556-c311333aae0f",
+          "code": "no_event_contract_found",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-018",
+      "group": "Las Vegas",
+      "url": "https://www.lasvegasnevada.gov/Residents/Arts-Culture/Annual-Festivals",
+      "script": "scrapers/url-018.mjs",
+      "adapter": "discovery",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "a7d20ee2-719f-4f81-bf7b-ef62ed46885a",
+        "status": "repair_needed",
+        "records": 0,
+        "pages": 1,
+        "requests": 1,
+        "stopReason": "probe_only",
+        "error": "no_event_contract_found",
+        "build": "accb6b6a641d40c91a91d0aa083e63bafa526e3187179d5219336d742e677bae"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "43971590-b909-4dc8-b8d8-ac9ba93d2144",
+          "code": "no_event_contract_found",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-019",
+      "group": "Las Vegas",
+      "url": "https://network.vegas/calendar/",
+      "script": "scrapers/url-019.mjs",
+      "adapter": "tribe",
+      "coverage": "verified-list",
+      "enabled": false,
+      "latest": {
+        "runId": "e4f81f3e-ab37-4424-bee5-c6ba62f89226",
+        "status": "complete",
+        "records": 298,
+        "pages": 6,
+        "requests": 6,
+        "stopReason": "enumeration_exhausted",
+        "build": "c424b942be741433b27e91d325ac7b2f227f7775826d1cbdb9613e2b85a4a864"
+      },
+      "lastComplete": "e4f81f3e-ab37-4424-bee5-c6ba62f89226",
+      "repairs": []
+    },
+    {
+      "id": "url-020",
+      "group": "Las Vegas",
+      "url": "https://network.vegas/calendar/category/event-type/convention/",
+      "script": "scrapers/url-020.mjs",
+      "adapter": "tribe",
+      "coverage": "verified-list",
+      "enabled": false,
+      "latest": {
+        "runId": "19d7d685-e861-4c9b-9c0e-979445e82c6c",
+        "status": "partial",
+        "records": 18,
+        "pages": 1,
+        "requests": 1,
+        "stopReason": "request_budget",
+        "build": "0d44e9b085295c1fc53269e9e63eb87e394fa30fd2e3a5702a2a71f959336035"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "c0da911a-7dc0-4227-a7da-93da6e8f5a4d",
+          "code": "coverage_unverified",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-021",
+      "group": "Las Vegas",
+      "url": "https://networkinvegas.com/calendar/",
+      "script": "scrapers/url-021.mjs",
+      "adapter": "tribe",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "7d94dc07-9df9-468a-87c4-256af09030b9",
+        "status": "partial",
+        "records": 34,
+        "pages": 1,
+        "requests": 1,
+        "stopReason": "request_budget",
+        "build": "0d44e9b085295c1fc53269e9e63eb87e394fa30fd2e3a5702a2a71f959336035"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "ea1859b9-c239-4df6-900c-feb1a693f23a",
+          "code": "coverage_unverified",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-022",
+      "group": "Las Vegas",
+      "url": "https://events.lasvegascalendars.com/lasvegascalendars/pinboard?tags=Conventions",
+      "script": "scrapers/url-022.mjs",
+      "adapter": "discovery",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "7f3e0236-d0c6-4848-85e5-dfa36031ce62",
+        "status": "blocked_access",
+        "records": 0,
+        "pages": 0,
+        "requests": 1,
+        "stopReason": "access_blocked",
+        "error": "access_blocked",
+        "build": "accb6b6a641d40c91a91d0aa083e63bafa526e3187179d5219336d742e677bae"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "0998419d-baf4-4533-a44c-3f8163ac3a7a",
+          "code": "access_blocked",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-023",
+      "group": "Las Vegas",
+      "url": "https://www.eventbrite.com/d/nv--las-vegas/",
+      "script": "scrapers/url-023.mjs",
+      "adapter": "jsonld",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "d79e1a6d-597a-4bc0-abd3-30d64aeb7c0d",
+        "status": "partial",
+        "records": 30,
+        "pages": 1,
+        "requests": 1,
+        "stopReason": "probe_only",
+        "build": "0d44e9b085295c1fc53269e9e63eb87e394fa30fd2e3a5702a2a71f959336035"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "0a51fbc5-b199-42bc-b875-6d2bd4db765f",
+          "code": "coverage_unverified",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-024",
+      "group": "New York City",
+      "url": "https://www.nyctourism.com/events/",
+      "script": "scrapers/url-024.mjs",
+      "adapter": "nyc-tourism",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "3e34b6de-34b5-4f7e-b79d-3dd3f773b81c",
+        "status": "partial",
+        "records": 12,
+        "pages": 1,
+        "requests": 1,
+        "stopReason": "probe_only",
+        "build": "0d44e9b085295c1fc53269e9e63eb87e394fa30fd2e3a5702a2a71f959336035"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "83d76d34-26b5-4828-9fca-d38e700cc442",
+          "code": "coverage_unverified",
+          "status": "open"
+        },
+        {
+          "id": "ed7ce790-3aee-41f9-9141-9fbd2b5aa49b",
+          "code": "no_event_contract_found",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-025",
+      "group": "New York City",
+      "url": "https://www.nyctourism.com/things-to-do/events-and-festivals/",
+      "script": "scrapers/url-025.mjs",
+      "adapter": "nyc-tourism",
+      "coverage": "discovery",
+      "enabled": false,
+      "latest": {
+        "runId": "dbebba84-47f6-48b6-b509-b9800faa28e9",
+        "status": "partial",
+        "records": 12,
+        "pages": 1,
+        "requests": 1,
+        "stopReason": "probe_only",
+        "build": "0d44e9b085295c1fc53269e9e63eb87e394fa30fd2e3a5702a2a71f959336035"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "8c468e63-ec85-4d29-a5ac-c3b2e6635908",
+          "code": "coverage_unverified",
+          "status": "open"
+        },
+        {
+          "id": "54736020-70fc-4d4a-8728-40ccb471a95a",
+          "code": "no_event_contract_found",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-026",
+      "group": "New York City",
+      "url": "https://www.nycgovparks.org/events/festivals",
+      "script": "scrapers/url-026.mjs",
+      "adapter": "microdata",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "ec54dcd7-85cf-4506-82e0-b43f4c636eba",
+        "status": "blocked_access",
+        "records": 0,
+        "pages": 0,
+        "requests": 1,
+        "stopReason": "access_blocked",
+        "error": "access_blocked",
+        "build": "accb6b6a641d40c91a91d0aa083e63bafa526e3187179d5219336d742e677bae"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "a28232e2-32bc-4bb5-a019-d01f552d0bbd",
+          "code": "access_blocked",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-027",
+      "group": "New York City",
+      "url": "https://www.javitscenter.com/calendar",
+      "script": "scrapers/url-027.mjs",
+      "adapter": "javits",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "fe6cd4b4-9cd0-4e0f-ae7c-010cd64871a7",
+        "status": "retry_wait",
+        "records": 0,
+        "pages": 0,
+        "requests": 1,
+        "stopReason": "rate_limited",
+        "error": "rate_limited",
+        "build": "c424b942be741433b27e91d325ac7b2f227f7775826d1cbdb9613e2b85a4a864"
+      },
+      "lastComplete": null,
+      "repairs": []
+    },
+    {
+      "id": "url-028",
+      "group": "New York City",
+      "url": "https://conventioncalendar.com/us/ny/new-york-city/jacob-javits-center",
+      "script": "scrapers/url-028.mjs",
+      "adapter": "discovery",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "582c5158-6038-4dcd-a537-22d8f07ce222",
+        "status": "repair_needed",
+        "records": 0,
+        "pages": 1,
+        "requests": 1,
+        "stopReason": "probe_only",
+        "error": "no_event_contract_found",
+        "build": "accb6b6a641d40c91a91d0aa083e63bafa526e3187179d5219336d742e677bae"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "5588569c-6294-4fbc-8ac0-ad17f82c60fb",
+          "code": "no_event_contract_found",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-029",
+      "group": "New York City",
+      "url": "https://www.nyc.com/events/",
+      "script": "scrapers/url-029.mjs",
+      "adapter": "discovery",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "fdd3d023-44cb-4821-a591-1a09aeb23a55",
+        "status": "blocked_access",
+        "records": 0,
+        "pages": 0,
+        "requests": 1,
+        "stopReason": "access_blocked",
+        "error": "access_blocked",
+        "build": "accb6b6a641d40c91a91d0aa083e63bafa526e3187179d5219336d742e677bae"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "c24823d0-b290-4ad1-afb8-5a008aafbd31",
+          "code": "access_blocked",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-030",
+      "group": "New York City",
+      "url": "https://www.cityguideny.com/events/?catid=182",
+      "script": "scrapers/url-030.mjs",
+      "adapter": "discovery",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "8c5e9d6f-b8be-4f99-a2d4-cc19e5666b90",
+        "status": "repair_needed",
+        "records": 0,
+        "pages": 1,
+        "requests": 1,
+        "stopReason": "probe_only",
+        "error": "no_event_contract_found",
+        "build": "accb6b6a641d40c91a91d0aa083e63bafa526e3187179d5219336d742e677bae"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "40a170b9-17f7-45e1-83d2-47a6f98c40f1",
+          "code": "no_event_contract_found",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-031",
+      "group": "New York City",
+      "url": "https://nycstreetfairs.com/",
+      "script": "scrapers/url-031.mjs",
+      "adapter": "discovery",
+      "coverage": "discovery",
+      "enabled": false,
+      "latest": {
+        "runId": "8b267a35-eeb0-41ec-a212-3b9bceb5b52b",
+        "status": "repair_needed",
+        "records": 0,
+        "pages": 1,
+        "requests": 1,
+        "stopReason": "probe_only",
+        "error": "no_event_contract_found",
+        "build": "accb6b6a641d40c91a91d0aa083e63bafa526e3187179d5219336d742e677bae"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "9555ad26-64b0-476c-a6ed-2d7a21f1e5ae",
+          "code": "no_event_contract_found",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-032",
+      "group": "New York City",
+      "url": "https://cititour.com/NYC_Events/2026-New-York-City-Street-Fairs/33756",
+      "script": "scrapers/url-032.mjs",
+      "adapter": "discovery",
+      "coverage": "discovery",
+      "enabled": false,
+      "latest": {
+        "runId": "9f969276-6ac2-41ab-ba0f-6214e15cba25",
+        "status": "blocked_access",
+        "records": 0,
+        "pages": 0,
+        "requests": 1,
+        "stopReason": "access_blocked",
+        "error": "access_blocked",
+        "build": "accb6b6a641d40c91a91d0aa083e63bafa526e3187179d5219336d742e677bae"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "7604fec6-8666-4d0e-80e2-eb3be2a56d35",
+          "code": "access_blocked",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-033",
+      "group": "New York City",
+      "url": "https://dothisnyc.com/street-fairs-nyc/",
+      "script": "scrapers/url-033.mjs",
+      "adapter": "jsonld",
+      "coverage": "discovery",
+      "enabled": false,
+      "latest": {
+        "runId": "15a6c485-ea1d-467e-90bb-1d34f121dd76",
+        "status": "partial",
+        "records": 10,
+        "pages": 1,
+        "requests": 1,
+        "stopReason": "probe_only",
+        "build": "0d44e9b085295c1fc53269e9e63eb87e394fa30fd2e3a5702a2a71f959336035"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "421e0b5b-7c06-4757-9e9a-7844fa02efb5",
+          "code": "coverage_unverified",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-034",
+      "group": "New York City",
+      "url": "https://www.eventbrite.com/d/ny--new-york/",
+      "script": "scrapers/url-034.mjs",
+      "adapter": "jsonld",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "e086d8fb-f5f7-4cb9-be1d-c2d691ed48e7",
+        "status": "partial",
+        "records": 39,
+        "pages": 1,
+        "requests": 1,
+        "stopReason": "probe_only",
+        "build": "0d44e9b085295c1fc53269e9e63eb87e394fa30fd2e3a5702a2a71f959336035"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "1e8d9ea3-636f-4c1f-8fd1-84aa64f6e088",
+          "code": "coverage_unverified",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-035",
+      "group": "Los Angeles",
+      "url": "https://www.discoverlosangeles.com/events",
+      "script": "scrapers/url-035.mjs",
+      "adapter": "cards",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "97b368d4-ccca-472c-8b7c-3d2e69f57a96",
+        "status": "partial",
+        "records": 27,
+        "pages": 1,
+        "requests": 1,
+        "stopReason": "request_budget",
+        "build": "0d44e9b085295c1fc53269e9e63eb87e394fa30fd2e3a5702a2a71f959336035"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "e670dcc1-550e-43e2-b5e6-22c93c420661",
+          "code": "coverage_unverified",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-036",
+      "group": "Los Angeles",
+      "url": "https://lacity.gov/calendar",
+      "script": "scrapers/url-036.mjs",
+      "adapter": "discovery",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "8853970b-907a-43a1-8e3b-e79af4a29731",
+        "status": "repair_needed",
+        "records": 0,
+        "pages": 1,
+        "requests": 1,
+        "stopReason": "probe_only",
+        "error": "no_event_contract_found",
+        "build": "accb6b6a641d40c91a91d0aa083e63bafa526e3187179d5219336d742e677bae"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "0ce98137-15c5-46d1-a055-e3cdf8eee8e7",
+          "code": "no_event_contract_found",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-037",
+      "group": "Los Angeles",
+      "url": "https://www.laconventioncenter.com/events",
+      "script": "scrapers/url-037.mjs",
+      "adapter": "la",
+      "coverage": "verified-list",
+      "enabled": false,
+      "latest": {
+        "runId": "cf5707b4-167e-4fb0-adb9-b89513a40400",
+        "status": "partial",
+        "records": 31,
+        "pages": 1,
+        "requests": 1,
+        "stopReason": "probe_only",
+        "build": "0d44e9b085295c1fc53269e9e63eb87e394fa30fd2e3a5702a2a71f959336035"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "b3f63dfe-b4f2-44fc-bb87-63c46afd30b7",
+          "code": "coverage_unverified",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-038",
+      "group": "Los Angeles",
+      "url": "https://www.laconventioncenter.com/events/all",
+      "script": "scrapers/url-038.mjs",
+      "adapter": "la",
+      "coverage": "verified-list",
+      "enabled": false,
+      "latest": {
+        "runId": "8ff47032-5387-4505-bf09-5bdc9278eb50",
+        "status": "complete",
+        "records": 31,
+        "pages": 1,
+        "requests": 1,
+        "stopReason": "enumeration_exhausted",
+        "build": "c424b942be741433b27e91d325ac7b2f227f7775826d1cbdb9613e2b85a4a864"
+      },
+      "lastComplete": "8ff47032-5387-4505-bf09-5bdc9278eb50",
+      "repairs": []
+    },
+    {
+      "id": "url-039",
+      "group": "Chicago",
+      "url": "https://www.choosechicago.com/events/",
+      "script": "scrapers/url-039.mjs",
+      "adapter": "tribe",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "24de2bab-feaa-4e63-9176-af9742a65e9d",
+        "status": "partial",
+        "records": 24,
+        "pages": 1,
+        "requests": 1,
+        "stopReason": "request_budget",
+        "build": "0d44e9b085295c1fc53269e9e63eb87e394fa30fd2e3a5702a2a71f959336035"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "7768b125-ea64-4efa-8754-078a4fe977ec",
+          "code": "coverage_unverified",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-040",
+      "group": "Chicago",
+      "url": "https://www.chicago.gov/city/en/depts/dca/provdrs/chicago_festivals.html",
+      "script": "scrapers/url-040.mjs",
+      "adapter": "discovery",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "4ea327bc-977f-402d-bdf5-29ae95057159",
+        "status": "repair_needed",
+        "records": 0,
+        "pages": 1,
+        "requests": 1,
+        "stopReason": "probe_only",
+        "error": "no_event_contract_found",
+        "build": "accb6b6a641d40c91a91d0aa083e63bafa526e3187179d5219336d742e677bae"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "a0308937-8812-4010-85a8-b2d89bfc6ed9",
+          "code": "no_event_contract_found",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-041",
+      "group": "Chicago",
+      "url": "https://www.chicago.gov/city/en/depts/dca/provdrs/attractions_eventsandexhibitions.html",
+      "script": "scrapers/url-041.mjs",
+      "adapter": "discovery",
+      "coverage": "discovery",
+      "enabled": false,
+      "latest": {
+        "runId": "9c5a826b-a46c-4890-945f-d76629f7f2c4",
+        "status": "repair_needed",
+        "records": 0,
+        "pages": 1,
+        "requests": 1,
+        "stopReason": "probe_only",
+        "error": "no_event_contract_found",
+        "build": "accb6b6a641d40c91a91d0aa083e63bafa526e3187179d5219336d742e677bae"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "2ca0fa82-7a83-4f02-afe4-e88d2355a8a7",
+          "code": "no_event_contract_found",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-042",
+      "group": "Chicago",
+      "url": "https://www.chicagoparkdistrict.com/events",
+      "script": "scrapers/url-042.mjs",
+      "adapter": "chicago-parks",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "9fe71d38-f4a1-476e-87b8-4aa9a5652c2e",
+        "status": "partial",
+        "records": 1,
+        "pages": 1,
+        "requests": 1,
+        "stopReason": "request_budget",
+        "build": "0d44e9b085295c1fc53269e9e63eb87e394fa30fd2e3a5702a2a71f959336035"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "12ed3e68-6f73-4728-ad86-226c696ca423",
+          "code": "coverage_unverified",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-043",
+      "group": "Houston",
+      "url": "https://www.visithoustontexas.com/events/",
+      "script": "scrapers/url-043.mjs",
+      "adapter": "jsonld",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "b514621d-e0d3-42a4-99f6-08eec191baf1",
+        "status": "blocked_access",
+        "records": 0,
+        "pages": 0,
+        "requests": 1,
+        "stopReason": "access_blocked",
+        "error": "access_blocked",
+        "build": "accb6b6a641d40c91a91d0aa083e63bafa526e3187179d5219336d742e677bae"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "ecd915bd-aa98-42f4-a560-bcfe9ba75524",
+          "code": "access_blocked",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-044",
+      "group": "Houston",
+      "url": "https://www.visithoustontexas.com/events/annual-events/",
+      "script": "scrapers/url-044.mjs",
+      "adapter": "jsonld",
+      "coverage": "discovery",
+      "enabled": false,
+      "latest": {
+        "runId": "9c100244-55d0-4784-86a9-d466f2a5fd5b",
+        "status": "blocked_access",
+        "records": 0,
+        "pages": 0,
+        "requests": 1,
+        "stopReason": "access_blocked",
+        "error": "access_blocked",
+        "build": "accb6b6a641d40c91a91d0aa083e63bafa526e3187179d5219336d742e677bae"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "0638af61-744f-46e1-b354-0d95898c8d18",
+          "code": "access_blocked",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-045",
+      "group": "Houston",
+      "url": "https://www.houstontx.gov/events/",
+      "script": "scrapers/url-045.mjs",
+      "adapter": "discovery",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "49c18ef7-c13b-4976-9ad9-045e2ba2b021",
+        "status": "repair_needed",
+        "records": 0,
+        "pages": 1,
+        "requests": 1,
+        "stopReason": "probe_only",
+        "error": "no_event_contract_found",
+        "build": "accb6b6a641d40c91a91d0aa083e63bafa526e3187179d5219336d742e677bae"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "4141707d-851d-448e-b25b-c01263969cde",
+          "code": "no_event_contract_found",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-046",
+      "group": "Houston",
+      "url": "https://www.houstontx.gov/abouthouston/annualevents.html",
+      "script": "scrapers/url-046.mjs",
+      "adapter": "discovery",
+      "coverage": "discovery",
+      "enabled": false,
+      "latest": {
+        "runId": "8ac92f64-570c-43e5-ac18-34716ad5ad7b",
+        "status": "repair_needed",
+        "records": 0,
+        "pages": 1,
+        "requests": 1,
+        "stopReason": "probe_only",
+        "error": "no_event_contract_found",
+        "build": "accb6b6a641d40c91a91d0aa083e63bafa526e3187179d5219336d742e677bae"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "dfc89eeb-7c3c-4c94-ae08-21f52ca53b0f",
+          "code": "no_event_contract_found",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-047",
+      "group": "Houston",
+      "url": "https://houston.com/events",
+      "script": "scrapers/url-047.mjs",
+      "adapter": "discovery",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "86764ab6-b3ca-41e1-b08e-b243e98dc462",
+        "status": "repair_needed",
+        "records": 0,
+        "pages": 1,
+        "requests": 1,
+        "stopReason": "probe_only",
+        "error": "no_event_contract_found",
+        "build": "accb6b6a641d40c91a91d0aa083e63bafa526e3187179d5219336d742e677bae"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "26e6b9b9-cd18-406b-9c74-81d1b16cdf9a",
+          "code": "no_event_contract_found",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-048",
+      "group": "Houston",
+      "url": "https://houston.com/festivals",
+      "script": "scrapers/url-048.mjs",
+      "adapter": "discovery",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "bb4c81a9-c269-4323-a3ee-b5ae5daf21f9",
+        "status": "repair_needed",
+        "records": 0,
+        "pages": 1,
+        "requests": 1,
+        "stopReason": "probe_only",
+        "error": "no_event_contract_found",
+        "build": "accb6b6a641d40c91a91d0aa083e63bafa526e3187179d5219336d742e677bae"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "40c82f02-08f4-4718-bbd6-a16258726dd2",
+          "code": "no_event_contract_found",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-049",
+      "group": "Washington, DC",
+      "url": "https://washington.org/find-dc-listings/dc-events",
+      "script": "scrapers/url-049.mjs",
+      "adapter": "dc-tourism",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "67d26b4d-6f98-47f3-a6ef-10039702ffd3",
+        "status": "partial",
+        "records": 10,
+        "pages": 1,
+        "requests": 1,
+        "stopReason": "probe_only",
+        "build": "0d44e9b085295c1fc53269e9e63eb87e394fa30fd2e3a5702a2a71f959336035"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "0f1a0ff4-8ff0-4a7b-8872-41d5a27dd524",
+          "code": "coverage_unverified",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-050",
+      "group": "Washington, DC",
+      "url": "https://washington.org/press/journalist-newsletter/calendar-events",
+      "script": "scrapers/url-050.mjs",
+      "adapter": "dc-tourism",
+      "coverage": "discovery",
+      "enabled": false,
+      "latest": {
+        "runId": "ec199121-81b9-48a2-ae87-71d7cffcb63d",
+        "status": "repair_needed",
+        "records": 0,
+        "pages": 0,
+        "requests": 1,
+        "stopReason": "contract_changed",
+        "error": "contract_changed",
+        "build": "accb6b6a641d40c91a91d0aa083e63bafa526e3187179d5219336d742e677bae"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "bb49ce90-288a-4e46-8703-9de262058da2",
+          "code": "contract_changed",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-051",
+      "group": "Washington, DC",
+      "url": "https://eventsdc.com/",
+      "script": "scrapers/url-051.mjs",
+      "adapter": "cards",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "fd5de9e3-c22d-4049-93ca-107a9d931e6e",
+        "status": "partial",
+        "records": 5,
+        "pages": 1,
+        "requests": 1,
+        "stopReason": "probe_only",
+        "build": "0d44e9b085295c1fc53269e9e63eb87e394fa30fd2e3a5702a2a71f959336035"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "ec65f35d-034e-4000-b2a3-0965bea9bdc0",
+          "code": "coverage_unverified",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-052",
+      "group": "Washington, DC",
+      "url": "https://dc.gov/calendar/month",
+      "script": "scrapers/url-052.mjs",
+      "adapter": "discovery",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "fb71d5e1-2b6e-4561-af52-3564a97f22db",
+        "status": "repair_needed",
+        "records": 0,
+        "pages": 1,
+        "requests": 1,
+        "stopReason": "probe_only",
+        "error": "no_event_contract_found",
+        "build": "accb6b6a641d40c91a91d0aa083e63bafa526e3187179d5219336d742e677bae"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "daca75c1-2054-48a3-a865-4245d8a6a7c8",
+          "code": "no_event_contract_found",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-053",
+      "group": "Boston",
+      "url": "https://www.meetboston.com/events/",
+      "script": "scrapers/url-053.mjs",
+      "adapter": "jsonld",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "6d01d832-13a4-481c-889d-3ea37ae9cfc5",
+        "status": "blocked_access",
+        "records": 0,
+        "pages": 0,
+        "requests": 1,
+        "stopReason": "access_blocked",
+        "error": "access_blocked",
+        "build": "accb6b6a641d40c91a91d0aa083e63bafa526e3187179d5219336d742e677bae"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "7db9e927-3d43-47a7-8aa1-de34c3fd8c92",
+          "code": "access_blocked",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-054",
+      "group": "Boston",
+      "url": "https://www.boston.gov/events",
+      "script": "scrapers/url-054.mjs",
+      "adapter": "boston",
+      "coverage": "verified-list",
+      "enabled": false,
+      "latest": {
+        "runId": "67a0ec9a-0190-4ef3-a3ba-5f34671fcfca",
+        "status": "complete",
+        "records": 325,
+        "pages": 11,
+        "requests": 11,
+        "stopReason": "enumeration_exhausted",
+        "build": "c424b942be741433b27e91d325ac7b2f227f7775826d1cbdb9613e2b85a4a864"
+      },
+      "lastComplete": "67a0ec9a-0190-4ef3-a3ba-5f34671fcfca",
+      "repairs": []
+    },
+    {
+      "id": "url-055",
+      "group": "Boston",
+      "url": "https://www.boston.gov/departments/tourism-sports-and-entertainment",
+      "script": "scrapers/url-055.mjs",
+      "adapter": "discovery",
+      "coverage": "discovery",
+      "enabled": false,
+      "latest": {
+        "runId": "c226740f-e1ff-4ad2-82a7-266e05e8dc38",
+        "status": "repair_needed",
+        "records": 0,
+        "pages": 1,
+        "requests": 1,
+        "stopReason": "probe_only",
+        "error": "no_event_contract_found",
+        "build": "accb6b6a641d40c91a91d0aa083e63bafa526e3187179d5219336d742e677bae"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "c97de477-f99f-4083-88ab-7a0d9f30f84e",
+          "code": "no_event_contract_found",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-056",
+      "group": "Miami",
+      "url": "https://www.miamiandbeaches.com/events",
+      "script": "scrapers/url-056.mjs",
+      "adapter": "cards",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "df7266e1-bc30-461b-9042-5b088b82b380",
+        "status": "repair_needed",
+        "records": 0,
+        "pages": 1,
+        "requests": 1,
+        "stopReason": "probe_only",
+        "error": "no_event_contract_found",
+        "build": "accb6b6a641d40c91a91d0aa083e63bafa526e3187179d5219336d742e677bae"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "071e5ad6-091f-4092-bbeb-13b9a43ef101",
+          "code": "no_event_contract_found",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-057",
+      "group": "Miami",
+      "url": "https://www.miamiandbeaches.com/events/annual-events",
+      "script": "scrapers/url-057.mjs",
+      "adapter": "cards",
+      "coverage": "discovery",
+      "enabled": false,
+      "latest": {
+        "runId": "f0224f0a-74a7-4bef-aa80-191abdac9265",
+        "status": "partial",
+        "records": 23,
+        "pages": 1,
+        "requests": 1,
+        "stopReason": "probe_only",
+        "build": "0d44e9b085295c1fc53269e9e63eb87e394fa30fd2e3a5702a2a71f959336035"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "2a92d3e6-a653-4e69-b30c-595b2a525efb",
+          "code": "coverage_unverified",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-058",
+      "group": "Seattle",
+      "url": "https://visitseattle.org/events/",
+      "script": "scrapers/url-058.mjs",
+      "adapter": "cards",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "a8751d16-e311-4cef-a341-810062098240",
+        "status": "repair_needed",
+        "records": 0,
+        "pages": 1,
+        "requests": 1,
+        "stopReason": "probe_only",
+        "error": "no_event_contract_found",
+        "build": "accb6b6a641d40c91a91d0aa083e63bafa526e3187179d5219336d742e677bae"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "a861a859-7f1e-4a2a-ba6f-9b1f0b90f392",
+          "code": "no_event_contract_found",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-059",
+      "group": "Seattle",
+      "url": "https://visitseattle.org/things-to-do/events/",
+      "script": "scrapers/url-059.mjs",
+      "adapter": "cards",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "cbf61135-dda7-4dc9-8a2e-273b663bd67a",
+        "status": "repair_needed",
+        "records": 0,
+        "pages": 1,
+        "requests": 1,
+        "stopReason": "probe_only",
+        "error": "no_event_contract_found",
+        "build": "accb6b6a641d40c91a91d0aa083e63bafa526e3187179d5219336d742e677bae"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "3b9bd372-e835-4975-aace-441a46c77377",
+          "code": "no_event_contract_found",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-060",
+      "group": "Seattle",
+      "url": "https://visitseattle.org/things-to-do/events/festivals/",
+      "script": "scrapers/url-060.mjs",
+      "adapter": "cards",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "8191d80f-2fda-43c3-8c77-c43e4dae3e04",
+        "status": "repair_needed",
+        "records": 0,
+        "pages": 1,
+        "requests": 1,
+        "stopReason": "probe_only",
+        "error": "no_event_contract_found",
+        "build": "accb6b6a641d40c91a91d0aa083e63bafa526e3187179d5219336d742e677bae"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "8ba09a12-49ad-49db-98d7-1878185e32ae",
+          "code": "no_event_contract_found",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-061",
+      "group": "Seattle",
+      "url": "https://visitseattle.org/about-us/citywide-calendar/",
+      "script": "scrapers/url-061.mjs",
+      "adapter": "cards",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "a4bb04ce-812f-4a69-88bb-3203d5995c4b",
+        "status": "repair_needed",
+        "records": 0,
+        "pages": 1,
+        "requests": 1,
+        "stopReason": "probe_only",
+        "error": "no_event_contract_found",
+        "build": "accb6b6a641d40c91a91d0aa083e63bafa526e3187179d5219336d742e677bae"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "4c1d233e-83d6-4672-a379-c916d84b4f2f",
+          "code": "no_event_contract_found",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-062",
+      "group": "Seattle",
+      "url": "https://www.seattle.gov/event-calendar",
+      "script": "scrapers/url-062.mjs",
+      "adapter": "embedded-calendar",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "e8bbc0a4-707b-414a-b1e0-680010bc7b3a",
+        "status": "blocked_access",
+        "records": 0,
+        "pages": 0,
+        "requests": 1,
+        "stopReason": "access_blocked",
+        "error": "access_blocked",
+        "build": "accb6b6a641d40c91a91d0aa083e63bafa526e3187179d5219336d742e677bae"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "e2c71087-716c-46af-b798-136986419d8f",
+          "code": "access_blocked",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-063",
+      "group": "Seattle",
+      "url": "https://www.seattle.gov/special-events/plan-an-event/calendar",
+      "script": "scrapers/url-063.mjs",
+      "adapter": "embedded-calendar",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "8d051cec-d363-4f33-ac38-9ee0b79b2572",
+        "status": "blocked_access",
+        "records": 0,
+        "pages": 0,
+        "requests": 1,
+        "stopReason": "access_blocked",
+        "error": "access_blocked",
+        "build": "accb6b6a641d40c91a91d0aa083e63bafa526e3187179d5219336d742e677bae"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "48aa41b0-b7b7-4807-884d-1839ddaa59f6",
+          "code": "access_blocked",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-064",
+      "group": "San Francisco",
+      "url": "https://www.sftravel.com/explore/events",
+      "script": "scrapers/url-064.mjs",
+      "adapter": "discovery",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "9061993d-f56b-4540-b4e0-0e0d9c4acb9c",
+        "status": "blocked_access",
+        "records": 0,
+        "pages": 0,
+        "requests": 1,
+        "stopReason": "access_blocked",
+        "error": "access_blocked",
+        "build": "accb6b6a641d40c91a91d0aa083e63bafa526e3187179d5219336d742e677bae"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "573a22c6-5b79-4beb-834f-87f8ba0a2615",
+          "code": "access_blocked",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-065",
+      "group": "San Francisco",
+      "url": "https://portal.sftravel.com/calendar_public/home_sfdc.cfm",
+      "script": "scrapers/url-065.mjs",
+      "adapter": "sf-portal",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "62111d50-2381-4b1f-a425-d2d20a05f5c8",
+        "status": "partial",
+        "records": 26,
+        "pages": 1,
+        "requests": 1,
+        "stopReason": "probe_only",
+        "build": "0d44e9b085295c1fc53269e9e63eb87e394fa30fd2e3a5702a2a71f959336035"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "eb30b6b3-35ee-44ea-9d08-0cdc2fa0ffe5",
+          "code": "coverage_unverified",
+          "status": "open"
+        },
+        {
+          "id": "a8f8b714-f80f-49d8-9a5c-ffa8100c1781",
+          "code": "no_event_contract_found",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-066",
+      "group": "San Francisco",
+      "url": "https://www.sf.gov/departments--office-mayor/events/calendar",
+      "script": "scrapers/url-066.mjs",
+      "adapter": "discovery",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "d8e1ea25-2be5-41a4-b61c-ec86f44d9069",
+        "status": "repair_needed",
+        "records": 0,
+        "pages": 1,
+        "requests": 1,
+        "stopReason": "probe_only",
+        "error": "no_event_contract_found",
+        "build": "accb6b6a641d40c91a91d0aa083e63bafa526e3187179d5219336d742e677bae"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "55e2e37f-2cbc-4d3b-8586-c33f9d7d9463",
+          "code": "no_event_contract_found",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-067",
+      "group": "Atlanta",
+      "url": "https://discoveratlanta.com/events/all/",
+      "script": "scrapers/url-067.mjs",
+      "adapter": "discovery",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "3aad5886-57b0-4706-b974-05fa25e33bf7",
+        "status": "blocked_access",
+        "records": 0,
+        "pages": 0,
+        "requests": 1,
+        "stopReason": "access_blocked",
+        "error": "access_blocked",
+        "build": "accb6b6a641d40c91a91d0aa083e63bafa526e3187179d5219336d742e677bae"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "b1f112f4-2694-4bfc-bf7e-bc9843fa1c21",
+          "code": "access_blocked",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-068",
+      "group": "Atlanta",
+      "url": "https://discoveratlanta.com/events/festivals/",
+      "script": "scrapers/url-068.mjs",
+      "adapter": "discovery",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "0699dca0-bba2-4f34-910b-73e4cc92c770",
+        "status": "blocked_access",
+        "records": 0,
+        "pages": 0,
+        "requests": 1,
+        "stopReason": "access_blocked",
+        "error": "access_blocked",
+        "build": "accb6b6a641d40c91a91d0aa083e63bafa526e3187179d5219336d742e677bae"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "e3461c31-422b-4454-b616-9d04b45ac8fb",
+          "code": "access_blocked",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-069",
+      "group": "Atlanta",
+      "url": "https://www.atlantaga.gov/government/mayor-s-office/executive-offices/office-of-communications/city-calendar",
+      "script": "scrapers/url-069.mjs",
+      "adapter": "discovery",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "c85fd62c-51fc-4b8f-94b1-849ca1055278",
+        "status": "blocked_access",
+        "records": 0,
+        "pages": 0,
+        "requests": 1,
+        "stopReason": "access_blocked",
+        "error": "access_blocked",
+        "build": "accb6b6a641d40c91a91d0aa083e63bafa526e3187179d5219336d742e677bae"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "eb63e91b-f071-467d-bc29-7c413246d843",
+          "code": "access_blocked",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-070",
+      "group": "Dallas",
+      "url": "https://www.visitdallas.com/events/",
+      "script": "scrapers/url-070.mjs",
+      "adapter": "cards",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "96ae112d-15a1-4e50-bbef-1ba53abddbee",
+        "status": "repair_needed",
+        "records": 0,
+        "pages": 1,
+        "requests": 1,
+        "stopReason": "probe_only",
+        "error": "no_event_contract_found",
+        "build": "accb6b6a641d40c91a91d0aa083e63bafa526e3187179d5219336d742e677bae"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "fad30d61-cffd-4c4f-a8c6-28d01db44905",
+          "code": "no_event_contract_found",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-071",
+      "group": "Dallas",
+      "url": "https://www.visitdallas.com/events/annual-events/",
+      "script": "scrapers/url-071.mjs",
+      "adapter": "cards",
+      "coverage": "discovery",
+      "enabled": false,
+      "latest": {
+        "runId": "cb73b8f3-c5a1-4af4-a47e-f6209329dfff",
+        "status": "repair_needed",
+        "records": 0,
+        "pages": 1,
+        "requests": 1,
+        "stopReason": "probe_only",
+        "error": "no_event_contract_found",
+        "build": "accb6b6a641d40c91a91d0aa083e63bafa526e3187179d5219336d742e677bae"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "37f47b4d-8f71-4b81-b5c0-a369cdf37435",
+          "code": "no_event_contract_found",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-072",
+      "group": "Dallas",
+      "url": "https://dallascityhall.com/calendar/Pages/default.aspx",
+      "script": "scrapers/url-072.mjs",
+      "adapter": "discovery",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "01cb6aa9-b2ae-47be-a169-20b93b2ef23f",
+        "status": "repair_needed",
+        "records": 0,
+        "pages": 1,
+        "requests": 1,
+        "stopReason": "probe_only",
+        "error": "no_event_contract_found",
+        "build": "accb6b6a641d40c91a91d0aa083e63bafa526e3187179d5219336d742e677bae"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "18a0ace3-9e22-48f2-8426-cb7a50626ee5",
+          "code": "no_event_contract_found",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-073",
+      "group": "New Orleans",
+      "url": "https://www.neworleans.com/events/",
+      "script": "scrapers/url-073.mjs",
+      "adapter": "jsonld",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "0d8cd874-99e5-4045-9392-b08068a1a069",
+        "status": "blocked_access",
+        "records": 0,
+        "pages": 0,
+        "requests": 1,
+        "stopReason": "access_blocked",
+        "error": "access_blocked",
+        "build": "accb6b6a641d40c91a91d0aa083e63bafa526e3187179d5219336d742e677bae"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "222d536c-3590-40aa-a42f-7c9928aa5767",
+          "code": "access_blocked",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-074",
+      "group": "New Orleans",
+      "url": "https://www.neworleans.com/things-to-do/festivals/",
+      "script": "scrapers/url-074.mjs",
+      "adapter": "jsonld",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "08a9f8ca-3037-4e6b-8174-cc6366d67c8e",
+        "status": "blocked_access",
+        "records": 0,
+        "pages": 0,
+        "requests": 1,
+        "stopReason": "access_blocked",
+        "error": "access_blocked",
+        "build": "accb6b6a641d40c91a91d0aa083e63bafa526e3187179d5219336d742e677bae"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "0932acf1-e591-4cd2-9bb0-5118bbb6a733",
+          "code": "access_blocked",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-075",
+      "group": "New Orleans",
+      "url": "https://www.neworleans.com/events/year-at-a-glance/",
+      "script": "scrapers/url-075.mjs",
+      "adapter": "jsonld",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "a85a4be9-3db6-4eed-a9c6-cd72b17c5b2a",
+        "status": "blocked_access",
+        "records": 0,
+        "pages": 0,
+        "requests": 1,
+        "stopReason": "access_blocked",
+        "error": "access_blocked",
+        "build": "accb6b6a641d40c91a91d0aa083e63bafa526e3187179d5219336d742e677bae"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "1a571ae7-bff1-4b69-b0cb-0922f0fb509a",
+          "code": "access_blocked",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-076",
+      "group": "Denver",
+      "url": "https://visitdenver.com/events/",
+      "script": "scrapers/url-076.mjs",
+      "adapter": "jsonld",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "b06fcd0c-52b4-4c95-89a7-fa7af3a8c6a7",
+        "status": "blocked_access",
+        "records": 0,
+        "pages": 0,
+        "requests": 1,
+        "stopReason": "access_blocked",
+        "error": "access_blocked",
+        "build": "accb6b6a641d40c91a91d0aa083e63bafa526e3187179d5219336d742e677bae"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "1e099c3a-3d16-4a7c-addf-58c9336cf5e4",
+          "code": "access_blocked",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-077",
+      "group": "Denver",
+      "url": "https://visitdenver.com/things-to-do/festivals-events/",
+      "script": "scrapers/url-077.mjs",
+      "adapter": "jsonld",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "bfd06c3b-3429-4ed4-bc1b-b10baf5745f3",
+        "status": "blocked_access",
+        "records": 0,
+        "pages": 0,
+        "requests": 1,
+        "stopReason": "access_blocked",
+        "error": "access_blocked",
+        "build": "accb6b6a641d40c91a91d0aa083e63bafa526e3187179d5219336d742e677bae"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "b2c056bf-a1a3-4f1a-8f77-b49c1c7adc0c",
+          "code": "access_blocked",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-078",
+      "group": "Orlando",
+      "url": "https://www.visitorlando.com/events/",
+      "script": "scrapers/url-078.mjs",
+      "adapter": "jsonld",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "876296a7-7e81-4420-bb9f-efc3f5b5a5fd",
+        "status": "blocked_access",
+        "records": 0,
+        "pages": 0,
+        "requests": 1,
+        "stopReason": "access_blocked",
+        "error": "access_blocked",
+        "build": "accb6b6a641d40c91a91d0aa083e63bafa526e3187179d5219336d742e677bae"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "9b626fac-dff5-44bc-b810-e5154f5ebe0b",
+          "code": "access_blocked",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-079",
+      "group": "Orlando",
+      "url": "https://www.orlando.gov/Events",
+      "script": "scrapers/url-079.mjs",
+      "adapter": "opencities",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "b26715c0-7f0c-40f9-b266-95a40ae4dd2e",
+        "status": "partial",
+        "records": 10,
+        "pages": 1,
+        "requests": 1,
+        "stopReason": "probe_only",
+        "build": "0d44e9b085295c1fc53269e9e63eb87e394fa30fd2e3a5702a2a71f959336035"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "508eb7cf-8ffc-4f78-be6e-6d309dba4ea1",
+          "code": "coverage_unverified",
+          "status": "open"
+        },
+        {
+          "id": "430fd68c-4b18-4cf6-b3d8-2ba399e35fa4",
+          "code": "no_event_contract_found",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-080",
+      "group": "Orlando",
+      "url": "https://www.downtownorlando.com/Fun/Events",
+      "script": "scrapers/url-080.mjs",
+      "adapter": "opencities",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "e033b247-cca2-41d7-b751-22c9797abb85",
+        "status": "partial",
+        "records": 10,
+        "pages": 1,
+        "requests": 1,
+        "stopReason": "probe_only",
+        "build": "0d44e9b085295c1fc53269e9e63eb87e394fa30fd2e3a5702a2a71f959336035"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "36870bec-22ff-40b1-a2ac-e950a582c157",
+          "code": "coverage_unverified",
+          "status": "open"
+        },
+        {
+          "id": "b6e7c51c-2ff6-4992-90f5-53ccacb63f9a",
+          "code": "no_event_contract_found",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-081",
+      "group": "Orlando",
+      "url": "https://events.occc.net/",
+      "script": "scrapers/url-081.mjs",
+      "adapter": "jsonld",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "75adcf49-623a-4326-9909-76550c5b83cb",
+        "status": "blocked_access",
+        "records": 0,
+        "pages": 0,
+        "requests": 1,
+        "stopReason": "access_blocked",
+        "error": "access_blocked",
+        "build": "accb6b6a641d40c91a91d0aa083e63bafa526e3187179d5219336d742e677bae"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "a0f93261-b734-4f9a-8c39-636b3077b120",
+          "code": "access_blocked",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-082",
+      "group": "San Diego",
+      "url": "https://www.visitsandiego.com/calendar",
+      "script": "scrapers/url-082.mjs",
+      "adapter": "san-diego",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "4c70d342-e9c2-43cd-afb8-5d2b9d37a7cd",
+        "status": "partial",
+        "records": 60,
+        "pages": 1,
+        "requests": 1,
+        "stopReason": "probe_only",
+        "build": "0d44e9b085295c1fc53269e9e63eb87e394fa30fd2e3a5702a2a71f959336035"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "dfd9ce62-053e-440e-80e8-8037edecf665",
+          "code": "coverage_unverified",
+          "status": "open"
+        },
+        {
+          "id": "120b402a-d64b-4e17-8f1c-84611602af77",
+          "code": "no_event_contract_found",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-083",
+      "group": "Conventions and trade shows",
+      "url": "https://tradefest.io/en/tag/research",
+      "script": "scrapers/url-083.mjs",
+      "adapter": "discovery",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "08943d56-ca45-477e-95c3-f87045b542dd",
+        "status": "repair_needed",
+        "records": 0,
+        "pages": 1,
+        "requests": 1,
+        "stopReason": "probe_only",
+        "error": "no_event_contract_found",
+        "build": "accb6b6a641d40c91a91d0aa083e63bafa526e3187179d5219336d742e677bae"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "34bf8582-8b65-4042-9196-413630ca00cf",
+          "code": "no_event_contract_found",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-084",
+      "group": "Las Vegas",
+      "url": "https://www.vegasmeansbusiness.com/destination-calendar/?bounds=false&view=grid&sort=date&filter_date_start=1/1/2026&filter_date_end=1/31/2026",
+      "script": "scrapers/url-084.mjs",
+      "adapter": "jsonld",
+      "coverage": "historical-view",
+      "enabled": false,
+      "latest": {
+        "runId": "f2b73a95-8150-4490-b6f7-b557e3958e2c",
+        "status": "blocked_access",
+        "records": 0,
+        "pages": 0,
+        "requests": 1,
+        "stopReason": "access_blocked",
+        "error": "access_blocked",
+        "build": "accb6b6a641d40c91a91d0aa083e63bafa526e3187179d5219336d742e677bae"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "b0e488d7-190e-437e-aaf7-2921e9e294bb",
+          "code": "access_blocked",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-085",
+      "group": "New York City",
+      "url": "https://www.nycgovparks.org/events/festivals/ajax/aggregate/p1",
+      "script": "scrapers/url-085.mjs",
+      "adapter": "microdata",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "61e8cfb3-add1-463a-9f1a-64317f2392df",
+        "status": "partial",
+        "records": 39,
+        "pages": 1,
+        "requests": 1,
+        "stopReason": "probe_only",
+        "build": "0d44e9b085295c1fc53269e9e63eb87e394fa30fd2e3a5702a2a71f959336035"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "d6c666b1-8772-4e85-8afa-8bcac5d4f7a8",
+          "code": "coverage_unverified",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-086",
+      "group": "Seattle",
+      "url": "https://visitseattle.org/events/?frm=events&event_type=festivals-special-events",
+      "script": "scrapers/url-086.mjs",
+      "adapter": "cards",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "45782157-c594-4522-9230-5b4343dba0de",
+        "status": "repair_needed",
+        "records": 0,
+        "pages": 1,
+        "requests": 1,
+        "stopReason": "probe_only",
+        "error": "no_event_contract_found",
+        "build": "accb6b6a641d40c91a91d0aa083e63bafa526e3187179d5219336d742e677bae"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "2b70c9b0-d8ff-4d54-9514-57b20aca0349",
+          "code": "no_event_contract_found",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-087",
+      "group": "Denver",
+      "url": "https://visitdenver.com/events/?filter_categories[0]=63",
+      "script": "scrapers/url-087.mjs",
+      "adapter": "jsonld",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "5c1d72a4-15ab-4a11-a6e5-4f5482521e94",
+        "status": "blocked_access",
+        "records": 0,
+        "pages": 0,
+        "requests": 1,
+        "stopReason": "access_blocked",
+        "error": "access_blocked",
+        "build": "accb6b6a641d40c91a91d0aa083e63bafa526e3187179d5219336d742e677bae"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "be3a64a8-a6b9-4e58-9eb3-7970521924b5",
+          "code": "access_blocked",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-088",
+      "group": "Orlando",
+      "url": "https://expofp.com/orange-county-convention-center",
+      "script": "scrapers/url-088.mjs",
+      "adapter": "discovery",
+      "coverage": "discovery",
+      "enabled": false,
+      "latest": {
+        "runId": "46826925-d04b-4642-850e-86d39aca6352",
+        "status": "repair_needed",
+        "records": 0,
+        "pages": 1,
+        "requests": 1,
+        "stopReason": "probe_only",
+        "error": "no_event_contract_found",
+        "build": "accb6b6a641d40c91a91d0aa083e63bafa526e3187179d5219336d742e677bae"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "b1db22c7-1389-47db-b1dc-d5a1993381c4",
+          "code": "no_event_contract_found",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-089",
+      "group": "Orlando",
+      "url": "https://www.ramadaorlando.com/orange-county-convention-center-events/",
+      "script": "scrapers/url-089.mjs",
+      "adapter": "discovery",
+      "coverage": "discovery",
+      "enabled": false,
+      "latest": {
+        "runId": "b3ab04c0-b6b1-43ef-9df1-fd7472ff1298",
+        "status": "repair_needed",
+        "records": 0,
+        "pages": 1,
+        "requests": 1,
+        "stopReason": "probe_only",
+        "error": "no_event_contract_found",
+        "build": "accb6b6a641d40c91a91d0aa083e63bafa526e3187179d5219336d742e677bae"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "789c6b18-06e6-4750-b56f-f5ed4a47bf1f",
+          "code": "no_event_contract_found",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-090",
+      "group": "Orlando",
+      "url": "https://conventioncalendar.com/us/fl/orlando/orange-county-convention-center",
+      "script": "scrapers/url-090.mjs",
+      "adapter": "discovery",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "ef449359-c7ff-41b7-84cf-49160c48915e",
+        "status": "repair_needed",
+        "records": 0,
+        "pages": 1,
+        "requests": 1,
+        "stopReason": "probe_only",
+        "error": "no_event_contract_found",
+        "build": "accb6b6a641d40c91a91d0aa083e63bafa526e3187179d5219336d742e677bae"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "92aacc0c-4805-454d-a895-beb3601dfb53",
+          "code": "no_event_contract_found",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-091",
+      "group": "Orlando",
+      "url": "https://www.occc.net/About-Us-Media-Relations-Press-Releases",
+      "script": "scrapers/url-091.mjs",
+      "adapter": "discovery",
+      "coverage": "discovery",
+      "enabled": false,
+      "latest": {
+        "runId": "2c4aa15a-9445-4ee4-b853-226a2e99921e",
+        "status": "partial",
+        "records": 0,
+        "pages": 1,
+        "requests": 1,
+        "stopReason": "request_budget",
+        "build": "0d44e9b085295c1fc53269e9e63eb87e394fa30fd2e3a5702a2a71f959336035"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "a09ef68e-4c04-465b-ab11-68345b3aebb3",
+          "code": "coverage_unverified",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-092",
+      "group": "Orlando",
+      "url": "https://www.wyndhamidriveresort.com/orange-county-convention-center.htm",
+      "script": "scrapers/url-092.mjs",
+      "adapter": "discovery",
+      "coverage": "discovery",
+      "enabled": false,
+      "latest": {
+        "runId": "8b439d62-ac2e-4464-8eaf-fa8cff10409e",
+        "status": "repair_needed",
+        "records": 0,
+        "pages": 1,
+        "requests": 1,
+        "stopReason": "probe_only",
+        "error": "no_event_contract_found",
+        "build": "accb6b6a641d40c91a91d0aa083e63bafa526e3187179d5219336d742e677bae"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "f95d52ae-1520-41c7-b1e5-5f2eda134520",
+          "code": "no_event_contract_found",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-093",
+      "group": "Chicago",
+      "url": "https://www.chicago.gov/city/en/sites/chicagoriverwalk/home/events.html",
+      "script": "scrapers/url-093.mjs",
+      "adapter": "discovery",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "1040fdef-d816-4bd9-bbd7-065fe2403128",
+        "status": "repair_needed",
+        "records": 0,
+        "pages": 1,
+        "requests": 1,
+        "stopReason": "probe_only",
+        "error": "no_event_contract_found",
+        "build": "accb6b6a641d40c91a91d0aa083e63bafa526e3187179d5219336d742e677bae"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "717eb1ee-677d-43de-b44c-9733eb51138b",
+          "code": "no_event_contract_found",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-094",
+      "group": "Orlando",
+      "url": "https://www.orlando.gov/Home",
+      "script": "scrapers/url-094.mjs",
+      "adapter": "opencities",
+      "coverage": "discovery",
+      "enabled": false,
+      "latest": {
+        "runId": "919c6370-2aba-4ba5-b108-2cfcbe0b10fb",
+        "status": "repair_needed",
+        "records": 0,
+        "pages": 1,
+        "requests": 1,
+        "stopReason": "probe_only",
+        "error": "no_event_contract_found",
+        "build": "accb6b6a641d40c91a91d0aa083e63bafa526e3187179d5219336d742e677bae"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "6e1a292f-9fea-4236-a888-fe4b58ded0dd",
+          "code": "no_event_contract_found",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-095",
+      "group": "Orlando",
+      "url": "https://www.visitorlando.city/events",
+      "script": "scrapers/url-095.mjs",
+      "adapter": "jsonld",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "0665b5db-61be-416a-acd5-1e4ef3629719",
+        "status": "repair_needed",
+        "records": 0,
+        "pages": 1,
+        "requests": 1,
+        "stopReason": "probe_only",
+        "error": "no_event_contract_found",
+        "build": "accb6b6a641d40c91a91d0aa083e63bafa526e3187179d5219336d742e677bae"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "77e7e526-662b-4b23-a0c9-39dbcda1b2ae",
+          "code": "no_event_contract_found",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-096",
+      "group": "Chicago",
+      "url": "https://events.uchicago.edu/",
+      "script": "scrapers/url-096.mjs",
+      "adapter": "discovery",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "e503b59c-6e53-4657-831a-e213a9964aa1",
+        "status": "repair_needed",
+        "records": 0,
+        "pages": 1,
+        "requests": 1,
+        "stopReason": "probe_only",
+        "error": "no_event_contract_found",
+        "build": "accb6b6a641d40c91a91d0aa083e63bafa526e3187179d5219336d742e677bae"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "4834223e-8df6-44e4-a9ce-ddf7bf5c1ee3",
+          "code": "no_event_contract_found",
+          "status": "open"
+        }
+      ]
+    },
+    {
+      "id": "url-097",
+      "group": "Orlando",
+      "url": "https://events.occc.net/calendar-embed-source/",
+      "script": "scrapers/url-097.mjs",
+      "adapter": "jsonld",
+      "coverage": "unverified",
+      "enabled": false,
+      "latest": {
+        "runId": "c07bb4eb-9e0d-4167-a7e3-af9c3d6c4e1a",
+        "status": "blocked_access",
+        "records": 0,
+        "pages": 0,
+        "requests": 1,
+        "stopReason": "access_blocked",
+        "error": "access_blocked",
+        "build": "accb6b6a641d40c91a91d0aa083e63bafa526e3187179d5219336d742e677bae"
+      },
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "54152e7e-68f6-40f6-84f4-5a1f06efb318",
+          "code": "access_blocked",
+          "status": "open"
+        }
+      ]
+    }
+  ]
+}
