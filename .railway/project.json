@@ -5,7 +5,17 @@
   "repository": "paulshorey/events",
   "serviceName": "events",
   "environments": {
-    "dev": { "id": "fb0a7dbd-2f66-4183-b3c3-7b1e7a7afe24", "branch": "main" },
-    "production": { "id": "cf2c1bdd-7938-4b8a-b752-3c3bb6826b9e", "branch": "prod" }
-  }
+    "dev": {
+      "id": "fb0a7dbd-2f66-4183-b3c3-7b1e7a7afe24",
+      "branch": "main",
+      "url": "https://events-dev-7362.up.railway.app"
+    },
+    "production": {
+      "id": "cf2c1bdd-7938-4b8a-b752-3c3bb6826b9e",
+      "branch": "prod",
+      "url": "https://events-production-832d.up.railway.app"
+    }
+  },
+  "serviceId": "392ab483-08a9-4f84-9160-476b11470324",
+  "waitForCI": true
 }

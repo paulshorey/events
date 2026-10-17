@@ -4,8 +4,10 @@
 
 | Environment | GitHub source | Service | Start / readiness |
 | --- | --- | --- | --- |
-| dev | `paulshorey/events:main` | `events` | `node src/server.mjs` / `/api/health` |
-| production | `paulshorey/events:prod` | `events` | `node src/server.mjs` / `/api/health` |
+| dev | `paulshorey/events:main` | `events` | [HTTPS health](https://events-dev-7362.up.railway.app/api/health) |
+| production | `paulshorey/events:prod` | `events` | [HTTPS health](https://events-production-832d.up.railway.app/api/health) |
+
+Both environments start `node src/server.mjs` and use `/api/health` as the deployment healthcheck.
 
 Railway builds the root Dockerfile. It pins Node 26.9.0 by image digest, installs lockfile production dependencies and the matching Playwright Chromium plus Linux dependencies, then runs as the `node` user. The service probes Chromium launch, the SQLite engine in memory, and the source registry before returning healthy. The health response includes Railway's Git commit/branch, making release verification possible.
 
@@ -34,6 +36,8 @@ For pinned plans, commit `.railway/` first, then use `railway config plan --file
 
 ## Deployment contract
 
+The definition uses the typed `github()` source helper. With SDK 3.15.0, the shorthand `{ repo, branch, checkSuites }` silently drops `checkSuites`; regression tests assert that the normalized graph retains the CI gate for both environments.
+
 GitHub autodeploy triggers map `main` to dev and `prod` to production. Check suites are enabled; Railway waits for the repository's CI test job. CI runs the IaC type check, parser/framework tests and real Chromium readiness test. A push deploys the configuration already applied to Railway. Editing `.railway/railway.ts` additionally requires its reviewed plan/apply; CI deliberately does not hold a workspace-wide token or silently apply infrastructure.
 
 Feature work should use a feature branch and PR into main. Promote the full reviewed main branch to prod when authorized. The initial repository/bootstrap task was explicitly authorized to commit directly to main and create prod.
@@ -41,3 +45,15 @@ Feature work should use a feature branch and PR into main. Promote the full revi
 Inspect deployment status and logs using explicit project/environment/service targets. Verify the exact deployed commit, successful deployment state and validated HTTPS readiness in both environments. A passing health response establishes runtime capability, not event completeness, database connectivity or long-term worker reliability.
 
 Provider references: [Railway IaC](https://docs.railway.com/infrastructure-as-code), [GitHub autodeploys](https://docs.railway.com/deployments/github-autodeploys), [Playwright Docker guidance](https://playwright.dev/docs/docker).
+
+## Read-only verification
+
+```sh
+(
+  source "$HOME/.config/railway/webarts.env"
+  unset RAILWAY_TOKEN
+  npm run hosting:verify
+)
+```
+
+The verifier checks workspace/project identity, both branch triggers and CI gates, a clean IaC plan for both environments, the latest deployment's successful status and exact remote branch head, and HTTPS runtime readiness. It reads no secret values and starts no collection work. The effective Docker builder comes from the normalized live graph and deployed service manifest; the raw ServiceInstance builder can retain its Railpack default during Dockerfile detection.

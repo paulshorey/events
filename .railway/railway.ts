@@ -1,4 +1,4 @@
-import { defineRailway, project, service } from "railway/iac";
+import { defineRailway, github, project, service } from "railway/iac";
 import target from "./project.json" with { type: "json" };
 
 export default defineRailway((ctx) => {
@@ -11,11 +11,11 @@ export default defineRailway((ctx) => {
     throw new Error("Select the Events dev or production environment.");
   const [environment, configuration] = selected;
   const collector = service(target.serviceName, {
-    source: {
-      repo: target.repository,
+    // SDK 3.15.0's shorthand source object drops checkSuites during normalization.
+    source: github(target.repository, {
       branch: configuration.branch,
-      checkSuites: true,
-    },
+      checkSuites: target.waitForCI,
+    }),
     replicas: 1,
     env: { NODE_ENV: "production", APP_ENVIRONMENT: environment, PORT: "4500" },
     build: { builder: "DOCKERFILE", dockerfilePath: "Dockerfile" },
