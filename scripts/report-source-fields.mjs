@@ -95,6 +95,7 @@ for (const config of await registry()) {
         .map((r) =>
           mergeDetail(records[i], r, {
             allowDateRange: config.adapter === "opencities",
+            titleAliases: config.detailTitleAliases,
           }),
         )
         .filter(Boolean);
@@ -175,6 +176,10 @@ for (const config of await registry()) {
       startLocal: r.startLocal,
       endLocal: r.endLocal,
       dateTimePrecision: r.dateTimePrecision,
+      dateTimeBasis: r.dateTimeBasis,
+      timeZone: r.timeZone,
+      timeZoneBasis: r.timeZoneBasis,
+      timeZoneLabel: r.timeZoneLabel,
       location: r.location,
       geoCoordinates: r.geoCoordinates,
       fieldQuality: r.fieldQuality,

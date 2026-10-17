@@ -72,7 +72,10 @@ export function parseDocument({
     observedCount = 0,
     method = "jsonld",
     rejected = 0;
-  if (inspectedAdapters.has(config.adapter)) {
+  if (config.discoveryOnly) {
+    method = "discovery-only";
+    coverage = "discovery";
+  } else if (inspectedAdapters.has(config.adapter)) {
     const parsed = parseInspected({ html, url, config });
     all.push(...parsed.records);
     issues.push(
@@ -304,6 +307,9 @@ export function parseDocument({
           )
           .remove();
         const title =
+          (config.adapter === "conventiongrid"
+            ? text(c.find(".font-medium").first().text())
+            : "") ||
           text(c.find('h2,h3,h4,[class*="title"]').first().text()) ||
           text(a.text()).slice(0, 200);
         const time = visible

@@ -295,7 +295,7 @@ test("OpenCities detail uses the full date range and event marker, without copyi
   });
 });
 
-test("Boston visible occurrence overrides a conflicting JSON-LD metadata timestamp and retains the conflict", async () => {
+test("Boston visible occurrence overrides a conflicting JSON-LD timestamp and retains the conflict", async () => {
   const c = configs.find((c) => c.id === "url-054"),
     url = "https://www.boston.gov/calendar/open-streets-roslindale";
   const parsed = parseDocument({
@@ -333,6 +333,88 @@ test("article publication metadata cannot masquerade as an event date and placeh
   );
   assert.equal(safeUrl("/events/undefined", c.url), null);
   assert.equal(safeUrl("/events/null", c.url), null);
+});
+
+test("a department discovery page cannot publish its misleading Event metadata", async () => {
+  const c = configs.find((c) => c.id === "url-055");
+  const html =
+    '<h1>Tourism, Sports, and Entertainment</h1><script type="application/ld+json">' +
+    JSON.stringify({
+      "@type": "Event",
+      name: "Tourism, Sports, and Entertainment",
+      url: c.url,
+      startDate: "2026-08-07T15:00:00",
+    }) +
+    '</script><main><a href="/calendar/open-streets-roslindale">Open Streets</a></main>';
+  const listing = parseDocument({ html, url: c.url, config: c });
+  assert.equal(listing.records.length, 0);
+  assert.ok(
+    listing.nextRequests.some((p) =>
+      p.url.endsWith("/calendar/open-streets-roslindale"),
+    ),
+  );
+  const detail = parseDocument({
+    html: await fixture("boston-detail"),
+    url: "https://www.boston.gov/calendar/open-streets-roslindale",
+    config: c,
+    task: { kind: "detail" },
+  });
+  assert.equal(detail.records.length, 1);
+  assert.equal(detail.records[0].startDate, "2026-10-18");
+});
+
+test("reviewed title aliases retain the date guard rather than enabling generic fuzzy matching", () => {
+  const listing = eventRecord(
+    config,
+    {
+      ...input,
+      title: "NY Auto Show",
+      startDate: "2027-03-26",
+      endDate: "2027-04-04",
+    },
+    evidence,
+  );
+  const detail = eventRecord(
+    config,
+    {
+      ...input,
+      title: "New York International Auto Show",
+      startDate: "2027-03-26",
+      endDate: "2027-04-04",
+      location: "Javits Center",
+    },
+    evidence,
+  );
+  assert.equal(mergeDetail(listing, detail), null);
+  const options = {
+    titleAliases: { "NY Auto Show": "New York International Auto Show" },
+  };
+  assert.ok(mergeDetail(listing, detail, options));
+  assert.doesNotThrow(() =>
+    mergeDetail(
+      { ...listing, title: "toString" },
+      { ...detail, title: "toString" },
+    ),
+  );
+  assert.equal(
+    mergeDetail(listing, { ...detail, startDate: "2028-03-26" }, options),
+    null,
+  );
+});
+
+test("ConventionGrid event names exclude the adjacent date/city metadata", async () => {
+  const c = configs.find((c) => c.id === "url-013");
+  const parsed = parseDocument({
+    html: await fixture("conventiongrid-card"),
+    url: c.url,
+    config: { ...c, maxDepth: 0 },
+  });
+  assert.equal(parsed.records.length, 1);
+  assert.equal(
+    parsed.records[0].title,
+    "ATA Management Conference & Exhibition",
+  );
+  assert.equal(parsed.records[0].startDate, "2026-10-17");
 });
 
 test("inspected location elements retain explicit address components without inventing a city from the market", async () => {
@@ -503,6 +585,187 @@ test("enrichment and its next-page frontier roll back together on an invalid che
     assert.equal(
       j.pages(r.id).find((p) => p.id === detail.id).state,
       "processing",
+    );
+  } finally {
+    j.close();
+  }
+});
+
+for (const [name, occurrences, mismatch] of [
+  ["a verified listing can complete with detail enrichment", 1, false],
+  [
+    "recurring occurrences across listing pages share one detail fetch without lost bindings",
+    3,
+    false,
+  ],
+  [
+    "an unmatched detail still prevents a verified listing from completing",
+    1,
+    true,
+  ],
+])
+  test(name, async (t) => {
+    const dir = await mkdtemp(join(tmpdir(), "events-enumeration-detail-")),
+      j = new Journal(":memory:");
+    t.after(async () => {
+      j.close();
+      await rm(dir, { recursive: true, force: true });
+    });
+    const original = jsonLdEvents(await fixture("allevents-detail")).events[0]
+      .event;
+    const c = {
+      ...config,
+      adapter: "tribe",
+      coverage: "verified-list",
+      enrichDetails: true,
+      maxDepth: 1,
+    };
+    j.register([c]);
+    const q = j.enqueue(
+      c.id,
+      optionsFor(
+        c,
+        { asOf: "2026-10-17", maxPages: occurrences + 1 },
+        "enumeration-test",
+      ),
+    );
+    const script = (events) =>
+      '<script type="application/ld+json">' +
+      JSON.stringify(events) +
+      "</script>";
+    const seen = [];
+    await work(j, {
+      root: dir,
+      runId: q.runId,
+      build: "enumeration-test",
+      transportFactory: () => ({
+        fetch: async (task) => {
+          seen.push(task.kind);
+          let body;
+          if (task.kind === "listing") {
+            const index = Number(
+                new URL(task.url).searchParams.get("page") ?? 1,
+              ),
+              date = `2026-10-${16 + index}`;
+            body =
+              '<div class="tribe-events-view"></div>' +
+              script({
+                ...original,
+                startDate: date,
+                endDate: date,
+                location: null,
+              }) +
+              (index < occurrences
+                ? `<a rel="next" href="?page=${index + 1}">Next</a>`
+                : "");
+          } else
+            body =
+              "<h1>" +
+              original.name +
+              "</h1>" +
+              script(
+                Array.from({ length: occurrences }, (_, i) => {
+                  const date = `2026-10-${17 + i}`;
+                  return {
+                    ...original,
+                    name: mismatch ? "Different event" : original.name,
+                    startDate: original.startDate.replace("2026-10-17", date),
+                    endDate: original.endDate.replace("2026-10-17", date),
+                  };
+                }),
+              );
+          return {
+            body,
+            url: task.url,
+            capture: {
+              path: join(dir, `${seen.length}.html`),
+              hash: String(seen.length),
+            },
+          };
+        },
+        close: async () => {},
+      }),
+    });
+    assert.equal(j.run(q.runId).status, mismatch ? "partial" : "complete");
+    assert.equal(j.records(q.runId).length, occurrences);
+    const details = j.pages(q.runId).filter((p) => p.kind === "detail");
+    assert.equal(details.length, 1);
+    assert.equal(details[0].meta.enrichRecordIds.length, occurrences);
+    assert.deepEqual(seen, [...Array(occurrences).fill("listing"), "detail"]);
+    assert.equal(
+      j.db.prepare("SELECT count(*) n FROM record_enrichments").get().n,
+      mismatch ? 0 : occurrences,
+    );
+    if (!mismatch)
+      assert.ok(
+        j
+          .records(q.runId)
+          .every((r) => r.endLocal && r.location && r.geoCoordinates),
+      );
+    else
+      assert.ok(
+        j
+          .run(q.runId)
+          .result.issues.some(
+            (i) => i.code === "detail_occurrence_not_matched",
+          ),
+      );
+  });
+
+test("late occurrence bindings fail visibly and roll back rather than modifying completed detail work", () => {
+  const j = new Journal(":memory:");
+  try {
+    j.register([config]);
+    const q = j.enqueue(
+      config.id,
+      optionsFor(config, { asOf: "2026-10-17" }, "test"),
+    );
+    const run = j.claim("owner", 60000, q.runId),
+      listing = j.nextPage(run.id, run.token),
+      record = eventRecord(config, { ...input, id: "one" }, evidence);
+    const url = input.url;
+    j.commitPage(
+      run.id,
+      run.token,
+      listing,
+      {
+        records: [record],
+        nextRequests: [
+          { url, kind: "detail", meta: { enrichRecordIds: ["one"] } },
+        ],
+      },
+      { path: "listing", hash: "listing" },
+    );
+    const detail = j.nextPage(run.id, run.token);
+    j.commitPage(
+      run.id,
+      run.token,
+      detail,
+      { records: [], enrichments: [record], nextRequests: [] },
+      { path: "detail", hash: "detail" },
+    );
+    j._addPage(run.id, { url: config.url + "?page=2", kind: "listing" });
+    const later = j.nextPage(run.id, run.token);
+    assert.throws(
+      () =>
+        j.commitPage(
+          run.id,
+          run.token,
+          later,
+          {
+            records: [{ ...record, sourceRecordId: "two" }],
+            nextRequests: [
+              { url, kind: "detail", meta: { enrichRecordIds: ["two"] } },
+            ],
+          },
+          { path: "later", hash: "later" },
+        ),
+      { code: "late_detail_bindings" },
+    );
+    assert.equal(j.records(run.id).length, 1);
+    assert.deepEqual(
+      j.pages(run.id).find((p) => p.id === detail.id).meta.enrichRecordIds,
+      ["one"],
     );
   } finally {
     j.close();

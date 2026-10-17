@@ -23,7 +23,7 @@ This follows the [official event date/time guidance](https://developers.google.c
 
 Impossible dates, malformed clocks, and reversed comparable timestamps are rejected. Overnight dates and changing explicit offsets across daylight-saving transitions are retained. A zero-duration timed event is retained as a source claim and flagged for review.
 
-The October 17 browser audit found that Boston's event JSON-LD can contain a metadata timestamp instead of the visible occurrence date. Its inspected visible date/time elements take precedence, with conflicting structured claims retained in `raw.structuredCandidates`. The verified AllEvents-owned `all.events` destination can label local clock values as UTC while displaying a different timezone. Its visible clock and abbreviation are retained without inventing an offset, and the conflict requires review.
+The October 17 browser audit found that Boston's event JSON-LD can contain a timestamp that conflicts with the visible occurrence date. Its inspected visible date/time elements take precedence, with conflicting structured claims retained in `raw.structuredCandidates`. The verified AllEvents-owned `all.events` destination can label local clock values as UTC while displaying a different timezone. Its visible clock and abbreviation are retained without inventing an offset, and the conflict requires review.
 
 ## Two location properties
 
@@ -53,9 +53,9 @@ A source's `marketCity` remains provenance. It does not populate missing venue l
 
 ## Detail acquisition and immutable evidence
 
-Seventeen inspected collection configurations opt into `enrichDetails`. Sparse listing records queue event detail pages, ahead of unrelated discovered links and within the existing request/depth/runtime limits. Verified allowed hosts govern navigation; AllEvents includes its browser-verified `all.events` destination.
+Seventeen inspected collection configurations opt into `enrichDetails`. Sparse listing records queue event detail pages, ahead of unrelated discovered links and within the existing request/depth/runtime limits. Listing/API pages are acquired first so all recurring-occurrence bindings can be merged into a shared pending detail task. An unexpected binding after a detail task has been claimed fails explicitly for repair; completed work is not silently rewritten. Verified allowed hosts govern navigation; AllEvents includes its browser-verified `all.events` destination.
 
-Details must match the requested event title and occurrence date/time. Recommendation cards and different recurring occurrences cannot enrich the listing. OpenCities' explicit detail date ranges may encompass the listing's next-date display. Unmatched detail occurrences remain issues requiring review; source disagreements do not justify weakening identity checks.
+Details must match the requested event title and occurrence date/time. A source configuration can declare a narrowly reviewed title alias, such as NYC Tourism's “NY Auto Show” / “New York International Auto Show”; the requested-page and occurrence-date guards still apply. Department landing pages marked discovery-only cannot emit their misleading Event metadata. Recommendation cards and different recurring occurrences cannot enrich the listing. OpenCities' explicit detail date ranges may encompass the listing's next-date display. Unmatched detail occurrences remain issues requiring review; source disagreements do not justify weakening identity checks.
 
 Journal schema version 2 adds append-only `record_enrichments` linked to their original observation and detail page. A checkpoint saves enrichment, page completion, and its frontier transactionally under the fenced lease. `Journal.records()` and JSONL exports project the enriched view while the original observation payload remains intact. Field evidence identifies the detail capture behind richer values. The future database uploader must deliver both original observations and these enrichment observations.
 
@@ -63,7 +63,7 @@ Journal schema version 2 adds append-only `record_enrichments` linked to their o
 
 Every new record contains `fieldQuality`: missing date/time/location fields, review issues, and a `needs_detail`, `needs_review`, or `fields_present` status. Each run also includes aggregate field counts. Coordinates are optional; their absence does not itself fail an event.
 
-`fields_present` establishes presence and shape, not semantic accuracy, complete source coverage, or publication approval. Missing source fields and access restrictions remain explicit. A complete enumeration can still contain records requiring detail work or semantic review. Scraper repair tickets still require the existing two-complete-run probation process; this audit closes none automatically.
+`fields_present` establishes presence and shape, not semantic accuracy, complete source coverage, or publication approval. Missing source fields and access restrictions remain explicit. Enumeration coverage and terminal signals come from listing/API pages; detail-page issues, failures and pending work still block completion. A complete enumeration can still contain records requiring additional field work or semantic review. Scraper repair tickets still require the existing two-complete-run probation process; this audit closes none automatically.
 
 ## Repeatable inspection
 

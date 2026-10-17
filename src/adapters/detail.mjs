@@ -21,6 +21,10 @@ export function parseDetail({ html, url, config }) {
     records = [],
     issues = [];
   const title = text($("main h1,h1").first().text());
+  const profile =
+    config.sourceKey === "boston.gov" && $(".event-detail-page").length
+      ? "boston"
+      : config.adapter;
   for (const { event, path } of ld.events) {
     const own = safeUrl(event.url, url) ?? safeUrl(event["@id"], url);
     // On a detail page, an Event without a URL can use the page's own identity
@@ -217,7 +221,7 @@ export function parseDetail({ html, url, config }) {
       );
     });
     method = "opencities-detail-occurrences";
-  } else if (config.adapter === "boston") {
+  } else if (profile === "boston") {
     const root = $(".event-detail-page"),
       rawDate = text(root.find(".date-title").first().text());
     const times = parseTimeRange(
@@ -271,7 +275,7 @@ export function parseDetail({ html, url, config }) {
   }
   let selected = records;
   if (
-    ["boston", "opencities"].includes(config.adapter) &&
+    ["boston", "opencities"].includes(profile) &&
     records.length > structuredCount
   ) {
     const structured = records.slice(0, structuredCount);

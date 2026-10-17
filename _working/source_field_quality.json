@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-10-17T23:09:37.908Z",
-  "build": "e5dd35a92cd50f3a2600e5eb883c8ddf59015768df2dfc0dcb8a0ee86a28a061",
+  "generatedAt": "2026-10-17T23:20:09.298Z",
+  "build": "1168adbb978011c956d08e7648dd596aa07ac10cae1edb25825126777eb30884",
   "scope": "Bounded rendered listing and representative detail inspections; captured-page replay, not complete enumeration or semantic approval",
   "inputBuilds": [
     {
@@ -183,6 +183,13 @@
             "start": "datetime",
             "end": "datetime"
           },
+          "dateTimeBasis": {
+            "start": "visible event date and clock",
+            "end": "visible clock and source end date"
+          },
+          "timeZone": null,
+          "timeZoneBasis": "visible source abbreviation; offset unresolved",
+          "timeZoneLabel": "CDT",
           "location": {
             "venue": "The Fairgrounds Nashville",
             "address": "625 Smith Ave, Nashville, TN 37203, United States",
@@ -222,6 +229,13 @@
             "start": "date",
             "end": "date"
           },
+          "dateTimeBasis": {
+            "start": "source startDate",
+            "end": "source endDate"
+          },
+          "timeZone": null,
+          "timeZoneBasis": null,
+          "timeZoneLabel": null,
           "location": {
             "venue": "124 E. Tiverton Way, Lexington, KY, United States, Kentucky 40517",
             "address": "124 E Tiverton Way, Lexington, KY 40517-1520, United States",
@@ -438,6 +452,13 @@
             "start": "date",
             "end": "date"
           },
+          "dateTimeBasis": {
+            "start": "source startDate",
+            "end": "source endDate"
+          },
+          "timeZone": null,
+          "timeZoneBasis": null,
+          "timeZoneLabel": null,
           "location": null,
           "geoCoordinates": null,
           "fieldQuality": {
@@ -785,6 +806,13 @@
             "start": "date",
             "end": "date"
           },
+          "dateTimeBasis": {
+            "start": "source startDate",
+            "end": "source endDate"
+          },
+          "timeZone": null,
+          "timeZoneBasis": null,
+          "timeZoneLabel": null,
           "location": {
             "venue": "Las Vegas",
             "address": null,
@@ -820,6 +848,13 @@
             "start": "date",
             "end": "date"
           },
+          "dateTimeBasis": {
+            "start": "visible listing date",
+            "end": "visible listing date/range"
+          },
+          "timeZone": null,
+          "timeZoneBasis": null,
+          "timeZoneLabel": null,
           "location": {
             "venue": null,
             "address": null,
@@ -1005,6 +1040,13 @@
             "start": "datetime",
             "end": "datetime"
           },
+          "dateTimeBasis": {
+            "start": "source startDate",
+            "end": "source endDate"
+          },
+          "timeZone": null,
+          "timeZoneBasis": null,
+          "timeZoneLabel": null,
           "location": {
             "venue": "Arts Center East",
             "address": "709 Hartford Turnpike",
@@ -1262,6 +1304,13 @@
             "start": "date",
             "end": "date"
           },
+          "dateTimeBasis": {
+            "start": "source startDate",
+            "end": "source endDate"
+          },
+          "timeZone": null,
+          "timeZoneBasis": null,
+          "timeZoneLabel": null,
           "location": {
             "venue": "McCormick Place",
             "address": "2301 S King Dr, Chicago, IL 60616, USA",
@@ -1306,22 +1355,22 @@
         "endDate": 3,
         "startTime": 0,
         "endTime": 0,
-        "textLocation": 0,
-        "city": 0,
+        "textLocation": 1,
+        "city": 1,
         "coordinates": 0,
         "needsDetail": 3,
         "needsReview": 0
       },
       "standaloneDetailSamples": {
-        "records": 1,
-        "startDate": 1,
-        "endDate": 1,
+        "records": 0,
+        "startDate": 0,
+        "endDate": 0,
         "startTime": 0,
         "endTime": 0,
-        "textLocation": 1,
-        "city": 1,
+        "textLocation": 0,
+        "city": 0,
         "coordinates": 0,
-        "needsDetail": 1,
+        "needsDetail": 0,
         "needsReview": 0
       },
       "pages": [
@@ -1396,47 +1445,39 @@
           ]
         }
       ],
-      "unmatchedDetails": [
-        {
-          "code": "detail_occurrence_not_matched",
-          "requestedUrl": "https://conventiongrid.com/shows/ata-management-conference-exhibition/2026/charlotte/",
-          "listing": [
-            {
-              "title": "ATA Management Conference & Exhibition 2026-10-17 · Charlotte",
-              "startDate": "2026-10-17",
-              "startLocal": null
-            }
-          ],
-          "detail": [
-            {
-              "title": "ATA Management Conference & Exhibition 2026",
-              "startDate": "2026-10-17",
-              "startLocal": null
-            }
-          ]
-        }
-      ],
-      "nextWork": "Resolve the sampled listing/detail identity or date mismatch before merging fields. Finish detail acquisition or document unavailable fields; validate occurrence matching and full pagination.",
+      "unmatchedDetails": [],
+      "nextWork": "Finish detail acquisition or document unavailable fields; validate occurrence matching and full pagination.",
       "samples": [
         {
-          "title": "ATA Management Conference & Exhibition 2026-10-17 · Charlotte",
+          "title": "ATA Management Conference & Exhibition",
           "url": "https://conventiongrid.com/shows/ata-management-conference-exhibition/2026/charlotte/",
           "startDate": "2026-10-17",
-          "endDate": "2026-10-17",
+          "endDate": "2026-10-20",
           "startLocal": null,
           "endLocal": null,
           "dateTimePrecision": {
             "start": "date",
             "end": "date"
           },
-          "location": null,
+          "dateTimeBasis": {
+            "start": "source startDate",
+            "end": "source endDate"
+          },
+          "timeZone": null,
+          "timeZoneBasis": null,
+          "timeZoneLabel": null,
+          "location": {
+            "venue": "Charlotte Convention Center",
+            "locality": "Charlotte",
+            "country": "United States",
+            "basis": "upstream structured data"
+          },
           "geoCoordinates": null,
           "fieldQuality": {
             "status": "needs_detail",
             "missing": [
               "start_time",
-              "end_time",
-              "location"
+              "end_time"
             ],
             "issues": [],
             "needsDetail": true,
@@ -1445,7 +1486,7 @@
           "warnings": []
         },
         {
-          "title": "AABB Annual Meeting 2026-10-17 · Atlanta",
+          "title": "AABB Annual Meeting",
           "url": "https://conventiongrid.com/shows/aabb-annual-meeting/2026/atlanta/",
           "startDate": "2026-10-17",
           "endDate": "2026-10-17",
@@ -1455,6 +1496,13 @@
             "start": "date",
             "end": "date"
           },
+          "dateTimeBasis": {
+            "start": "visible listing date",
+            "end": "visible listing date/range"
+          },
+          "timeZone": null,
+          "timeZoneBasis": null,
+          "timeZoneLabel": null,
           "location": null,
           "geoCoordinates": null,
           "fieldQuality": {
@@ -1543,6 +1591,13 @@
             "start": "date",
             "end": "date"
           },
+          "dateTimeBasis": {
+            "start": "visible listing date",
+            "end": "visible listing date/range"
+          },
+          "timeZone": null,
+          "timeZoneBasis": null,
+          "timeZoneLabel": null,
           "location": {
             "venue": null,
             "address": null,
@@ -1578,6 +1633,13 @@
             "start": "date",
             "end": "date"
           },
+          "dateTimeBasis": {
+            "start": "visible listing date",
+            "end": "visible listing date/range"
+          },
+          "timeZone": null,
+          "timeZoneBasis": null,
+          "timeZoneLabel": null,
           "location": {
             "venue": null,
             "address": null,
@@ -2051,6 +2113,13 @@
             "start": "datetime",
             "end": "datetime"
           },
+          "dateTimeBasis": {
+            "start": "source startDate",
+            "end": "source endDate"
+          },
+          "timeZone": "America/Los_Angeles",
+          "timeZoneBasis": "collection setting",
+          "timeZoneLabel": null,
           "location": null,
           "geoCoordinates": null,
           "fieldQuality": {
@@ -2075,6 +2144,13 @@
             "start": "datetime",
             "end": "datetime"
           },
+          "dateTimeBasis": {
+            "start": "source startDate",
+            "end": "source endDate"
+          },
+          "timeZone": "America/Los_Angeles",
+          "timeZoneBasis": "collection setting",
+          "timeZoneLabel": null,
           "location": null,
           "geoCoordinates": null,
           "fieldQuality": {
@@ -2225,6 +2301,13 @@
             "start": "datetime",
             "end": "datetime"
           },
+          "dateTimeBasis": {
+            "start": "source startDate",
+            "end": "source endDate"
+          },
+          "timeZone": "America/Los_Angeles",
+          "timeZoneBasis": "collection setting",
+          "timeZoneLabel": null,
           "location": null,
           "geoCoordinates": null,
           "fieldQuality": {
@@ -2249,6 +2332,13 @@
             "start": "datetime",
             "end": "datetime"
           },
+          "dateTimeBasis": {
+            "start": "source startDate",
+            "end": "source endDate"
+          },
+          "timeZone": "America/Los_Angeles",
+          "timeZoneBasis": "collection setting",
+          "timeZoneLabel": null,
           "location": null,
           "geoCoordinates": null,
           "fieldQuality": {
@@ -2407,6 +2497,13 @@
             "start": "datetime",
             "end": "datetime"
           },
+          "dateTimeBasis": {
+            "start": "source startDate",
+            "end": "source endDate"
+          },
+          "timeZone": "America/Los_Angeles",
+          "timeZoneBasis": "collection setting",
+          "timeZoneLabel": null,
           "location": {
             "venue": "Venetian Expo Convention Center",
             "address": "201 Sands Avenue",
@@ -2442,6 +2539,13 @@
             "start": "datetime",
             "end": "datetime"
           },
+          "dateTimeBasis": {
+            "start": "source startDate",
+            "end": "source endDate"
+          },
+          "timeZone": "America/Los_Angeles",
+          "timeZoneBasis": "collection setting",
+          "timeZoneLabel": null,
           "location": {
             "venue": "Mandalay Bay Convention Center",
             "address": "3950 Las Vegas Boulevard South",
@@ -2657,6 +2761,13 @@
             "start": "datetime",
             "end": "date"
           },
+          "dateTimeBasis": {
+            "start": "source startDate",
+            "end": "source endDate"
+          },
+          "timeZone": "America/Los_Angeles",
+          "timeZoneBasis": "collection setting",
+          "timeZoneLabel": null,
           "location": {
             "venue": "Ahern Hotel",
             "address": "300 West Sahara Avenue, Las Vegas, NV 89102",
@@ -2694,6 +2805,13 @@
             "start": "date",
             "end": "date"
           },
+          "dateTimeBasis": {
+            "start": "source startDate",
+            "end": "source endDate"
+          },
+          "timeZone": "America/Los_Angeles",
+          "timeZoneBasis": "collection setting",
+          "timeZoneLabel": null,
           "location": {
             "venue": "Thomas & Mack Center",
             "address": "4505 South Maryland Parkway",
@@ -2807,22 +2925,22 @@
         "endDate": 12,
         "startTime": 0,
         "endTime": 0,
-        "textLocation": 0,
-        "city": 0,
-        "coordinates": 0,
+        "textLocation": 1,
+        "city": 1,
+        "coordinates": 1,
         "needsDetail": 12,
         "needsReview": 0
       },
       "standaloneDetailSamples": {
-        "records": 1,
-        "startDate": 1,
-        "endDate": 1,
+        "records": 0,
+        "startDate": 0,
+        "endDate": 0,
         "startTime": 0,
         "endTime": 0,
-        "textLocation": 1,
-        "city": 1,
-        "coordinates": 1,
-        "needsDetail": 1,
+        "textLocation": 0,
+        "city": 0,
+        "coordinates": 0,
+        "needsDetail": 0,
         "needsReview": 0
       },
       "pages": [
@@ -2885,27 +3003,8 @@
           ]
         }
       ],
-      "unmatchedDetails": [
-        {
-          "code": "detail_occurrence_not_matched",
-          "requestedUrl": "https://www.nyctourism.com/events/new-york-international-auto-show",
-          "listing": [
-            {
-              "title": "NY Auto Show",
-              "startDate": "2027-03-26",
-              "startLocal": null
-            }
-          ],
-          "detail": [
-            {
-              "title": "New York International Auto Show",
-              "startDate": "2027-03-26",
-              "startLocal": null
-            }
-          ]
-        }
-      ],
-      "nextWork": "Resolve the sampled listing/detail identity or date mismatch before merging fields. Finish detail acquisition or document unavailable fields; validate occurrence matching and full pagination.",
+      "unmatchedDetails": [],
+      "nextWork": "Finish detail acquisition or document unavailable fields; validate occurrence matching and full pagination.",
       "samples": [
         {
           "title": "NY Auto Show",
@@ -2918,14 +3017,33 @@
             "start": "date",
             "end": "date"
           },
-          "location": null,
-          "geoCoordinates": null,
+          "dateTimeBasis": {
+            "start": "visible detail date/occurrence",
+            "end": "visible detail date/occurrence"
+          },
+          "timeZone": "America/New_York",
+          "timeZoneBasis": "collection setting",
+          "timeZoneLabel": null,
+          "location": {
+            "venue": "Javits Center",
+            "address": "655 W. 34th St.",
+            "streetAddress": "655 W. 34th St.",
+            "locality": "Manhattan",
+            "region": "NY",
+            "country": "US",
+            "postalCode": "10001",
+            "formattedAddress": "655 W. 34th St., Manhattan, NY, 10001",
+            "basis": "event detail Location section"
+          },
+          "geoCoordinates": {
+            "latitude": 40.7570237,
+            "longitude": -74.0019699
+          },
           "fieldQuality": {
             "status": "needs_detail",
             "missing": [
               "start_time",
-              "end_time",
-              "location"
+              "end_time"
             ],
             "issues": [],
             "needsDetail": true,
@@ -2944,6 +3062,13 @@
             "start": "date",
             "end": "date"
           },
+          "dateTimeBasis": {
+            "start": "visible listing date",
+            "end": "visible listing date/range"
+          },
+          "timeZone": "America/New_York",
+          "timeZoneBasis": "collection setting",
+          "timeZoneLabel": null,
           "location": null,
           "geoCoordinates": null,
           "fieldQuality": {
@@ -3501,6 +3626,13 @@
             "start": "datetime",
             "end": "datetime"
           },
+          "dateTimeBasis": {
+            "start": "source startDate",
+            "end": "source endDate"
+          },
+          "timeZone": "America/New_York",
+          "timeZoneBasis": "collection setting",
+          "timeZoneLabel": null,
           "location": {
             "venue": "8th Avenue, 42nd to 52nd St",
             "address": "8th Avenue from 42nd to 52nd St",
@@ -3536,6 +3668,13 @@
             "start": "date",
             "end": "unknown"
           },
+          "dateTimeBasis": {
+            "start": "source startDate",
+            "end": null
+          },
+          "timeZone": "America/New_York",
+          "timeZoneBasis": "collection setting",
+          "timeZoneLabel": null,
           "location": {
             "venue": "54th Street, 9th Avenue to 10th Avenue",
             "address": "54th Street from 9th Avenue to 10th Avenue, New York, NY",
@@ -3703,6 +3842,13 @@
             "start": "datetime",
             "end": "datetime"
           },
+          "dateTimeBasis": {
+            "start": "source startDate",
+            "end": "source endDate"
+          },
+          "timeZone": "America/New_York",
+          "timeZoneBasis": "collection setting",
+          "timeZoneLabel": null,
           "location": {
             "venue": "Elsewhere",
             "address": "599 Johnson Avenue, Brooklyn, NY 11237",
@@ -3738,6 +3884,13 @@
             "start": "date",
             "end": "date"
           },
+          "dateTimeBasis": {
+            "start": "source startDate",
+            "end": "source endDate"
+          },
+          "timeZone": "America/New_York",
+          "timeZoneBasis": "collection setting",
+          "timeZoneLabel": null,
           "location": {
             "venue": "MAMATACO",
             "address": "880 Flushing Avenue",
@@ -3914,6 +4067,13 @@
             "start": "datetime",
             "end": "datetime"
           },
+          "dateTimeBasis": {
+            "start": "visible listing date",
+            "end": "visible listing date/range"
+          },
+          "timeZone": "America/Los_Angeles",
+          "timeZoneBasis": "collection setting",
+          "timeZoneLabel": null,
           "location": null,
           "geoCoordinates": null,
           "fieldQuality": {
@@ -3938,6 +4098,13 @@
             "start": "datetime",
             "end": "datetime"
           },
+          "dateTimeBasis": {
+            "start": "visible listing date",
+            "end": "visible listing date/range"
+          },
+          "timeZone": "America/Los_Angeles",
+          "timeZoneBasis": "collection setting",
+          "timeZoneLabel": null,
           "location": null,
           "geoCoordinates": null,
           "fieldQuality": {
@@ -4181,6 +4348,13 @@
             "start": "date",
             "end": "date"
           },
+          "dateTimeBasis": {
+            "start": "visible detail date/occurrence",
+            "end": "visible detail date/occurrence"
+          },
+          "timeZone": "America/Los_Angeles",
+          "timeZoneBasis": "source time zone",
+          "timeZoneLabel": null,
           "location": {
             "venue": "Los Angeles Convention Center",
             "address": null,
@@ -4216,6 +4390,13 @@
             "start": "date",
             "end": "date"
           },
+          "dateTimeBasis": {
+            "start": "source startDate",
+            "end": "source endDate"
+          },
+          "timeZone": "America/Los_Angeles",
+          "timeZoneBasis": "source time zone",
+          "timeZoneLabel": null,
           "location": {
             "venue": "Los Angeles Convention Center",
             "address": null,
@@ -4365,6 +4546,13 @@
             "start": "date",
             "end": "date"
           },
+          "dateTimeBasis": {
+            "start": "visible detail date/occurrence",
+            "end": "visible detail date/occurrence"
+          },
+          "timeZone": "America/Los_Angeles",
+          "timeZoneBasis": "source time zone",
+          "timeZoneLabel": null,
           "location": {
             "venue": "Los Angeles Convention Center",
             "address": null,
@@ -4400,6 +4588,13 @@
             "start": "date",
             "end": "date"
           },
+          "dateTimeBasis": {
+            "start": "source startDate",
+            "end": "source endDate"
+          },
+          "timeZone": "America/Los_Angeles",
+          "timeZoneBasis": "source time zone",
+          "timeZoneLabel": null,
           "location": {
             "venue": "Los Angeles Convention Center",
             "address": null,
@@ -4569,6 +4764,13 @@
             "start": "datetime",
             "end": "datetime"
           },
+          "dateTimeBasis": {
+            "start": "source startDate",
+            "end": "source endDate"
+          },
+          "timeZone": "America/Chicago",
+          "timeZoneBasis": "collection setting",
+          "timeZoneLabel": null,
           "location": {
             "venue": "SAIC Galleries Street Level",
             "address": "33 E Washington St",
@@ -4601,6 +4803,13 @@
             "start": "datetime",
             "end": "datetime"
           },
+          "dateTimeBasis": {
+            "start": "source startDate",
+            "end": "source endDate"
+          },
+          "timeZone": "America/Chicago",
+          "timeZoneBasis": "collection setting",
+          "timeZoneLabel": null,
           "location": {
             "venue": "Lincoln Park Zoo",
             "address": "Chicago",
@@ -4922,6 +5131,13 @@
             "start": "datetime",
             "end": "datetime"
           },
+          "dateTimeBasis": {
+            "start": "source startDate",
+            "end": "source endDate"
+          },
+          "timeZone": "America/Chicago",
+          "timeZoneBasis": "collection setting",
+          "timeZoneLabel": null,
           "location": {
             "venue": null,
             "address": "87th at S. Lake Shore Dr.",
@@ -5339,6 +5555,13 @@
             "start": "datetime",
             "end": "datetime"
           },
+          "dateTimeBasis": {
+            "start": "source startDate",
+            "end": "source endDate"
+          },
+          "timeZone": "America/Chicago",
+          "timeZoneBasis": "collection setting",
+          "timeZoneLabel": null,
           "location": {
             "venue": "Husky Stadium-TX",
             "address": "7502 Fondren Road",
@@ -5622,6 +5845,13 @@
             "start": "datetime",
             "end": "datetime"
           },
+          "dateTimeBasis": {
+            "start": "source startDate",
+            "end": "source endDate"
+          },
+          "timeZone": "America/New_York",
+          "timeZoneBasis": "collection setting",
+          "timeZoneLabel": null,
           "location": {
             "venue": "4495 University Dr",
             "address": "4495 University Dr",
@@ -5657,6 +5887,13 @@
             "start": "date",
             "end": "date"
           },
+          "dateTimeBasis": {
+            "start": "visible listing date",
+            "end": "visible listing date/range"
+          },
+          "timeZone": "America/New_York",
+          "timeZoneBasis": "collection setting",
+          "timeZoneLabel": null,
           "location": {
             "venue": "National Mall",
             "address": null,
@@ -5873,6 +6110,13 @@
             "start": "datetime",
             "end": "datetime"
           },
+          "dateTimeBasis": {
+            "start": "visible listing date",
+            "end": "visible listing date/range"
+          },
+          "timeZone": "America/New_York",
+          "timeZoneBasis": "collection setting",
+          "timeZoneLabel": null,
           "location": null,
           "geoCoordinates": null,
           "fieldQuality": {
@@ -5897,6 +6141,13 @@
             "start": "datetime",
             "end": "datetime"
           },
+          "dateTimeBasis": {
+            "start": "visible listing date",
+            "end": "visible listing date/range"
+          },
+          "timeZone": "America/New_York",
+          "timeZoneBasis": "collection setting",
+          "timeZoneLabel": null,
           "location": null,
           "geoCoordinates": null,
           "fieldQuality": {
@@ -6210,6 +6461,13 @@
             "start": "datetime",
             "end": "datetime"
           },
+          "dateTimeBasis": {
+            "start": "visible detail date/occurrence",
+            "end": "visible detail date/occurrence"
+          },
+          "timeZone": "America/New_York",
+          "timeZoneBasis": "source time zone",
+          "timeZoneLabel": null,
           "location": {
             "venue": null,
             "address": "Roslindale Square",
@@ -6246,6 +6504,13 @@
             "start": "datetime",
             "end": "datetime"
           },
+          "dateTimeBasis": {
+            "start": "source startDate",
+            "end": "source endDate"
+          },
+          "timeZone": "America/New_York",
+          "timeZoneBasis": "source time zone",
+          "timeZoneLabel": null,
           "location": {
             "venue": null,
             "address": "TBD",
@@ -6279,28 +6544,28 @@
       "status": "sample_extracted",
       "detailEnrichmentEnabled": false,
       "listingWithSampledEnrichment": {
-        "records": 1,
-        "startDate": 1,
-        "endDate": 1,
-        "startTime": 1,
+        "records": 0,
+        "startDate": 0,
+        "endDate": 0,
+        "startTime": 0,
         "endTime": 0,
         "textLocation": 0,
         "city": 0,
         "coordinates": 0,
-        "needsDetail": 1,
+        "needsDetail": 0,
         "needsReview": 0
       },
       "standaloneDetailSamples": {
         "records": 1,
         "startDate": 1,
-        "endDate": 0,
+        "endDate": 1,
         "startTime": 1,
-        "endTime": 0,
+        "endTime": 1,
         "textLocation": 1,
         "city": 1,
         "coordinates": 0,
-        "needsDetail": 1,
-        "needsReview": 0
+        "needsDetail": 0,
+        "needsReview": 1
       },
       "pages": [
         {
@@ -6308,21 +6573,21 @@
           "url": "https://www.boston.gov/departments/tourism-sports-and-entertainment",
           "capture": ".artifacts/field-audits/baseline/runs/url-055/9d0cfc6e-d9da-47c9-a8d4-2bdb54f7d18c/page-1.html",
           "contentHash": "5301a92315f576c333c1cae48cee3533248a80d1f5e25311be62b9de52186305",
-          "method": "semantic-event-cards",
+          "method": "discovery-only",
           "fields": {
-            "records": 1,
-            "startDate": 1,
-            "endDate": 1,
-            "startTime": 1,
+            "records": 0,
+            "startDate": 0,
+            "endDate": 0,
+            "startTime": 0,
             "endTime": 0,
             "textLocation": 0,
             "city": 0,
             "coordinates": 0,
-            "needsDetail": 1,
+            "needsDetail": 0,
             "needsReview": 0
           },
           "issues": [],
-          "queuedDetails": 8,
+          "queuedDetails": 9,
           "elementSelectors": [
             {
               "selector": "article",
@@ -6351,18 +6616,18 @@
           "url": "https://www.boston.gov/calendar/open-streets-roslindale",
           "capture": ".artifacts/field-audits/baseline/runs/url-055/9d0cfc6e-d9da-47c9-a8d4-2bdb54f7d18c/page-2.html",
           "contentHash": "d9b0fc6b8a5f6160934c10b7bd92edee6ccca513761c8f242f0a72a738eac308",
-          "method": "detail-jsonld",
+          "method": "boston-detail",
           "fields": {
             "records": 1,
             "startDate": 1,
-            "endDate": 0,
+            "endDate": 1,
             "startTime": 1,
-            "endTime": 0,
+            "endTime": 1,
             "textLocation": 1,
             "city": 1,
             "coordinates": 0,
-            "needsDetail": 1,
-            "needsReview": 0
+            "needsDetail": 0,
+            "needsReview": 1
           },
           "issues": [],
           "queuedDetails": 0,
@@ -6394,88 +6659,50 @@
           ]
         }
       ],
-      "unmatchedDetails": [
-        {
-          "code": "detail_occurrence_not_matched",
-          "requestedUrl": "https://www.boston.gov/calendar/open-streets-roslindale",
-          "listing": [
-            {
-              "title": "Tourism, Sports, and Entertainment",
-              "startDate": "2026-08-07",
-              "startLocal": "2026-08-07T15:00:00"
-            }
-          ],
-          "detail": [
-            {
-              "title": "Open Streets Roslindale",
-              "startDate": "2026-10-17",
-              "startLocal": "2026-10-17T18:43:16"
-            }
-          ]
-        }
-      ],
-      "nextWork": "Resolve the sampled listing/detail identity or date mismatch before merging fields. Finish detail acquisition or document unavailable fields; validate occurrence matching and full pagination.",
+      "unmatchedDetails": [],
+      "nextWork": "Representative fields are present; validate remaining events, semantics and full pagination before scheduling.",
       "samples": [
-        {
-          "title": "Tourism, Sports, and Entertainment",
-          "url": "https://www.boston.gov/calendar/open-streets-roslindale",
-          "startDate": "2026-08-07",
-          "endDate": "2026-08-07",
-          "startLocal": "2026-08-07T15:00:00",
-          "endLocal": null,
-          "dateTimePrecision": {
-            "start": "datetime",
-            "end": "date"
-          },
-          "location": null,
-          "geoCoordinates": null,
-          "fieldQuality": {
-            "status": "needs_detail",
-            "missing": [
-              "end_time",
-              "location"
-            ],
-            "issues": [],
-            "needsDetail": true,
-            "needsReview": false
-          },
-          "warnings": []
-        },
         {
           "title": "Open Streets Roslindale",
           "url": "https://www.boston.gov/calendar/open-streets-roslindale",
-          "startDate": "2026-10-17",
-          "endDate": null,
-          "startLocal": "2026-10-17T18:43:16",
-          "endLocal": null,
+          "startDate": "2026-10-18",
+          "endDate": "2026-10-18",
+          "startLocal": "2026-10-18T10:30:00",
+          "endLocal": "2026-10-18T15:00:00",
           "dateTimePrecision": {
             "start": "datetime",
-            "end": "unknown"
+            "end": "datetime"
           },
+          "dateTimeBasis": {
+            "start": "visible detail date/occurrence",
+            "end": "visible detail date/occurrence"
+          },
+          "timeZone": "America/New_York",
+          "timeZoneBasis": "collection setting",
+          "timeZoneLabel": null,
           "location": {
             "venue": null,
             "address": "Roslindale Square",
             "streetAddress": "Roslindale Square",
             "locality": "Roslindale",
             "region": "MA",
-            "country": null,
+            "country": "United States",
             "postalCode": "02131",
             "formattedAddress": null,
-            "basis": "upstream structured data"
+            "basis": "event detail PostalAddress"
           },
           "geoCoordinates": null,
           "fieldQuality": {
-            "status": "needs_detail",
-            "missing": [
-              "end_date",
-              "end_time"
+            "status": "needs_review",
+            "missing": [],
+            "issues": [
+              "structured_dates_conflict_with_visible_occurrence"
             ],
-            "issues": [],
-            "needsDetail": true,
-            "needsReview": false
+            "needsDetail": false,
+            "needsReview": true
           },
           "warnings": [
-            "end_date_not_supplied"
+            "structured_dates_conflict_with_visible_occurrence"
           ]
         }
       ]
@@ -6603,6 +6830,13 @@
             "start": "date",
             "end": "date"
           },
+          "dateTimeBasis": {
+            "start": "source startDate",
+            "end": "source endDate"
+          },
+          "timeZone": "America/New_York",
+          "timeZoneBasis": "collection setting",
+          "timeZoneLabel": null,
           "location": {
             "venue": "Mana Wynwood",
             "address": "2217 NW 5th Ave.",
@@ -6748,6 +6982,13 @@
             "start": "date",
             "end": "date"
           },
+          "dateTimeBasis": {
+            "start": "source startDate",
+            "end": "source endDate"
+          },
+          "timeZone": "America/New_York",
+          "timeZoneBasis": "collection setting",
+          "timeZoneLabel": null,
           "location": {
             "venue": "Hard Rock Stadium",
             "address": "Hard Rock Stadium",
@@ -6782,6 +7023,13 @@
             "start": "date",
             "end": "date"
           },
+          "dateTimeBasis": {
+            "start": "visible listing date",
+            "end": "visible listing date/range"
+          },
+          "timeZone": "America/New_York",
+          "timeZoneBasis": "collection setting",
+          "timeZoneLabel": null,
           "location": null,
           "geoCoordinates": null,
           "fieldQuality": {
@@ -7505,6 +7753,13 @@
             "start": "date",
             "end": "date"
           },
+          "dateTimeBasis": {
+            "start": "source startDate",
+            "end": "source endDate"
+          },
+          "timeZone": "America/Los_Angeles",
+          "timeZoneBasis": "collection setting",
+          "timeZoneLabel": null,
           "location": {
             "venue": "Moscone Center",
             "address": null,
@@ -7540,6 +7795,13 @@
             "start": "date",
             "end": "date"
           },
+          "dateTimeBasis": {
+            "start": "source startDate",
+            "end": "source endDate"
+          },
+          "timeZone": "America/Los_Angeles",
+          "timeZoneBasis": "collection setting",
+          "timeZoneLabel": null,
           "location": {
             "venue": "Moscone Center",
             "address": null,
@@ -8551,6 +8813,13 @@
             "start": "datetime",
             "end": "datetime"
           },
+          "dateTimeBasis": {
+            "start": "visible detail date/occurrence",
+            "end": "visible detail date/occurrence"
+          },
+          "timeZone": "America/New_York",
+          "timeZoneBasis": "collection setting",
+          "timeZoneLabel": null,
           "location": null,
           "geoCoordinates": null,
           "fieldQuality": {
@@ -8577,6 +8846,13 @@
             "start": "date",
             "end": "date"
           },
+          "dateTimeBasis": {
+            "start": "visible listing date",
+            "end": "visible listing date/range"
+          },
+          "timeZone": "America/New_York",
+          "timeZoneBasis": "collection setting",
+          "timeZoneLabel": null,
           "location": null,
           "geoCoordinates": null,
           "fieldQuality": {
@@ -8715,6 +8991,13 @@
             "start": "datetime",
             "end": "datetime"
           },
+          "dateTimeBasis": {
+            "start": "visible detail date/occurrence",
+            "end": "visible detail date/occurrence"
+          },
+          "timeZone": "America/New_York",
+          "timeZoneBasis": "collection setting",
+          "timeZoneLabel": null,
           "location": {
             "venue": "Orange County Regional History Center",
             "address": "65 E Central Blvd",
@@ -8749,6 +9032,13 @@
             "start": "date",
             "end": "date"
           },
+          "dateTimeBasis": {
+            "start": "visible listing date",
+            "end": "visible listing date/range"
+          },
+          "timeZone": "America/New_York",
+          "timeZoneBasis": "collection setting",
+          "timeZoneLabel": null,
           "location": null,
           "geoCoordinates": null,
           "fieldQuality": {
@@ -8962,6 +9252,13 @@
             "start": "date",
             "end": "date"
           },
+          "dateTimeBasis": {
+            "start": "source startDate",
+            "end": "source endDate"
+          },
+          "timeZone": "America/Los_Angeles",
+          "timeZoneBasis": "collection setting",
+          "timeZoneLabel": null,
           "location": {
             "venue": "San Diego Convention Center",
             "address": null,
@@ -8997,6 +9294,13 @@
             "start": "date",
             "end": "date"
           },
+          "dateTimeBasis": {
+            "start": "source startDate",
+            "end": "source endDate"
+          },
+          "timeZone": "America/Los_Angeles",
+          "timeZoneBasis": "collection setting",
+          "timeZoneLabel": null,
           "location": {
             "venue": "San Diego Convention Center",
             "address": null,
@@ -9121,6 +9425,13 @@
             "start": "date",
             "end": "date"
           },
+          "dateTimeBasis": {
+            "start": "source startDate",
+            "end": "source endDate"
+          },
+          "timeZone": null,
+          "timeZoneBasis": null,
+          "timeZoneLabel": null,
           "location": {
             "venue": "Kuala Lumpur Convention Centre",
             "address": "Masjid Wilayah Persekutuan, Kompleks Kerajaan, 50480 Kuala Lumpur, Wilayah Persekutuan Kuala Lumpur, Malaysia",
@@ -9303,6 +9614,13 @@
             "start": "datetime",
             "end": "datetime"
           },
+          "dateTimeBasis": {
+            "start": "source startDate",
+            "end": "source endDate"
+          },
+          "timeZone": "America/New_York",
+          "timeZoneBasis": "collection setting",
+          "timeZoneLabel": null,
           "location": {
             "venue": "H.H. Biddle House",
             "address": "70 Satterlee Street, Staten Island",
@@ -9335,6 +9653,13 @@
             "start": "datetime",
             "end": "datetime"
           },
+          "dateTimeBasis": {
+            "start": "source startDate",
+            "end": "source endDate"
+          },
+          "timeZone": "America/New_York",
+          "timeZoneBasis": "collection setting",
+          "timeZoneLabel": null,
           "location": {
             "venue": "DeMatti Park Fieldhouse",
             "address": "430 Tompkins Ave.",
@@ -10062,6 +10387,13 @@
             "start": "datetime",
             "end": "datetime"
           },
+          "dateTimeBasis": {
+            "start": "visible detail date/occurrence",
+            "end": "visible detail date/occurrence"
+          },
+          "timeZone": "America/New_York",
+          "timeZoneBasis": "collection setting",
+          "timeZoneLabel": null,
           "location": null,
           "geoCoordinates": null,
           "fieldQuality": {

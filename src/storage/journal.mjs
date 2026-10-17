@@ -328,6 +328,33 @@ export class Journal {
       !["https:", "http:"].includes(new URL(page.url).protocol)
     )
       throw new Error("Invalid queued page URL");
+    const existing = this.db
+      .prepare(
+        "SELECT id,state,meta FROM pages WHERE run_id=? AND url=? AND kind=?",
+      )
+      .get(id, page.url, page.kind ?? "listing");
+    if (existing && page.meta?.enrichRecordIds?.length) {
+      const meta = JSON.parse(existing.meta),
+        ids = new Set(meta.enrichRecordIds ?? []);
+      const additions = page.meta.enrichRecordIds.filter(
+        (key) => !ids.has(key),
+      );
+      if (additions.length && existing.state !== "pending")
+        throw Object.assign(
+          new Error(
+            "New occurrence bindings arrived after the detail task was claimed; start a fresh enumeration",
+          ),
+          { code: "late_detail_bindings" },
+        );
+      for (const key of additions) ids.add(key);
+      if (additions.length)
+        this.db
+          .prepare("UPDATE pages SET meta=? WHERE id=?")
+          .run(
+            JSON.stringify({ ...meta, enrichRecordIds: [...ids] }),
+            existing.id,
+          );
+    }
     return this.db
       .prepare(
         "INSERT INTO pages(run_id,url,kind,depth,meta) VALUES(?,?,?,?,?) ON CONFLICT(run_id,url,kind) DO NOTHING",
@@ -345,7 +372,7 @@ export class Journal {
       this.assertLease(id, token);
       const p = this.db
         .prepare(
-          "SELECT * FROM pages WHERE run_id=? AND state='pending' ORDER BY id LIMIT 1",
+          "SELECT * FROM pages WHERE run_id=? AND state='pending' ORDER BY CASE WHEN kind IN ('listing','api') THEN 0 ELSE 1 END,id LIMIT 1",
         )
         .get(id);
       if (!p) return null;

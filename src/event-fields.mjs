@@ -123,14 +123,23 @@ export function fieldSummary(records) {
   };
 }
 
-export function mergeDetail(listing, detail, { allowDateRange = false } = {}) {
+export function mergeDetail(
+  listing,
+  detail,
+  { allowDateRange = false, titleAliases = {} } = {},
+) {
   const title = (value) =>
     value
       .toLowerCase()
       .replace(/(?:\.{3}|…).*$/, "")
       .replace(/[^\p{L}\p{N}]+/gu, " ")
       .trim();
-  const a = title(listing.title),
+  const alias =
+    Object.hasOwn(titleAliases, listing.title) &&
+    typeof titleAliases[listing.title] === "string"
+      ? titleAliases[listing.title]
+      : listing.title;
+  const a = title(alias),
     b = title(detail.title);
   // The requested page identity is checked by the worker. Also require the
   // event title and occurrence date, so recommendation cards cannot enrich it.

@@ -879,7 +879,10 @@
     ],
     "maxDepth": 2,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-024.mjs"
+    "script": "scrapers/url-024.mjs",
+    "detailTitleAliases": {
+      "NY Auto Show": "New York International Auto Show"
+    }
   },
   {
     "id": "url-025",
@@ -915,7 +918,10 @@
     "maxDepth": 2,
     "validationStatus": "needs-validation",
     "script": "scrapers/url-025.mjs",
-    "enrichDetails": true
+    "enrichDetails": true,
+    "detailTitleAliases": {
+      "NY Auto Show": "New York International Auto Show"
+    }
   },
   {
     "id": "url-026",
@@ -1956,7 +1962,8 @@
     ],
     "maxDepth": 2,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-055.mjs"
+    "script": "scrapers/url-055.mjs",
+    "discoveryOnly": true
   },
   {
     "id": "url-056",

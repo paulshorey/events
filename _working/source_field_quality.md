@@ -1,6 +1,6 @@
 # Events source date, time and location audit
 
-Generated 2026-10-17T23:09:37.908Z. All 97 supplied entries are accounted for.
+Generated 2026-10-17T23:20:09.298Z. All 97 supplied entries are accounted for.
 
 Each source received a bounded Playwright listing attempt. Accessible sources were inspected through their rendered DOM; a representative same-host detail was visited where discovered. Access/policy failures are recorded, not bypassed. Later focused browser checks replace earlier samples for those sources. The current parsers replay the immutable captures to measure fields.
 
@@ -22,7 +22,7 @@ The listing columns include successful sampled detail enrichment. Separate detai
 | url-010 | Conventions and trade shows | [URL](https://www.tsnn.com/trade-show-calendar) | adapter_work_needed | 0 | 0 / 0 | 0 / 0 | 0 | 0 | 0 |
 | url-011 | Conventions and trade shows | [URL](https://10times.com/) | access_blocked | 0 | 0 / 0 | 0 / 0 | 0 | 0 | 0 |
 | url-012 | Conventions and trade shows | [URL](https://tradefest.io/) | sample_extracted | 0 | 0 / 0 | 0 / 0 | 0 | 0 | 1 |
-| url-013 | Conventions and trade shows | [URL](https://conventiongrid.com/calendar/) | sample_extracted | 3 | 3 / 3 | 0 / 0 | 0 | 0 | 1 |
+| url-013 | Conventions and trade shows | [URL](https://conventiongrid.com/calendar/) | sample_extracted | 3 | 3 / 3 | 0 / 0 | 1 | 0 | 0 |
 | url-014 | Conventions and trade shows | [URL](https://thetradeshowcalendar.com/ttn/index.php) | sample_extracted | 100 | 100 / 100 | 0 / 0 | 100 | 0 | 0 |
 | url-015 | Conventions and trade shows | [URL](https://conventioncalendar.com/) | adapter_work_needed | 0 | 0 / 0 | 0 / 0 | 0 | 0 | 0 |
 | url-016 | Las Vegas | [URL](https://www.vegasmeansbusiness.com/destination-calendar/) | access_blocked | 0 | 0 / 0 | 0 / 0 | 0 | 0 | 0 |
@@ -34,7 +34,7 @@ The listing columns include successful sampled detail enrichment. Separate detai
 | url-022 | Las Vegas | [URL](https://events.lasvegascalendars.com/lasvegascalendars/pinboard?tags=Conventions) | access_blocked | 0 | 0 / 0 | 0 / 0 | 0 | 0 | 0 |
 | url-023 | Las Vegas | [URL](https://www.eventbrite.com/d/nv--las-vegas/) | sample_extracted | 30 | 30 / 30 | 1 / 0 | 22 | 22 | 0 |
 | url-024 | New York City | [URL](https://www.nyctourism.com/events/) | adapter_work_needed | 0 | 0 / 0 | 0 / 0 | 0 | 0 | 0 |
-| url-025 | New York City | [URL](https://www.nyctourism.com/things-to-do/events-and-festivals/) | sample_extracted | 12 | 12 / 12 | 0 / 0 | 0 | 0 | 1 |
+| url-025 | New York City | [URL](https://www.nyctourism.com/things-to-do/events-and-festivals/) | sample_extracted | 12 | 12 / 12 | 0 / 0 | 1 | 1 | 0 |
 | url-026 | New York City | [URL](https://www.nycgovparks.org/events/festivals) | access_blocked | 0 | 0 / 0 | 0 / 0 | 0 | 0 | 0 |
 | url-027 | New York City | [URL](https://www.javitscenter.com/calendar) | rate_limited | 0 | 0 / 0 | 0 / 0 | 0 | 0 | 0 |
 | url-028 | New York City | [URL](https://conventioncalendar.com/us/ny/new-york-city/jacob-javits-center) | adapter_work_needed | 0 | 0 / 0 | 0 / 0 | 0 | 0 | 0 |
@@ -64,7 +64,7 @@ The listing columns include successful sampled detail enrichment. Separate detai
 | url-052 | Washington, DC | [URL](https://dc.gov/calendar/month) | adapter_work_needed | 0 | 0 / 0 | 0 / 0 | 0 | 0 | 0 |
 | url-053 | Boston | [URL](https://www.meetboston.com/events/) | access_blocked | 0 | 0 / 0 | 0 / 0 | 0 | 0 | 0 |
 | url-054 | Boston | [URL](https://www.boston.gov/events) | sample_extracted | 30 | 30 / 30 | 30 / 30 | 30 | 0 | 0 |
-| url-055 | Boston | [URL](https://www.boston.gov/departments/tourism-sports-and-entertainment) | sample_extracted | 1 | 1 / 1 | 1 / 0 | 0 | 0 | 1 |
+| url-055 | Boston | [URL](https://www.boston.gov/departments/tourism-sports-and-entertainment) | sample_extracted | 0 | 0 / 0 | 0 / 0 | 0 | 0 | 1 |
 | url-056 | Miami | [URL](https://www.miamiandbeaches.com/events) | sample_extracted | 0 | 0 / 0 | 0 / 0 | 0 | 0 | 1 |
 | url-057 | Miami | [URL](https://www.miamiandbeaches.com/events/annual-events) | sample_extracted | 23 | 23 / 23 | 0 / 0 | 1 | 0 | 0 |
 | url-058 | Seattle | [URL](https://visitseattle.org/events/) | adapter_work_needed | 0 | 0 / 0 | 0 / 0 | 0 | 0 | 0 |
@@ -122,7 +122,7 @@ The listing columns include successful sampled detail enrichment. Separate detai
 - **url-010** (discovery): Inspect source calendar, embed/feed and dated detail contracts; no usable sample was established.
 - **url-011** (discovery): Investigate permitted feed/API/access; do not rewrite selectors for an access denial. Recorded errors: access_blocked.
 - **url-012** (discovery): Finish detail acquisition or document unavailable fields; validate occurrence matching and full pagination.
-- **url-013** (conventiongrid): Resolve the sampled listing/detail identity or date mismatch before merging fields. Finish detail acquisition or document unavailable fields; validate occurrence matching and full pagination.
+- **url-013** (conventiongrid): Finish detail acquisition or document unavailable fields; validate occurrence matching and full pagination.
 - **url-014** (trade-table): Finish detail acquisition or document unavailable fields; validate occurrence matching and full pagination.
 - **url-015** (discovery): Inspect source calendar, embed/feed and dated detail contracts; no usable sample was established.
 - **url-016** (jsonld): Investigate permitted feed/API/access; do not rewrite selectors for an access denial. Recorded errors: access_blocked.
@@ -134,7 +134,7 @@ The listing columns include successful sampled detail enrichment. Separate detai
 - **url-022** (discovery): Investigate permitted feed/API/access; do not rewrite selectors for an access denial. Recorded errors: access_blocked.
 - **url-023** (jsonld): Finish detail acquisition or document unavailable fields; validate occurrence matching and full pagination.
 - **url-024** (nyc-tourism): Inspect source calendar, embed/feed and dated detail contracts; no usable sample was established.
-- **url-025** (nyc-tourism): Resolve the sampled listing/detail identity or date mismatch before merging fields. Finish detail acquisition or document unavailable fields; validate occurrence matching and full pagination.
+- **url-025** (nyc-tourism): Finish detail acquisition or document unavailable fields; validate occurrence matching and full pagination.
 - **url-026** (microdata): Investigate permitted feed/API/access; do not rewrite selectors for an access denial. Recorded errors: access_blocked.
 - **url-027** (javits): Review transport/cooldown evidence before retrying. Recorded errors: rate_limited.
 - **url-028** (discovery): Inspect source calendar, embed/feed and dated detail contracts; no usable sample was established.
@@ -164,7 +164,7 @@ The listing columns include successful sampled detail enrichment. Separate detai
 - **url-052** (discovery): Inspect source calendar, embed/feed and dated detail contracts; no usable sample was established.
 - **url-053** (jsonld): Investigate permitted feed/API/access; do not rewrite selectors for an access denial. Recorded errors: access_blocked.
 - **url-054** (boston): Representative fields are present; validate remaining events, semantics and full pagination before scheduling.
-- **url-055** (discovery): Resolve the sampled listing/detail identity or date mismatch before merging fields. Finish detail acquisition or document unavailable fields; validate occurrence matching and full pagination.
+- **url-055** (discovery): Representative fields are present; validate remaining events, semantics and full pagination before scheduling.
 - **url-056** (cards): Finish detail acquisition or document unavailable fields; validate occurrence matching and full pagination.
 - **url-057** (cards): Finish detail acquisition or document unavailable fields; validate occurrence matching and full pagination.
 - **url-058** (cards): Inspect source calendar, embed/feed and dated detail contracts; no usable sample was established.

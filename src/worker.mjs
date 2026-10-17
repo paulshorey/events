@@ -117,10 +117,15 @@ export function evaluate(journal, run, stopReason) {
   const failed = pages.filter((p) => p.state === "failed").length,
     results = pages.filter((p) => p.state === "done").map((p) => p.result),
     issues = results.flatMap((p) => p.issues ?? []);
+  const enumerationResults = pages
+    .filter((p) => p.state === "done" && ["listing", "api"].includes(p.kind))
+    .map((p) => p.result);
   const knownCoverage =
-    results.length > 0 &&
-    results.every((p) => ["verified-list", "api-query"].includes(p.coverage));
-  const terminal = results.some((p) => p.terminal),
+    enumerationResults.length > 0 &&
+    enumerationResults.every((p) =>
+      ["verified-list", "api-query"].includes(p.coverage),
+    );
+  const terminal = enumerationResults.some((p) => p.terminal),
     countMatches =
       run.expected_total == null || run.expected_total === records.length;
   const previousId = journal.collection(run.collection_id).last_complete;
@@ -345,6 +350,7 @@ export async function work(
                 .map((detail) =>
                   mergeDetail(listing, detail, {
                     allowDateRange: run.config.adapter === "opencities",
+                    titleAliases: run.config.detailTitleAliases,
                   }),
                 )
                 .filter(Boolean);
