@@ -6,6 +6,8 @@ The git-ignored `.env.local` contains the active development `DB_EVENTS_URL` and
 
 ## Proposed storage boundary
 
+The date/time/location follow-up adds append-only `record_enrichments` in local journal schema version 2. Original observations remain unchanged; `Journal.records()` and exports project listing records with matched detail fields. The uploader must deliver original observations, enrichment observations, and both sets of evidence rather than reading only the base `observations` table. New outputs use event schema version 3; unknown end dates and unavailable address components remain explicit nulls. See `source_field_contract.md`.
+
 Keep three layers separate:
 
 1. **Evidence:** captured public HTML/JSON and failed screenshots. Each observation references its capture path and SHA-256 content hash. Move these files to object storage when hosting workers, retaining immutable keys and a backup/retention policy.

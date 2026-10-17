@@ -34,7 +34,7 @@ for (const [id, name, start, end] of [
     for (const e of r.records) {
       assert.equal(e.collectionId, c.id);
       assert.equal(e.marketCity, c.cityMarket);
-      assert.equal(e.schemaVersion, 2);
+      assert.equal(e.schemaVersion, 3);
     }
     assert.notEqual(r.coverage, "verified-list");
   });

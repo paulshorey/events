@@ -1,0 +1,510 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import { readFile, mkdtemp, rm } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { registry } from "../src/registry.mjs";
+import {
+  eventRecord,
+  recordFromJsonLd,
+  jsonLdEvents,
+  safeUrl,
+} from "../src/records.mjs";
+import { coordinates, mergeDetail } from "../src/event-fields.mjs";
+import { parseDocument } from "../src/adapters/document.mjs";
+import { Journal } from "../src/storage/journal.mjs";
+import { work, optionsFor, parseApi } from "../src/worker.mjs";
+
+const configs = await registry(),
+  config = configs.find((c) => c.id === "url-002");
+const fixture = (name) =>
+  readFile(new URL(`fixtures/${name}.html`, import.meta.url), "utf8");
+const evidence = { url: config.url };
+const input = {
+  title: "Evening social",
+  url: "https://allevents.in/event/1",
+  startDate: "2026-10-17T18:00:00-05:00",
+};
+
+test("every event has separate date boundaries, text location and coordinate properties; unknown end stays unknown", () => {
+  const r = eventRecord(config, input, evidence);
+  assert.equal(r.startDate, "2026-10-17");
+  assert.equal(r.startLocal, input.startDate);
+  assert.equal(r.endDate, null);
+  assert.equal(r.endLocal, null);
+  assert.equal(r.location, null);
+  assert.equal(r.geoCoordinates, null);
+  assert.equal(r.dateTimePrecision.end, "unknown");
+  assert.ok(r.fieldQuality.missing.includes("end_date"));
+  assert.ok(r.warnings.includes("end_date_not_supplied"));
+});
+
+test("captured AllEvents detail preserves real coordinates, postal address and exact start/end timestamps", async () => {
+  const html = await fixture("allevents-detail"),
+    event = jsonLdEvents(html).events[0].event;
+  const r = recordFromJsonLd(config, event, evidence);
+  assert.deepEqual(r.geoCoordinates, {
+    latitude: 36.1313039,
+    longitude: -86.76156689999999,
+  });
+  assert.equal(r.location.venue, "The Fairgrounds Nashville");
+  assert.equal(r.location.locality, "Nashville");
+  assert.equal(r.location.region, "TN");
+  assert.equal(r.location.country, "US");
+  assert.equal(r.location.postalCode, "37203");
+  assert.match(r.location.streetAddress, /625 Smith Ave/);
+  assert.equal(r.startLocal, "2026-10-17T12:00:00-05:00");
+  assert.equal(r.endLocal, "2026-10-17T18:00:00-05:00");
+  assert.deepEqual(r.fieldQuality.missing, []);
+});
+
+test("verified AllEvents domain preserves the displayed CDT clock instead of trusting conflicting UTC markup", async () => {
+  const url = "https://all.events/go/80002894423001";
+  const parsed = parseDocument({
+    html: await fixture("allevents-new-domain-detail"),
+    url,
+    config,
+    task: { kind: "detail" },
+  });
+  assert.equal(parsed.records.length, 1);
+  const r = parsed.records[0];
+  assert.equal(r.startLocal, "2026-10-17T12:00:00");
+  assert.equal(r.endLocal, "2026-10-17T18:00:00");
+  assert.equal(r.timeZone, null);
+  assert.equal(r.timeZoneLabel, "CDT");
+  assert.equal(r.fieldQuality.needsReview, true);
+  assert.equal(r.raw.structured.startDate, "2026-10-17T12:00:00.000Z");
+  assert.deepEqual(r.geoCoordinates, {
+    latitude: 36.1313039,
+    longitude: -86.76156689999999,
+  });
+});
+
+test("detail acquisition accepts an explicitly verified host and excludes unrelated hosts", () => {
+  const c = { ...config, maxDepth: 1, enrichDetails: true };
+  const item = (url) => ({
+    ...input,
+    "@type": "Event",
+    name: input.title,
+    url,
+    startDate: "2026-10-17",
+    endDate: "2026-10-17",
+  });
+  const html =
+    '<script type="application/ld+json">' +
+    JSON.stringify([
+      item("https://all.events/go/1"),
+      item("https://unrelated.example/e/2"),
+    ]) +
+    "</script>";
+  const parsed = parseDocument({ html, url: c.url, config: c });
+  assert.ok(
+    parsed.nextRequests.some(
+      (r) => r.url === "https://all.events/go/1" && r.meta.enrichRecordIds,
+    ),
+  );
+  assert.equal(
+    parsed.nextRequests.some((r) => r.url.includes("unrelated.example")),
+    false,
+  );
+});
+
+test("coordinates reject missing/invalid values and keep real zero values without geocoding", () => {
+  for (const c of [
+    { latitude: "", longitude: "" },
+    { latitude: null, longitude: null },
+    { latitude: true, longitude: 20 },
+    { latitude: 91, longitude: 10 },
+    { latitude: 20, longitude: -181 },
+    { latitude: "12 north", longitude: 20 },
+    { latitude: 20 },
+  ])
+    assert.equal(coordinates(c), null);
+  assert.deepEqual(coordinates({ latitude: "0", longitude: 0 }), {
+    latitude: 0,
+    longitude: 0,
+  });
+  const r = eventRecord(
+    config,
+    {
+      ...input,
+      location: "A venue, somewhere",
+      geoCoordinates: { latitude: 120, longitude: 20 },
+    },
+    evidence,
+  );
+  assert.equal(r.geoCoordinates, null);
+  assert.equal(r.location.formattedAddress, "A venue, somewhere");
+  assert.ok(r.warnings.includes("invalid_or_incomplete_coordinates"));
+});
+
+test("API venue coordinates and postal code survive the shared output contract; zero duration is flagged", async () => {
+  const data = JSON.parse(
+    await readFile(new URL("fixtures/tribe-page.json", import.meta.url)),
+  );
+  data.events[0].venue.geo_lat = "36.1";
+  data.events[0].venue.geo_lng = "-115.2";
+  data.events[0].venue.zip = "89101";
+  const c = configs.find((c) => c.id === "url-019");
+  const r = parseApi(
+    JSON.stringify(data),
+    "https://network.vegas/wp-json/tribe/events/v1/events?page=1",
+    c,
+    {},
+  ).records[0];
+  assert.deepEqual(r.geoCoordinates, { latitude: 36.1, longitude: -115.2 });
+  assert.equal(r.location.postalCode, "89101");
+  const zero = eventRecord(
+    config,
+    { ...input, endDate: input.startDate, location: "Venue" },
+    evidence,
+  );
+  assert.equal(zero.fieldQuality.needsReview, true);
+});
+
+test("JSON-LD graph venue/address/geo references resolve and virtual locations are not street addresses", () => {
+  const html = `<script type="application/ld+json">${JSON.stringify({
+    "@graph": [
+      {
+        "@type": "Event",
+        name: input.title,
+        url: input.url,
+        startDate: input.startDate,
+        location: [
+          { "@type": "VirtualLocation", url: "https://video.example" },
+          { "@id": "#venue" },
+        ],
+      },
+      {
+        "@id": "#venue",
+        "@type": "Place",
+        name: "Town Hall",
+        address: { "@id": "#address" },
+        geo: { "@id": "#geo" },
+      },
+      {
+        "@id": "#address",
+        "@type": "PostalAddress",
+        streetAddress: "1 Main Street",
+        addressLocality: "Portland",
+        addressRegion: "ME",
+        addressCountry: { name: "US" },
+        postalCode: "04101",
+      },
+      {
+        "@id": "#geo",
+        "@type": "GeoCoordinates",
+        latitude: 43.65,
+        longitude: -70.25,
+      },
+    ],
+  })}</script>`;
+  const ld = jsonLdEvents(html),
+    r = recordFromJsonLd(config, ld.events[0].event, evidence, ld.references);
+  assert.equal(r.location.venue, "Town Hall");
+  assert.equal(r.location.locality, "Portland");
+  assert.deepEqual(r.geoCoordinates, { latitude: 43.65, longitude: -70.25 });
+  const virtual = recordFromJsonLd(
+    config,
+    {
+      ...input,
+      name: input.title,
+      location: { "@type": "VirtualLocation", url: "https://video.example" },
+    },
+    evidence,
+  );
+  assert.equal(virtual.location, null);
+});
+
+test("invalid clocks and reversed real instants are rejected; overnight and DST offsets survive", async () => {
+  for (const startDate of [
+    "2026-10-17T25:00:00Z",
+    "2026-10-17T12:60:00Z",
+    "2026-10-17T12:30:90Z",
+    "2026-10-17T12:30:00+99:00",
+  ])
+    assert.equal(eventRecord(config, { ...input, startDate }, evidence), null);
+  assert.equal(
+    eventRecord(
+      config,
+      { ...input, endDate: "2026-10-17T17:00:00-05:00" },
+      evidence,
+    ),
+    null,
+  );
+  const dst = eventRecord(
+    config,
+    {
+      ...input,
+      startDate: "2026-11-01T01:45:00-04:00",
+      endDate: "2026-11-01T01:15:00-05:00",
+    },
+    evidence,
+  );
+  assert.ok(dst);
+  const html = await fixture("eventbrite-overnight-detail");
+  const ld = jsonLdEvents(html),
+    r = recordFromJsonLd(config, ld.events[0].event, evidence);
+  assert.equal(r.startDate, "2026-10-29");
+  assert.equal(r.endDate, "2026-10-30");
+  assert.equal(r.endLocal, "2026-10-30T04:00:00-04:00");
+});
+
+test("NYC Tourism detail extracts the event address and map coordinates rather than market hints", async () => {
+  const c = configs.find((c) => c.id === "url-025"),
+    url = "https://www.nyctourism.com/events/lincoln-center-2026-2027-season/";
+  const r = parseDocument({
+    html: await fixture("nyc-tourism-detail"),
+    url,
+    config: c,
+    task: { kind: "detail" },
+  }).records[0];
+  assert.equal(r.startDate, "2026-09-10");
+  assert.equal(r.endDate, "2027-06-19");
+  assert.equal(r.location.venue, "Lincoln Center for the Performing Arts");
+  assert.equal(r.location.streetAddress, "70 Lincoln Center Plaza");
+  assert.equal(r.location.locality, "Manhattan");
+  assert.equal(r.location.region, "NY");
+  assert.equal(r.location.postalCode, "10023");
+  assert.equal(r.location.country, null);
+  assert.equal(r.startLocal, null);
+  assert.deepEqual(r.geoCoordinates, {
+    latitude: 40.7741882,
+    longitude: -73.9842563,
+  });
+});
+
+test("OpenCities detail uses the full date range and event marker, without copying the site footer", async () => {
+  const c = configs.find((c) => c.id === "url-080"),
+    url = "https://www.downtownorlando.com/Fun/Events/By-Heart-and-By-Hand";
+  const r = parseDocument({
+    html: await fixture("downtown-orlando-detail"),
+    url,
+    config: c,
+    task: { kind: "detail" },
+  }).records[0];
+  assert.equal(r.startLocal, "2026-09-05T10:00:00");
+  assert.equal(r.endLocal, "2027-03-28T17:00:00");
+  assert.equal(r.location.venue, "Orange County Regional History Center");
+  assert.equal(r.location.streetAddress, "65 E Central Blvd");
+  assert.equal(r.location.locality, null);
+  assert.equal(r.location.country, null);
+  assert.deepEqual(r.geoCoordinates, {
+    latitude: 28.5493147,
+    longitude: -81.38659,
+  });
+});
+
+test("Boston visible occurrence overrides a conflicting JSON-LD metadata timestamp and retains the conflict", async () => {
+  const c = configs.find((c) => c.id === "url-054"),
+    url = "https://www.boston.gov/calendar/open-streets-roslindale";
+  const parsed = parseDocument({
+    html: await fixture("boston-detail"),
+    url,
+    config: c,
+    task: { kind: "detail" },
+  });
+  assert.equal(parsed.records.length, 1);
+  const r = parsed.records[0];
+  assert.equal(r.startLocal, "2026-10-18T10:30:00");
+  assert.equal(r.endLocal, "2026-10-18T15:00:00");
+  assert.equal(r.location.locality, "Roslindale");
+  assert.equal(r.location.postalCode, "02131");
+  assert.ok(
+    r.warnings.includes("structured_dates_conflict_with_visible_occurrence"),
+  );
+  assert.equal(r.fieldQuality.needsReview, true);
+  assert.equal(r.raw.structuredCandidates[0].startDate, "2026-10-17");
+});
+
+test("article publication metadata cannot masquerade as an event date and placeholder URLs are rejected", () => {
+  const c = {
+    ...config,
+    adapter: "cards",
+    cardSelectors: ["article"],
+    detailPattern: "/events/",
+    maxDepth: 0,
+  };
+  const html =
+    '<article><script type="application/ld+json">{"@type":"Article","datePublished":"2026-10-17"}</script><h2><a href="/events/guide">Annual guide</a></h2><time itemprop="datePublished" datetime="2026-10-17">October 17, 2026</time></article>';
+  assert.equal(
+    parseDocument({ html, url: c.url, config: c }).records.length,
+    0,
+  );
+  assert.equal(safeUrl("/events/undefined", c.url), null);
+  assert.equal(safeUrl("/events/null", c.url), null);
+});
+
+test("inspected location elements retain explicit address components without inventing a city from the market", async () => {
+  const chicago = configs.find((c) => c.id === "url-042");
+  const r = parseDocument({
+    html: await fixture("chicago-parks"),
+    url: chicago.url,
+    config: { ...chicago, maxDepth: 0 },
+  }).records[0];
+  assert.equal(r.location.locality, "Chicago");
+  assert.equal(r.location.region, "IL");
+  assert.equal(r.location.postalCode, "60617");
+  assert.equal(r.location.streetAddress, "87th at S. Lake Shore Dr.");
+  assert.equal(r.location.country, null);
+  const sf = configs.find((c) => c.id === "url-065");
+  const s = parseDocument({
+    html: await fixture("sf-portal"),
+    url: sf.url,
+    config: { ...sf, maxDepth: 0 },
+  }).records[0];
+  assert.equal(s.location.venue, "Moscone Center");
+  assert.equal(s.location.locality, null);
+  assert.equal(s.marketCity, "San Francisco");
+});
+
+test("detail parsing excludes recommended events and preserves distinct occurrences", async () => {
+  const html = await fixture("allevents-detail"),
+    e = jsonLdEvents(html).events[0].event,
+    url = e.url;
+  const extra = `<script type="application/ld+json">${JSON.stringify({ ...e, url: url + "/recommended", name: "Another event" })}</script>`;
+  const r = parseDocument({
+    html: html + extra,
+    url,
+    config,
+    task: { kind: "detail" },
+  });
+  assert.equal(r.records.length, 1);
+  const listing = eventRecord(
+    config,
+    {
+      ...e,
+      id: "listing-occurrence",
+      startDate: "2026-10-18",
+      endDate: "2026-10-18",
+    },
+    evidence,
+  );
+  assert.equal(mergeDetail(listing, r.records[0]), null);
+});
+
+test("detail enrichment is checkpointed separately, survives re-open and preserves original observations", async (t) => {
+  const dir = await mkdtemp(join(tmpdir(), "events-field-quality-"));
+  t.after(() => rm(dir, { recursive: true, force: true }));
+  const path = join(dir, "journal.sqlite"),
+    j = new Journal(path);
+  let open = true;
+  t.after(() => {
+    if (open) j.close();
+  });
+  const detail = await fixture("allevents-detail"),
+    e = jsonLdEvents(detail).events[0].event;
+  const listing =
+    '<script type="application/ld+json">' +
+    JSON.stringify({
+      ...e,
+      startDate: "2026-10-17",
+      endDate: "2026-10-17",
+      location: null,
+    }) +
+    "</script>";
+  const c = {
+    ...config,
+    enrichDetails: true,
+    maxDepth: 1,
+    readySelector: null,
+  };
+  j.register([c]);
+  const q = j.enqueue(
+    c.id,
+    optionsFor(c, { asOf: "2026-10-17", maxPages: 2 }, "fields-test"),
+  );
+  const seen = [];
+  await work(j, {
+    root: dir,
+    runId: q.runId,
+    build: "fields-test",
+    transportFactory: () => ({
+      fetch: async (task) => {
+        seen.push(task.kind);
+        return {
+          body: task.kind === "detail" ? detail : listing,
+          url: task.url,
+          capture: { path: join(dir, task.kind + ".html"), hash: task.kind },
+        };
+      },
+      close: async () => {},
+    }),
+  });
+  assert.deepEqual(seen, ["listing", "detail"]);
+  assert.equal(j.records(q.runId).length, 1);
+  const enriched = j.records(q.runId)[0];
+  assert.equal(enriched.endLocal, "2026-10-17T18:00:00-05:00");
+  assert.ok(enriched.geoCoordinates);
+  assert.equal(enriched.evidence.details.length, 1);
+  const original = JSON.parse(
+    j.db.prepare("SELECT payload FROM observations WHERE run_id=?").get(q.runId)
+      .payload,
+  );
+  assert.equal(original.startLocal, null);
+  assert.equal(original.geoCoordinates, null);
+  assert.equal(
+    j.db.prepare("SELECT count(*) n FROM record_enrichments").get().n,
+    1,
+  );
+  assert.ok(j.run(q.runId).result.fieldQuality.endTime);
+  j.close();
+  open = false;
+  const reopened = new Journal(path);
+  t.after(() => reopened.close());
+  assert.deepEqual(reopened.records(q.runId), [enriched]);
+});
+
+test("enrichment and its next-page frontier roll back together on an invalid checkpoint", () => {
+  const j = new Journal(":memory:");
+  try {
+    j.register([config]);
+    const q = j.enqueue(
+      config.id,
+      optionsFor(config, { asOf: "2026-10-17" }, "test"),
+    );
+    const r = j.claim("owner", 60000, q.runId),
+      listing = j.nextPage(r.id, r.token),
+      record = eventRecord(config, { ...input, id: "one" }, evidence);
+    j.commitPage(
+      r.id,
+      r.token,
+      listing,
+      {
+        records: [record],
+        nextRequests: [
+          {
+            url: input.url,
+            kind: "detail",
+            meta: { enrichRecordIds: ["one"] },
+          },
+        ],
+      },
+      { path: "listing", hash: "listing" },
+    );
+    const detail = j.nextPage(r.id, r.token);
+    assert.throws(() =>
+      j.commitPage(
+        r.id,
+        r.token,
+        detail,
+        {
+          records: [],
+          enrichments: [record],
+          nextRequests: [{ url: "file:///invalid" }],
+        },
+        { path: "detail", hash: "detail" },
+      ),
+    );
+    assert.equal(
+      j.db.prepare("SELECT count(*) n FROM record_enrichments").get().n,
+      0,
+    );
+    assert.equal(
+      j.pages(r.id).find((p) => p.id === detail.id).state,
+      "processing",
+    );
+  } finally {
+    j.close();
+  }
+});

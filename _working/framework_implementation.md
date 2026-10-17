@@ -2,6 +2,8 @@
 
 Implementation and live validation completed October 16–17, 2026.
 
+Date/time/location follow-up: the current record contract is schema version 3, with separate `location` and `geoCoordinates`, field-quality diagnostics, and append-only detail enrichment. See `source_field_contract.md` and the all-97-source `source_field_quality.md` browser audit. The counts and complete-run evidence below remain the historical framework milestone; the field audit does not re-certify complete enumeration or close repairs.
+
 Hosting update: the code is now in private `paulshorey/events`, with main/dev and prod/production Railway deployment targets. Separate dev/production PostgreSQL services were provisioned October 17; event schema/import are still pending. See `.railway/README.md` for current hosting operations and `review_and_next_steps.md` for the current review. The collection results below describe the earlier local mining milestone; hosted services remain passive, with no collection scheduler. Collection tests use `asOf: 2026-10-16`. Read this with `README.md`; the earlier `initial_data_mining_framework.md` describes the original research/prototype stage.
 
 ## What is built

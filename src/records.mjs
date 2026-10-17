@@ -1,6 +1,7 @@
 import { load } from "cheerio";
 import { createHash } from "node:crypto";
 import { parseDateRange } from "../examples/parsers.mjs";
+import { locationFields, fieldQuality } from "./event-fields.mjs";
 export const text = (value) =>
   value == null
     ? ""
@@ -56,10 +57,33 @@ export function safeUrl(value, base) {
     const u = new URL(value, base);
     if (!["http:", "https:"].includes(u.protocol) || u.username || u.password)
       return null;
+    if (
+      u.pathname.split("/").some((part) => /^(?:undefined|null)$/i.test(part))
+    )
+      return null;
     return u.href;
   } catch {
     return null;
   }
+}
+export function validTimestamp(value) {
+  if (typeof value !== "string") return false;
+  const m = value.match(
+    /^(\d{4}-\d\d-\d\d)T(\d\d):(\d\d)(?::(\d\d)(?:\.\d+)?)?(Z|[+-]\d\d:\d\d)?$/,
+  );
+  if (
+    !m ||
+    !validDate(m[1]) ||
+    Number(m[2]) > 23 ||
+    Number(m[3]) > 59 ||
+    Number(m[4] ?? 0) > 59
+  )
+    return false;
+  if (m[5] && m[5] !== "Z") {
+    const [h, min] = m[5].slice(1).split(":").map(Number);
+    if (h > 23 || min > 59) return false;
+  }
+  return true;
 }
 export function eventRecord(config, input, evidence) {
   const title = text(input.title ?? input.name),
@@ -70,7 +94,9 @@ export function eventRecord(config, input, evidence) {
     input.startDate && validDate(String(input.startDate).slice(0, 10))
       ? String(input.startDate).slice(0, 10)
       : range.startDate;
-  const endDate = end.startDate ?? range.endDate ?? startDate,
+  // A single structured startDate does not establish an end. A visible listing
+  // date/range is retained at day precision, with its separate basis below.
+  const endDate = end.startDate ?? (input.rawDate ? range.endDate : null),
     base = evidence.url ?? config.url,
     url = safeUrl(input.url, base) ?? safeUrl(input["@id"], base);
   if (
@@ -79,8 +105,7 @@ export function eventRecord(config, input, evidence) {
     title.length > 500 ||
     !url ||
     !startDate ||
-    !endDate ||
-    endDate < startDate
+    (endDate && endDate < startDate)
   )
     return null;
   const startRaw = String(input.startDate ?? ""),
@@ -91,13 +116,33 @@ export function eventRecord(config, input, evidence) {
   const endLocal =
     input.endLocal ??
     (/^\d{4}-\d\d-\d\dT\d\d:\d\d/.test(endRaw) ? endRaw : null);
+  if (
+    (/^\d{4}-\d\d-\d\dT/.test(startRaw) && !validTimestamp(startRaw)) ||
+    (/^\d{4}-\d\d-\d\dT/.test(endRaw) && !validTimestamp(endRaw)) ||
+    (startLocal &&
+      (!validTimestamp(startLocal) || startLocal.slice(0, 10) !== startDate)) ||
+    (endLocal &&
+      (!validTimestamp(endLocal) || endLocal.slice(0, 10) !== endDate))
+  )
+    return null;
+  if (startLocal && endLocal) {
+    const offset = (v) => /(?:Z|[+-]\d\d:\d\d)$/.test(v);
+    if (
+      offset(startLocal) === offset(endLocal) &&
+      (offset(startLocal)
+        ? Date.parse(endLocal) < Date.parse(startLocal)
+        : endLocal < startLocal)
+    )
+      return null;
+  }
+  const fields = locationFields(input.location, input.geoCoordinates);
   const identity = String(
     input.id ??
       input.sourceRecordId ??
       `${input["@id"] ?? url}|${startDate}|${startLocal ?? ""}`,
   );
-  return {
-    schemaVersion: 2,
+  const record = {
+    schemaVersion: 3,
     collectionId: config.id,
     sourceId: config.sourceKey,
     sourceRecordId: identity,
@@ -107,9 +152,30 @@ export function eventRecord(config, input, evidence) {
     endDate,
     startLocal,
     endLocal,
+    dateTimePrecision: {
+      start: startLocal ? "datetime" : "date",
+      end: endLocal ? "datetime" : endDate ? "date" : "unknown",
+    },
+    dateTimeBasis: input.dateTimeBasis ?? {
+      start: input.startDate ? "source startDate" : "visible listing date",
+      end: input.endDate
+        ? "source endDate"
+        : input.rawDate
+          ? "visible listing date/range"
+          : null,
+    },
     timeZone: input.timeZone ?? (config.cityMarket ? config.timeZone : null),
+    timeZoneLabel: input.timeZoneLabel ?? null,
+    timeZoneBasis:
+      input.timeZoneBasis ??
+      (input.timeZone
+        ? "source time zone"
+        : config.cityMarket && config.timeZone
+          ? "collection setting"
+          : null),
     allDay: input.allDay ?? null,
-    location: input.location ?? null,
+    location: fields.location,
+    geoCoordinates: fields.geoCoordinates,
     marketCity: config.cityMarket ?? null,
     sourceGroups: [config.group],
     categoryTags:
@@ -119,14 +185,33 @@ export function eventRecord(config, input, evidence) {
         basis: "source-level hint",
       })),
     validationStatus: "extracted-candidate",
-    warnings: input.warnings ?? [],
+    warnings: [
+      ...new Set([
+        ...(input.warnings ?? []),
+        ...fields.warnings,
+        ...(startLocal &&
+        endLocal &&
+        input.allDay !== true &&
+        (startLocal === endLocal ||
+          (/(?:Z|[+-]\d\d:\d\d)$/.test(startLocal) &&
+            /(?:Z|[+-]\d\d:\d\d)$/.test(endLocal) &&
+            Date.parse(startLocal) === Date.parse(endLocal)))
+          ? ["source_zero_duration_timed_event"]
+          : []),
+        ...(!endDate ? ["end_date_not_supplied"] : []),
+        ...(fields.virtual ? ["virtual_location_present"] : []),
+      ]),
+    ],
     evidence,
     raw: input.raw ?? input,
   };
+  record.fieldQuality = fieldQuality(record);
+  return record;
 }
 export function jsonLdEvents(html) {
   const $ = load(html),
     events = [],
+    references = Object.create(null),
     parseErrors = [];
   const walk = (obj, path) => {
     if (!obj || typeof obj !== "object") return;
@@ -134,6 +219,11 @@ export function jsonLdEvents(html) {
       obj.forEach((o, i) => walk(o, `${path}[${i}]`));
       return;
     }
+    if (
+      typeof obj["@id"] === "string" &&
+      Object.keys(obj).length > Object.keys(references[obj["@id"]] ?? {}).length
+    )
+      references[obj["@id"]] = obj;
     const types = [obj["@type"]].flat().filter(Boolean);
     if (
       types.some(
@@ -153,13 +243,18 @@ export function jsonLdEvents(html) {
       parseErrors.push(error.message.slice(0, 100));
     }
   });
-  return { events, parseErrors };
+  return { events, parseErrors, references };
 }
-export function recordFromJsonLd(config, event, evidence) {
-  const loc = Array.isArray(event.location)
-      ? event.location[0]
-      : event.location,
-    address = loc?.address;
+export function recordFromJsonLd(config, event, evidence, references = {}) {
+  const resolve = (value, depth = 0) => {
+    if (!value || typeof value !== "object" || depth > 3) return value;
+    if (Array.isArray(value)) return value.map((v) => resolve(v, depth + 1));
+    const resolved = { ...(references[value["@id"]] ?? {}), ...value };
+    for (const key of ["address", "geo"])
+      if (resolved[key]) resolved[key] = resolve(resolved[key], depth + 1);
+    return resolved;
+  };
+  const locations = resolve(event.location);
   const identifier =
     typeof event.identifier === "object"
       ? event.identifier?.value
@@ -170,25 +265,15 @@ export function recordFromJsonLd(config, event, evidence) {
       ...event,
       title: event.name,
       id: identifier ? `${identifier}|${event.startDate}` : undefined,
-      location: loc
-        ? {
-            venue: text(loc.name) || null,
-            address:
-              typeof address === "string"
-                ? text(address)
-                : (address?.streetAddress ?? null),
-            locality:
-              typeof address === "object"
-                ? (address?.addressLocality ?? null)
-                : null,
-            region: address?.addressRegion ?? null,
-            country:
-              typeof address?.addressCountry === "object"
-                ? (address.addressCountry?.name ?? null)
-                : (address?.addressCountry ?? null),
-            basis: "upstream structured data",
-          }
-        : null,
+      location: Array.isArray(locations)
+        ? locations.map((loc) =>
+            typeof loc === "object" && loc
+              ? { ...loc, basis: "upstream structured data" }
+              : loc,
+          )
+        : locations && typeof locations === "object"
+          ? { ...locations, basis: "upstream structured data" }
+          : locations,
       categoryTags: event.keywords
         ? String(
             Array.isArray(event.keywords)

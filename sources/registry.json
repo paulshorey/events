@@ -64,14 +64,16 @@
       "article"
     ],
     "readySelector": ".event-card",
-    "notes": "Inspect event containers, detail pages, identity, pagination, date scope, and any published feed; then implement a bounded adapter probe.",
+    "notes": "Inspect event containers, detail pages, identity, pagination, date scope, and any published feed; then implement a bounded adapter probe. Field audit: follow sparse event cards to same-host detail pages; retain listing and detail evidence separately. Full enumeration remains unverified for partial sources. Verified AllEvents-owned all.events redirect; its displayed zone and UTC-marked structured times can conflict. Preserve the visible clock and zone label, flag for review.",
     "role": "collection candidate",
     "allowedHosts": [
-      "allevents.in"
+      "allevents.in",
+      "all.events"
     ],
     "maxDepth": 2,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-002.mjs"
+    "script": "scrapers/url-002.mjs",
+    "enrichDetails": true
   },
   {
     "id": "url-003",
@@ -249,14 +251,15 @@
       "article"
     ],
     "readySelector": "[data-event-payload]",
-    "notes": "Inspect event containers, detail pages, identity, pagination, date scope, and any published feed; then implement a bounded adapter probe.",
+    "notes": "Inspect event containers, detail pages, identity, pagination, date scope, and any published feed; then implement a bounded adapter probe. Field audit: follow sparse event cards to same-host detail pages; retain listing and detail evidence separately. Full enumeration remains unverified for partial sources.",
     "role": "collection candidate",
     "allowedHosts": [
       "festivalindex.com"
     ],
     "maxDepth": 2,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-007.mjs"
+    "script": "scrapers/url-007.mjs",
+    "enrichDetails": true
   },
   {
     "id": "url-008",
@@ -312,7 +315,7 @@
     "timeZone": "America/New_York",
     "adapter": "discovery",
     "coverage": "unverified",
-    "detailPattern": "/events?/[^/?#]+|/calendar/[^/?#]+|/shows/|/festivals?/[^/?#]+",
+    "detailPattern": "/events/(?!all(?:[/?#]|$)|past(?:[/?#]|$)|undefined(?:[/?#]|$)|null(?:[/?#]|$))[^/?#]+",
     "cardSelectors": [
       ".event-card",
       ".event-item",
@@ -434,14 +437,15 @@
       "article"
     ],
     "readySelector": null,
-    "notes": "Root redirected to /en/home and promotes booth-design companies; use event-specific sections and validate relevance.",
+    "notes": "Root redirected to /en/home and promotes booth-design companies; use event-specific sections and validate relevance. Field audit: follow sparse event cards to same-host detail pages; retain listing and detail evidence separately. Full enumeration remains unverified for partial sources.",
     "role": "discovery hub",
     "allowedHosts": [
       "tradefest.io"
     ],
     "maxDepth": 2,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-012.mjs"
+    "script": "scrapers/url-012.mjs",
+    "enrichDetails": true
   },
   {
     "id": "url-013",
@@ -471,14 +475,15 @@
       "article"
     ],
     "readySelector": null,
-    "notes": "Inspect event containers, detail pages, identity, pagination, date scope, and any published feed; then implement a bounded adapter probe.",
+    "notes": "Inspect event containers, detail pages, identity, pagination, date scope, and any published feed; then implement a bounded adapter probe. Field audit: follow sparse event cards to same-host detail pages; retain listing and detail evidence separately. Full enumeration remains unverified for partial sources.",
     "role": "collection candidate",
     "allowedHosts": [
       "conventiongrid.com"
     ],
     "maxDepth": 2,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-013.mjs"
+    "script": "scrapers/url-013.mjs",
+    "enrichDetails": true
   },
   {
     "id": "url-014",
@@ -686,14 +691,15 @@
     ],
     "readySelector": ".tribe-events-calendar-list__event",
     "apiEndpoint": "https://network.vegas/wp-json/tribe/events/v1/events",
-    "notes": "Public TEC API returned 10 records across two pages; reuse for category subset instead of scraping twice.",
+    "notes": "Public TEC API returned 10 records across two pages; reuse for category subset instead of scraping twice. Field audit: follow sparse event cards to same-host detail pages; retain listing and detail evidence separately. Full enumeration remains unverified for partial sources.",
     "role": "tested collection",
     "allowedHosts": [
       "network.vegas"
     ],
     "maxDepth": 2,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-019.mjs"
+    "script": "scrapers/url-019.mjs",
+    "enrichDetails": true
   },
   {
     "id": "url-020",
@@ -722,14 +728,15 @@
     ],
     "readySelector": ".tribe-events-calendar-list__event",
     "apiEndpoint": null,
-    "notes": "Use source-level acquisition with upstream category tags; validate category filtering against this view.",
+    "notes": "Use source-level acquisition with upstream category tags; validate category filtering against this view. Field audit: follow sparse event cards to same-host detail pages; retain listing and detail evidence separately. Full enumeration remains unverified for partial sources.",
     "role": "overlapping category view",
     "allowedHosts": [
       "network.vegas"
     ],
     "maxDepth": 2,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-020.mjs"
+    "script": "scrapers/url-020.mjs",
+    "enrichDetails": true
   },
   {
     "id": "url-021",
@@ -758,14 +765,15 @@
     ],
     "readySelector": null,
     "apiEndpoint": "https://networkinvegas.com/wp-json/tribe/events/v1/events",
-    "notes": "Inspect event containers, detail pages, identity, pagination, date scope, and any published feed; then implement a bounded adapter probe.",
+    "notes": "Inspect event containers, detail pages, identity, pagination, date scope, and any published feed; then implement a bounded adapter probe. Field audit: follow sparse event cards to same-host detail pages; retain listing and detail evidence separately. Full enumeration remains unverified for partial sources.",
     "role": "collection candidate",
     "allowedHosts": [
       "networkinvegas.com"
     ],
     "maxDepth": 2,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-021.mjs"
+    "script": "scrapers/url-021.mjs",
+    "enrichDetails": true
   },
   {
     "id": "url-022",
@@ -828,14 +836,15 @@
       "article"
     ],
     "readySelector": ".event-card",
-    "notes": "Inspect event containers, detail pages, identity, pagination, date scope, and any published feed; then implement a bounded adapter probe.",
+    "notes": "Inspect event containers, detail pages, identity, pagination, date scope, and any published feed; then implement a bounded adapter probe. Field audit: follow sparse event cards to same-host detail pages; retain listing and detail evidence separately. Full enumeration remains unverified for partial sources.",
     "role": "collection candidate",
     "allowedHosts": [
       "www.eventbrite.com"
     ],
     "maxDepth": 2,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-023.mjs"
+    "script": "scrapers/url-023.mjs",
+    "enrichDetails": true
   },
   {
     "id": "url-024",
@@ -898,14 +907,15 @@
       "article"
     ],
     "readySelector": "[class*=ContentCard_headerLink]",
-    "notes": "Use as event/detail-page discovery; do not assume all guide entries are dated occurrences.",
+    "notes": "Use as event/detail-page discovery; do not assume all guide entries are dated occurrences. Field audit: follow sparse event cards to same-host detail pages; retain listing and detail evidence separately. Full enumeration remains unverified for partial sources.",
     "role": "editorial / discovery guide",
     "allowedHosts": [
       "www.nyctourism.com"
     ],
     "maxDepth": 2,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-025.mjs"
+    "script": "scrapers/url-025.mjs",
+    "enrichDetails": true
   },
   {
     "id": "url-026",
@@ -1213,14 +1223,15 @@
       "article"
     ],
     "readySelector": ".event-card",
-    "notes": "Inspect event containers, detail pages, identity, pagination, date scope, and any published feed; then implement a bounded adapter probe.",
+    "notes": "Inspect event containers, detail pages, identity, pagination, date scope, and any published feed; then implement a bounded adapter probe. Field audit: follow sparse event cards to same-host detail pages; retain listing and detail evidence separately. Full enumeration remains unverified for partial sources.",
     "role": "collection candidate",
     "allowedHosts": [
       "www.eventbrite.com"
     ],
     "maxDepth": 2,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-034.mjs"
+    "script": "scrapers/url-034.mjs",
+    "enrichDetails": true
   },
   {
     "id": "url-035",
@@ -1243,14 +1254,15 @@
       ".views-row"
     ],
     "readySelector": null,
-    "notes": "Inspect event containers, detail pages, identity, pagination, date scope, and any published feed; then implement a bounded adapter probe.",
+    "notes": "Inspect event containers, detail pages, identity, pagination, date scope, and any published feed; then implement a bounded adapter probe. Field audit: follow sparse event cards to same-host detail pages; retain listing and detail evidence separately. Full enumeration remains unverified for partial sources.",
     "role": "collection candidate",
     "allowedHosts": [
       "www.discoverlosangeles.com"
     ],
     "maxDepth": 2,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-035.mjs"
+    "script": "scrapers/url-035.mjs",
+    "enrichDetails": true
   },
   {
     "id": "url-036",
@@ -1388,14 +1400,15 @@
     ],
     "readySelector": null,
     "apiEndpoint": "https://www.choosechicago.com/wp-json/tribe/events/v1/events",
-    "notes": "Inspect event containers, detail pages, identity, pagination, date scope, and any published feed; then implement a bounded adapter probe.",
+    "notes": "Inspect event containers, detail pages, identity, pagination, date scope, and any published feed; then implement a bounded adapter probe. Field audit: follow sparse event cards to same-host detail pages; retain listing and detail evidence separately. Full enumeration remains unverified for partial sources.",
     "role": "collection candidate",
     "allowedHosts": [
       "www.choosechicago.com"
     ],
     "maxDepth": 2,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-039.mjs"
+    "script": "scrapers/url-039.mjs",
+    "enrichDetails": true
   },
   {
     "id": "url-040",
@@ -1972,7 +1985,8 @@
     ],
     "maxDepth": 2,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-056.mjs"
+    "script": "scrapers/url-056.mjs",
+    "enrichDetails": true
   },
   {
     "id": "url-057",
@@ -2001,7 +2015,8 @@
     ],
     "maxDepth": 2,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-057.mjs"
+    "script": "scrapers/url-057.mjs",
+    "enrichDetails": true
   },
   {
     "id": "url-058",
@@ -2737,14 +2752,15 @@
       "article"
     ],
     "readySelector": null,
-    "notes": "Inspect event containers, detail pages, identity, pagination, date scope, and any published feed; then implement a bounded adapter probe.",
+    "notes": "Inspect event containers, detail pages, identity, pagination, date scope, and any published feed; then implement a bounded adapter probe. Field audit: follow sparse event cards to same-host detail pages; retain listing and detail evidence separately. Full enumeration remains unverified for partial sources.",
     "role": "collection candidate",
     "allowedHosts": [
       "www.orlando.gov"
     ],
     "maxDepth": 2,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-079.mjs"
+    "script": "scrapers/url-079.mjs",
+    "enrichDetails": true
   },
   {
     "id": "url-080",
@@ -2768,14 +2784,15 @@
       "article"
     ],
     "readySelector": null,
-    "notes": "Inspect event containers, detail pages, identity, pagination, date scope, and any published feed; then implement a bounded adapter probe.",
+    "notes": "Inspect event containers, detail pages, identity, pagination, date scope, and any published feed; then implement a bounded adapter probe. Field audit: follow sparse event cards to same-host detail pages; retain listing and detail evidence separately. Full enumeration remains unverified for partial sources.",
     "role": "collection candidate",
     "allowedHosts": [
       "www.downtownorlando.com"
     ],
     "maxDepth": 2,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-080.mjs"
+    "script": "scrapers/url-080.mjs",
+    "enrichDetails": true
   },
   {
     "id": "url-081",
@@ -2871,14 +2888,15 @@
       "article"
     ],
     "readySelector": null,
-    "notes": "Research-industry tag, not a complete trade-show directory; keep scope explicit.",
+    "notes": "Research-industry tag, not a complete trade-show directory; keep scope explicit. Field audit: follow sparse event cards to same-host detail pages; retain listing and detail evidence separately. Full enumeration remains unverified for partial sources.",
     "role": "category-specific discovery",
     "allowedHosts": [
       "tradefest.io"
     ],
     "maxDepth": 2,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-083.mjs"
+    "script": "scrapers/url-083.mjs",
+    "enrichDetails": true
   },
   {
     "id": "url-084",

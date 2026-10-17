@@ -2,6 +2,7 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { randomUUID } from 'node:crypto';
 import { resolve } from 'node:path';
 import { assertValidRecords, MiningError, nextAction } from '../examples/parsers.mjs';
+import { eventRecord } from '../src/records.mjs';
 
 const args=process.argv.slice(2);
 const option=(flag,fallback)=>args.includes(flag)?args[args.indexOf(flag)+1]:fallback;
@@ -26,6 +27,13 @@ const result={runId,sourceId,adapterVersion:'prototype-v1',startedAt:new Date().
   mode:'bounded-live-prototype',outcome:'failed',records:[],enumeration:{complete:false}};
 try{
   Object.assign(result,await run(ctx));
+  result.records=result.records.map(record=>{
+    const normalized=eventRecord({id:sourceId,sourceKey:record.sourceId,cityMarket:record.marketCity,
+      group:record.sourceGroups[0],timeZone:source.timeZone,categoryHints:[]},
+      {...record,id:record.sourceRecordId},record.evidence);
+    if(!normalized)throw new MiningError('data_quality_error','Invalid prototype event date/time fields');
+    return normalized;
+  });
   if(!result.records.length) throw new MiningError('no_results_unverified','Zero records; explicit empty-state verification is not implemented');
   assertValidRecords(result.records);
   result.outcome='sample_passed';

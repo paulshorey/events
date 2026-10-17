@@ -1,8 +1,10 @@
 import { load } from "cheerio";
 import { inspectedAdapters, parseInspected } from "./inspected.mjs";
+import { parseDetail } from "./detail.mjs";
 import {
   parseLaCalendar,
   parseBostonCalendar,
+  parseTimeRange,
 } from "../../examples/parsers.mjs";
 import {
   text,
@@ -16,15 +18,18 @@ import {
 
 const paginationSelectors =
   'a[rel="next"],.pager__item--next a,.tribe-events-c-nav__next a,a.tribe-events-c-nav__next,.pagination .next a,a.next.page-numbers,.pagination-next a';
-const sameHost = (a, b) =>
-  new URL(a).hostname.replace(/^www\./, "") ===
-  new URL(b).hostname.replace(/^www\./, "");
+const inScope = (url, config) =>
+  [new URL(config.url).hostname, ...(config.allowedHosts ?? [])].some(
+    (host) =>
+      host.replace(/^www\./, "") ===
+      new URL(url).hostname.replace(/^www\./, ""),
+  );
 function navigation($, url, config, task) {
   const requests = [];
   $(paginationSelectors).each((_, e) => {
     const href = $(e).attr("href"),
       u = href && !href.startsWith("#") ? safeUrl(href, url) : null;
-    if (u && sameHost(u, config.url) && u !== url)
+    if (u && inScope(u, config) && u !== url)
       requests.push({
         url: u,
         kind: "listing",
@@ -35,15 +40,21 @@ function navigation($, url, config, task) {
   return requests;
 }
 function normalizedLegacy(config, records, url) {
-  return records.map((r) => ({
-    ...r,
-    schemaVersion: 2,
-    collectionId: config.id,
-    sourceId: config.sourceKey,
-    sourceRecordId: r.sourceRecordId,
-    validationStatus: "parser-validated",
-    evidence: { ...r.evidence, url },
-  }));
+  return records
+    .map((r) => {
+      const record = eventRecord(
+        config,
+        { ...r, id: r.sourceRecordId },
+        { ...r.evidence, url },
+      );
+      if (!record)
+        throw Object.assign(
+          new Error("Inspected event has invalid date/time fields"),
+          { code: "data_quality_error" },
+        );
+      return record;
+    })
+    .map((r) => ({ ...r, validationStatus: "parser-validated" }));
 }
 export function parseDocument({
   html,
@@ -51,13 +62,7 @@ export function parseDocument({
   config,
   task = { depth: 0, kind: "listing", meta: {} },
 }) {
-  if (task.kind === "detail" && config.adapter !== "jsonld")
-    return parseDocument({
-      html,
-      url,
-      config: { ...config, adapter: "jsonld", coverage: "unverified" },
-      task,
-    });
+  if (task.kind === "detail") return parseDetail({ html, url, config });
   const $ = load(html),
     issues = [],
     all = [],
@@ -197,6 +202,15 @@ export function parseDocument({
             text(x.text())
           );
         };
+      const location = c.find('[itemprop="location"]').first();
+      const locationProp = (name) => {
+        const x = location.find(`[itemprop~="${name}"]`).first();
+        return x.attr("content") ?? text(x.text());
+      };
+      const venueText = location.clone();
+      venueText.find('[itemprop="address"]').remove();
+      const latitude = locationProp("latitude"),
+        longitude = locationProp("longitude");
       const r = eventRecord(
         config,
         {
@@ -205,10 +219,16 @@ export function parseDocument({
           startDate: prop("startDate"),
           endDate: prop("endDate"),
           location: {
-            locality: prop("addressLocality"),
-            venue: prop("location"),
+            locality: locationProp("addressLocality"),
+            region: locationProp("addressRegion"),
+            country: locationProp("addressCountry"),
+            postalCode: locationProp("postalCode"),
+            address: locationProp("streetAddress"),
+            venue: locationProp("name") || text(venueText.text()),
             basis: "microdata",
           },
+          geoCoordinates:
+            latitude || longitude ? { latitude, longitude } : null,
         },
         { url, selector: "[itemtype*=schema.org/Event]" },
       );
@@ -218,7 +238,12 @@ export function parseDocument({
     const ld = jsonLdEvents(html);
     observedCount = ld.events.length;
     for (const { event, path } of ld.events) {
-      const r = recordFromJsonLd(config, event, { url, jsonPath: path });
+      const r = recordFromJsonLd(
+        config,
+        event,
+        { url, jsonPath: path },
+        ld.references,
+      );
       r ? all.push(r) : rejected++;
     }
     if (ld.parseErrors.length)
@@ -272,17 +297,42 @@ export function parseDocument({
                   .first();
         const href = a.attr("href");
         if (!href) continue;
+        const visible = c.clone();
+        visible
+          .find(
+            'script,style,noscript,template,[itemprop="datePublished"],[itemprop="dateModified"],time[pubdate],.published,.updated,.post-date',
+          )
+          .remove();
         const title =
           text(c.find('h2,h3,h4,[class*="title"]').first().text()) ||
           text(a.text()).slice(0, 200);
-        const time = c
+        const time = visible
           .find('time,[itemprop="startDate"],[datetime],[data-date]')
+          .filter(
+            (_, e) =>
+              !/datePublished|dateModified|published|updated/i.test(
+                `${$(e).attr("itemprop") ?? ""} ${$(e).attr("class") ?? ""}`,
+              ),
+          )
           .first();
+        const dateText = text(visible.find('[class*="date"]').text());
         const rawDate =
           time.attr("datetime") ??
           time.attr("content") ??
           time.attr("data-date") ??
-          (text(c.find('[class*="date"]').text()) || text(c.text()));
+          (dateText ||
+            (["conventiongrid", "trade-table"].includes(config.adapter)
+              ? text(visible.text())
+              : ""));
+        const range = dates(rawDate),
+          clocks = parseTimeRange(visible.text());
+        const explicitEnd = visible.find('[itemprop="endDate"]').first();
+        const endDate =
+          explicitEnd.attr("datetime") ?? explicitEnd.attr("content");
+        const endClockSafe =
+          clocks.endTime &&
+          (range.endDate > range.startDate ||
+            clocks.endTime >= clocks.startTime);
         const r = eventRecord(
           config,
           {
@@ -290,7 +340,31 @@ export function parseDocument({
             title,
             url: href,
             rawDate,
-            raw: { cardText: text(c.text()).slice(0, 4000) },
+            startDate: /^\d{4}-\d\d-\d\dT/.test(rawDate) ? rawDate : undefined,
+            endDate,
+            startLocal:
+              clocks.startTime && range.startDate
+                ? `${range.startDate}T${clocks.startTime}`
+                : undefined,
+            endLocal:
+              endClockSafe && range.endDate
+                ? `${range.endDate}T${clocks.endTime}`
+                : undefined,
+            location: {
+              venue: text(visible.find(".venue,.event-venue").first().text()),
+              formattedAddress: text(
+                visible
+                  .find('.event-location,.location,[itemprop="location"]')
+                  .first()
+                  .text(),
+              ),
+              basis: "event card location element",
+            },
+            warnings:
+              clocks.endTime && !endClockSafe
+                ? ["end_time_requires_date_review"]
+                : [],
+            raw: { cardText: text(visible.text()).slice(0, 4000) },
           },
           {
             url,
@@ -337,7 +411,7 @@ export function parseDocument({
     const href = $(e).attr("href");
     if (!href || href.startsWith("#") || !pattern.test(href)) return;
     const u = safeUrl(href, url);
-    if (!u || !sameHost(u, config.url) || u === url) return;
+    if (!u || !inScope(u, config) || u === url) return;
     if (/\/wp-admin\/|\/user\/|\/login|\/cart|\.pdf(?:\?|$)/i.test(u)) return;
     discovered.push({
       url: u,
@@ -354,6 +428,31 @@ export function parseDocument({
     const knownUrls = new Set(all.map((r) => r.url));
     nextRequests.push(...discovered.filter((r) => !knownUrls.has(r.url)));
   }
+  if (
+    config.enrichDetails &&
+    task.kind === "listing" &&
+    task.depth < config.maxDepth
+  ) {
+    const targets = all.filter(
+      (r) =>
+        r.fieldQuality?.needsDetail &&
+        inScope(r.url, config) &&
+        !new URL(r.url).hash,
+    );
+    for (const targetUrl of new Set(targets.map((r) => r.url)))
+      if (targetUrl !== url)
+        nextRequests.push({
+          url: targetUrl,
+          kind: "detail",
+          depth: task.depth + 1,
+          meta: {
+            enrichRecordIds: targets
+              .filter((r) => r.url === targetUrl)
+              .map((r) => r.sourceRecordId),
+            discoveredOn: url,
+          },
+        });
+  }
   if (!all.length && !nextRequests.length)
     issues.push({
       code: "no_event_contract_found",
@@ -365,9 +464,15 @@ export function parseDocument({
       .length
   )
     issues.push({ code: "embedded_calendar_requires_validation" });
+  const uniqueRequests = new Map();
+  const priority = (p) =>
+    p.kind === "listing" ? 0 : p.meta?.enrichRecordIds ? 1 : 2;
+  for (const request of nextRequests.sort((a, b) => priority(a) - priority(b)))
+    if (!uniqueRequests.has(request.url))
+      uniqueRequests.set(request.url, request);
   return {
     records: dedupe(all),
-    nextRequests: [...new Map(nextRequests.map((r) => [r.url, r])).values()],
+    nextRequests: [...uniqueRequests.values()],
     method,
     observedCount,
     rejected,

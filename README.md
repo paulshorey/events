@@ -23,6 +23,8 @@ This explicitly selects the active `DB_EVENTS_URL` from `.env.local`, overriding
 
 ## Start here
 
+The latest date/time/location audit covers all 97 sources in [_working/source_field_quality.md](_working/source_field_quality.md), with machine-readable counts and evidence in the adjacent JSON. These are bounded browser/detail samples, not full-source validation. The [source field contract](_working/source_field_contract.md) documents schema version 3, separate text/coordinate locations, unknown end dates, detail enrichment, and repeatable audit commands.
+
 Tested on Node 26.9.0 with Playwright 1.64.1 and headless Chromium. Use Node 24 or later, with `node:sqlite` available; this task does not change your managed Node installation.
 
 ```sh
