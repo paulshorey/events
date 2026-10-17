@@ -2,7 +2,13 @@
 
 A deterministic Node.js CLI framework for collecting event observations from the supplied websites. Each of the **97 supplied URLs** has a runnable Playwright entry point and a registry record. They share browser operations, parsers, validation, persistence, and repair handling. Many sources still need source-specific development; having an entry point does not mean a complete crawler has been validated.
 
-No model calls occur during extraction. AI agents or engineers improve the code using captured evidence and regression tests. The local SQLite journal is operational storage for this stage. The external development database, hosted workers, and Codex automations remain unconfigured. All collection schedules are disabled.
+No model calls occur during extraction. AI agents or engineers improve the code using captured evidence and regression tests. The local SQLite journal is operational storage for this stage. The external development database and Codex automations remain unconfigured. Railway hosts passive dev and production services, with all collection schedules disabled. See [.railway/README.md](.railway/README.md) for deployment and infrastructure operations.
+
+## Hosting
+
+GitHub repository: [paulshorey/events](https://github.com/paulshorey/events). Railway project: [Events](https://railway.com/project/a0315029-9b64-41a0-9c83-e4367366947d). Pushes to `main` deploy dev; pushes to `prod` deploy production after CI passes. The deployment host exposes `/api/health`, checks Chromium/SQLite/registry readiness, and runs no collection schedule. It has no database connection or durable cloud job storage yet.
+
+Run `npm start` locally to inspect the passive host on port 4500. Set `PORT` to override it. `.railway/project.json` owns target IDs and branch mapping; `.railway/railway.ts` owns applied configuration. Changes to IaC require a separate reviewed plan/apply.
 
 ## Start here
 

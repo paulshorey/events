@@ -1,0 +1,11 @@
+{
+  "projectId": "a0315029-9b64-41a0-9c83-e4367366947d",
+  "workspaceId": "c64d0999-e00c-4c52-bbd4-2614210e3758",
+  "profileId": "railway.webarts",
+  "repository": "paulshorey/events",
+  "serviceName": "events",
+  "environments": {
+    "dev": { "id": "fb0a7dbd-2f66-4183-b3c3-7b1e7a7afe24", "branch": "main" },
+    "production": { "id": "cf2c1bdd-7938-4b8a-b752-3c3bb6826b9e", "branch": "prod" }
+  }
+}

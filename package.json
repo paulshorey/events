@@ -12,7 +12,11 @@
     "samples": "node scripts/export-samples.mjs",
     "test": "node --test tests/*.test.mjs",
     "framework": "node scripts/framework.mjs",
-    "registry:build": "node scripts/build-registry.mjs"
+    "registry:build": "node scripts/build-registry.mjs",
+    "start": "node src/server.mjs",
+    "railway:check": "tsc -p .railway/tsconfig.json",
+    "railway:plan": "railway config plan --file .railway/railway.ts",
+    "railway:apply": "railway config apply --file .railway/railway.ts"
   },
   "engines": {
     "node": ">=24"
@@ -22,6 +26,9 @@
     "playwright": "1.64.1"
   },
   "devDependencies": {
-    "prettier": "3.6.2"
+    "@types/node": "24.10.0",
+    "prettier": "3.6.2",
+    "railway": "3.15.0",
+    "typescript": "5.9.3"
   }
 }

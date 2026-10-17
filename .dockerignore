@@ -1,0 +1,11 @@
+.git
+.github
+.railway
+.artifacts
+node_modules
+_working
+docs
+.env
+.env.*
+*.log
+.DS_Store

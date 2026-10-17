@@ -1,6 +1,8 @@
 # Implemented events mining framework
 
-Implementation and live validation completed October 16–17, 2026. Collection tests use `asOf: 2026-10-16`. Read this with `README.md`; the earlier `initial_data_mining_framework.md` describes the original research/prototype stage.
+Implementation and live validation completed October 16–17, 2026.
+
+Hosting update: the code is now in private `paulshorey/events`, with main/dev and prod/production Railway deployment targets. See `.railway/README.md` for current hosting operations. The collection results below describe the earlier local mining milestone; hosted services remain passive, with no scheduler or remote database. Collection tests use `asOf: 2026-10-16`. Read this with `README.md`; the earlier `initial_data_mining_framework.md` describes the original research/prototype stage.
 
 ## What is built
 
