@@ -19,6 +19,17 @@ export async function saveCapture(root, run, task, body, url, kind) {
   await writeFile(path, body, { flag: "wx" });
   return { path, hash: hash(body), url: redactUrl(url), kind };
 }
+async function snapshotPage(page) {
+  // Read the document and its URL in one browser task. Separate awaits of
+  // page.content() and page.url() can associate two different navigations.
+  return page.evaluate(() => ({
+    url: window.location.href,
+    body:
+      (document.doctype
+        ? new XMLSerializer().serializeToString(document.doctype) + "\n"
+        : "") + (document.documentElement?.outerHTML ?? ""),
+  }));
+}
 export function robotsAllowed(
   content,
   path,
@@ -165,6 +176,9 @@ export class Transport {
         "json",
       );
       try {
+        // Playwright follows HTTP redirects. The effective page must still
+        // belong to this collection before any observations can be parsed.
+        await this.permit(response.url());
         classifyResponse(response.status(), body);
       } catch (error) {
         error.capture = capture;
@@ -176,23 +190,24 @@ export class Transport {
     }
     const context = await this.initBrowser(),
       page = await context.newPage();
-    let capture;
+    let capture, snapshot;
     try {
       const response = await page.goto(task.url, {
         waitUntil: "domcontentloaded",
         timeout: this.timeoutMs,
       });
-      let body = await page.content();
+      snapshot = await snapshotPage(page);
+      await this.permit(snapshot.url);
       // Capture denials before attempting a selector wait.
       try {
-        classifyResponse(response?.status() ?? 0, body);
+        classifyResponse(response?.status() ?? 0, snapshot.body);
       } catch (error) {
         capture = await saveCapture(
           this.root,
           this.run,
           task,
-          body,
-          page.url(),
+          snapshot.body,
+          snapshot.url,
           "html",
         );
         error.capture = capture;
@@ -217,33 +232,37 @@ export class Transport {
           .waitForLoadState("networkidle", { timeout: 2500 })
           .catch(() => {});
       }
-      body = await page.content();
+      snapshot = await snapshotPage(page);
       capture = await saveCapture(
         this.root,
         this.run,
         task,
-        body,
-        page.url(),
+        snapshot.body,
+        snapshot.url,
         "html",
       );
+      // A later navigation cannot change the checked URL for this snapshot.
+      await this.permit(snapshot.url);
       return {
-        body,
-        url: page.url(),
+        body: snapshot.body,
+        url: snapshot.url,
         capture,
         status: response?.status() ?? 0,
       };
     } catch (error) {
       if (!capture) {
-        capture = await saveCapture(
-          this.root,
-          this.run,
-          task,
-          await page.content().catch(() => ""),
-          page.url(),
-          "html",
-        ).catch(() => null);
-        if (capture) error.capture = capture;
+        const failure = await snapshotPage(page).catch(() => snapshot);
+        if (failure)
+          capture = await saveCapture(
+            this.root,
+            this.run,
+            task,
+            failure.body,
+            failure.url,
+            "html",
+          ).catch(() => null);
       }
+      if (capture) error.capture = capture;
       await page
         .screenshot({
           path: resolve(

@@ -1,4 +1,11 @@
-import { defineRailway, github, project, service } from "railway/iac";
+import {
+  defineRailway,
+  github,
+  postgres,
+  project,
+  service,
+  volume,
+} from "railway/iac";
 import target from "./project.json" with { type: "json" };
 
 export default defineRailway((ctx) => {
@@ -10,6 +17,23 @@ export default defineRailway((ctx) => {
   if (!selected)
     throw new Error("Select the Events dev or production environment.");
   const [environment, configuration] = selected;
+  // Provisioned by Railway's official Postgres template; credentials and the
+  // product-managed mount stay on Railway, never in this definition.
+  const database = postgres(configuration.database.name);
+  database.networking = { tcpProxies: { "5432": {} } };
+  database.variables = {
+    DATABASE_PUBLIC_URL: {
+      type: "literal",
+      value:
+        "postgresql://${{PGUSER}}:${{POSTGRES_PASSWORD}}@${{RAILWAY_TCP_PROXY_DOMAIN}}:${{RAILWAY_TCP_PROXY_PORT}}/${{PGDATABASE}}?sslmode=require",
+    },
+  };
+  const databaseVolume = volume(configuration.database.volumeName, {
+    region: "us-east4-eqdc4a",
+    sizeMB: 50000,
+    allowOnlineResize: true,
+    alerts: { usage: { "80": {}, "95": {}, "100": {} } },
+  });
   const collector = service(target.serviceName, {
     // SDK 3.15.0's shorthand source object drops checkSuites during normalization.
     source: github(target.repository, {
@@ -17,7 +41,12 @@ export default defineRailway((ctx) => {
       checkSuites: target.waitForCI,
     }),
     replicas: 1,
-    env: { NODE_ENV: "production", APP_ENVIRONMENT: environment, PORT: "4500" },
+    env: {
+      NODE_ENV: "production",
+      APP_ENVIRONMENT: environment,
+      PORT: "4500",
+      DB_EVENTS_URL: database.env.DATABASE_PUBLIC_URL,
+    },
     build: { builder: "DOCKERFILE", dockerfilePath: "Dockerfile" },
     deploy: {
       startCommand: "node src/server.mjs",
@@ -26,5 +55,7 @@ export default defineRailway((ctx) => {
       restartPolicyMaxRetries: 5,
     },
   });
-  return project("Events", { resources: [collector] });
+  return project("Events", {
+    resources: [collector, database, databaseVolume],
+  });
 });

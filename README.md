@@ -2,13 +2,24 @@
 
 A deterministic Node.js CLI framework for collecting event observations from the supplied websites. Each of the **97 supplied URLs** has a runnable Playwright entry point and a registry record. They share browser operations, parsers, validation, persistence, and repair handling. Many sources still need source-specific development; having an entry point does not mean a complete crawler has been validated.
 
-No model calls occur during extraction. AI agents or engineers improve the code using captured evidence and regression tests. The local SQLite journal is operational storage for this stage. The external development database and Codex automations remain unconfigured. Railway hosts passive dev and production services, with all collection schedules disabled. See [.railway/README.md](.railway/README.md) for deployment and infrastructure operations.
+No model calls occur during extraction. AI agents or engineers improve the code using captured evidence and regression tests. The local SQLite journal remains operational storage. Separate Railway PostgreSQL databases now exist for dev and production; event tables and the importer have not been implemented. Railway hosts passive dev and production services, with all collection schedules disabled. See [.railway/README.md](.railway/README.md) for infrastructure operations and [_working/review_and_next_steps.md](_working/review_and_next_steps.md) for the review and next milestones.
 
 ## Hosting
 
-GitHub repository: [paulshorey/events](https://github.com/paulshorey/events). Railway project: [Events](https://railway.com/project/a0315029-9b64-41a0-9c83-e4367366947d). Pushes to `main` deploy dev; pushes to `prod` deploy production after CI passes. The deployment host exposes `/api/health`, checks Chromium/SQLite/registry readiness, and runs no collection schedule. It has no database connection or durable cloud job storage yet.
+GitHub repository: [paulshorey/events](https://github.com/paulshorey/events). Railway project: [Events](https://railway.com/project/a0315029-9b64-41a0-9c83-e4367366947d). Pushes to `main` deploy dev; pushes to `prod` deploy production after CI passes. The deployment host exposes `/api/health`, checks Chromium/SQLite/registry readiness, and runs no collection schedule. Each environment has a project-specific `DB_EVENTS_URL` reference to its own PostgreSQL service’s `DATABASE_PUBLIC_URL`. The application does not yet use that connection or have durable cloud job storage.
 
 Run `npm start` locally to inspect the passive host on port 4500. Set `PORT` to override it. `.railway/project.json` owns target IDs and branch mapping; `.railway/railway.ts` owns applied configuration. Changes to IaC require a separate reviewed plan/apply.
+
+## Local database access
+
+The ignored `.env.local` contains the development PostgreSQL URL as active `DB_EVENTS_URL` and the production URL as a commented assignment. Local clients and Railway services always use the public TCP endpoints with TLS. Events clients read only `DB_EVENTS_URL`, so an unrelated global `DATABASE_URL` cannot select another project’s database. Keep production commented during local development. `.env.example` is the credential-free template for another checkout. Ordinary framework commands need no remote database connection.
+
+```sh
+# Requires psql on PATH, or PSQL_PATH pointing to its executable.
+npm run db:check
+```
+
+This explicitly selects the active `DB_EVENTS_URL` from `.env.local`, overriding any inherited value, and executes read-only SQL, reporting the PostgreSQL major version, TLS state and public application-table count. Missing or invalid local credentials fail rather than falling back to a global URL. Direct `node scripts/check-database.mjs` is the separate environment-based check for explicitly selected operational targets. Neither mode prints the connection URL, runs migrations, or uploads events. See [_working/database_handoff.md](_working/database_handoff.md) for the ingestion boundary and remaining schema work.
 
 ## Start here
 

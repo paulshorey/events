@@ -7,6 +7,7 @@ import { join } from "node:path";
 import { Journal } from "../src/storage/journal.mjs";
 import { work, optionsFor } from "../src/worker.mjs";
 import { registry } from "../src/registry.mjs";
+import { Transport } from "../src/runtime/transport.mjs";
 
 // Real Playwright HTTP client, controlled upstream. No external service is hit by this test.
 test("HTTP 429 retains an API checkpoint, honors Retry-After and resumes via a new client", async (t) => {
@@ -74,4 +75,99 @@ test("HTTP 429 retains an API checkpoint, honors Retry-After and resumes via a n
   assert.equal(j.records(q.runId).length, 2);
   assert.equal(j.run(q.runId).requests, 3);
   assert.equal(j.pages(q.runId).length, 2);
+});
+
+for (const kind of ["api", "listing"]) {
+  test(`${kind} redirect to an unrelated host retains evidence and fails collection scope`, async (t) => {
+    const dir = await mkdtemp(join(tmpdir(), "events-redirect-"));
+    t.after(() => rm(dir, { recursive: true, force: true }));
+    const server = createServer((req, res) => {
+      if (req.url === "/robots.txt") return res.end("User-agent: *\nAllow: /");
+      if (req.url === "/start") {
+        res.writeHead(302, {
+          location: `http://localhost:${server.address().port}/unrelated`,
+        });
+        return res.end();
+      }
+      res.end("Unrelated publisher, never accept as the original collection");
+    });
+    await new Promise((resolve) => server.listen(0, resolve));
+    t.after(() => new Promise((resolve) => server.close(resolve)));
+    const url = `http://127.0.0.1:${server.address().port}/start`;
+    const transport = new Transport({
+      root: dir,
+      run: {
+        id: "test",
+        attemptId: "one",
+        source_key: "127.0.0.1",
+        config: { url, timeZone: "UTC" },
+      },
+      journal: { reserveRate: () => 0 },
+    });
+    t.after(() => transport.close());
+    await assert.rejects(transport.fetch({ id: "one", url, kind }), asyncError);
+    function asyncError(error) {
+      assert.equal(error.code, "scope_violation");
+      assert.ok(
+        error.capture?.path,
+        "retain redirected response as failure evidence",
+      );
+      return true;
+    }
+  });
+}
+
+test("navigation during final policy validation cannot change the captured page's base URL", async (t) => {
+  const dir = await mkdtemp(join(tmpdir(), "events-navigation-"));
+  t.after(() => rm(dir, { recursive: true, force: true }));
+  const server = createServer((req, res) => {
+    if (req.url === "/robots.txt") return res.end("User-agent: *\nAllow: /");
+    res.setHeader("content-type", "text/html");
+    res.end(
+      req.url === "/original"
+        ? '<!DOCTYPE html><html><body id="original"><a href="./event">Original event listing</a></body></html>'
+        : "<!DOCTYPE html><html><body>Unrelated page after navigation</body></html>",
+    );
+  });
+  await new Promise((resolve) => server.listen(0, resolve));
+  t.after(() => new Promise((resolve) => server.close(resolve)));
+  const url = `http://127.0.0.1:${server.address().port}/original`;
+  const transport = new Transport({
+    root: dir,
+    run: {
+      id: "navigation",
+      attemptId: "one",
+      source_key: "127.0.0.1",
+      config: { url, timeZone: "UTC", readySelector: "#original" },
+    },
+    journal: { reserveRate: () => 0 },
+  });
+  t.after(() => transport.close());
+  const permit = transport.permit.bind(transport);
+  let checks = 0,
+    navigated = false;
+  transport.permit = async (checkedUrl) => {
+    await permit(checkedUrl);
+    // Force the race while the final asynchronous policy check is in flight.
+    if (++checks === 3) {
+      await transport.context
+        .pages()[0]
+        .goto(`http://localhost:${server.address().port}/other`, {
+          waitUntil: "domcontentloaded",
+        });
+      navigated = true;
+    }
+  };
+  const result = await transport.fetch({ id: "one", url, kind: "listing" });
+  assert.equal(navigated, true, "exercise navigation during final permit");
+  assert.equal(
+    result.url,
+    url,
+    "return the URL checked for this captured document",
+  );
+  assert.equal(result.capture.url, url);
+  assert.match(result.body, /Original event listing/);
+  assert.doesNotMatch(result.body, /Unrelated page after navigation/);
+  assert.equal(await readFile(result.capture.path, "utf8"), result.body);
+  assert.equal(new URL("./event", result.url).hostname, "127.0.0.1");
 });

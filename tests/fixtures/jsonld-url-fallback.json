@@ -1,0 +1,7 @@
+{
+  "@type": "Event",
+  "name": "Community arts festival",
+  "startDate": "2026-10-18",
+  "url": "",
+  "@id": "https://example.test/event/arts-festival"
+}

@@ -8,12 +8,24 @@
     "dev": {
       "id": "fb0a7dbd-2f66-4183-b3c3-7b1e7a7afe24",
       "branch": "main",
-      "url": "https://events-dev-7362.up.railway.app"
+      "url": "https://events-dev-7362.up.railway.app",
+      "database": {
+        "id": "cbd2c5f4-02bd-410a-aa5f-78b83e2af58e",
+        "name": "Postgres",
+        "volumeName": "postgres-volume",
+        "volumeId": "6efaacce-9c11-409e-a55a-4752091c8ba1"
+      }
     },
     "production": {
       "id": "cf2c1bdd-7938-4b8a-b752-3c3bb6826b9e",
       "branch": "prod",
-      "url": "https://events-production-832d.up.railway.app"
+      "url": "https://events-production-832d.up.railway.app",
+      "database": {
+        "id": "3b990b78-506a-4dbc-8776-eaf7d8d71dd9",
+        "name": "Postgres-production",
+        "volumeName": "postgres-production-volume",
+        "volumeId": "331d06e8-f857-4862-bb3c-730a14890004"
+      }
     }
   },
   "serviceId": "392ab483-08a9-4f84-9160-476b11470324",

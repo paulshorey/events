@@ -14,8 +14,38 @@ for (const [environment, configuration] of Object.entries(
         environmentId: configuration.id,
       }),
     );
-    assert.equal(graph.resources.length, 1);
+    assert.equal(graph.resources.length, 3);
     const collector = graph.resources[0];
+    const database = graph.resources.find(
+      (resource) => resource.type === "database",
+    );
+    const volume = graph.resources.find(
+      (resource) => resource.type === "volume",
+    );
+    assert.equal(database.engine, "postgres");
+    assert.equal(database.name, configuration.database.name);
+    assert.equal(database.networking.tcpProxies["5432"] != null, true);
+    assert.equal(volume.name, configuration.database.volumeName);
+    assert.equal(volume.config.region, "us-east4-eqdc4a");
+    assert.equal(volume.config.sizeMB, 50000);
+    assert.equal(collector.variables.DATABASE_URL, undefined);
+    assert.deepEqual(collector.variables.DB_EVENTS_URL, {
+      type: "reference",
+      resource: database.address,
+      output: "DATABASE_PUBLIC_URL",
+    });
+    assert.match(
+      database.variables.DATABASE_PUBLIC_URL.value,
+      /RAILWAY_TCP_PROXY_DOMAIN/,
+    );
+    assert.match(
+      database.variables.DATABASE_PUBLIC_URL.value,
+      /RAILWAY_TCP_PROXY_PORT/,
+    );
+    assert.match(
+      database.variables.DATABASE_PUBLIC_URL.value,
+      /sslmode=require$/,
+    );
     assert.equal(collector.source.repo, "paulshorey/events");
     assert.equal(
       collector.source.branch,
