@@ -1,9 +1,16 @@
 import { spawnSync } from "node:child_process";
+import { readFileSync } from "node:fs";
+import { parseEnv } from "node:util";
 
 // Read-only local smoke check. Keep the URL/password out of argv, diagnostics,
-// and output. Loading .env.local is explicit in the npm command.
+// and output. The npm command selects .env.local explicitly; its active value
+// wins over inherited credentials. Direct invocation accepts DB_EVENTS_URL.
 try {
-  const url = new URL(process.env.DB_EVENTS_URL);
+  const local = process.argv.includes("--local");
+  const connection = local
+    ? parseEnv(readFileSync(".env.local", "utf8")).DB_EVENTS_URL
+    : process.env.DB_EVENTS_URL;
+  const url = new URL(connection);
   if (
     !["postgres:", "postgresql:"].includes(url.protocol) ||
     !url.hostname ||
@@ -52,7 +59,7 @@ try {
   console.log(JSON.stringify({ connected: true, ...check }, null, 2));
 } catch {
   console.error(
-    "Database check failed. Verify DB_EVENTS_URL, public TCP access, and psql installation (or PSQL_PATH). Connection details are suppressed.",
+    "Database check failed. Verify DB_EVENTS_URL (.env.local is required with --local), public TCP access, and psql installation (or PSQL_PATH). Connection details are suppressed.",
   );
   process.exitCode = 1;
 }

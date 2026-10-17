@@ -1,6 +1,14 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { mkdtemp, rm, writeFile, chmod } from "node:fs/promises";
+import {
+  mkdtemp,
+  rm,
+  writeFile,
+  chmod,
+  mkdir,
+  copyFile,
+  readFile,
+} from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { spawnSync } from "node:child_process";
@@ -33,6 +41,66 @@ console.log(JSON.stringify({postgresMajor:18,tls:true,readOnly:'on',applicationT
   assert.doesNotMatch(
     result.stdout + result.stderr,
     /events-test-password|other-test-password/,
+  );
+});
+
+test("npm db:check selects the local file over an inherited Events URL and requires that file", async (t) => {
+  const directory = await mkdtemp(join(tmpdir(), "events-db-local-"));
+  t.after(() => rm(directory, { recursive: true, force: true }));
+  const project = JSON.parse(
+    await readFile(new URL("../package.json", import.meta.url)),
+  );
+  await mkdir(join(directory, "scripts"));
+  await copyFile(
+    new URL("../scripts/check-database.mjs", import.meta.url),
+    join(directory, "scripts/check-database.mjs"),
+  );
+  await writeFile(
+    join(directory, "package.json"),
+    JSON.stringify({
+      type: "module",
+      scripts: { "db:check": project.scripts["db:check"] },
+    }),
+  );
+  const dev =
+    "postgresql://events:dev-test-password@dev.example.test/events?sslmode=require";
+  await writeFile(
+    join(directory, ".env.local"),
+    `DB_EVENTS_URL=${dev}\n# DB_EVENTS_URL=postgresql://production:prod-test-password@prod.example.test/events\n`,
+  );
+  const client = join(directory, "psql");
+  await writeFile(
+    client,
+    `#!${process.execPath}\nif(process.env.PGHOST !== 'dev.example.test' || process.env.PGPASSWORD !== 'dev-test-password') process.exit(1);\nconsole.log(JSON.stringify({postgresMajor:18,tls:true,readOnly:'on',applicationTables:0}));\n`,
+  );
+  await chmod(client, 0o700);
+  const env = {
+    ...process.env,
+    DB_EVENTS_URL:
+      "postgresql://production:prod-test-password@prod.example.test/events",
+    PSQL_PATH: client,
+  };
+  const check = (environment) =>
+    spawnSync("npm", ["run", "db:check", "--silent"], {
+      cwd: directory,
+      encoding: "utf8",
+      timeout: 10000,
+      env: environment,
+    });
+  let result = check(env);
+  assert.equal(result.status, 0, result.stderr);
+  assert.equal(JSON.parse(result.stdout).connected, true);
+  assert.doesNotMatch(
+    result.stdout + result.stderr,
+    /dev-test-password|prod-test-password/,
+  );
+  await rm(join(directory, ".env.local"));
+  // Even a usable inherited URL cannot substitute for the required local file.
+  result = check({ ...env, DB_EVENTS_URL: dev });
+  assert.equal(result.status, 1);
+  assert.doesNotMatch(
+    result.stdout + result.stderr,
+    /dev-test-password|prod-test-password/,
   );
 });
 

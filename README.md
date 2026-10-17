@@ -19,7 +19,7 @@ The ignored `.env.local` contains the development PostgreSQL URL as active `DB_E
 npm run db:check
 ```
 
-This loads `.env.local` explicitly and executes read-only SQL, reporting the PostgreSQL major version, TLS state and public application-table count. It does not print the connection URL, run migrations, or upload events. See [_working/database_handoff.md](_working/database_handoff.md) for the ingestion boundary and remaining schema work.
+This explicitly selects the active `DB_EVENTS_URL` from `.env.local`, overriding any inherited value, and executes read-only SQL, reporting the PostgreSQL major version, TLS state and public application-table count. Missing or invalid local credentials fail rather than falling back to a global URL. Direct `node scripts/check-database.mjs` is the separate environment-based check for explicitly selected operational targets. Neither mode prints the connection URL, runs migrations, or uploads events. See [_working/database_handoff.md](_working/database_handoff.md) for the ingestion boundary and remaining schema work.
 
 ## Start here
 
