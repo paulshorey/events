@@ -71,7 +71,8 @@ export function eventRecord(config, input, evidence) {
       ? String(input.startDate).slice(0, 10)
       : range.startDate;
   const endDate = end.startDate ?? range.endDate ?? startDate,
-    url = safeUrl(input.url ?? input["@id"], evidence.url ?? config.url);
+    base = evidence.url ?? config.url,
+    url = safeUrl(input.url, base) ?? safeUrl(input["@id"], base);
   if (
     !title ||
     title.length < 3 ||

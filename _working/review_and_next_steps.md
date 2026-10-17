@@ -25,9 +25,9 @@ PostgreSQL is appropriate for shared observations, run metadata, import receipts
 
 ## Review fixes included
 
-1. **Missing event links created false URLs.** `new URL(undefined, listingUrl)` previously produced a valid-looking `/undefined` event link. The shared URL helper now rejects missing, blank and non-string values. Events with neither a usable URL nor `@id` are rejected rather than receiving an invented link.
+1. **Missing event links created false URLs.** `new URL(undefined, listingUrl)` previously produced a valid-looking `/undefined` event link. The shared URL helper now rejects missing, blank and non-string values. It validates `url` and `@id` independently, retaining a usable canonical identifier when an optional URL is malformed. Events with neither usable link are rejected rather than receiving an invented link.
 2. **Null optional JSON-LD fields crashed parsing.** An `identifier: null` or `addressCountry: null` could throw. Parsing now retains otherwise valid events and preserves unknown values. A labeled synthetic JSON-LD fixture covers both null fields and missing links.
-3. **Redirected content could be attributed to the wrong collection.** The transport previously checked only the starting URL. It now rechecks the effective API/browser URL and browser URL after readiness, before returning content for parsing; rejected responses remain failure evidence. Real Playwright tests redirect between two loopback hostnames and verify scope rejection for both transports.
+3. **Redirected content could be attributed to the wrong collection.** The transport previously checked only the starting URL. It now checks the effective API URL and browser document URL before returning content for parsing; rejected responses remain failure evidence. Browser HTML and its URL are read atomically, and the exact checked snapshot URL is returned, even if navigation occurs during an asynchronous policy check. Real Playwright tests verify scope rejection for both transports and force navigation during the final policy check.
 
 These changes pass offline/controlled tests. They do not revalidate historical live runs or close source repair tickets. The transport still follows redirects before checking the destination; checking every redirect hop before acquisition is a remaining policy-hardening task. The final URL guard prevents accepting that content as a successful collection, but it is not a pre-request redirect firewall.
 
@@ -84,8 +84,9 @@ All 97 schedules remain disabled. Database provisioning does not activate worker
 ## Validation for this review
 
 - `npm run railway:check`: passed.
-- `npm test`: 57 passed, including database-key isolation from unrelated global settings, real Chromium runtime readiness, controlled API retry/recovery and API/browser redirect rejection.
+- `npm test`: 59 passed, including malformed-URL fallback to JSON-LD `@id`, database-key isolation from unrelated global settings, real Chromium runtime readiness, controlled API retry/recovery, API/browser redirect rejection and navigation during final browser policy validation.
 - `npm run db:check`: development connection passed with TLS and read-only SQL.
+- Bounded LA Convention Center browser probe in a disposable journal: one page, 31 observations, explicitly `partial`/`probe_only`; no repair ticket was closed or operational journal reset. This is a transport compatibility sample, not a new complete-source validation.
 - Separate production connection check: TLS/read-only SQL passed; no application tables or writes.
 - Native Railway state: independent database volumes, successful PostgreSQL deployments, daily/weekly backup schedules and clean IaC plans in both environments.
 - `node scripts/verify-hosting.mjs`: validates exact current branch deployments, HTTPS runtime readiness and database infrastructure; secret values are not read by this command.

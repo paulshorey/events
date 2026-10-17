@@ -14,6 +14,38 @@ const evidence = { url: config.url };
 const event = JSON.parse(
   await readFile(new URL("fixtures/jsonld-null-fields.json", import.meta.url)),
 );
+const fallbackEvent = JSON.parse(
+  await readFile(new URL("fixtures/jsonld-url-fallback.json", import.meta.url)),
+);
+
+test("unusable optional url values fall back to a usable JSON-LD @id", () => {
+  for (const url of [
+    undefined,
+    null,
+    "",
+    "   ",
+    {},
+    42,
+    false,
+    "javascript:alert(1)",
+    "http://[",
+  ]) {
+    const record = recordFromJsonLd(
+      config,
+      { ...fallbackEvent, url },
+      evidence,
+    );
+    assert.ok(record, "a usable canonical identifier retains the event");
+    assert.equal(record.url, fallbackEvent["@id"]);
+    assert.equal(record.raw.url, url);
+  }
+  const record = recordFromJsonLd(
+    config,
+    { ...fallbackEvent, url: "/event/preferred" },
+    evidence,
+  );
+  assert.equal(record.url, "https://example.test/event/preferred");
+});
 
 test("missing links cannot become plausible /undefined or /null event URLs", () => {
   for (const missing of [undefined, null, "", "   ", {}, 42]) {
