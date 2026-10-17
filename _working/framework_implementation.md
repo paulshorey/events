@@ -2,7 +2,7 @@
 
 Implementation and live validation completed October 16–17, 2026.
 
-Hosting update: the code is now in private `paulshorey/events`, with main/dev and prod/production Railway deployment targets. See `.railway/README.md` for current hosting operations. The collection results below describe the earlier local mining milestone; hosted services remain passive, with no scheduler or remote database. Collection tests use `asOf: 2026-10-16`. Read this with `README.md`; the earlier `initial_data_mining_framework.md` describes the original research/prototype stage.
+Hosting update: the code is now in private `paulshorey/events`, with main/dev and prod/production Railway deployment targets. Separate dev/production PostgreSQL services were provisioned October 17; event schema/import are still pending. See `.railway/README.md` for current hosting operations and `review_and_next_steps.md` for the current review. The collection results below describe the earlier local mining milestone; hosted services remain passive, with no collection scheduler. Collection tests use `asOf: 2026-10-16`. Read this with `README.md`; the earlier `initial_data_mining_framework.md` describes the original research/prototype stage.
 
 ## What is built
 
@@ -26,7 +26,7 @@ Implemented components:
 | Local storage | Append-only run observations, raw captures, derived JSONL/result exports, last good/complete pointers |
 | Tests | 45 passing regression/integration tests, plus the live browser fleet and complete pagination runs |
 
-No external development database, hosted worker, Codex scheduled task, background daemon or website has been configured. **All 97 schedules remain disabled.** Manual runs are independent of schedule enablement.
+At the original collection milestone no external development database, hosted worker, Codex scheduled task, background daemon or website had been configured. PostgreSQL was subsequently provisioned; hosted collection and import remain pending. **All 97 schedules remain disabled.** Manual runs are independent of schedule enablement.
 
 ## Measured results
 
@@ -128,7 +128,7 @@ The current milestone is usable: more scrapers can be developed, bounded runs ca
 
 The remaining infrastructure steps are deliberate boundaries:
 
-1. Supply the development database configuration through ignored credentials/environment storage. Follow `database_handoff.md` for append-only source observations, idempotent delivery, canonical events and city/category tags.
+1. Development and production PostgreSQL connections are now provisioned in ignored credential storage. Follow `database_handoff.md` for the remaining migrations, append-only source observations, idempotent delivery, canonical events and city/category tags.
 2. Add an upload outbox with delivery receipts and database-outage tests. Remote delivery retries must not trigger scraping again.
 3. Choose a worker host, install a process supervisor and backups, and validate long-running behavior. Use a deterministic due-work tick; keep per-source schedules in the registry/journal.
 4. Add Codex coordination for onboarding and repair claims once its operating scope is reviewed. Agents change scripts; the traditional CLI remains responsible for acquisition.

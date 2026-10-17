@@ -8,4 +8,6 @@ These small fixtures were selected from public pages/API responses inspected on 
 
 Original run captures and the initially failed Boston attempt remain in ignored `.artifacts/`. The Boston link-format tests failed before the adapter fix and passed afterward.
 
+`jsonld-null-fields.json` is a synthetic contract fixture for optional null identifiers/countries and missing event URLs. It is not a captured publisher event. Redirect tests use two loopback hostnames and a controlled local server; they never contact external websites.
+
 The additional `nyc-tourism`, `orlando`, `downtown-orlando`, `san-diego`, `sf-portal`, `trade-table`, `chicago-parks`, `festivalindex`, and `dc-tourism` HTML files are bounded excerpts from the October 16/17, 2026 reconnaissance captures. Table excerpts retain a table wrapper because HTML parsing otherwise discards standalone rows. These fixtures preserve source dates and structure; they are historical parser contracts, not current event recommendations. Chicago's second card deliberately lacks a year-bearing timestamp and must be rejected rather than guessing the year. Full local captures remain in ignored artifacts.

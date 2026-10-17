@@ -165,6 +165,9 @@ export class Transport {
         "json",
       );
       try {
+        // Playwright follows HTTP redirects. The effective page must still
+        // belong to this collection before any observations can be parsed.
+        await this.permit(response.url());
         classifyResponse(response.status(), body);
       } catch (error) {
         error.capture = capture;
@@ -182,6 +185,7 @@ export class Transport {
         waitUntil: "domcontentloaded",
         timeout: this.timeoutMs,
       });
+      await this.permit(page.url());
       let body = await page.content();
       // Capture denials before attempting a selector wait.
       try {
@@ -226,6 +230,8 @@ export class Transport {
         page.url(),
         "html",
       );
+      // Client-side navigation may have occurred during the readiness wait.
+      await this.permit(page.url());
       return {
         body,
         url: page.url(),
@@ -242,8 +248,8 @@ export class Transport {
           page.url(),
           "html",
         ).catch(() => null);
-        if (capture) error.capture = capture;
       }
+      if (capture) error.capture = capture;
       await page
         .screenshot({
           path: resolve(

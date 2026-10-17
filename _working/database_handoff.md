@@ -1,6 +1,8 @@
-# Database handoff — not connected or migrated
+# Database handoff — provisioned, event schema and importer pending
 
-The crawler framework currently uses a local SQLite operational journal and JSONL exports. This keeps collection and repair work useful before the central development database exists. A database URL is not needed to run or improve a scraper.
+The crawler framework currently uses a local SQLite operational journal and JSONL exports. Separate Railway PostgreSQL 18 services now exist in dev and production, with independent persistent volumes and credentials. Both passed read-only SQL connections over TLS on October 17, 2026, and had zero public application tables. A database URL is still not needed to run or improve a scraper.
+
+The git-ignored `.env.local` contains the active development `DATABASE_URL` and a commented production assignment. File permissions are owner-only. `npm run db:check` loads that file and checks connectivity without exposing the URL. Railway's `events` service receives a private-network database reference in each environment, but application code does not consume it yet. Provider service/volume IDs and operations are recorded in `.railway/project.json` and `.railway/README.md`. Daily and weekly volume backups are configured; a restore drill is still required before relying on production storage.
 
 ## Proposed storage boundary
 
@@ -10,7 +12,7 @@ Keep three layers separate:
 2. **Source observations:** append-only records exactly as extracted, including title/date/location/category claims, native identity, collection/run IDs, parser revision, scope, and evidence. Partial runs are useful here and remain labeled partial.
 3. **Canonical events:** reviewed normalized events and occurrences, connected to source observations and city/category dictionaries. Only this layer feeds the future website.
 
-A central PostgreSQL database is a straightforward next step. Proposed initial tables:
+A central PostgreSQL database is now available. Proposed initial tables, still to be implemented:
 
 | Table | Purpose | Idempotency/identity |
 | --- | --- | --- |
@@ -37,12 +39,12 @@ Keep queue state in SQLite while all workers run on one machine. If workers move
 - Missing from a partial crawl is never a cancellation. Missing from one complete run is only a missing observation. Use repeated comparable complete snapshots and explicit source cancellation evidence before changing publication status.
 - API offset pagination is not an upstream atomic snapshot. The framework checks totals, repeated pages and final counts, but cannot prove a remote provider did not change records while counts stayed constant. Preserve the run interval and scope.
 
-## When the development connection is supplied
+## Next implementation sequence
 
-1. Read connection settings from an ignored environment/credential location. Perform a read-only identity/schema check first; never print the URL.
+1. Use the active development connection in `.env.local`. Repeat the read-only identity/schema check first; never print the URL. Database provisioning and connectivity checks are complete; production migrations require their own reviewed release.
 2. Create reviewed, forward-only development migrations and verify constraints.
 3. Implement the outbox/import boundary and idempotent upserts. Test duplicate delivery, interrupted delivery and database outage/recovery with a disposable database.
 4. Import a small known run, compare counts and evidence links, and then import the full validated source runs.
 5. Add normalization and reconciliation jobs. Only after that should deployment, hosted schedules and Codex repair coordination be activated.
 
-No external database calls, migrations, credentials, canonical event publication, or hosted services were created in this implementation stage.
+No event migrations, imports, canonical event publication or unattended collection were performed during database provisioning. Provisioning is a storage prerequisite, not a working ingestion pipeline.

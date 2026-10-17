@@ -1,0 +1,14 @@
+{
+  "@type": "Event",
+  "name": "Independent neighborhood fair",
+  "startDate": "2026-10-18",
+  "url": "https://example.test/event/neighborhood-fair",
+  "identifier": null,
+  "location": {
+    "name": "Community hall",
+    "address": {
+      "addressLocality": "Boston",
+      "addressCountry": null
+    }
+  }
+}

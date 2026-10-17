@@ -96,6 +96,55 @@ try {
       (resource) => resource.address === `service.${target.serviceName}`,
     );
     assert.equal(effective.build.builder, "DOCKERFILE");
+    const database = plan.currentGraph.resources.find(
+      (resource) => resource.address === `database.${env.database.name}`,
+    );
+    assert.equal(database?.engine, "postgres");
+    assert.ok(database.networking?.tcpProxies?.["5432"]);
+    const databaseVolume = plan.currentGraph.resources.find(
+      (resource) => resource.address === `volume.${env.database.volumeName}`,
+    );
+    assert.equal(databaseVolume?.config?.region, "us-east4-eqdc4a");
+    assert.equal(databaseVolume?.config?.sizeMB, 50000);
+    const backups = JSON.parse(
+      command("railway", [
+        "postgres",
+        "pitr",
+        "schedule",
+        "list",
+        "--project",
+        target.projectId,
+        "--environment",
+        env.id,
+        "--service",
+        env.database.id,
+        "--json",
+      ]),
+    );
+    assert.deepEqual(backups.map((backup) => backup.kind).sort(), [
+      "DAILY",
+      "WEEKLY",
+    ]);
+    const databaseDeployments = JSON.parse(
+      command("railway", [
+        "deployment",
+        "list",
+        "--project",
+        target.projectId,
+        "--environment",
+        env.id,
+        "--service",
+        env.database.id,
+        "--limit",
+        "1",
+        "--json",
+      ]),
+    );
+    assert.equal(
+      databaseDeployments[0]?.status,
+      "SUCCESS",
+      `${name}: database deployment`,
+    );
     assert.equal(instance.startCommand, "node src/server.mjs");
     assert.equal(instance.healthcheckPath, "/api/health");
     assert.ok(!instance.railwayConfigFile);
@@ -164,6 +213,14 @@ try {
       configurationAligned: true,
       browserReady: true,
       schedulerRunning: false,
+      database: {
+        serviceId: env.database.id,
+        volumeId: env.database.volumeId,
+        deploymentId: databaseDeployments[0].id,
+        deploymentStatus: databaseDeployments[0].status,
+        backupSchedules: backups.map((backup) => backup.kind).sort(),
+        // SQL connectivity is checked separately with db:check.
+      },
     });
   }
   console.log(

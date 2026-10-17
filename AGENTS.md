@@ -1,6 +1,6 @@
 # Events collection framework
 
-Read `README.md` and `_working/framework_implementation.md` before changing collection behavior. There is no remote event database or installed scheduler yet. All registered schedules are disabled by default. Do not infer permission to activate unattended jobs or publish observations from a successful sample.
+Read `README.md` and `_working/framework_implementation.md` before changing collection behavior. Dev and production PostgreSQL services exist, but have no event schema or importer yet; SQLite remains the crawler journal. No scheduler is installed. All registered schedules are disabled by default. Do not infer permission to activate unattended jobs or publish observations from a successful sample. `.env.local` is ignored and contains active dev and commented production credentials; never print or commit it.
 
 - Make acquisition deterministic. No LLM calls inside miners; AI work produces reviewed code/configuration and fixtures.
 - Each supplied URL has a collection ID and executable in `scrapers/`. Reuse `src/` runtime and platform parsers. Do not create 97 independent queue or browser implementations.

@@ -17,7 +17,8 @@
     "railway:check": "tsc -p .railway/tsconfig.json",
     "railway:plan": "railway config plan --file .railway/railway.ts",
     "railway:apply": "railway config apply --file .railway/railway.ts",
-    "hosting:verify": "node scripts/verify-hosting.mjs"
+    "hosting:verify": "node scripts/verify-hosting.mjs",
+    "db:check": "node --env-file=.env.local scripts/check-database.mjs"
   },
   "engines": {
     "node": ">=24"

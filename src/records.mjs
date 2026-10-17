@@ -51,6 +51,7 @@ export function dates(value) {
   return { startDate: null, endDate: null };
 }
 export function safeUrl(value, base) {
+  if (typeof value !== "string" || !value.trim()) return null;
   try {
     const u = new URL(value, base);
     if (!["http:", "https:"].includes(u.protocol) || u.username || u.password)
@@ -160,7 +161,7 @@ export function recordFromJsonLd(config, event, evidence) {
     address = loc?.address;
   const identifier =
     typeof event.identifier === "object"
-      ? event.identifier.value
+      ? event.identifier?.value
       : event.identifier;
   return eventRecord(
     config,
@@ -182,7 +183,7 @@ export function recordFromJsonLd(config, event, evidence) {
             region: address?.addressRegion ?? null,
             country:
               typeof address?.addressCountry === "object"
-                ? address.addressCountry.name
+                ? (address.addressCountry?.name ?? null)
                 : (address?.addressCountry ?? null),
             basis: "upstream structured data",
           }
