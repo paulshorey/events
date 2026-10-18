@@ -3,13 +3,15 @@ import { resolve, join } from "node:path";
 import { createHash, randomUUID } from "node:crypto";
 import { parseDocument } from "./adapters/document.mjs";
 import { parseTribePage } from "../examples/parsers.mjs";
-import { validDate } from "./records.mjs";
+import { validDate, eventRecord } from "./records.mjs";
+import { fieldSummary, mergeDetail } from "./event-fields.mjs";
 import { Transport, sleep } from "./runtime/transport.mjs";
 import { LeaseLost } from "./storage/journal.mjs";
 
 export async function buildId() {
   const files = [
     "src/records.mjs",
+    "src/event-fields.mjs",
     "src/worker.mjs",
     "src/runtime/transport.mjs",
     "src/storage/journal.mjs",
@@ -81,16 +83,19 @@ export function parseApi(body, url, config, task) {
     });
   }
   return {
-    records: parsed.records.map((r) => ({
-      ...r,
-      schemaVersion: 2,
-      marketCity: config.cityMarket,
-      sourceGroups: [config.group],
-      sourceId: config.sourceKey,
-      collectionId: config.id,
-      validationStatus: "parser-validated",
-      evidence: { ...r.evidence, url },
-    })),
+    records: parsed.records.map((r) => {
+      const normalized = eventRecord(
+        config,
+        { ...r, id: r.sourceRecordId },
+        { ...r.evidence, url },
+      );
+      if (!normalized)
+        throw Object.assign(
+          new Error("API event has invalid dates, times or location shape"),
+          { code: "data_quality_error" },
+        );
+      return { ...normalized, validationStatus: "parser-validated" };
+    }),
     nextRequests,
     expectedTotal: parsed.total,
     terminal: page >= parsed.totalPages,
@@ -112,10 +117,15 @@ export function evaluate(journal, run, stopReason) {
   const failed = pages.filter((p) => p.state === "failed").length,
     results = pages.filter((p) => p.state === "done").map((p) => p.result),
     issues = results.flatMap((p) => p.issues ?? []);
+  const enumerationResults = pages
+    .filter((p) => p.state === "done" && ["listing", "api"].includes(p.kind))
+    .map((p) => p.result);
   const knownCoverage =
-    results.length > 0 &&
-    results.every((p) => ["verified-list", "api-query"].includes(p.coverage));
-  const terminal = results.some((p) => p.terminal),
+    enumerationResults.length > 0 &&
+    enumerationResults.every((p) =>
+      ["verified-list", "api-query"].includes(p.coverage),
+    );
+  const terminal = enumerationResults.some((p) => p.terminal),
     countMatches =
       run.expected_total == null || run.expected_total === records.length;
   const previousId = journal.collection(run.collection_id).last_complete;
@@ -162,6 +172,7 @@ export function evaluate(journal, run, stopReason) {
     failedPages: failed,
     requests: run.requests,
     observedRecords: records.length,
+    fieldQuality: fieldSummary(records),
     recordCount: upcoming.length,
     expectedTotal: run.expected_total,
     countMatches,
@@ -310,11 +321,49 @@ export async function work(
             throw Object.assign(new Error("Invalid extracted calendar date"), {
               code: "data_quality_error",
             });
-          r.evidence = {
-            ...r.evidence,
+          const stamp = (evidence) => ({
+            ...evidence,
             capture: input.capture.path,
             contentHash: input.capture.hash,
-          };
+            ...(evidence.details
+              ? { details: evidence.details.map(stamp) }
+              : {}),
+          });
+          r.evidence = stamp(r.evidence);
+          if (r.fieldEvidence)
+            r.fieldEvidence = Object.fromEntries(
+              Object.entries(r.fieldEvidence).map(([key, e]) => [
+                key,
+                stamp(e),
+              ]),
+            );
+        }
+        if (task.meta.enrichRecordIds) {
+          const targets = journal
+            .records(run.id)
+            .filter((r) =>
+              task.meta.enrichRecordIds.includes(r.sourceRecordId),
+            );
+          parsed.enrichments = targets
+            .map((listing) => {
+              const candidates = parsed.records
+                .map((detail) =>
+                  mergeDetail(listing, detail, {
+                    allowDateRange: run.config.adapter === "opencities",
+                    titleAliases: run.config.detailTitleAliases,
+                  }),
+                )
+                .filter(Boolean);
+              return candidates.length === 1 ? candidates[0] : null;
+            })
+            .filter(Boolean);
+          if (parsed.enrichments.length !== targets.length)
+            parsed.issues.push({
+              code: "detail_occurrence_not_matched",
+              expected: targets.length,
+              matched: parsed.enrichments.length,
+            });
+          parsed.records = [];
         }
         journal.commitPage(run.id, run.token, task, parsed, input.capture);
         onProgress({

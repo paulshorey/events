@@ -39,12 +39,16 @@ export class Journal {
         UNIQUE(run_id,url,kind));
       CREATE TABLE IF NOT EXISTS observations(run_id TEXT NOT NULL REFERENCES runs(id),record_key TEXT NOT NULL,
         payload TEXT NOT NULL,page_id INTEGER NOT NULL REFERENCES pages(id),PRIMARY KEY(run_id,record_key));
+      CREATE TABLE IF NOT EXISTS record_enrichments(run_id TEXT NOT NULL,record_key TEXT NOT NULL,
+        page_id INTEGER NOT NULL REFERENCES pages(id),payload TEXT NOT NULL,
+        PRIMARY KEY(run_id,record_key,page_id),
+        FOREIGN KEY(run_id,record_key) REFERENCES observations(run_id,record_key));
       CREATE TABLE IF NOT EXISTS repair_jobs(id TEXT PRIMARY KEY,collection_id TEXT NOT NULL,run_id TEXT NOT NULL,
         code TEXT NOT NULL,status TEXT NOT NULL DEFAULT 'open',created INTEGER,updated INTEGER,occurrences INTEGER DEFAULT 1,
         packet TEXT NOT NULL,owner TEXT,token TEXT,lease_until INTEGER);
       CREATE UNIQUE INDEX IF NOT EXISTS one_open_repair ON repair_jobs(collection_id,code) WHERE status IN ('open','claimed','probation');
       CREATE TABLE IF NOT EXISTS actions(id INTEGER PRIMARY KEY,at INTEGER NOT NULL,run_id TEXT,kind TEXT NOT NULL,payload TEXT NOT NULL);
-      PRAGMA user_version=1;`);
+      PRAGMA user_version=2;`);
   }
   close() {
     this.db.close();
@@ -324,6 +328,33 @@ export class Journal {
       !["https:", "http:"].includes(new URL(page.url).protocol)
     )
       throw new Error("Invalid queued page URL");
+    const existing = this.db
+      .prepare(
+        "SELECT id,state,meta FROM pages WHERE run_id=? AND url=? AND kind=?",
+      )
+      .get(id, page.url, page.kind ?? "listing");
+    if (existing && page.meta?.enrichRecordIds?.length) {
+      const meta = JSON.parse(existing.meta),
+        ids = new Set(meta.enrichRecordIds ?? []);
+      const additions = page.meta.enrichRecordIds.filter(
+        (key) => !ids.has(key),
+      );
+      if (additions.length && existing.state !== "pending")
+        throw Object.assign(
+          new Error(
+            "New occurrence bindings arrived after the detail task was claimed; start a fresh enumeration",
+          ),
+          { code: "late_detail_bindings" },
+        );
+      for (const key of additions) ids.add(key);
+      if (additions.length)
+        this.db
+          .prepare("UPDATE pages SET meta=? WHERE id=?")
+          .run(
+            JSON.stringify({ ...meta, enrichRecordIds: [...ids] }),
+            existing.id,
+          );
+    }
     return this.db
       .prepare(
         "INSERT INTO pages(run_id,url,kind,depth,meta) VALUES(?,?,?,?,?) ON CONFLICT(run_id,url,kind) DO NOTHING",
@@ -341,7 +372,7 @@ export class Journal {
       this.assertLease(id, token);
       const p = this.db
         .prepare(
-          "SELECT * FROM pages WHERE run_id=? AND state='pending' ORDER BY id LIMIT 1",
+          "SELECT * FROM pages WHERE run_id=? AND state='pending' ORDER BY CASE WHEN kind IN ('listing','api') THEN 0 ELSE 1 END,id LIMIT 1",
         )
         .get(id);
       if (!p) return null;
@@ -394,6 +425,18 @@ export class Journal {
             "INSERT INTO observations(run_id,record_key,payload,page_id) VALUES(?,?,?,?) ON CONFLICT(run_id,record_key) DO NOTHING",
           )
           .run(id, record.sourceRecordId, JSON.stringify(record), page.id);
+      for (const record of result.enrichments ?? []) {
+        if (!page.meta.enrichRecordIds?.includes(record.sourceRecordId))
+          throw new Error(
+            "Detail enrichment is not bound to the requested listing record",
+          );
+        this.db
+          .prepare(
+            `INSERT INTO record_enrichments(run_id,record_key,page_id,payload)
+          VALUES(?,?,?,?) ON CONFLICT(run_id,record_key,page_id) DO NOTHING`,
+          )
+          .run(id, record.sourceRecordId, page.id, JSON.stringify(record));
+      }
       for (const next of result.nextRequests) this._addPage(id, next);
       this.db
         .prepare(
@@ -403,7 +446,11 @@ export class Journal {
           capture.path,
           capture.hash,
           fp,
-          JSON.stringify({ ...result, records: undefined }),
+          JSON.stringify({
+            ...result,
+            records: undefined,
+            enrichments: undefined,
+          }),
           page.id,
         );
     });
@@ -419,12 +466,21 @@ export class Journal {
       }));
   }
   records(id) {
-    return this.db
+    const records = this.db
       .prepare(
         "SELECT payload FROM observations WHERE run_id=? ORDER BY record_key",
       )
       .all(id)
       .map((r) => JSON.parse(r.payload));
+    const enriched = new Map(
+      this.db
+        .prepare(
+          "SELECT record_key,payload FROM record_enrichments WHERE run_id=? ORDER BY page_id",
+        )
+        .all(id)
+        .map((r) => [r.record_key, JSON.parse(r.payload)]),
+    );
+    return records.map((r) => enriched.get(r.sourceRecordId) ?? r);
   }
   pageError(id, token, pageId, error, retry, capture = null) {
     return this.tx(() => {

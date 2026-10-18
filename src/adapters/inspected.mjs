@@ -116,10 +116,7 @@ export function parseInspected({ html, url, config }) {
           endDate: rawDate.endDate,
           location: {
             venue,
-            locality: "San Francisco",
-            region: "CA",
-            country: "US",
-            basis: "source convention calendar",
+            basis: "upstream venue row; city market is separate provenance",
           },
           raw: { rowText: text(c.text()) },
         },
@@ -157,6 +154,10 @@ export function parseInspected({ html, url, config }) {
         a = c.find(".event--title a").first(),
         times = c.find("time[datetime]");
       if (!a.length) return;
+      const locationText = text(c.find(".event--location").text());
+      const address = locationText.match(
+        /^(.*?)\s+(Chicago),\s*(IL)\s+(\d{5}(?:-\d{4})?)$/,
+      );
       add(
         {
           title: a.text(),
@@ -164,7 +165,11 @@ export function parseInspected({ html, url, config }) {
           startDate: times.first().attr("datetime"),
           endDate: times.last().attr("datetime"),
           location: {
-            address: text(c.find(".event--location").text()),
+            formattedAddress: locationText,
+            streetAddress: address?.[1],
+            locality: address?.[2],
+            region: address?.[3],
+            postalCode: address?.[4],
             basis: "upstream card location",
           },
           raw: { date: text(c.find(".event--duration").text()) },
