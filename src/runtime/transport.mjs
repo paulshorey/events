@@ -160,8 +160,17 @@ export class Transport {
   }
   async fetch(task) {
     this.leaseCheck();
+    const delay = this.journal.reserveRate(
+      this.run.source_key,
+      this.run.config.minIntervalMs ?? 1000,
+    );
+    if (delay > 5000)
+      throw Object.assign(new Error("Publisher cooldown is still active"), {
+        code: "rate_limited",
+        retryAfterMs: delay,
+      });
+    await sleep(delay);
     await this.permit(task.url);
-    await sleep(this.journal.reserveRate(this.run.source_key, 1000));
     this.leaseCheck();
     if (task.kind === "api") {
       const api = await this.initApi(),
@@ -184,23 +193,120 @@ export class Transport {
         error.capture = capture;
         const retry = response.headers()["retry-after"];
         if (retry) error.retryAfterMs = retryDelay(retry);
+        if (error.code === "rate_limited")
+          this.journal.deferRate(
+            this.run.source_key,
+            error.retryAfterMs ?? 60000,
+          );
         throw error;
       }
       return { body, url: response.url(), capture, status: response.status() };
     }
     const context = await this.initBrowser(),
-      page = await context.newPage();
+      browserPaging =
+        task.kind === "listing" &&
+        this.run.config.pagination?.mode === "nyc-browser",
+      page = browserPaging
+        ? (this.listingPage ??= await context.newPage())
+        : await context.newPage();
+    const diagnostics = {
+      requestedUrl: redactUrl(task.url),
+      startedAt: new Date().toISOString(),
+      errors: [],
+      failedRequests: [],
+      selectors: [],
+    };
+    const onPageError = (error) => {
+      if (diagnostics.errors.length < 20)
+        diagnostics.errors.push(error.message.slice(0, 400));
+    };
+    const onRequestFailed = (request) => {
+      if (
+        diagnostics.failedRequests.length < 30 &&
+        ["document", "xhr", "fetch"].includes(request.resourceType())
+      )
+        diagnostics.failedRequests.push({
+          url: redactUrl(request.url()),
+          error: request.failure()?.errorText,
+        });
+    };
+    if (this.run.options?.diagnostics) {
+      page.on("pageerror", onPageError);
+      page.on("requestfailed", onRequestFailed);
+    }
     let capture, snapshot;
     try {
-      const response = await page.goto(task.url, {
-        waitUntil: "domcontentloaded",
-        timeout: this.timeoutMs,
-      });
+      let response;
+      const target = task.meta?.browserPage ?? 1;
+      if (
+        !browserPaging ||
+        !this.listingPageNumber ||
+        target <= this.listingPageNumber
+      ) {
+        const navigationUrl = new URL(task.url);
+        if (browserPaging) navigationUrl.hash = "";
+        response = await page.goto(navigationUrl.href, {
+          waitUntil: "domcontentloaded",
+          timeout: this.timeoutMs,
+        });
+        if (browserPaging) this.listingPageNumber = 1;
+      }
+      if (browserPaging) {
+        if (
+          !Number.isSafeInteger(target) ||
+          target < 1 ||
+          target > this.run.config.pagination.maxPages
+        )
+          throw Object.assign(new Error("Invalid browser page target"), {
+            code: "pagination_changed",
+          });
+        while (this.listingPageNumber < target) {
+          this.leaseCheck();
+          const current = this.listingPageNumber;
+          const before = await page
+            .locator('a[class*="ContentCard_headerLink"]')
+            .evaluateAll((links) =>
+              links
+                .map((a) => a.textContent.trim())
+                .sort()
+                .join("|"),
+            );
+          await page
+            .locator(
+              'ul[class*="SearchPagination_pagination"] li.next:not(.disabled) a',
+            )
+            .click({ timeout: 7000 });
+          await page.waitForFunction(
+            ({ n, before }) =>
+              Number(
+                document
+                  .querySelector(
+                    'ul[class*="SearchPagination_pagination"] li[class*="SearchPagination_active"]',
+                  )
+                  ?.textContent.trim(),
+              ) === n &&
+              [
+                ...document.querySelectorAll(
+                  'a[class*="ContentCard_headerLink"]',
+                ),
+              ]
+                .map((a) => a.textContent.trim())
+                .sort()
+                .join("|") !== before,
+            { n: current + 1, before },
+            { timeout: 15000 },
+          );
+          this.listingPageNumber++;
+        }
+      }
       snapshot = await snapshotPage(page);
       await this.permit(snapshot.url);
       // Capture denials before attempting a selector wait.
       try {
-        classifyResponse(response?.status() ?? 0, snapshot.body);
+        classifyResponse(
+          response?.status() ?? (browserPaging ? 200 : 0),
+          snapshot.body,
+        );
       } catch (error) {
         capture = await saveCapture(
           this.root,
@@ -211,10 +317,20 @@ export class Transport {
           "html",
         );
         error.capture = capture;
+        const retry = await response?.headerValue("retry-after");
+        if (retry) error.retryAfterMs = retryDelay(retry);
+        if (error.code === "rate_limited")
+          this.journal.deferRate(
+            this.run.source_key,
+            error.retryAfterMs ?? 60000,
+          );
         throw error;
       }
-      const selector = this.run.config.readySelector;
-      if (selector && task.kind === "listing") {
+      const selector =
+        task.kind === "detail"
+          ? this.run.config.detailReadySelector
+          : this.run.config.readySelector;
+      if (selector) {
         try {
           await page
             .locator(selector)
@@ -233,6 +349,22 @@ export class Transport {
           .catch(() => {});
       }
       snapshot = await snapshotPage(page);
+      if (this.run.options?.diagnostics) {
+        diagnostics.url = redactUrl(snapshot.url);
+        diagnostics.status = response?.status() ?? 0;
+        for (const selector of [
+          ...new Set(
+            [
+              this.run.config.readySelector,
+              ...(this.run.config.cardSelectors ?? []),
+            ].filter(Boolean),
+          ),
+        ])
+          diagnostics.selectors.push({
+            selector,
+            count: await page.locator(selector).count(),
+          });
+      }
       capture = await saveCapture(
         this.root,
         this.run,
@@ -247,7 +379,7 @@ export class Transport {
         body: snapshot.body,
         url: snapshot.url,
         capture,
-        status: response?.status() ?? 0,
+        status: response?.status() ?? (browserPaging ? 200 : 0),
       };
     } catch (error) {
       if (!capture) {
@@ -276,7 +408,21 @@ export class Transport {
         .catch(() => {});
       throw error;
     } finally {
-      await page.close().catch(() => {});
+      page.off("pageerror", onPageError);
+      page.off("requestfailed", onRequestFailed);
+      if (this.run.options?.diagnostics && capture) {
+        diagnostics.finishedAt = new Date().toISOString();
+        const dir = resolve(this.root, "runs", this.run.id, this.run.attemptId);
+        await writeFile(
+          resolve(dir, `page-${task.id}-diagnostics.json`),
+          JSON.stringify(diagnostics, null, 2),
+          { flag: "wx" },
+        ).catch(() => {});
+        await page
+          .screenshot({ path: resolve(dir, `page-${task.id}-sample.png`) })
+          .catch(() => {});
+      }
+      if (!browserPaging) await page.close().catch(() => {});
     }
   }
   async close() {

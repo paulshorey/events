@@ -1,6 +1,7 @@
 import { load } from "cheerio";
 import { inspectedAdapters, parseInspected } from "./inspected.mjs";
 import { parseDetail } from "./detail.mjs";
+import { inspectedPagination } from "./pagination.mjs";
 import {
   parseLaCalendar,
   parseBostonCalendar,
@@ -86,6 +87,7 @@ export function parseDocument({
     observedCount = parsed.observedCount;
     method = parsed.method;
     rejected = parsed.rejected;
+    nextRequests.push(...(parsed.nextRequests ?? []));
     coverage = parsed.coverage;
     terminal = parsed.terminal;
   } else if (config.adapter === "la") {
@@ -441,6 +443,23 @@ export function parseDocument({
   }
   if (rejected)
     issues.push({ code: "records_require_parse_review", count: rejected });
+  const paging = inspectedPagination($, url, config, task);
+  if (paging) {
+    const details = nextRequests.filter((r) => r.kind === "detail");
+    nextRequests.splice(
+      0,
+      nextRequests.length,
+      ...paging.nextRequests,
+      ...details,
+    );
+    coverage = paging.coverage;
+    terminal = paging.terminal;
+  }
+  if (config.listingContract && !$(config.listingContract).length)
+    throw Object.assign(
+      new Error(`Listing contract missing: ${config.listingContract}`),
+      { code: "contract_changed" },
+    );
   const pattern = new RegExp(config.detailPattern),
     discovered = [];
   $(
@@ -460,6 +479,7 @@ export function parseDocument({
   });
   // Never label unknown discovery navigation as a complete event catalogue.
   if (
+    config.discoverDetails !== false &&
     !["la", "boston", "tribe"].includes(config.adapter) &&
     task.depth < config.maxDepth
   ) {
@@ -498,8 +518,20 @@ export function parseDocument({
         "Inspect source, embeds, network calls and event-specific sections",
     });
   if (
-    $('iframe[src*="calendar"],iframe[src*="trumba"],iframe[src*="event"]')
-      .length
+    $("iframe[src]")
+      .toArray()
+      .some((el) => {
+        try {
+          const frame = new URL($(el).attr("src"), url);
+          return (
+            /(?:^|\.)trumba\.com$|(?:^|\.)localist\.com$/.test(
+              frame.hostname,
+            ) || /\/(?:calendar|events)(?:\/|\.|$)/i.test(frame.pathname)
+          );
+        } catch {
+          return false;
+        }
+      })
   )
     issues.push({ code: "embedded_calendar_requires_validation" });
   const uniqueRequests = new Map();

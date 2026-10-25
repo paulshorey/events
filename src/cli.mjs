@@ -3,7 +3,15 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { Journal } from "./storage/journal.mjs";
 import { registry } from "./registry.mjs";
 import { optionsFor, buildId, work, exportRun } from "./worker.mjs";
-import { parseDocument } from "./adapters/document.mjs";
+import {
+  inspectSource,
+  replayPage,
+  replayRun,
+  compareRecords,
+  writeBundle,
+  replayBundle,
+} from "./diagnostics.mjs";
+import { randomUUID } from "node:crypto";
 
 const projectRoot = resolve(new URL("../", import.meta.url).pathname);
 const flags = {
@@ -25,8 +33,11 @@ const flags = {
   "--all": "all",
   "--primary": "primary",
   "--json": "json",
+  "--config-mode": "configMode",
+  "--out": "out",
+  "--diagnostics": "diagnostics",
 };
-const booleans = new Set(["probe", "all", "primary", "json"]);
+const booleans = new Set(["probe", "all", "primary", "json", "diagnostics"]);
 const numbers = new Set([
   "maxPages",
   "maxRecords",
@@ -92,10 +103,44 @@ export async function main(argv) {
   const root = resolve(
     opts.root ?? resolve(projectRoot, ".artifacts/framework"),
   );
-  const journal = new Journal(resolve(root, "journal.sqlite"));
+  if (command === "replay-bundle") {
+    if (!id) throw new Error("Use replay-bundle DIRECTORY");
+    const report = JSON.parse(
+      await readFile(resolve(id, "report.json"), "utf8"),
+    );
+    const configs = await registry();
+    if (opts.configMode && !["current", "frozen"].includes(opts.configMode))
+      throw new Error("Use --config-mode current|frozen");
+    const result = await replayBundle(
+      resolve(id),
+      opts.configMode === "frozen"
+        ? report.run.config
+        : configs.find((c) => c.id === report.run.collection_id),
+    );
+    print({
+      candidateBuild: await buildId(),
+      configuration: opts.configMode ?? "current",
+      ...result,
+    });
+    if (!result.replayComplete) process.exitCode = 1;
+    return;
+  }
+  const readOnly = ["inspect", "replay", "compare", "bundle"].includes(command);
+  const journal = new Journal(resolve(root, "journal.sqlite"), Date.now, {
+    readOnly,
+  });
   try {
     const configs = await registry();
-    journal.register(configs);
+    if (!readOnly) journal.register(configs);
+    if (opts.configMode && !["current", "frozen"].includes(opts.configMode))
+      throw new Error("Use --config-mode current|frozen");
+    const replayConfig = (runId) => {
+      const run = journal.run(runId);
+      if (!run) throw new Error("Unknown run");
+      return opts.configMode === "frozen"
+        ? run.config
+        : configs.find((c) => c.id === run.collection_id);
+    };
     const build = await buildId();
     const choose = () =>
       configs.filter(
@@ -278,24 +323,54 @@ export async function main(argv) {
           );
         break;
       }
-      case "replay": {
-        // Reparse captured evidence without visiting the website or changing stored observations.
-        const r = journal.run(id),
-          page = journal.pages(id).find((p) => p.id === Number(extra));
-        if (!r || !page?.capture)
-          throw new Error(
-            "Use replay RUN_ID PAGE_ID with a saved HTML capture",
-          );
-        if (page.kind === "api")
-          throw new Error("Use the API fixture tests for API captures");
+      case "inspect":
         print(
-          parseDocument({
-            html: await readFile(page.capture, "utf8"),
-            url: page.url,
-            config: journal.collection(r.collection_id).config,
-            task: page,
-          }),
+          inspectSource(
+            journal,
+            id,
+            configs.find((c) => c.id === id),
+          ),
         );
+        break;
+      case "replay": {
+        const value = extra
+          ? await replayPage(journal, id, extra, replayConfig(id))
+          : await replayRun(journal, id, replayConfig(id));
+        print({
+          candidateBuild: build,
+          configuration: opts.configMode ?? "current",
+          ...value,
+        });
+        if (value.replayComplete === false) process.exitCode = 1;
+        break;
+      }
+      case "compare": {
+        const candidate = await replayRun(journal, id, replayConfig(id));
+        print({
+          runId: id,
+          candidateBuild: build,
+          configuration: opts.configMode ?? "current",
+          evidenceOnly: true,
+          replayComplete: candidate.replayComplete,
+          errors: candidate.errors,
+          pages: candidate.pages,
+          quality: candidate.quality,
+          comparison: compareRecords(journal.records(id), candidate.records),
+        });
+        if (!candidate.replayComplete) process.exitCode = 1;
+        break;
+      }
+      case "bundle": {
+        const result = await writeBundle(
+          journal,
+          id,
+          replayConfig(id),
+          resolve(
+            opts.out ?? resolve(root, "diagnostics", `${id}-${randomUUID()}`),
+          ),
+        );
+        print(result);
+        if (!result.replayComplete) process.exitCode = 1;
         break;
       }
       case "report": {
@@ -383,7 +458,11 @@ export async function main(argv) {
             "show RUN_ID",
             "export RUN_ID",
             "repairs list|claim ID|probation ID --token TOKEN|resolve",
-            "replay RUN_ID PAGE_ID",
+            "inspect url-NNN",
+            "replay RUN_ID [PAGE_ID] [--config-mode current|frozen]",
+            "compare RUN_ID [--config-mode current|frozen]",
+            "bundle RUN_ID [--out DIRECTORY]",
+            "replay-bundle DIRECTORY [--config-mode current|frozen]",
             "report",
           ],
           notes: [

@@ -1,0 +1,33 @@
+[
+  {
+    "id": "url-024",
+    "url": "https://www.nyctourism.com/events/",
+    "contentHash": "0e598f5a88c7124d37d05d4d3d13a20b2550a66edf977b5f774884cc4b7efc71",
+    "selected": "[class*=Card_card__],ul[class*=SearchPagination_pagination]",
+    "fixture": "nyc-pagination.html",
+    "inspectedAt": "2026-10-25T20:41:55.086Z"
+  },
+  {
+    "id": "url-080",
+    "url": "https://www.downtownorlando.com/Fun/Events",
+    "contentHash": "5918c49cfc3462ee1194da228ac9310914f0795a338463b1847aa0e3111f6d12",
+    "selected": ".list-item-container,.seamless-pagination-info,.seamless-pagination-data",
+    "fixture": "orlando-pagination.html",
+    "inspectedAt": "2026-10-25T20:41:55.086Z"
+  },
+  {
+    "id": "url-035",
+    "url": "https://www.discoverlosangeles.com/events",
+    "contentHash": "7e0cc8309abec60bdf28ef801ba88c5eca231d9bbe4c8401cc4d14fba84b7119",
+    "selected": ".view-events-day",
+    "fixture": "discover-la-calendar.html",
+    "inspectedAt": "2026-10-25T20:41:55.086Z"
+  },
+  {
+    "id": "url-080",
+    "url": "https://www.downtownorlando.com/Fun/Events/Mitch-Rossell",
+    "contentHash": "0d34202f7710c8e07c68031d9da17b5dce50286025ff74b51159f5932e0ba5de",
+    "selected": "h1,.multi-date-item[data-start-year],.gmap-marker",
+    "fixture": "orlando-sessions.html"
+  }
+]

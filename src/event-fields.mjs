@@ -130,6 +130,50 @@ export function sameOccurrenceTime(a, b) {
   return a.slice(0, 16) === b.slice(0, 16);
 }
 
+// An explicitly inspected date-only listing can describe several performances.
+// Keep its original observation, and project independently timed child occurrences.
+export function matchDetailBindings(targets, details, config) {
+  const enrichments = [],
+    expansions = [];
+  let matched = 0;
+  for (const listing of targets) {
+    const candidates = details
+      .map((detail) => ({
+        detail,
+        merged: mergeDetail(listing, detail, {
+          allowDateRange: config.adapter === "opencities",
+          titleAliases: config.detailTitleAliases,
+        }),
+      }))
+      .filter((c) => c.merged);
+    if (candidates.length === 1) {
+      enrichments.push(candidates[0].merged);
+      matched++;
+    } else if (
+      config.expandSameDaySessions &&
+      candidates.length > 1 &&
+      !listing.startLocal &&
+      listing.startDate === listing.endDate &&
+      candidates.every(
+        (c) => c.detail.startDate === listing.startDate && c.detail.startLocal,
+      ) &&
+      new Set(candidates.map((c) => c.detail.startLocal)).size ===
+        candidates.length
+    ) {
+      expansions.push({
+        parentRecordId: listing.sourceRecordId,
+        records: candidates.map(({ detail, merged }) => ({
+          ...merged,
+          listingRecordId: listing.sourceRecordId,
+          sourceRecordId: `${listing.sourceRecordId}|session=${detail.startLocal}`,
+        })),
+      });
+      matched++;
+    }
+  }
+  return { enrichments, expansions, matched };
+}
+
 export function mergeDetail(
   listing,
   detail,

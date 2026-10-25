@@ -25,7 +25,14 @@ for (const [id, name, start, end] of [
     const r = parseDocument({
       html,
       url: c.url,
-      config: { ...c, maxDepth: 0 },
+      // These older fixtures contain cards only. Full-page navigation contracts
+      // are exercised separately by collector-validation.test.mjs.
+      config: {
+        ...c,
+        maxDepth: 0,
+        pagination: undefined,
+        listingContract: undefined,
+      },
     });
     assert.equal(r.records.length, id === "042" ? 1 : 2);
     assert.equal(r.rejected, id === "042" ? 1 : 0);

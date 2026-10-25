@@ -14,10 +14,28 @@ export class LeaseLost extends Error {
   }
 }
 export class Journal {
-  constructor(path = ".artifacts/framework/journal.sqlite", clock = Date.now) {
-    if (path !== ":memory:") mkdirSync(dirname(path), { recursive: true });
+  constructor(
+    path = ".artifacts/framework/journal.sqlite",
+    clock = Date.now,
+    { readOnly = false } = {},
+  ) {
+    if (!readOnly && path !== ":memory:")
+      mkdirSync(dirname(path), { recursive: true });
     this.clock = clock;
-    this.db = new DatabaseSync(path, { timeout: 5000 });
+    this.db = new DatabaseSync(path, { timeout: 5000, readOnly });
+    if (readOnly) {
+      this.hasEnrichments = !!this.db
+        .prepare(
+          "SELECT name FROM sqlite_master WHERE type='table' AND name='record_enrichments'",
+        )
+        .get();
+      this.hasExpansions = !!this.db
+        .prepare(
+          "SELECT name FROM sqlite_master WHERE type='table' AND name='record_expansions'",
+        )
+        .get();
+      return;
+    }
     this.db
       .exec(`PRAGMA journal_mode=WAL; PRAGMA synchronous=FULL; PRAGMA foreign_keys=ON;
       CREATE TABLE IF NOT EXISTS collections(id TEXT PRIMARY KEY, config TEXT NOT NULL, revision TEXT NOT NULL,
@@ -43,12 +61,16 @@ export class Journal {
         page_id INTEGER NOT NULL REFERENCES pages(id),payload TEXT NOT NULL,
         PRIMARY KEY(run_id,record_key,page_id),
         FOREIGN KEY(run_id,record_key) REFERENCES observations(run_id,record_key));
+      CREATE TABLE IF NOT EXISTS record_expansions(run_id TEXT NOT NULL,parent_key TEXT NOT NULL,record_key TEXT NOT NULL,page_id INTEGER NOT NULL REFERENCES pages(id),payload TEXT NOT NULL,
+        PRIMARY KEY(run_id,parent_key,record_key,page_id), FOREIGN KEY(run_id,parent_key) REFERENCES observations(run_id,record_key));
       CREATE TABLE IF NOT EXISTS repair_jobs(id TEXT PRIMARY KEY,collection_id TEXT NOT NULL,run_id TEXT NOT NULL,
         code TEXT NOT NULL,status TEXT NOT NULL DEFAULT 'open',created INTEGER,updated INTEGER,occurrences INTEGER DEFAULT 1,
         packet TEXT NOT NULL,owner TEXT,token TEXT,lease_until INTEGER);
       CREATE UNIQUE INDEX IF NOT EXISTS one_open_repair ON repair_jobs(collection_id,code) WHERE status IN ('open','claimed','probation');
       CREATE TABLE IF NOT EXISTS actions(id INTEGER PRIMARY KEY,at INTEGER NOT NULL,run_id TEXT,kind TEXT NOT NULL,payload TEXT NOT NULL);
-      PRAGMA user_version=2;`);
+      PRAGMA user_version=3;`);
+    this.hasEnrichments = true;
+    this.hasExpansions = true;
   }
   close() {
     this.db.close();
@@ -307,6 +329,15 @@ export class Journal {
         .run(until, id, token);
     });
   }
+  deferRate(key, delay) {
+    if (!Number.isFinite(delay) || delay < 0)
+      throw new Error("Invalid publisher cooldown");
+    this.db
+      .prepare(
+        "INSERT INTO rate_limits(key,next_allowed) VALUES(?,?) ON CONFLICT(key) DO UPDATE SET next_allowed=MAX(next_allowed,excluded.next_allowed)",
+      )
+      .run(key, this.clock() + delay);
+  }
   reserveRate(key, intervalMs = 1000) {
     return this.tx(() => {
       const now = this.clock(),
@@ -437,6 +468,35 @@ export class Journal {
           )
           .run(id, record.sourceRecordId, page.id, JSON.stringify(record));
       }
+      for (const expansion of result.expansions ?? []) {
+        if (
+          !page.meta.enrichRecordIds?.includes(expansion.parentRecordId) ||
+          expansion.records.length < 2 ||
+          new Set(expansion.records.map((r) => r.sourceRecordId)).size !==
+            expansion.records.length
+        )
+          throw new Error("Invalid detail occurrence expansion binding");
+        for (const record of expansion.records) {
+          if (
+            !record.sourceRecordId ||
+            record.sourceRecordId === expansion.parentRecordId
+          )
+            throw new Error(
+              "Expansion requires distinct occurrence identities",
+            );
+          this.db
+            .prepare(
+              "INSERT INTO record_expansions(run_id,parent_key,record_key,page_id,payload) VALUES(?,?,?,?,?) ON CONFLICT DO NOTHING",
+            )
+            .run(
+              id,
+              expansion.parentRecordId,
+              record.sourceRecordId,
+              page.id,
+              JSON.stringify(record),
+            );
+        }
+      }
       for (const next of result.nextRequests) this._addPage(id, next);
       this.db
         .prepare(
@@ -450,6 +510,7 @@ export class Journal {
             ...result,
             records: undefined,
             enrichments: undefined,
+            expansions: undefined,
           }),
           page.id,
         );
@@ -463,6 +524,7 @@ export class Journal {
         ...p,
         meta: JSON.parse(p.meta),
         result: p.result ? JSON.parse(p.result) : null,
+        error: p.error ? JSON.parse(p.error) : null,
       }));
   }
   records(id) {
@@ -472,6 +534,7 @@ export class Journal {
       )
       .all(id)
       .map((r) => JSON.parse(r.payload));
+    if (!this.hasEnrichments) return records;
     const enriched = new Map(
       this.db
         .prepare(
@@ -480,7 +543,24 @@ export class Journal {
         .all(id)
         .map((r) => [r.record_key, JSON.parse(r.payload)]),
     );
-    return records.map((r) => enriched.get(r.sourceRecordId) ?? r);
+    const expanded = new Map();
+    if (this.hasExpansions)
+      for (const row of this.db
+        .prepare(
+          "SELECT parent_key,record_key,payload FROM record_expansions WHERE run_id=? ORDER BY page_id",
+        )
+        .all(id)) {
+        if (!expanded.has(row.parent_key))
+          expanded.set(row.parent_key, new Map());
+        expanded
+          .get(row.parent_key)
+          .set(row.record_key, JSON.parse(row.payload));
+      }
+    return records.flatMap((r) =>
+      expanded.has(r.sourceRecordId)
+        ? [...expanded.get(r.sourceRecordId).values()]
+        : [enriched.get(r.sourceRecordId) ?? r],
+    );
   }
   pageError(id, token, pageId, error, retry, capture = null) {
     return this.tx(() => {

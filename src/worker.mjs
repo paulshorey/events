@@ -4,7 +4,8 @@ import { createHash, randomUUID } from "node:crypto";
 import { parseDocument } from "./adapters/document.mjs";
 import { parseTribePage } from "../examples/parsers.mjs";
 import { validDate, eventRecord } from "./records.mjs";
-import { fieldSummary, mergeDetail } from "./event-fields.mjs";
+import { fieldSummary, matchDetailBindings } from "./event-fields.mjs";
+import { assessQuality } from "./quality.mjs";
 import { Transport, sleep } from "./runtime/transport.mjs";
 import { LeaseLost } from "./storage/journal.mjs";
 
@@ -12,6 +13,7 @@ export async function buildId() {
   const files = [
     "src/records.mjs",
     "src/event-fields.mjs",
+    "src/quality.mjs",
     "src/worker.mjs",
     "src/runtime/transport.mjs",
     "src/storage/journal.mjs",
@@ -41,10 +43,11 @@ export function optionsFor(config, options, build) {
     maxRuntimeMs: options.maxRuntimeMs ?? 180000,
     maxRetries: options.maxRetries ?? 3,
     probe: options.probe ?? false,
-    transport: options.transport ?? "browser",
+    transport: options.transport ?? config.defaultTransport ?? "browser",
     buildId: build,
     perPage: options.perPage ?? 50,
     acceptCountChange: options.acceptCountChange ?? null,
+    diagnostics: options.diagnostics ?? false,
   };
   for (const k of [
     "maxPages",
@@ -141,7 +144,7 @@ export function evaluate(journal, run, stopReason) {
       previous: previous.result.observedRecords,
       current: records.length,
     });
-  const complete =
+  const enumerationComplete =
     !run.options.probe &&
     !stopReason &&
     !pending &&
@@ -149,13 +152,31 @@ export function evaluate(journal, run, stopReason) {
     knownCoverage &&
     terminal &&
     countMatches &&
-    !issues.length;
+    !issues.length &&
+    records.length > 0;
+  const quality = assessQuality(
+    records,
+    results,
+    run.config.quality,
+    previous?.options?.transport === run.options.transport
+      ? previous?.result?.quality
+      : null,
+  );
+  issues.push(...quality.failures);
+  const complete = enumerationComplete && quality.status !== "failed";
   const upcoming = records.filter(
     (r) => (r.endDate ?? r.startDate) >= run.options.asOf,
   );
   return {
     outcome: complete ? "complete" : "partial",
     complete,
+    enumeration: {
+      complete: enumerationComplete,
+      knownCoverage,
+      terminal,
+      countMatches,
+    },
+    quality,
     scope: {
       entrypoints: run.config.entrypoints ?? [run.config.url],
       asOf: run.options.asOf,
@@ -181,13 +202,15 @@ export function evaluate(journal, run, stopReason) {
       stopReason ??
       (complete
         ? "enumeration_exhausted"
-        : run.options.probe
-          ? "probe_only"
-          : !knownCoverage
-            ? "coverage_unverified"
-            : !countMatches
-              ? "count_mismatch"
-              : "enumeration_unverified"),
+        : quality.status === "failed"
+          ? "source_quality_failed"
+          : run.options.probe
+            ? "probe_only"
+            : !knownCoverage
+              ? "coverage_unverified"
+              : !countMatches
+                ? "count_mismatch"
+                : "enumeration_unverified"),
   };
 }
 export async function exportRun(journal, id, root) {
@@ -312,6 +335,12 @@ export async function work(
           task.kind === "api"
             ? parseApi(input.body, input.url, config, task)
             : parseDocument({ html: input.body, url: input.url, config, task });
+        parsed.acquisition = {
+          url: input.url,
+          status: input.status,
+          kind: task.kind,
+          contentHash: input.capture.hash,
+        };
         for (const r of parsed.records) {
           if (
             !validDate(r.startDate) ||
@@ -344,24 +373,18 @@ export async function work(
             .filter((r) =>
               task.meta.enrichRecordIds.includes(r.sourceRecordId),
             );
-          parsed.enrichments = targets
-            .map((listing) => {
-              const candidates = parsed.records
-                .map((detail) =>
-                  mergeDetail(listing, detail, {
-                    allowDateRange: run.config.adapter === "opencities",
-                    titleAliases: run.config.detailTitleAliases,
-                  }),
-                )
-                .filter(Boolean);
-              return candidates.length === 1 ? candidates[0] : null;
-            })
-            .filter(Boolean);
-          if (parsed.enrichments.length !== targets.length)
+          const bindings = matchDetailBindings(
+            targets,
+            parsed.records,
+            run.config,
+          );
+          parsed.enrichments = bindings.enrichments;
+          parsed.expansions = bindings.expansions;
+          if (bindings.matched !== targets.length)
             parsed.issues.push({
               code: "detail_occurrence_not_matched",
               expected: targets.length,
-              matched: parsed.enrichments.length,
+              matched: bindings.matched,
             });
           parsed.records = [];
         }
@@ -378,17 +401,25 @@ export async function work(
       }
       const state = journal.run(run.id),
         result = evaluate(journal, state, stopReason);
-      const status = result.complete
-        ? "complete"
-        : !result.observedRecords && !result.pendingPages
+      const status =
+        result.quality.status === "failed" && !stopReason
           ? "repair_needed"
-          : "partial";
+          : result.complete
+            ? "complete"
+            : !result.observedRecords && !result.pendingPages
+              ? "repair_needed"
+              : "partial";
       const error =
         status === "repair_needed"
           ? {
-              code: "no_event_contract_found",
+              code:
+                result.quality.status === "failed"
+                  ? "source_quality_failed"
+                  : "no_event_contract_found",
               message:
-                "No dated event records or unresolved enumeration tasks; inspect source adapter",
+                result.quality.status === "failed"
+                  ? "Source field quality policy failed; inspect quality.failures and captured evidence"
+                  : "No dated event records or unresolved enumeration tasks; inspect source adapter",
             }
           : null;
       journal.finish(

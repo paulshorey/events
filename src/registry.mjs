@@ -1,5 +1,6 @@
 import { readFile } from "node:fs/promises";
 import { hash } from "./storage/journal.mjs";
+import { validateQualityPolicy } from "./quality.mjs";
 export async function registry() {
   const configs = JSON.parse(
     await readFile(new URL("../sources/registry.json", import.meta.url)),
@@ -20,6 +21,14 @@ export async function registry() {
         throw new Error(`Invalid URL ${c.id}`);
     new Intl.DateTimeFormat("en", { timeZone: c.timeZone });
     new RegExp(c.detailPattern);
+    validateQualityPolicy(c.quality);
+    if (
+      c.minIntervalMs != null &&
+      (!Number.isSafeInteger(c.minIntervalMs) ||
+        c.minIntervalMs < 1000 ||
+        c.minIntervalMs > 5000)
+    )
+      throw new Error(`Invalid publisher pacing ${c.id}`);
   }
   return configs;
 }
