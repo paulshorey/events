@@ -1,5 +1,7 @@
 # Captured regression examples
 
+October 25 additions: `nyc-pagination`, `orlando-pagination`, `discover-la-calendar`, and `orlando-sessions` are excerpts from fresh headless-browser inspections. `validation-provenance.json` records upstream URLs, full-rendered-capture hashes and selected elements. LA retains native calendar title/date/venue attributes while excluding carousel/image markup; its two-letter performer title is intentional. Orlando retains non-event newsletter cards to verify filtering, and two explicit performances to verify append-only expansion. Fixture whitespace is normalized. The asynchronous pagination and HTTP 429 servers in the tests are synthetic regressions reproducing observed behavior; they are not publisher captures. Full captures and screenshots remain ignored operational evidence.
+
 These small fixtures were selected from public pages/API responses inspected on October 16, 2026 (America/Chicago). They support offline parser regression checks; they do not establish current source compatibility.
 
 - `la-calendar.html`: the first two event cards from https://www.laconventioncenter.com/events/all. The first event is AAO-HNSF, October 17–20, 2026. Missing times must remain unknown.

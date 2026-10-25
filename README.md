@@ -25,6 +25,8 @@ This explicitly selects the active `DB_EVENTS_URL` from `.env.local`, overriding
 
 The [collector diagnostics and acceptance workflow](_working/source_validation_workflow.md) documents unified source inspection, offline HTML/API replay, parser comparisons, portable evidence packets, source-specific field-quality gates, and the explicit two-run foreground validator. These tools extend the existing journal and repair loop; they do not activate schedules.
 
+The [October 25 collector results](_working/collector_validation_results.md) record two complete final-build validations each for Boston and Chicago, a complete Orlando run followed by an access denial, and the concrete NYC/LA holds. These newer targeted results supplement the earlier all-source audit.
+
 The latest date/time/location audit covers all 97 sources in [_working/source_field_quality.md](_working/source_field_quality.md), with machine-readable counts and evidence in the adjacent JSON. These are bounded browser/detail samples, not full-source validation. The [source field contract](_working/source_field_contract.md) documents schema version 3, separate text/coordinate locations, unknown end dates, detail enrichment, and repeatable audit commands.
 
 Tested on Node 26.9.0 with Playwright 1.64.1 and headless Chromium. Use Node 24 or later, with `node:sqlite` available; this task does not change your managed Node installation.

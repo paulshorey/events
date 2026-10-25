@@ -1,6 +1,15 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { mkdtemp, rm, writeFile, readFile } from "node:fs/promises";
+import {
+  mkdtemp,
+  rm,
+  writeFile,
+  readFile,
+  mkdir,
+  cp,
+  symlink,
+  access,
+} from "node:fs/promises";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { spawnSync } from "node:child_process";
@@ -361,4 +370,77 @@ test("inspected same-day sessions expand atomically without overwriting the date
       .get(r.id).n,
     2,
   );
+});
+
+test("foreground validator rejects an operational journal root from another cwd and through a symlink", async (t) => {
+  const root = await mkdtemp(join(tmpdir(), "events-validator-root-"));
+  t.after(() => rm(root, { recursive: true, force: true }));
+  const scripts = join(root, "project/scripts"),
+    protectedRoot = join(root, "project/.artifacts/framework");
+  await mkdir(scripts, { recursive: true });
+  await mkdir(protectedRoot, { recursive: true });
+  const script = join(scripts, "validate-collectors.mjs");
+  await cp(
+    new URL("../scripts/validate-collectors.mjs", import.meta.url),
+    script,
+  );
+  await writeFile(
+    join(protectedRoot, "journal.sqlite"),
+    "operational sentinel",
+  );
+  const alias = join(root, "alias");
+  await symlink(protectedRoot, alias);
+  for (const path of [protectedRoot, alias]) {
+    const result = spawnSync(process.execPath, [script, "--root", path], {
+      cwd: root,
+      encoding: "utf8",
+    });
+    assert.notEqual(result.status, 0);
+    assert.match(result.stderr, /separate validation storage/);
+  }
+  assert.equal(
+    await readFile(join(protectedRoot, "journal.sqlite"), "utf8"),
+    "operational sentinel",
+  );
+  await assert.rejects(access(join(protectedRoot, "candidates")));
+});
+
+test("a pending retry response cannot count as a complete replay even if its JSON parses", async (t) => {
+  const config = configs.find((c) => c.id === "url-019"),
+    { journal: j, root } = await setup(t, config);
+  const body = await readFile(
+      new URL("fixtures/tribe-page.json", import.meta.url),
+      "utf8",
+    ),
+    path = join(root, "retry.json");
+  await writeFile(path, body);
+  const q = j.enqueue(
+      config.id,
+      optionsFor(config, { transport: "api", asOf: "2026-10-25" }, "test"),
+    ),
+    r = j.claim("test"),
+    p = j.nextPage(q.runId, r.token);
+  const capture = { path, hash: hash(body) },
+    error = { code: "rate_limited", capture, retryAfterMs: 60000 };
+  j.pageError(r.id, r.token, p.id, error, true, capture);
+  j.finish(r.id, r.token, "retry_wait", { recordCount: 0 }, error);
+  assert.ok(
+    (await replayPage(j, r.id, p.id, config)).result.records.length > 0,
+  );
+  const replay = await replayRun(j, r.id, config);
+  assert.equal(replay.replayComplete, false);
+  assert.ok(
+    replay.errors.some(
+      (e) =>
+        e.code === "page_not_committed" && e.state === "pending" && e.captured,
+    ),
+  );
+  const cli = spawnSync(
+    process.execPath,
+    ["scripts/framework.mjs", "compare", r.id, "--root", root],
+    { encoding: "utf8" },
+  );
+  assert.equal(cli.status, 1);
+  assert.equal(JSON.parse(cli.stdout).replayComplete, false);
+  assert.equal(j.records(r.id).length, 0);
 });

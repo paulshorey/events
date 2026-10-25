@@ -1,8 +1,8 @@
 // Explicit, bounded foreground validation. Never enables schedules or uses the operational journal.
-import { cp, mkdir, writeFile, rename } from "node:fs/promises";
+import { cp, mkdir, writeFile, rename, realpath } from "node:fs/promises";
 import { parseArgs } from "node:util";
 import { resolve, join } from "node:path";
-import { pathToFileURL } from "node:url";
+import { pathToFileURL, fileURLToPath } from "node:url";
 import { randomUUID } from "node:crypto";
 const { values } = parseArgs({
   options: {
@@ -17,7 +17,18 @@ const root = resolve(
   values.root ??
     `.artifacts/source-validation/${new Date().toISOString().replaceAll(":", "-")}`,
 );
-if (root === resolve(".artifacts/framework"))
+const operationalRoot = resolve(
+  fileURLToPath(new URL("../", import.meta.url)),
+  ".artifacts/framework",
+);
+const canonicalRoot = await realpath(root).catch(() => root),
+  canonicalOperational = await realpath(operationalRoot).catch(
+    () => operationalRoot,
+  );
+if (
+  canonicalRoot === canonicalOperational ||
+  canonicalRoot.startsWith(canonicalOperational + "/")
+)
   throw new Error(
     "Use separate validation storage, not the operational journal",
   );
@@ -77,6 +88,15 @@ const report = {
     id: c.id,
     url: c.url,
     configHash: hash(c),
+    options: optionsFor(
+      c,
+      {
+        maxPages: Number(values["max-pages"]),
+        maxRuntimeMs: Number(values["max-runtime-ms"]),
+        diagnostics: true,
+      },
+      build,
+    ),
     runs: [],
   })),
 };
@@ -124,15 +144,7 @@ try {
             j.probation(repair.id, claim.token, build);
           }
           for (let pass = 1; pass <= 2 && !controller.signal.aborted; pass++) {
-            const options = optionsFor(
-              config,
-              {
-                maxPages: Number(values["max-pages"]),
-                maxRuntimeMs: Number(values["max-runtime-ms"]),
-                diagnostics: true,
-              },
-              build,
-            );
+            const options = source.options;
             const job = j.enqueue(config.id, options);
             if (!job.created) {
               source.coalescedWithExistingWork = job.runId;
@@ -158,7 +170,8 @@ try {
               options: run.options,
               result: run.result,
               error: run.error,
-              exports: results[0]?.exports,
+              exportDirectory: results[0]?.directory ?? null,
+              exportError: results[0]?.exportError ?? null,
             });
             await persist();
             // Do not repeat an unchanged failed/partial/blocked candidate just to accumulate attempts.

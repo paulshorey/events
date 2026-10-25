@@ -94,6 +94,13 @@ export async function replayRun(journal, runId, config) {
         a.id - b.id,
     );
   for (const page of tasks) {
+    if (["pending", "processing"].includes(page.state))
+      errors.push({
+        pageId: page.id,
+        code: "page_not_committed",
+        state: page.state,
+        captured: !!page.capture,
+      });
     if (!page.capture) {
       errors.push({
         pageId: page.id,
