@@ -9,6 +9,51 @@ import { work, optionsFor } from "../src/worker.mjs";
 import { registry } from "../src/registry.mjs";
 import { Transport } from "../src/runtime/transport.mjs";
 
+for (const kind of ["api", "listing"]) {
+  test(`${kind} robots throttling persists the publisher cooldown across clients`, async (t) => {
+    const dir = await mkdtemp(join(tmpdir(), "events-robots-"));
+    t.after(() => rm(dir, { recursive: true, force: true }));
+    let robotsHits = 0, contentHits = 0;
+    const server = createServer((req, res) => {
+      if (req.url === "/robots.txt") {
+        robotsHits++;
+        if (robotsHits === 1) {
+          res.writeHead(429, { "Retry-After": "120" });
+          return res.end("try later");
+        }
+        return res.end("User-agent: *\nAllow: /");
+      }
+      contentHits++;
+      res.setHeader("content-type", "text/html");
+      res.end("<html><body>Allowed after cooldown</body></html>");
+    });
+    await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
+    t.after(() => new Promise((resolve) => server.close(resolve)));
+    const url = `http://127.0.0.1:${server.address().port}/events`;
+    const db = join(dir, "journal.sqlite");
+    let now = Date.now();
+    let journal = new Journal(db, () => now);
+    const run = { id: "robots", attemptId: "one", source_key: "publisher", config: { url, timeZone: "UTC", minIntervalMs: 1 } };
+    const first = new Transport({ root: dir, run, journal });
+    await assert.rejects(first.fetch({ id: "one", url, kind }), { code: "rate_limited", retryAfterMs: 120000 });
+    await first.close();
+    journal.close();
+    // A distinct collection/client for the same publisher must use the persisted delay.
+    journal = new Journal(db, () => now);
+    t.after(() => journal.close());
+    const next = new Transport({ root: dir, run: { ...run, id: "other-collection" }, journal });
+    t.after(() => next.close());
+    await assert.rejects(next.fetch({ id: "two", url, kind }), { code: "rate_limited", retryAfterMs: 120000 });
+    assert.equal(robotsHits, 1);
+    assert.equal(contentHits, 0);
+    now += 120001;
+    const result = await next.fetch({ id: "three", url, kind });
+    assert.match(result.body, /Allowed after cooldown/);
+    assert.equal(robotsHits, 2);
+    assert.equal(contentHits, 1);
+  });
+}
+
 // Real Playwright HTTP client, controlled upstream. No external service is hit by this test.
 test("HTTP 429 retains an API checkpoint, honors Retry-After and resumes via a new client", async (t) => {
   const dir = await mkdtemp(join(tmpdir(), "events-http-"));

@@ -131,10 +131,14 @@ export class Transport {
       try {
         const api = await this.initApi();
         const r = await api.get(`${u.origin}/robots.txt`, { timeout: 12000 });
-        if (r.status() === 429)
+        if (r.status() === 429) {
+          const retryAfterMs = retryDelay(r.headers()["retry-after"]);
+          this.journal.deferRate(this.run.source_key, retryAfterMs);
           throw Object.assign(new Error("Robots request throttled"), {
             code: "rate_limited",
+            retryAfterMs,
           });
+        }
         if (r.ok()) entry = { body: await r.text(), state: "loaded" };
         else if (r.status() >= 500)
           throw Object.assign(
