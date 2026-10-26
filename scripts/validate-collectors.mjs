@@ -1,7 +1,7 @@
 // Explicit, bounded foreground validation. Never enables schedules or uses the operational journal.
 import { cp, mkdir, writeFile, rename, realpath } from "node:fs/promises";
 import { parseArgs } from "node:util";
-import { resolve, join, dirname, basename } from "node:path";
+import { resolve, join, dirname, basename, sep } from "node:path";
 import { pathToFileURL, fileURLToPath } from "node:url";
 import { randomUUID } from "node:crypto";
 const { values } = parseArgs({
@@ -38,7 +38,7 @@ const canonicalRoot = await canonicalDestination(root),
   canonicalOperational = await canonicalDestination(operationalRoot);
 if (
   canonicalRoot === canonicalOperational ||
-  canonicalRoot.startsWith(canonicalOperational + "/")
+  canonicalRoot.startsWith(canonicalOperational + sep)
 )
   throw new Error(
     "Use separate validation storage, not the operational journal",
