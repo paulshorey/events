@@ -450,3 +450,118 @@ test("a pending retry response cannot count as a complete replay even if its JSO
   assert.equal(JSON.parse(cli.stdout).replayComplete, false);
   assert.equal(j.records(r.id).length, 0);
 });
+
+test("failed captured pages remain incomplete in replay and portable bundles", async (t) => {
+  const config = configs.find((c) => c.id === "url-019");
+  const { journal: j, root } = await setup(t, config);
+  const body = await readFile(
+    new URL("fixtures/tribe-page.json", import.meta.url),
+    "utf8",
+  );
+  const q = j.enqueue(
+    config.id,
+    optionsFor(config, { transport: "api", asOf: "2026-10-25" }, "test"),
+  );
+  const run = j.claim("test");
+  const page = j.nextPage(q.runId, run.token);
+  const path = join(root, "failed.json");
+  await writeFile(path, body);
+  const capture = { path, hash: hash(body) };
+  const error = { code: "pagination_changed", capture };
+  j.pageError(run.id, run.token, page.id, error, false, capture);
+  j.finish(run.id, run.token, "repair_needed", { recordCount: 0 }, error);
+  assert.ok(
+    (await replayPage(j, run.id, page.id, config)).result.records.length > 0,
+  );
+  const replay = await replayRun(j, run.id, config);
+  assert.equal(replay.replayComplete, false);
+  assert.ok(
+    replay.errors.some(
+      (e) =>
+        e.code === "page_not_committed" && e.state === "failed" && e.captured,
+    ),
+  );
+  const packet = join(root, "failed-packet");
+  assert.equal(
+    (await writeBundle(j, run.id, config, packet)).replayComplete,
+    false,
+  );
+  assert.equal((await replayBundle(packet, config)).replayComplete, false);
+  for (const args of [
+    ["compare", run.id, "--root", root],
+    ["replay-bundle", packet],
+  ]) {
+    const result = spawnSync(
+      process.execPath,
+      ["scripts/framework.mjs", ...args],
+      { encoding: "utf8" },
+    );
+    assert.equal(result.status, 1, result.stderr);
+    assert.equal(JSON.parse(result.stdout).replayComplete, false);
+  }
+  assert.equal(j.records(run.id).length, 0);
+});
+
+test("detail observations cannot dilute listing rejection quality", () => {
+  const quality = assessQuality(
+    [record()],
+    [
+      { observedCount: 100, rejected: 3, acquisition: { kind: "listing" } },
+      { observedCount: 97, rejected: 0, acquisition: { kind: "detail" } },
+    ],
+    { scope: "fixture", maxRejectedRate: 0.02 },
+  );
+  assert.equal(quality.metrics.observed, 100);
+  assert.equal(quality.metrics.rejectedRate, 0.03);
+  assert.equal(quality.status, "failed");
+  const api = assessQuality(
+    [record()],
+    [{ observedCount: 100, rejected: 3, acquisition: { kind: "api" } }],
+    { scope: "fixture", maxRejectedRate: 0.02 },
+  );
+  assert.equal(api.metrics.rejectedRate, 0.03);
+});
+
+test("offline replay keeps detail observations outside listing rejection counts", async (t) => {
+  const config = {
+    ...configs.find((c) => c.id === "url-035"),
+    quality: { scope: "fixture", maxRejectedRate: 0.7 },
+  };
+  const listing =
+    '<div class="view-events-day">' +
+    '<article class="node--type-event"></article>'.repeat(3) +
+    '<article class="node--type-event"><a data-description="Title link" data-start-date="2026-10-25" data-nid="1" data-content-title="Dance" data-venue="Hall" href="/event/2026/10/25/dance">Dance</a></article></div>';
+  const detailUrl = new URL("/event/2026/10/25/dance", config.url).href;
+  const detail = `<script type="application/ld+json">${JSON.stringify({ "@type": "Event", name: "Dance", url: detailUrl, startDate: "2026-10-25" })}</script>`;
+  const root = await mkdtemp(join(tmpdir(), "events-replay-quality-"));
+  t.after(() => rm(root, { recursive: true, force: true }));
+  const pages = [];
+  for (const [kind, body, url] of [
+    ["listing", listing, config.url],
+    ["detail", detail, detailUrl],
+  ]) {
+    const path = join(root, kind + ".html");
+    await writeFile(path, body);
+    pages.push({
+      id: pages.length + 1,
+      kind,
+      state: "done",
+      depth: kind === "detail" ? 1 : 0,
+      meta: {},
+      url,
+      capture: path,
+      content_hash: hash(body),
+    });
+  }
+  const journal = {
+    run: () => ({ id: "fixture", status: "repair_needed" }),
+    pages: () => pages,
+  };
+  const replay = await replayRun(journal, "fixture", config);
+  assert.equal(replay.replayComplete, true);
+  assert.equal(replay.pages[1].result.observedCount, 1);
+  assert.equal(replay.quality.metrics.observed, 4);
+  assert.equal(replay.quality.metrics.rejected, 3);
+  assert.equal(replay.quality.metrics.rejectedRate, 0.75);
+  assert.equal(replay.quality.status, "failed");
+});

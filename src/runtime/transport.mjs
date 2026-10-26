@@ -188,6 +188,82 @@ export class Transport {
     this.leaseCheck();
     if (recovery) this.runtimeCheck();
   }
+  checkBrowserResponse(response) {
+    if (!response) return;
+    try {
+      classifyResponse(response.status());
+    } catch (error) {
+      const retry = response.headers()["retry-after"];
+      if (retry) error.retryAfterMs = retryDelay(retry);
+      if (error.code === "rate_limited")
+        this.journal.deferRate(
+          this.run.source_key,
+          error.retryAfterMs ?? 60000,
+        );
+      error.httpResponse = response;
+      throw error;
+    }
+  }
+  async clickListingPage(page, current, before) {
+    const requests = new Set();
+    const hosts = [
+      new URL(this.run.config.url).hostname,
+      ...(this.run.config.allowedHosts ?? []),
+    ].map((host) => host.replace(/^www\./, ""));
+    const onRequest = (request) => {
+      if (
+        ["document", "xhr", "fetch"].includes(request.resourceType()) &&
+        request.frame() === page.mainFrame() &&
+        hosts.includes(new URL(request.url()).hostname.replace(/^www\./, ""))
+      )
+        requests.add(request);
+    };
+    let lastResponse, fail;
+    const failed = new Promise((resolve) => {
+      fail = resolve;
+    });
+    const onResponse = (response) => {
+      if (!requests.has(response.request())) return;
+      lastResponse = response;
+      // HTTP errors are response events, not requestfailed events. Race them
+      // against rendering so a denied click cannot become a generic timeout.
+      if (response.status() >= 400) fail(response);
+    };
+    page.on("request", onRequest);
+    page.on("response", onResponse);
+    try {
+      const rendered = (async () => {
+        await page
+          .locator(
+            'ul[class*="SearchPagination_pagination"] li.next:not(.disabled) a',
+          )
+          .click({ timeout: 7000 });
+        await page.waitForFunction(
+          ({ n, before }) =>
+            Number(
+              document
+                .querySelector(
+                  'ul[class*="SearchPagination_pagination"] li[class*="SearchPagination_active"]',
+                )
+                ?.textContent.trim(),
+            ) === n &&
+            [...document.querySelectorAll('a[class*="ContentCard_headerLink"]')]
+              .map((a) => a.textContent.trim())
+              .sort()
+              .join("|") !== before,
+          { n: current + 1, before },
+          { timeout: 15000 },
+        );
+        return lastResponse;
+      })();
+      const response = await Promise.race([rendered, failed]);
+      this.checkBrowserResponse(response);
+      return response;
+    } finally {
+      page.off("request", onRequest);
+      page.off("response", onResponse);
+    }
+  }
   async fetch(task) {
     await this.pace();
     await this.permit(task.url);
@@ -270,6 +346,7 @@ export class Transport {
           waitUntil: "domcontentloaded",
           timeout: this.timeoutMs,
         });
+        this.checkBrowserResponse(response);
         browserRequestUsed = true;
         if (browserPaging) {
           this.listingPageNumber = 1;
@@ -309,31 +386,7 @@ export class Transport {
                 .join("|"),
             );
           if (recovery) this.runtimeCheck();
-          await page
-            .locator(
-              'ul[class*="SearchPagination_pagination"] li.next:not(.disabled) a',
-            )
-            .click({ timeout: 7000 });
-          await page.waitForFunction(
-            ({ n, before }) =>
-              Number(
-                document
-                  .querySelector(
-                    'ul[class*="SearchPagination_pagination"] li[class*="SearchPagination_active"]',
-                  )
-                  ?.textContent.trim(),
-              ) === n &&
-              [
-                ...document.querySelectorAll(
-                  'a[class*="ContentCard_headerLink"]',
-                ),
-              ]
-                .map((a) => a.textContent.trim())
-                .sort()
-                .join("|") !== before,
-            { n: current + 1, before },
-            { timeout: 15000 },
-          );
+          response = await this.clickListingPage(page, current, before);
           this.listingPageNumber++;
           this.journal.deferRate(
             this.run.source_key,
@@ -424,6 +477,19 @@ export class Transport {
         status: response?.status() ?? (browserPaging ? 200 : 0),
       };
     } catch (error) {
+      if (!capture && error.httpResponse) {
+        const denied = error.httpResponse;
+        capture = await saveCapture(
+          this.root,
+          this.run,
+          task,
+          await denied.text().catch(() => ""),
+          denied.url(),
+          /json/i.test(denied.headers()["content-type"] ?? "")
+            ? "json"
+            : "html",
+        ).catch(() => null);
+      }
       if (!capture) {
         const failure = await snapshotPage(page).catch(() => snapshot);
         if (failure)

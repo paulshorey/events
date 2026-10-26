@@ -471,7 +471,11 @@ test("ordinary NYC task finishes when pacing crosses the runtime boundary", asyn
   j.register([config]);
   const q = j.enqueue(
     config.id,
-    optionsFor(config, { asOf: "2026-10-16", maxRuntimeMs: 10000 }, "test-build"),
+    optionsFor(
+      config,
+      { asOf: "2026-10-16", maxRuntimeMs: 10000 },
+      "test-build",
+    ),
   );
   const reserve = j.reserveRate.bind(j);
   let pacingCalls = 0;
@@ -491,3 +495,96 @@ test("ordinary NYC task finishes when pacing crosses the runtime boundary", asyn
   assert.equal(j.pages(q.runId).filter((p) => p.state === "pending").length, 0);
   assert.ok(j.run(q.runId).active_ms > 10000);
 });
+
+for (const mode of ["fetch", "fetch-stalled", "navigation"]) {
+  for (const status of [201, 429, 503]) {
+    test(`NYC ${mode} pagination preserves HTTP ${status} classification and capture`, async (t) => {
+      const dir = await mkdtemp(join(tmpdir(), "events-nyc-response-"));
+      t.after(() => rm(dir, { recursive: true, force: true }));
+      let requests = 0;
+      const card = (n) =>
+        `<div class="Card_card__fixture"><a class="ContentCard_headerLink" href="/events/${n}/">Dance ${n}</a><div class="ContentCard_tagContainer">Oct 25, 2026</div></div>`;
+      const terminal =
+        card(2) +
+        '<ul class="SearchPagination_pagination"><li class="SearchPagination_active">2</li><li class="next disabled"><a>Next</a></li></ul>';
+      const next =
+        mode === "navigation"
+          ? 'href="/page/2"'
+          : `onclick="fetch('/page/2').then((r)=>{if(${mode === "fetch-stalled" ? "!r.ok" : "false"})return;document.body.innerHTML=${JSON.stringify(terminal).replaceAll('"', "&quot;")}})"`;
+      const first =
+        card(1) +
+        `<ul class="SearchPagination_pagination"><li class="SearchPagination_active">1</li><li class="next"><a ${next}>Next</a></li></ul>`;
+      const server = createServer((req, res) => {
+        if (req.url === "/robots.txt")
+          return res.end("User-agent: *\nAllow: /\n");
+        if (req.url === "/favicon.ico") return res.end();
+        requests++;
+        res.setHeader("content-type", "text/html");
+        if (req.url === "/page/2") {
+          res.statusCode = status;
+          res.setHeader("retry-after", "60");
+          return res.end(terminal);
+        }
+        res.end(first);
+      });
+      await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
+      t.after(() => new Promise((resolve) => server.close(resolve)));
+      const config = {
+        ...(await registry()).find((c) => c.id === "url-024"),
+        url: `http://127.0.0.1:${server.address().port}/events/`,
+        allowedHosts: ["127.0.0.1"],
+        sourceKey: "fixture",
+        rateKey: "fixture",
+        maxDepth: 0,
+        minIntervalMs: 150,
+        quality: null,
+      };
+      const j = new Journal(join(dir, "journal.sqlite"));
+      t.after(() => j.close());
+      j.register([config]);
+      const q = j.enqueue(
+        config.id,
+        optionsFor(config, { asOf: "2026-10-16" }, "test-build"),
+      );
+      const result = await work(j, {
+        root: dir,
+        build: "test-build",
+        runId: q.runId,
+      });
+      if (status === 201) {
+        assert.equal(result[0].status, "complete");
+        assert.equal(j.records(q.runId).length, 2);
+        assert.equal(
+          j.pages(q.runId).find((p) => p.meta.browserPage === 2).result
+            .acquisition.status,
+          201,
+        );
+        return;
+      }
+      assert.equal(result[0].status, "retry_wait");
+      const failed = j.pages(q.runId).find((p) => p.meta.browserPage === 2);
+      assert.equal(failed.state, "pending");
+      assert.equal(
+        failed.error.code,
+        status === 429 ? "rate_limited" : "transport_error",
+      );
+      assert.equal(failed.error.retryAfterMs, 60000);
+      assert.equal(await readFile(failed.capture, "utf8"), terminal);
+      assert.equal(j.records(q.runId).length, 1);
+      assert.equal(requests, 2);
+      if (status === 429) {
+        const transport = new Transport({
+          root: dir,
+          run: { ...j.run(q.runId), token: "unused" },
+          journal: j,
+        });
+        t.after(() => transport.close());
+        await assert.rejects(
+          transport.fetch({ id: 999, url: config.url, kind: "listing" }),
+          (e) => e.code === "rate_limited",
+        );
+        assert.equal(requests, 2, "cooldown prevents another request");
+      }
+    });
+  }
+}

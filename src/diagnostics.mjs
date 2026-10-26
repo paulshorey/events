@@ -94,7 +94,7 @@ export async function replayRun(journal, runId, config) {
         a.id - b.id,
     );
   for (const page of tasks) {
-    if (["pending", "processing"].includes(page.state))
+    if (page.state !== "done")
       errors.push({
         pageId: page.id,
         code: "page_not_committed",
@@ -163,7 +163,10 @@ export async function replayRun(journal, runId, config) {
     fields: fieldSummary(records),
     quality: assessQuality(
       records,
-      pages.map((p) => p.result),
+      pages.map((p) => ({
+        ...p.result,
+        acquisition: { ...p.result.acquisition, kind: p.kind },
+      })),
       config.quality,
     ),
     records,
