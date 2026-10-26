@@ -188,8 +188,11 @@ export class Transport {
     this.leaseCheck();
     if (recovery) this.runtimeCheck();
   }
-  checkBrowserResponse(response) {
+  async checkBrowserResponse(response) {
     if (!response) return;
+    // Redirects must pass collection policy before HTTP errors can affect
+    // the publisher's retry state. The failure path still retains evidence.
+    await this.permit(response.url());
     try {
       classifyResponse(response.status());
     } catch (error) {
@@ -257,7 +260,7 @@ export class Transport {
         return lastResponse;
       })();
       const response = await Promise.race([rendered, failed]);
-      this.checkBrowserResponse(response);
+      await this.checkBrowserResponse(response);
       return response;
     } finally {
       page.off("request", onRequest);
@@ -346,7 +349,7 @@ export class Transport {
           waitUntil: "domcontentloaded",
           timeout: this.timeoutMs,
         });
-        this.checkBrowserResponse(response);
+        await this.checkBrowserResponse(response);
         browserRequestUsed = true;
         if (browserPaging) {
           this.listingPageNumber = 1;
