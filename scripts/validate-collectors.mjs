@@ -1,7 +1,7 @@
 // Explicit, bounded foreground validation. Never enables schedules or uses the operational journal.
 import { cp, mkdir, writeFile, rename, realpath } from "node:fs/promises";
 import { parseArgs } from "node:util";
-import { resolve, join } from "node:path";
+import { resolve, join, dirname, basename, sep } from "node:path";
 import { pathToFileURL, fileURLToPath } from "node:url";
 import { randomUUID } from "node:crypto";
 const { values } = parseArgs({
@@ -21,13 +21,24 @@ const operationalRoot = resolve(
   fileURLToPath(new URL("../", import.meta.url)),
   ".artifacts/framework",
 );
-const canonicalRoot = await realpath(root).catch(() => root),
-  canonicalOperational = await realpath(operationalRoot).catch(
-    () => operationalRoot,
-  );
+// Resolve missing destinations through their nearest existing ancestor so a
+// symlink cannot place a new campaign inside operational storage. Fail closed
+// for permissions, invalid path components and other filesystem errors.
+async function canonicalDestination(path) {
+  try {
+    return await realpath(path);
+  } catch (error) {
+    if (error.code !== "ENOENT") throw error;
+    const parent = dirname(path);
+    if (parent === path) throw error;
+    return join(await canonicalDestination(parent), basename(path));
+  }
+}
+const canonicalRoot = await canonicalDestination(root),
+  canonicalOperational = await canonicalDestination(operationalRoot);
 if (
   canonicalRoot === canonicalOperational ||
-  canonicalRoot.startsWith(canonicalOperational + "/")
+  canonicalRoot.startsWith(canonicalOperational + sep)
 )
   throw new Error(
     "Use separate validation storage, not the operational journal",

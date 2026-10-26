@@ -390,7 +390,12 @@ test("foreground validator rejects an operational journal root from another cwd 
   );
   const alias = join(root, "alias");
   await symlink(protectedRoot, alias);
-  for (const path of [protectedRoot, alias]) {
+  for (const path of [
+    protectedRoot,
+    alias,
+    join(protectedRoot, "new-campaign", "nested"),
+    join(alias, "new-campaign", "nested"),
+  ]) {
     const result = spawnSync(process.execPath, [script, "--root", path], {
       cwd: root,
       encoding: "utf8",
@@ -403,6 +408,7 @@ test("foreground validator rejects an operational journal root from another cwd 
     "operational sentinel",
   );
   await assert.rejects(access(join(protectedRoot, "candidates")));
+  await assert.rejects(access(join(protectedRoot, "new-campaign")));
 });
 
 test("a pending retry response cannot count as a complete replay even if its JSON parses", async (t) => {
