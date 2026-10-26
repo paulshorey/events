@@ -414,6 +414,18 @@ export class Journal {
       return { ...p, meta: JSON.parse(p.meta) };
     });
   }
+  reserveAdditionalRequest(id, token) {
+    return this.tx(() => {
+      this.assertLease(id, token);
+      const run = this.run(id);
+      if (run.requests >= run.options.maxPages)
+        throw Object.assign(
+          new Error("Request budget exhausted during browser recovery"),
+          { code: "request_budget" },
+        );
+      this.db.prepare("UPDATE runs SET requests=requests+1 WHERE id=?").run(id);
+    });
+  }
   commitPage(id, token, page, result, capture) {
     return this.tx(() => {
       this.assertLease(id, token);
