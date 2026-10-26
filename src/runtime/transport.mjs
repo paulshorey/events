@@ -84,8 +84,16 @@ export class Transport {
     journal,
     timeoutMs = 25000,
     leaseCheck = () => {},
+    runtimeCheck = () => {},
   }) {
-    Object.assign(this, { root, run, journal, timeoutMs, leaseCheck });
+    Object.assign(this, {
+      root,
+      run,
+      journal,
+      timeoutMs,
+      leaseCheck,
+      runtimeCheck,
+    });
     this.robots = new Map();
     this.browser = null;
     this.context = null;
@@ -162,8 +170,9 @@ export class Transport {
         { code: "robots_disallowed" },
       );
   }
-  async pace() {
+  async pace(recovery = false) {
     this.leaseCheck();
+    if (recovery) this.runtimeCheck();
     const delay = this.journal.reserveRate(
       this.run.source_key,
       this.run.config.minIntervalMs ?? 1000,
@@ -173,8 +182,11 @@ export class Transport {
         code: "rate_limited",
         retryAfterMs: delay,
       });
+    // Stop before a pacing wait that would consume the remaining active budget.
+    if (recovery) this.runtimeCheck(delay);
     await sleep(delay);
     this.leaseCheck();
+    if (recovery) this.runtimeCheck();
   }
   async fetch(task) {
     await this.pace();
@@ -277,11 +289,13 @@ export class Transport {
             code: "pagination_changed",
           });
         while (this.listingPageNumber < target) {
+          const recovery = browserRequestUsed;
           // nextPage reserved the first action. Reconstructing the browser's
           // lost state consumes another paced, fenced request for each click.
-          if (browserRequestUsed) {
+          if (recovery) {
+            this.runtimeCheck();
             this.journal.reserveAdditionalRequest(this.run.id, this.run.token);
-            await this.pace();
+            await this.pace(true);
           }
           this.leaseCheck();
           browserRequestUsed = true;
@@ -294,6 +308,7 @@ export class Transport {
                 .sort()
                 .join("|"),
             );
+          if (recovery) this.runtimeCheck();
           await page
             .locator(
               'ul[class*="SearchPagination_pagination"] li.next:not(.disabled) a',

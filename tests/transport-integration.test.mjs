@@ -305,3 +305,189 @@ for (const budget of [4, 5]) {
     }
   });
 }
+
+test("browser recovery stops at the runtime boundary and preserves its pending target", async (t) => {
+  const dir = await mkdtemp(join(tmpdir(), "events-browser-runtime-"));
+  t.after(() => rm(dir, { recursive: true, force: true }));
+  const requests = [];
+  let offset = 0,
+    expireRecovery = false;
+  const actualNow = Date.now.bind(Date);
+  t.mock.method(Date, "now", () => actualNow() + offset);
+  const html = `<div class="Card_card__fixture"><a class="ContentCard_headerLink" href="/events/1/">Dance 1</a><div class="ContentCard_tagContainer">Oct 25, 2026</div></div>
+    <ul class="SearchPagination_pagination"><li class="SearchPagination_active">1</li><li class="next"><a onclick="const n=Number(document.querySelector('.SearchPagination_active').textContent)+1;fetch('/page/'+n).then(()=>{document.querySelector('.SearchPagination_active').textContent=n;document.querySelector('.ContentCard_headerLink').textContent='Dance '+n;document.querySelector('.ContentCard_headerLink').href='/events/'+n+'/';if(n===3)document.querySelector('li.next').classList.add('disabled')})">Next</a></li></ul>`;
+  const server = createServer((req, res) => {
+    if (req.url === "/robots.txt") return res.end("User-agent: *\nAllow: /\n");
+    if (req.url === "/favicon.ico") return res.end();
+    requests.push(req.url);
+    // Advance only the worker/journal clock, after a real intermediate click.
+    // This crosses the 10-second runtime budget while retaining the 60-second lease.
+    if (expireRecovery && req.url === "/page/2") offset += 10001;
+    res.setHeader("content-type", "text/html");
+    res.end(req.url.startsWith("/page/") ? "ok" : html);
+  });
+  await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
+  t.after(() => new Promise((resolve) => server.close(resolve)));
+  const url = `http://127.0.0.1:${server.address().port}/events/`;
+  const config = {
+    ...(await registry()).find((c) => c.id === "url-024"),
+    url,
+    allowedHosts: ["127.0.0.1"],
+    sourceKey: "fixture",
+    rateKey: "fixture",
+    maxDepth: 0,
+    minIntervalMs: 150,
+    quality: null,
+  };
+  const j = new Journal(join(dir, "journal.sqlite"));
+  t.after(() => j.close());
+  j.register([config]);
+  const q = j.enqueue(
+    config.id,
+    optionsFor(
+      config,
+      { asOf: "2026-10-16", maxPages: 2, maxRuntimeMs: 10000 },
+      "test-build",
+    ),
+  );
+  await work(j, { root: dir, build: "test-build", runId: q.runId });
+  assert.equal(j.records(q.runId).length, 2);
+  const prior = j.records(q.runId);
+  j.resume(q.runId, {
+    maxPages: 20,
+    maxRuntimeMs: j.run(q.runId).active_ms + 10000,
+  });
+  requests.length = 0;
+  expireRecovery = true;
+  const out = await work(j, { root: dir, build: "test-build", runId: q.runId });
+  assert.equal(out[0].status, "partial");
+  assert.equal(out[0].stopReason, "runtime_budget");
+  assert.deepEqual(requests, ["/events/", "/page/2"]);
+  assert.deepEqual(j.records(q.runId), prior);
+  assert.equal(j.pages(q.runId).filter((p) => p.state === "pending").length, 1);
+  assert.equal(j.pages(q.runId).filter((p) => p.state === "failed").length, 0);
+  // An explicit cumulative budget extension can finish without losing prior output.
+  expireRecovery = false;
+  j.resume(q.runId, { maxRuntimeMs: j.run(q.runId).active_ms + 10000 });
+  const resumed = await work(j, {
+    root: dir,
+    build: "test-build",
+    runId: q.runId,
+  });
+  assert.equal(resumed[0].status, "complete");
+  assert.equal(j.records(q.runId).length, 3);
+});
+
+test("ordinary API task may finish after its pacing wait crosses the runtime boundary", async (t) => {
+  const dir = await mkdtemp(join(tmpdir(), "events-api-runtime-"));
+  t.after(() => rm(dir, { recursive: true, force: true }));
+  const fixture = JSON.parse(
+    await readFile(new URL("fixtures/tribe-page.json", import.meta.url)),
+  );
+  let contentHits = 0,
+    offset = 0;
+  const actualNow = Date.now.bind(Date);
+  t.mock.method(Date, "now", () => actualNow() + offset);
+  const server = createServer((req, res) => {
+    if (req.url === "/robots.txt") return res.end("User-agent: *\nAllow: /\n");
+    contentHits++;
+    res.setHeader("content-type", "application/json");
+    res.end(
+      JSON.stringify({
+        ...fixture,
+        total: 1,
+        total_pages: 1,
+        events: [fixture.events[0]],
+      }),
+    );
+  });
+  await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
+  t.after(() => new Promise((resolve) => server.close(resolve)));
+  const base = `http://127.0.0.1:${server.address().port}`;
+  const config = {
+    ...(await registry()).find((c) => c.id === "url-019"),
+    url: base + "/calendar",
+    apiEndpoint: base + "/api/events",
+    allowedHosts: ["127.0.0.1"],
+    sourceKey: "fixture",
+    rateKey: "fixture",
+    quality: null,
+  };
+  const j = new Journal(join(dir, "journal.sqlite"));
+  t.after(() => j.close());
+  j.register([config]);
+  const q = j.enqueue(
+    config.id,
+    optionsFor(
+      config,
+      { asOf: "2026-10-16", transport: "api", maxRuntimeMs: 10000 },
+      "test-build",
+    ),
+  );
+  const reserve = j.reserveRate.bind(j);
+  j.reserveRate = (...args) => {
+    reserve(...args);
+    // The task was admitted within budget; its ordinary pacing crosses the deadline.
+    offset = 10001;
+    return 150;
+  };
+  const out = await work(j, { root: dir, build: "test-build", runId: q.runId });
+  assert.equal(contentHits, 1);
+  assert.equal(out[0].status, "complete");
+  assert.equal(j.records(q.runId).length, 1);
+  assert.ok(j.run(q.runId).active_ms > 10000);
+});
+
+test("ordinary NYC task finishes when pacing crosses the runtime boundary", async (t) => {
+  const dir = await mkdtemp(join(tmpdir(), "events-nyc-task-runtime-"));
+  t.after(() => rm(dir, { recursive: true, force: true }));
+  const requests = [];
+  let offset = 0;
+  const actualNow = Date.now.bind(Date);
+  t.mock.method(Date, "now", () => actualNow() + offset);
+  const html = `<div class="Card_card__fixture"><a class="ContentCard_headerLink" href="/events/1/">Dance 1</a><div class="ContentCard_tagContainer">Oct 25, 2026</div></div>
+    <ul class="SearchPagination_pagination"><li class="SearchPagination_active">1</li><li class="next"><a onclick="fetch('/page/2').then(()=>{document.querySelector('.SearchPagination_active').textContent=2;document.querySelector('.ContentCard_headerLink').textContent='Dance 2';document.querySelector('.ContentCard_headerLink').href='/events/2/';document.querySelector('li.next').classList.add('disabled')})">Next</a></li></ul>`;
+  const server = createServer((req, res) => {
+    if (req.url === "/robots.txt") return res.end("User-agent: *\nAllow: /\n");
+    if (req.url === "/favicon.ico") return res.end();
+    requests.push(req.url);
+    res.setHeader("content-type", "text/html");
+    res.end(req.url === "/page/2" ? "ok" : html);
+  });
+  await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
+  t.after(() => new Promise((resolve) => server.close(resolve)));
+  const config = {
+    ...(await registry()).find((c) => c.id === "url-024"),
+    url: `http://127.0.0.1:${server.address().port}/events/`,
+    allowedHosts: ["127.0.0.1"],
+    sourceKey: "fixture",
+    rateKey: "fixture",
+    maxDepth: 0,
+    minIntervalMs: 150,
+    quality: null,
+  };
+  const j = new Journal(join(dir, "journal.sqlite"));
+  t.after(() => j.close());
+  j.register([config]);
+  const q = j.enqueue(
+    config.id,
+    optionsFor(config, { asOf: "2026-10-16", maxRuntimeMs: 10000 }, "test-build"),
+  );
+  const reserve = j.reserveRate.bind(j);
+  let pacingCalls = 0;
+  j.reserveRate = (...args) => {
+    const delay = reserve(...args);
+    // The second task was admitted within budget and reuses the live page.
+    if (++pacingCalls === 2) {
+      offset += 10001;
+      return 150;
+    }
+    return delay;
+  };
+  const out = await work(j, { root: dir, build: "test-build", runId: q.runId });
+  assert.deepEqual(requests, ["/events/", "/page/2"]);
+  assert.equal(out[0].status, "complete");
+  assert.equal(j.records(q.runId).length, 2);
+  assert.equal(j.pages(q.runId).filter((p) => p.state === "pending").length, 0);
+  assert.ok(j.run(q.runId).active_ms > 10000);
+});
