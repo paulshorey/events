@@ -289,10 +289,11 @@ export class Transport {
             code: "pagination_changed",
           });
         while (this.listingPageNumber < target) {
-          this.runtimeCheck();
+          const recovery = browserRequestUsed;
           // nextPage reserved the first action. Reconstructing the browser's
           // lost state consumes another paced, fenced request for each click.
-          if (browserRequestUsed) {
+          if (recovery) {
+            this.runtimeCheck();
             this.journal.reserveAdditionalRequest(this.run.id, this.run.token);
             await this.pace(true);
           }
@@ -307,7 +308,7 @@ export class Transport {
                 .sort()
                 .join("|"),
             );
-          this.runtimeCheck();
+          if (recovery) this.runtimeCheck();
           await page
             .locator(
               'ul[class*="SearchPagination_pagination"] li.next:not(.disabled) a',

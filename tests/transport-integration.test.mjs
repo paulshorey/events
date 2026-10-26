@@ -437,3 +437,57 @@ test("ordinary API task may finish after its pacing wait crosses the runtime bou
   assert.equal(j.records(q.runId).length, 1);
   assert.ok(j.run(q.runId).active_ms > 10000);
 });
+
+test("ordinary NYC task finishes when pacing crosses the runtime boundary", async (t) => {
+  const dir = await mkdtemp(join(tmpdir(), "events-nyc-task-runtime-"));
+  t.after(() => rm(dir, { recursive: true, force: true }));
+  const requests = [];
+  let offset = 0;
+  const actualNow = Date.now.bind(Date);
+  t.mock.method(Date, "now", () => actualNow() + offset);
+  const html = `<div class="Card_card__fixture"><a class="ContentCard_headerLink" href="/events/1/">Dance 1</a><div class="ContentCard_tagContainer">Oct 25, 2026</div></div>
+    <ul class="SearchPagination_pagination"><li class="SearchPagination_active">1</li><li class="next"><a onclick="fetch('/page/2').then(()=>{document.querySelector('.SearchPagination_active').textContent=2;document.querySelector('.ContentCard_headerLink').textContent='Dance 2';document.querySelector('.ContentCard_headerLink').href='/events/2/';document.querySelector('li.next').classList.add('disabled')})">Next</a></li></ul>`;
+  const server = createServer((req, res) => {
+    if (req.url === "/robots.txt") return res.end("User-agent: *\nAllow: /\n");
+    if (req.url === "/favicon.ico") return res.end();
+    requests.push(req.url);
+    res.setHeader("content-type", "text/html");
+    res.end(req.url === "/page/2" ? "ok" : html);
+  });
+  await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
+  t.after(() => new Promise((resolve) => server.close(resolve)));
+  const config = {
+    ...(await registry()).find((c) => c.id === "url-024"),
+    url: `http://127.0.0.1:${server.address().port}/events/`,
+    allowedHosts: ["127.0.0.1"],
+    sourceKey: "fixture",
+    rateKey: "fixture",
+    maxDepth: 0,
+    minIntervalMs: 150,
+    quality: null,
+  };
+  const j = new Journal(join(dir, "journal.sqlite"));
+  t.after(() => j.close());
+  j.register([config]);
+  const q = j.enqueue(
+    config.id,
+    optionsFor(config, { asOf: "2026-10-16", maxRuntimeMs: 10000 }, "test-build"),
+  );
+  const reserve = j.reserveRate.bind(j);
+  let pacingCalls = 0;
+  j.reserveRate = (...args) => {
+    const delay = reserve(...args);
+    // The second task was admitted within budget and reuses the live page.
+    if (++pacingCalls === 2) {
+      offset += 10001;
+      return 150;
+    }
+    return delay;
+  };
+  const out = await work(j, { root: dir, build: "test-build", runId: q.runId });
+  assert.deepEqual(requests, ["/events/", "/page/2"]);
+  assert.equal(out[0].status, "complete");
+  assert.equal(j.records(q.runId).length, 2);
+  assert.equal(j.pages(q.runId).filter((p) => p.state === "pending").length, 0);
+  assert.ok(j.run(q.runId).active_ms > 10000);
+});
