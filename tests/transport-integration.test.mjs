@@ -377,3 +377,63 @@ test("browser recovery stops at the runtime boundary and preserves its pending t
   assert.equal(resumed[0].status, "complete");
   assert.equal(j.records(q.runId).length, 3);
 });
+
+test("ordinary API task may finish after its pacing wait crosses the runtime boundary", async (t) => {
+  const dir = await mkdtemp(join(tmpdir(), "events-api-runtime-"));
+  t.after(() => rm(dir, { recursive: true, force: true }));
+  const fixture = JSON.parse(
+    await readFile(new URL("fixtures/tribe-page.json", import.meta.url)),
+  );
+  let contentHits = 0,
+    offset = 0;
+  const actualNow = Date.now.bind(Date);
+  t.mock.method(Date, "now", () => actualNow() + offset);
+  const server = createServer((req, res) => {
+    if (req.url === "/robots.txt") return res.end("User-agent: *\nAllow: /\n");
+    contentHits++;
+    res.setHeader("content-type", "application/json");
+    res.end(
+      JSON.stringify({
+        ...fixture,
+        total: 1,
+        total_pages: 1,
+        events: [fixture.events[0]],
+      }),
+    );
+  });
+  await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
+  t.after(() => new Promise((resolve) => server.close(resolve)));
+  const base = `http://127.0.0.1:${server.address().port}`;
+  const config = {
+    ...(await registry()).find((c) => c.id === "url-019"),
+    url: base + "/calendar",
+    apiEndpoint: base + "/api/events",
+    allowedHosts: ["127.0.0.1"],
+    sourceKey: "fixture",
+    rateKey: "fixture",
+    quality: null,
+  };
+  const j = new Journal(join(dir, "journal.sqlite"));
+  t.after(() => j.close());
+  j.register([config]);
+  const q = j.enqueue(
+    config.id,
+    optionsFor(
+      config,
+      { asOf: "2026-10-16", transport: "api", maxRuntimeMs: 10000 },
+      "test-build",
+    ),
+  );
+  const reserve = j.reserveRate.bind(j);
+  j.reserveRate = (...args) => {
+    reserve(...args);
+    // The task was admitted within budget; its ordinary pacing crosses the deadline.
+    offset = 10001;
+    return 150;
+  };
+  const out = await work(j, { root: dir, build: "test-build", runId: q.runId });
+  assert.equal(contentHits, 1);
+  assert.equal(out[0].status, "complete");
+  assert.equal(j.records(q.runId).length, 1);
+  assert.ok(j.run(q.runId).active_ms > 10000);
+});

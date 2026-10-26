@@ -170,9 +170,9 @@ export class Transport {
         { code: "robots_disallowed" },
       );
   }
-  async pace() {
+  async pace(recovery = false) {
     this.leaseCheck();
-    this.runtimeCheck();
+    if (recovery) this.runtimeCheck();
     const delay = this.journal.reserveRate(
       this.run.source_key,
       this.run.config.minIntervalMs ?? 1000,
@@ -183,16 +183,15 @@ export class Transport {
         retryAfterMs: delay,
       });
     // Stop before a pacing wait that would consume the remaining active budget.
-    this.runtimeCheck(delay);
+    if (recovery) this.runtimeCheck(delay);
     await sleep(delay);
     this.leaseCheck();
-    this.runtimeCheck();
+    if (recovery) this.runtimeCheck();
   }
   async fetch(task) {
     await this.pace();
     await this.permit(task.url);
     this.leaseCheck();
-    this.runtimeCheck();
     if (task.kind === "api") {
       const api = await this.initApi(),
         response = await api.get(task.url),
@@ -267,7 +266,6 @@ export class Transport {
       ) {
         const navigationUrl = new URL(task.url);
         if (browserPaging) navigationUrl.hash = "";
-        this.runtimeCheck();
         response = await page.goto(navigationUrl.href, {
           waitUntil: "domcontentloaded",
           timeout: this.timeoutMs,
@@ -296,7 +294,7 @@ export class Transport {
           // lost state consumes another paced, fenced request for each click.
           if (browserRequestUsed) {
             this.journal.reserveAdditionalRequest(this.run.id, this.run.token);
-            await this.pace();
+            await this.pace(true);
           }
           this.leaseCheck();
           browserRequestUsed = true;
