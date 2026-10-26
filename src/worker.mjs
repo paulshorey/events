@@ -458,18 +458,17 @@ export async function work(
         const retry =
           ["rate_limited", "transport_error"].includes(code) &&
           run.attempt_no < run.options.maxRetries;
-        const status =
-          code === "worker_stopping"
-            ? "partial"
-            : [
-                  "access_blocked",
-                  "credentials_required",
-                  "robots_disallowed",
-                ].includes(code)
-              ? "blocked_access"
-              : retry
-                ? "retry_wait"
-                : "repair_needed";
+        const status = ["worker_stopping", "request_budget"].includes(code)
+          ? "partial"
+          : [
+                "access_blocked",
+                "credentials_required",
+                "robots_disallowed",
+              ].includes(code)
+            ? "blocked_access"
+            : retry
+              ? "retry_wait"
+              : "repair_needed";
         try {
           if (task)
             journal.pageError(
@@ -477,7 +476,7 @@ export async function work(
               run.token,
               task.id,
               detail,
-              retry || code === "worker_stopping",
+              retry || ["worker_stopping", "request_budget"].includes(code),
               detail.capture,
             );
           const result = evaluate(journal, journal.run(run.id), code);

@@ -162,7 +162,7 @@ export class Transport {
         { code: "robots_disallowed" },
       );
   }
-  async fetch(task) {
+  async pace() {
     this.leaseCheck();
     const delay = this.journal.reserveRate(
       this.run.source_key,
@@ -174,6 +174,10 @@ export class Transport {
         retryAfterMs: delay,
       });
     await sleep(delay);
+    this.leaseCheck();
+  }
+  async fetch(task) {
+    await this.pace();
     await this.permit(task.url);
     this.leaseCheck();
     if (task.kind === "api") {
@@ -240,7 +244,8 @@ export class Transport {
     }
     let capture, snapshot;
     try {
-      let response;
+      let response,
+        browserRequestUsed = false;
       const target = task.meta?.browserPage ?? 1;
       if (
         !browserPaging ||
@@ -253,7 +258,14 @@ export class Transport {
           waitUntil: "domcontentloaded",
           timeout: this.timeoutMs,
         });
-        if (browserPaging) this.listingPageNumber = 1;
+        browserRequestUsed = true;
+        if (browserPaging) {
+          this.listingPageNumber = 1;
+          this.journal.deferRate(
+            this.run.source_key,
+            this.run.config.minIntervalMs ?? 1000,
+          );
+        }
       }
       if (browserPaging) {
         if (
@@ -265,7 +277,14 @@ export class Transport {
             code: "pagination_changed",
           });
         while (this.listingPageNumber < target) {
+          // nextPage reserved the first action. Reconstructing the browser's
+          // lost state consumes another paced, fenced request for each click.
+          if (browserRequestUsed) {
+            this.journal.reserveAdditionalRequest(this.run.id, this.run.token);
+            await this.pace();
+          }
           this.leaseCheck();
+          browserRequestUsed = true;
           const current = this.listingPageNumber;
           const before = await page
             .locator('a[class*="ContentCard_headerLink"]')
@@ -301,6 +320,10 @@ export class Transport {
             { timeout: 15000 },
           );
           this.listingPageNumber++;
+          this.journal.deferRate(
+            this.run.source_key,
+            this.run.config.minIntervalMs ?? 1000,
+          );
         }
       }
       snapshot = await snapshotPage(page);
