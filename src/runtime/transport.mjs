@@ -84,8 +84,16 @@ export class Transport {
     journal,
     timeoutMs = 25000,
     leaseCheck = () => {},
+    runtimeCheck = () => {},
   }) {
-    Object.assign(this, { root, run, journal, timeoutMs, leaseCheck });
+    Object.assign(this, {
+      root,
+      run,
+      journal,
+      timeoutMs,
+      leaseCheck,
+      runtimeCheck,
+    });
     this.robots = new Map();
     this.browser = null;
     this.context = null;
@@ -164,6 +172,7 @@ export class Transport {
   }
   async pace() {
     this.leaseCheck();
+    this.runtimeCheck();
     const delay = this.journal.reserveRate(
       this.run.source_key,
       this.run.config.minIntervalMs ?? 1000,
@@ -173,13 +182,17 @@ export class Transport {
         code: "rate_limited",
         retryAfterMs: delay,
       });
+    // Stop before a pacing wait that would consume the remaining active budget.
+    this.runtimeCheck(delay);
     await sleep(delay);
     this.leaseCheck();
+    this.runtimeCheck();
   }
   async fetch(task) {
     await this.pace();
     await this.permit(task.url);
     this.leaseCheck();
+    this.runtimeCheck();
     if (task.kind === "api") {
       const api = await this.initApi(),
         response = await api.get(task.url),
@@ -254,6 +267,7 @@ export class Transport {
       ) {
         const navigationUrl = new URL(task.url);
         if (browserPaging) navigationUrl.hash = "";
+        this.runtimeCheck();
         response = await page.goto(navigationUrl.href, {
           waitUntil: "domcontentloaded",
           timeout: this.timeoutMs,
@@ -277,6 +291,7 @@ export class Transport {
             code: "pagination_changed",
           });
         while (this.listingPageNumber < target) {
+          this.runtimeCheck();
           // nextPage reserved the first action. Reconstructing the browser's
           // lost state consumes another paced, fenced request for each click.
           if (browserRequestUsed) {
@@ -294,6 +309,7 @@ export class Transport {
                 .sort()
                 .join("|"),
             );
+          this.runtimeCheck();
           await page
             .locator(
               'ul[class*="SearchPagination_pagination"] li.next:not(.disabled) a',
