@@ -517,6 +517,89 @@ test("ordinary NYC task finishes when pacing crosses the runtime boundary", asyn
   assert.ok(j.run(q.runId).active_ms > 10000);
 });
 
+for (const mode of ["fetch", "xhr", "navigation"]) {
+  for (const allowed of [false, true]) {
+    test(`NYC ${mode} pagination ${allowed ? "allows" : "blocks"} requests before sending according to robots policy`, async (t) => {
+      const dir = await mkdtemp(join(tmpdir(), "events-nyc-robots-"));
+      t.after(() => rm(dir, { recursive: true, force: true }));
+      let pageHits = 0;
+      const card = (n) =>
+        `<div class="Card_card__fixture"><a class="ContentCard_headerLink" href="/events/${n}/">Dance ${n}</a><div class="ContentCard_tagContainer">Oct 25, 2026</div></div>`;
+      const terminal =
+        card(2) +
+        '<ul class="SearchPagination_pagination"><li class="SearchPagination_active">2</li><li class="next disabled"><a>Next</a></li></ul>';
+      const update = `document.body.innerHTML=${JSON.stringify(terminal)}`;
+      const action =
+        mode === "fetch"
+          ? `fetch('/page/2').then(()=>{${update}}).catch(()=>{})`
+          : `const xhr=new XMLHttpRequest();xhr.open('GET','/page/2');xhr.onload=()=>{${update}};xhr.send()`;
+      const next =
+        mode === "navigation"
+          ? 'href="/page/2"'
+          : `onclick="${action.replaceAll('"', "&quot;")}"`;
+      const first =
+        card(1) +
+        `<ul class="SearchPagination_pagination"><li class="SearchPagination_active">1</li><li class="next"><a ${next}>Next</a></li></ul>`;
+      const server = createServer((req, res) => {
+        if (req.url === "/robots.txt")
+          return res.end(
+            `User-agent: *\nAllow: /\n${allowed ? "" : "Disallow: /page/2\n"}`,
+          );
+        if (req.url === "/favicon.ico") return res.end();
+        res.setHeader("content-type", "text/html");
+        if (req.url === "/page/2") {
+          pageHits++;
+          return res.end(terminal);
+        }
+        res.end(first);
+      });
+      await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
+      t.after(() => new Promise((resolve) => server.close(resolve)));
+      const config = {
+        ...(await registry()).find((c) => c.id === "url-024"),
+        url: `http://127.0.0.1:${server.address().port}/events/`,
+        allowedHosts: ["127.0.0.1"],
+        sourceKey: "fixture",
+        rateKey: "fixture",
+        maxDepth: 0,
+        minIntervalMs: 1,
+        quality: null,
+      };
+      const j = new Journal(join(dir, "journal.sqlite"));
+      t.after(() => j.close());
+      j.register([config]);
+      const q = j.enqueue(
+        config.id,
+        optionsFor(config, { asOf: "2026-10-16" }, "test-build"),
+      );
+      const result = await work(j, {
+        root: dir,
+        build: "test-build",
+        runId: q.runId,
+      });
+      assert.equal(
+        pageHits,
+        allowed ? 1 : 0,
+        "disallowed request must never reach the publisher",
+      );
+      assert.equal(j.records(q.runId).length, allowed ? 2 : 1);
+      if (allowed) {
+        assert.equal(result[0].status, "complete");
+      } else {
+        assert.equal(j.run(q.runId).error.code, "robots_disallowed");
+        const failed = j.pages(q.runId).find((p) => p.meta.browserPage === 2);
+        assert.equal(failed.state, "failed");
+        assert.equal(result[0].status, "blocked_access");
+        assert.ok(
+          j.pages(q.runId).find((p) => p.state === "done").capture,
+          "retain the prior committed page; the blocked request has no response",
+        );
+        assert.equal(j.collection(config.id).last_complete, null);
+      }
+    });
+  }
+}
+
 for (const mode of ["fetch", "fetch-stalled", "navigation"]) {
   for (const status of [201, 429, 503]) {
     test(`NYC ${mode} pagination preserves HTTP ${status} classification and capture`, async (t) => {
