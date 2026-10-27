@@ -55,8 +55,11 @@ export function assessQuality(records, results, policy, baseline = null) {
         records.length ? fields[key] / records.length : 0,
       ]),
     ),
-    rejected = results.reduce((n, r) => n + (r.rejected ?? 0), 0),
-    observed = results.reduce((n, r) => n + (r.observedCount ?? 0), 0),
+    // Detail enrichment describes the same listing observations again.
+    // Keep both rejection counts on the listing/API population.
+    enumeration = results.filter((r) => r.acquisition?.kind !== "detail"),
+    rejected = enumeration.reduce((n, r) => n + (r.rejected ?? 0), 0),
+    observed = enumeration.reduce((n, r) => n + (r.observedCount ?? 0), 0),
     metrics = {
       fields,
       rates,

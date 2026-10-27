@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { createServer } from "node:http";
-import { mkdtemp, rm, readFile } from "node:fs/promises";
+import { mkdtemp, rm, readFile, access } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { Journal } from "../src/storage/journal.mjs";
@@ -138,44 +138,60 @@ test("HTTP 429 retains an API checkpoint, honors Retry-After and resumes via a n
   assert.equal(j.pages(q.runId).length, 2);
 });
 
-for (const kind of ["api", "listing"]) {
-  test(`${kind} redirect to an unrelated host retains evidence and fails collection scope`, async (t) => {
-    const dir = await mkdtemp(join(tmpdir(), "events-redirect-"));
-    t.after(() => rm(dir, { recursive: true, force: true }));
-    const server = createServer((req, res) => {
-      if (req.url === "/robots.txt") return res.end("User-agent: *\nAllow: /");
-      if (req.url === "/start") {
-        res.writeHead(302, {
-          location: `http://localhost:${server.address().port}/unrelated`,
-        });
-        return res.end();
-      }
-      res.end("Unrelated publisher, never accept as the original collection");
-    });
-    await new Promise((resolve) => server.listen(0, resolve));
-    t.after(() => new Promise((resolve) => server.close(resolve)));
-    const url = `http://127.0.0.1:${server.address().port}/start`;
-    const transport = new Transport({
-      root: dir,
-      run: {
-        id: "test",
-        attemptId: "one",
-        source_key: "127.0.0.1",
-        config: { url, timeZone: "UTC" },
-      },
-      journal: { reserveRate: () => 0 },
-    });
-    t.after(() => transport.close());
-    await assert.rejects(transport.fetch({ id: "one", url, kind }), asyncError);
-    function asyncError(error) {
-      assert.equal(error.code, "scope_violation");
-      assert.ok(
-        error.capture?.path,
-        "retain redirected response as failure evidence",
+for (const status of [200, 403, 429, 503]) {
+  for (const kind of ["api", "listing"]) {
+    test(`${kind} redirect to an unrelated host with HTTP ${status} retains evidence and fails collection scope`, async (t) => {
+      const dir = await mkdtemp(join(tmpdir(), "events-redirect-"));
+      t.after(() => rm(dir, { recursive: true, force: true }));
+      const server = createServer((req, res) => {
+        if (req.url === "/robots.txt")
+          return res.end("User-agent: *\nAllow: /");
+        if (req.url === "/start") {
+          res.writeHead(302, {
+            location: `http://localhost:${server.address().port}/unrelated`,
+          });
+          return res.end();
+        }
+        res.writeHead(status, { "retry-after": "120" });
+        res.end("Unrelated publisher, never accept as the original collection");
+      });
+      await new Promise((resolve) => server.listen(0, resolve));
+      t.after(() => new Promise((resolve) => server.close(resolve)));
+      const url = `http://127.0.0.1:${server.address().port}/start`;
+      const cooldowns = [];
+      const transport = new Transport({
+        root: dir,
+        run: {
+          id: "test",
+          attemptId: "one",
+          source_key: "127.0.0.1",
+          config: { url, timeZone: "UTC" },
+        },
+        journal: {
+          reserveRate: () => 0,
+          deferRate: (...args) => cooldowns.push(args),
+        },
+      });
+      t.after(() => transport.close());
+      await assert.rejects(
+        transport.fetch({ id: "one", url, kind }),
+        asyncError,
       );
-      return true;
-    }
-  });
+      assert.deepEqual(
+        cooldowns,
+        [],
+        "unrelated host cannot defer the publisher",
+      );
+      function asyncError(error) {
+        assert.equal(error.code, "scope_violation");
+        assert.ok(
+          error.capture?.path,
+          "retain redirected response as failure evidence",
+        );
+        return true;
+      }
+    });
+  }
 }
 
 test("navigation during final policy validation cannot change the captured page's base URL", async (t) => {
@@ -205,12 +221,17 @@ test("navigation during final policy validation cannot change the captured page'
   });
   t.after(() => transport.close());
   const permit = transport.permit.bind(transport);
-  let checks = 0,
-    navigated = false;
+  let navigated = false;
   transport.permit = async (checkedUrl) => {
     await permit(checkedUrl);
     // Force the race while the final asynchronous policy check is in flight.
-    if (++checks === 3) {
+    const captured = await access(
+      join(dir, "runs", "navigation", "one", "page-one.html"),
+    ).then(
+      () => true,
+      () => false,
+    );
+    if (captured && !navigated) {
       await transport.context
         .pages()[0]
         .goto(`http://localhost:${server.address().port}/other`, {
@@ -471,7 +492,11 @@ test("ordinary NYC task finishes when pacing crosses the runtime boundary", asyn
   j.register([config]);
   const q = j.enqueue(
     config.id,
-    optionsFor(config, { asOf: "2026-10-16", maxRuntimeMs: 10000 }, "test-build"),
+    optionsFor(
+      config,
+      { asOf: "2026-10-16", maxRuntimeMs: 10000 },
+      "test-build",
+    ),
   );
   const reserve = j.reserveRate.bind(j);
   let pacingCalls = 0;
@@ -491,3 +516,96 @@ test("ordinary NYC task finishes when pacing crosses the runtime boundary", asyn
   assert.equal(j.pages(q.runId).filter((p) => p.state === "pending").length, 0);
   assert.ok(j.run(q.runId).active_ms > 10000);
 });
+
+for (const mode of ["fetch", "fetch-stalled", "navigation"]) {
+  for (const status of [201, 429, 503]) {
+    test(`NYC ${mode} pagination preserves HTTP ${status} classification and capture`, async (t) => {
+      const dir = await mkdtemp(join(tmpdir(), "events-nyc-response-"));
+      t.after(() => rm(dir, { recursive: true, force: true }));
+      let requests = 0;
+      const card = (n) =>
+        `<div class="Card_card__fixture"><a class="ContentCard_headerLink" href="/events/${n}/">Dance ${n}</a><div class="ContentCard_tagContainer">Oct 25, 2026</div></div>`;
+      const terminal =
+        card(2) +
+        '<ul class="SearchPagination_pagination"><li class="SearchPagination_active">2</li><li class="next disabled"><a>Next</a></li></ul>';
+      const next =
+        mode === "navigation"
+          ? 'href="/page/2"'
+          : `onclick="fetch('/page/2').then((r)=>{if(${mode === "fetch-stalled" ? "!r.ok" : "false"})return;document.body.innerHTML=${JSON.stringify(terminal).replaceAll('"', "&quot;")}})"`;
+      const first =
+        card(1) +
+        `<ul class="SearchPagination_pagination"><li class="SearchPagination_active">1</li><li class="next"><a ${next}>Next</a></li></ul>`;
+      const server = createServer((req, res) => {
+        if (req.url === "/robots.txt")
+          return res.end("User-agent: *\nAllow: /\n");
+        if (req.url === "/favicon.ico") return res.end();
+        requests++;
+        res.setHeader("content-type", "text/html");
+        if (req.url === "/page/2") {
+          res.statusCode = status;
+          res.setHeader("retry-after", "60");
+          return res.end(terminal);
+        }
+        res.end(first);
+      });
+      await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
+      t.after(() => new Promise((resolve) => server.close(resolve)));
+      const config = {
+        ...(await registry()).find((c) => c.id === "url-024"),
+        url: `http://127.0.0.1:${server.address().port}/events/`,
+        allowedHosts: ["127.0.0.1"],
+        sourceKey: "fixture",
+        rateKey: "fixture",
+        maxDepth: 0,
+        minIntervalMs: 150,
+        quality: null,
+      };
+      const j = new Journal(join(dir, "journal.sqlite"));
+      t.after(() => j.close());
+      j.register([config]);
+      const q = j.enqueue(
+        config.id,
+        optionsFor(config, { asOf: "2026-10-16" }, "test-build"),
+      );
+      const result = await work(j, {
+        root: dir,
+        build: "test-build",
+        runId: q.runId,
+      });
+      if (status === 201) {
+        assert.equal(result[0].status, "complete");
+        assert.equal(j.records(q.runId).length, 2);
+        assert.equal(
+          j.pages(q.runId).find((p) => p.meta.browserPage === 2).result
+            .acquisition.status,
+          201,
+        );
+        return;
+      }
+      assert.equal(result[0].status, "retry_wait");
+      const failed = j.pages(q.runId).find((p) => p.meta.browserPage === 2);
+      assert.equal(failed.state, "pending");
+      assert.equal(
+        failed.error.code,
+        status === 429 ? "rate_limited" : "transport_error",
+      );
+      assert.equal(failed.error.retryAfterMs, 60000);
+      assert.equal(await readFile(failed.capture, "utf8"), terminal);
+      assert.equal(j.records(q.runId).length, 1);
+      assert.equal(requests, 2);
+      if (status === 429) {
+        const transport = new Transport({
+          root: dir,
+          run: { ...j.run(q.runId), token: "unused" },
+          journal: j,
+        });
+        t.after(() => transport.close());
+        await assert.rejects(
+          transport.fetch({ id: 999, url: config.url, kind: "listing" }),
+          (e) => e.code === "rate_limited",
+        );
+        assert.equal(requests, 2, "cooldown prevents another request");
+      }
+    });
+  }
+}
