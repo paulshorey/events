@@ -245,6 +245,33 @@ test("comparison preserves occurrence identity and detects field differences wit
   );
 });
 
+test("comparison detects all-day changes with unchanged identity, clocks and field quality", () => {
+  const timed = record({ allDay: false }),
+    allDay = record({ allDay: true });
+  assert.equal(timed.sourceRecordId, allDay.sourceRecordId);
+  assert.equal(timed.startDate, allDay.startDate);
+  assert.equal(timed.endDate, allDay.endDate);
+  assert.deepEqual(timed.fieldQuality, allDay.fieldQuality);
+  for (const [before, after] of [
+    [timed, allDay],
+    [allDay, timed],
+  ]) {
+    const result = compareRecords([before], [after]);
+    assert.equal(result.addedCount, 0);
+    assert.equal(result.removedCount, 0);
+    assert.equal(result.changedCount, 1);
+    assert.deepEqual(result.changed, [
+      {
+        sourceRecordId: timed.sourceRecordId,
+        fields: [
+          { field: "allDay", before: before.allDay, after: after.allDay },
+        ],
+      },
+    ]);
+  }
+  assert.equal(compareRecords([allDay], [allDay]).changedCount, 0);
+});
+
 test("read-only diagnostics accept the legacy journal without creating enrichment tables", async (t) => {
   const root = await mkdtemp(join(tmpdir(), "events-legacy-reader-"));
   t.after(() => rm(root, { recursive: true, force: true }));

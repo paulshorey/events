@@ -182,6 +182,7 @@ const comparedFields = [
   "endLocal",
   "timeZone",
   "timeZoneLabel",
+  "allDay",
   "location",
   "geoCoordinates",
   "categoryTags",
