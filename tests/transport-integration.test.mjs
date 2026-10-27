@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { createServer } from "node:http";
-import { mkdtemp, rm, readFile } from "node:fs/promises";
+import { mkdtemp, rm, readFile, access } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { Journal } from "../src/storage/journal.mjs";
@@ -138,44 +138,60 @@ test("HTTP 429 retains an API checkpoint, honors Retry-After and resumes via a n
   assert.equal(j.pages(q.runId).length, 2);
 });
 
-for (const kind of ["api", "listing"]) {
-  test(`${kind} redirect to an unrelated host retains evidence and fails collection scope`, async (t) => {
-    const dir = await mkdtemp(join(tmpdir(), "events-redirect-"));
-    t.after(() => rm(dir, { recursive: true, force: true }));
-    const server = createServer((req, res) => {
-      if (req.url === "/robots.txt") return res.end("User-agent: *\nAllow: /");
-      if (req.url === "/start") {
-        res.writeHead(302, {
-          location: `http://localhost:${server.address().port}/unrelated`,
-        });
-        return res.end();
-      }
-      res.end("Unrelated publisher, never accept as the original collection");
-    });
-    await new Promise((resolve) => server.listen(0, resolve));
-    t.after(() => new Promise((resolve) => server.close(resolve)));
-    const url = `http://127.0.0.1:${server.address().port}/start`;
-    const transport = new Transport({
-      root: dir,
-      run: {
-        id: "test",
-        attemptId: "one",
-        source_key: "127.0.0.1",
-        config: { url, timeZone: "UTC" },
-      },
-      journal: { reserveRate: () => 0 },
-    });
-    t.after(() => transport.close());
-    await assert.rejects(transport.fetch({ id: "one", url, kind }), asyncError);
-    function asyncError(error) {
-      assert.equal(error.code, "scope_violation");
-      assert.ok(
-        error.capture?.path,
-        "retain redirected response as failure evidence",
+for (const status of [200, 403, 429, 503]) {
+  for (const kind of ["api", "listing"]) {
+    test(`${kind} redirect to an unrelated host with HTTP ${status} retains evidence and fails collection scope`, async (t) => {
+      const dir = await mkdtemp(join(tmpdir(), "events-redirect-"));
+      t.after(() => rm(dir, { recursive: true, force: true }));
+      const server = createServer((req, res) => {
+        if (req.url === "/robots.txt")
+          return res.end("User-agent: *\nAllow: /");
+        if (req.url === "/start") {
+          res.writeHead(302, {
+            location: `http://localhost:${server.address().port}/unrelated`,
+          });
+          return res.end();
+        }
+        res.writeHead(status, { "retry-after": "120" });
+        res.end("Unrelated publisher, never accept as the original collection");
+      });
+      await new Promise((resolve) => server.listen(0, resolve));
+      t.after(() => new Promise((resolve) => server.close(resolve)));
+      const url = `http://127.0.0.1:${server.address().port}/start`;
+      const cooldowns = [];
+      const transport = new Transport({
+        root: dir,
+        run: {
+          id: "test",
+          attemptId: "one",
+          source_key: "127.0.0.1",
+          config: { url, timeZone: "UTC" },
+        },
+        journal: {
+          reserveRate: () => 0,
+          deferRate: (...args) => cooldowns.push(args),
+        },
+      });
+      t.after(() => transport.close());
+      await assert.rejects(
+        transport.fetch({ id: "one", url, kind }),
+        asyncError,
       );
-      return true;
-    }
-  });
+      assert.deepEqual(
+        cooldowns,
+        [],
+        "unrelated host cannot defer the publisher",
+      );
+      function asyncError(error) {
+        assert.equal(error.code, "scope_violation");
+        assert.ok(
+          error.capture?.path,
+          "retain redirected response as failure evidence",
+        );
+        return true;
+      }
+    });
+  }
 }
 
 test("navigation during final policy validation cannot change the captured page's base URL", async (t) => {
@@ -205,12 +221,17 @@ test("navigation during final policy validation cannot change the captured page'
   });
   t.after(() => transport.close());
   const permit = transport.permit.bind(transport);
-  let checks = 0,
-    navigated = false;
+  let navigated = false;
   transport.permit = async (checkedUrl) => {
     await permit(checkedUrl);
     // Force the race while the final asynchronous policy check is in flight.
-    if (++checks === 3) {
+    const captured = await access(
+      join(dir, "runs", "navigation", "one", "page-one.html"),
+    ).then(
+      () => true,
+      () => false,
+    );
+    if (captured && !navigated) {
       await transport.context
         .pages()[0]
         .goto(`http://localhost:${server.address().port}/other`, {
