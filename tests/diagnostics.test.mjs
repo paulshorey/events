@@ -9,8 +9,12 @@ import {
   cp,
   symlink,
   access,
+  readdir,
+  realpath,
+  lstat,
 } from "node:fs/promises";
 import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { tmpdir } from "node:os";
 import { spawnSync } from "node:child_process";
 import { Journal, hash } from "../src/storage/journal.mjs";
@@ -409,6 +413,48 @@ test("foreground validator rejects an operational journal root from another cwd 
   );
   await assert.rejects(access(join(protectedRoot, "candidates")));
   await assert.rejects(access(join(protectedRoot, "new-campaign")));
+});
+
+test("foreground validator resolves snapshot dependencies with an external root or working directory", async (t) => {
+  const root = await mkdtemp(join(tmpdir(), "events-validator-dependencies-"));
+  t.after(() => rm(root, { recursive: true, force: true }));
+  const script = fileURLToPath(
+    new URL("../scripts/validate-collectors.mjs", import.meta.url),
+  );
+  for (const explicitRoot of [true, false]) {
+    const result = spawnSync(
+      process.execPath,
+      [
+        script,
+        ...(explicitRoot ? ["--root", join(root, "absolute")] : []),
+        "--ids",
+        "url-999",
+      ],
+      { cwd: root, encoding: "utf8", timeout: 15000 },
+    );
+    // Invalid selection must be reached after importing real copied modules,
+    // before a journal or any collector can acquire publisher content.
+    assert.equal(result.status, 1, result.stderr);
+    assert.match(result.stderr, /Unknown source ID/);
+    assert.doesNotMatch(result.stderr, /ERR_MODULE_NOT_FOUND/);
+    const campaigns = join(root, ".artifacts/source-validation");
+    const campaign = explicitRoot
+      ? join(root, "absolute")
+      : join(campaigns, (await readdir(campaigns))[0]);
+    const candidates = join(campaign, "candidates");
+    const snapshot = join(candidates, (await readdir(candidates))[0]);
+    assert.equal(
+      await realpath(join(snapshot, "node_modules")),
+      await realpath(new URL("../node_modules", import.meta.url)),
+    );
+    const worker = join(snapshot, "src/worker.mjs");
+    assert.equal((await lstat(worker)).isSymbolicLink(), false);
+    assert.equal(
+      await readFile(worker, "utf8"),
+      await readFile(new URL("../src/worker.mjs", import.meta.url), "utf8"),
+    );
+    await assert.rejects(access(join(campaign, "journal.sqlite")));
+  }
 });
 
 test("a pending retry response cannot count as a complete replay even if its JSON parses", async (t) => {
