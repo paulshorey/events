@@ -1,5 +1,12 @@
 // Explicit, bounded foreground validation. Never enables schedules or uses the operational journal.
-import { cp, mkdir, writeFile, rename, realpath } from "node:fs/promises";
+import {
+  cp,
+  mkdir,
+  writeFile,
+  rename,
+  realpath,
+  symlink,
+} from "node:fs/promises";
 import { parseArgs } from "node:util";
 import { resolve, join, dirname, basename, sep } from "node:path";
 import { pathToFileURL, fileURLToPath } from "node:url";
@@ -61,6 +68,14 @@ for (const path of [
     force: false,
   });
 }
+// Copied ESM modules resolve bare package imports from their own location.
+// External validation storage has no checkout node_modules ancestor, so give
+// every candidate the same installed runtime dependencies explicitly.
+await symlink(
+  await realpath(new URL("../node_modules", import.meta.url)),
+  join(snapshot, "node_modules"),
+  "dir",
+);
 const { Journal, hash } = await import(
   pathToFileURL(join(snapshot, "src/storage/journal.mjs"))
 );
