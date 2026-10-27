@@ -213,18 +213,37 @@ export class Transport {
       new URL(this.run.config.url).hostname,
       ...(this.run.config.allowedHosts ?? []),
     ].map((host) => host.replace(/^www\./, ""));
+    const publisherRequest = (request) =>
+      ["document", "xhr", "fetch"].includes(request.resourceType()) &&
+      request.frame() === page.mainFrame() &&
+      hosts.includes(new URL(request.url()).hostname.replace(/^www\./, ""));
     const onRequest = (request) => {
-      if (
-        ["document", "xhr", "fetch"].includes(request.resourceType()) &&
-        request.frame() === page.mainFrame() &&
-        hosts.includes(new URL(request.url()).hostname.replace(/^www\./, ""))
-      )
-        requests.add(request);
+      if (publisherRequest(request)) requests.add(request);
     };
-    let lastResponse, fail;
+    let lastResponse, fail, block;
     const failed = new Promise((resolve) => {
       fail = resolve;
     });
+    const blocked = new Promise((_, reject) => {
+      block = reject;
+    });
+    const guardRequest = async (route, request) => {
+      if (publisherRequest(request)) {
+        try {
+          this.leaseCheck();
+          await this.permit(request.url());
+          this.leaseCheck();
+        } catch (error) {
+          // Surface the policy failure before aborting can become a generic
+          // navigation error. The publisher must never receive this request.
+          block(error);
+          await route.abort("blockedbyclient").catch(() => {});
+          return;
+        }
+      }
+      // Preserve the context's existing resource blocking and other routes.
+      await route.fallback();
+    };
     const onResponse = (response) => {
       if (!requests.has(response.request())) return;
       lastResponse = response;
@@ -235,6 +254,7 @@ export class Transport {
     page.on("request", onRequest);
     page.on("response", onResponse);
     try {
+      await page.route("**/*", guardRequest);
       const rendered = (async () => {
         await page
           .locator(
@@ -259,12 +279,13 @@ export class Transport {
         );
         return lastResponse;
       })();
-      const response = await Promise.race([rendered, failed]);
+      const response = await Promise.race([rendered, failed, blocked]);
       await this.checkBrowserResponse(response);
       return response;
     } finally {
       page.off("request", onRequest);
       page.off("response", onResponse);
+      await page.unroute("**/*", guardRequest);
     }
   }
   async fetch(task) {
