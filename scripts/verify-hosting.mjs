@@ -40,7 +40,7 @@ function api(query, variables) {
 try {
   if (!process.env.RAILWAY_API_TOKEN || process.env.RAILWAY_TOKEN)
     throw new Error(
-      "Explicitly load the railway.webarts workspace profile and unset RAILWAY_TOKEN before verification.",
+      "RAILWAY_API_TOKEN comes from ~/.secrets.sh, which every shell loads; unset RAILWAY_TOKEN before verification.",
     );
   const data = api(
     `query($id:String!){project(id:$id){id name workspaceId environments{edges{node{id name volumeInstances(first:100){pageInfo{hasNextPage}edges{node{id volumeId serviceId environmentId mountPath deletedAt isPendingDeletion}}} deploymentTriggers{edges{node{id repository branch checkSuites serviceId}}}}}}}}`,
