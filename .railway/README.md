@@ -37,13 +37,17 @@ The October 17 provisioning is already applied live. Adopt this updated definiti
 
 ## Apply desired state
 
-Use the Railway workspace token `RAILWAY_API_TOKEN`, which every shell exports from `~/.secrets.sh`. Never print it or copy it into this repository. The native Railway CLI is 5.62.1; the repository pins SDK 3.15.0. No broad Railway credential is installed in GitHub Actions.
+On Paul’s Mac, use the workspace token `RAILWAY_API_TOKEN` exported from
+`~/.secrets.sh`. Clean noninteractive shells must receive it explicitly;
+`~/.shortcuts.sh` defines shell helpers, not Railway credentials. Unset
+`RAILWAY_TOKEN` for workspace operations and require a nonempty API token. Never print it or copy it into this repository. The native Railway CLI is 5.62.1; the repository pins SDK 3.15.0. No broad Railway credential is installed in GitHub Actions.
 
 ```sh
 npm ci
 npm run railway:check
 (
   unset RAILWAY_TOKEN RAILWAY_SERVICE_ID
+  test -n "${RAILWAY_API_TOKEN:-}" || exit 1
   export RAILWAY_PROJECT_ID=a0315029-9b64-41a0-9c83-e4367366947d
   export RAILWAY_ENVIRONMENT_ID=fb0a7dbd-2f66-4183-b3c3-7b1e7a7afe24
   npm run railway:plan
@@ -72,6 +76,7 @@ Provider references: [Railway IaC](https://docs.railway.com/infrastructure-as-co
 ```sh
 (
   unset RAILWAY_TOKEN
+  test -n "${RAILWAY_API_TOKEN:-}" || exit 1
   npm run hosting:verify
 )
 ```
