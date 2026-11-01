@@ -27,7 +27,7 @@ The git-ignored, mode-0600 `.env.local` uses each public endpoint with `sslmode=
 Daily and weekly volume backups were enabled with Railway's native database workflow in both environments. These are volume snapshots, not an enabled PITR/HA setup. The managed database helper preserves native credentials/mounts; the TypeScript graph explicitly retains both its database and imported volume resources. Backup schedules are maintained by the native workflow and checked by `hosting:verify`, because SDK 3.15.0's `postgres()` config does not expose them. Verify a restore into an isolated environment before storing irreplaceable production data.
 
 ```sh
-# In the explicit railway.webarts profile shell, with IDs from project.json:
+# With RAILWAY_TOKEN unset and IDs from project.json:
 railway postgres pitr schedule list --project PROJECT_ID --environment ENVIRONMENT_ID --service DATABASE_SERVICE_ID --json
 # Repair schedule drift only after inspection:
 railway postgres pitr schedule set --daily --weekly --project PROJECT_ID --environment ENVIRONMENT_ID --service DATABASE_SERVICE_ID --json
@@ -37,14 +37,17 @@ The October 17 provisioning is already applied live. Adopt this updated definiti
 
 ## Apply desired state
 
-Use the existing `railway.webarts` workspace profile. Never print it or copy it into this repository. The native Railway CLI is 5.62.1; the repository pins SDK 3.15.0. No broad Railway credential is installed in GitHub Actions.
+On Paul’s Mac, use the workspace token `RAILWAY_API_TOKEN` exported from
+`~/.secrets.sh`. Clean noninteractive shells must receive it explicitly;
+`~/.shortcuts.sh` defines shell helpers, not Railway credentials. Unset
+`RAILWAY_TOKEN` for workspace operations and require a nonempty API token. Never print it or copy it into this repository. The native Railway CLI is 5.62.1; the repository pins SDK 3.15.0. No broad Railway credential is installed in GitHub Actions.
 
 ```sh
 npm ci
 npm run railway:check
 (
-  source "$HOME/.config/railway/webarts.env"
   unset RAILWAY_TOKEN RAILWAY_SERVICE_ID
+  test -n "${RAILWAY_API_TOKEN:-}" || exit 1
   export RAILWAY_PROJECT_ID=a0315029-9b64-41a0-9c83-e4367366947d
   export RAILWAY_ENVIRONMENT_ID=fb0a7dbd-2f66-4183-b3c3-7b1e7a7afe24
   npm run railway:plan
@@ -72,8 +75,8 @@ Provider references: [Railway IaC](https://docs.railway.com/infrastructure-as-co
 
 ```sh
 (
-  source "$HOME/.config/railway/webarts.env"
   unset RAILWAY_TOKEN
+  test -n "${RAILWAY_API_TOKEN:-}" || exit 1
   npm run hosting:verify
 )
 ```
