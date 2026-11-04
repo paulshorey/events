@@ -8,11 +8,13 @@ export const inspectedAdapters = new Set([
   "sf-portal",
   "trade-table",
   "chicago-parks",
+  "discover-la",
 ]);
 export function parseInspected({ html, url, config }) {
   const $ = load(html),
     records = [],
-    issues = [];
+    issues = [],
+    nextRequests = [];
   let count = 0,
     rejected = 0;
   const add = (input, selector) => {
@@ -21,7 +23,51 @@ export function parseInspected({ html, url, config }) {
     if (r) records.push(r);
     else rejected++;
   };
-  if (config.adapter === "nyc-tourism") {
+  if (config.adapter === "discover-la") {
+    $(".view-events-day article.node--type-event").each((_, el) => {
+      const a = $(el)
+        .find('a[data-description="Title link"][data-start-date][data-nid]')
+        .first();
+      if (!a.length) {
+        count++;
+        rejected++;
+        return;
+      }
+      const pathDate = a
+        .attr("href")
+        ?.match(/\/event\/(\d{4})\/(\d{2})\/(\d{2})\//)
+        ?.slice(1)
+        .join("-");
+      add(
+        {
+          title: a.attr("data-content-title"),
+          url: a.attr("href"),
+          id: `${a.attr("data-nid")}|${a.attr("data-start-date")}`,
+          startDate: a.attr("data-start-date"),
+          location: {
+            venue: a.attr("data-venue"),
+            basis: "publisher event card data-venue",
+          },
+          categoryTags: [
+            {
+              label: a.attr("data-category"),
+              basis: "publisher event card data-category",
+            },
+          ],
+          warnings:
+            pathDate && pathDate !== a.attr("data-start-date")
+              ? ["source_tracking_date_conflict"]
+              : [],
+          raw: {
+            nodeId: a.attr("data-nid"),
+            startDate: a.attr("data-start-date"),
+            cardTitle: a.attr("data-content-title"),
+          },
+        },
+        '.view-events-day article a[data-description="Title link"]',
+      );
+    });
+  } else if (config.adapter === "nyc-tourism") {
     $('[class*="Card_card__"]').each((_, el) => {
       const c = $(el),
         a = c.find('a[class*="ContentCard_headerLink"]').first();
@@ -29,7 +75,16 @@ export function parseInspected({ html, url, config }) {
       const rawDate = text(
         c.find('[class*="ContentCard_tagContainer"]').text(),
       );
-      if (!dates(rawDate).startDate) return;
+      if (!dates(rawDate).startDate) {
+        count++;
+        nextRequests.push({
+          url: new URL(a.attr("href"), url).href,
+          kind: "detail",
+          depth: 1,
+          meta: { undatedListing: true, listingTitle: text(a.text()) },
+        });
+        return;
+      }
       add(
         {
           title: a.text(),
@@ -189,6 +244,6 @@ export function parseInspected({ html, url, config }) {
     issues,
     coverage: "unverified",
     terminal: false,
-    nextRequests: [],
+    nextRequests,
   };
 }

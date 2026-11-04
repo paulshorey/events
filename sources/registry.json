@@ -857,7 +857,7 @@
     "categoryHints": [],
     "intervalHours": 24,
     "enabled": false,
-    "adapterVersion": "framework-v1",
+    "adapterVersion": "source-validation-v2",
     "timeZone": "America/New_York",
     "adapter": "nyc-tourism",
     "coverage": "unverified",
@@ -871,8 +871,8 @@
       ".views-row",
       "article"
     ],
-    "readySelector": "[class*=ContentCard_headerLink]",
-    "notes": "Compare overlap with the NYC events/festivals guide; discover actual query and pagination.",
+    "readySelector": "ul[class*=\"SearchPagination_pagination\"]",
+    "notes": "Compare overlap with the NYC events/festivals guide; discover actual query and pagination. Inspected four-page client calendar; browser next controls and active page must reconcile. Default unfiltered interface only; hours may be unavailable.",
     "role": "collection candidate",
     "allowedHosts": [
       "www.nyctourism.com"
@@ -881,8 +881,32 @@
     "validationStatus": "needs-validation",
     "script": "scrapers/url-024.mjs",
     "detailTitleAliases": {
-      "NY Auto Show": "New York International Auto Show"
-    }
+      "NY Auto Show": "New York International Auto Show",
+      "Lighting Hanukkah Menorahs": "Lighting Largest Hanukkah Menorahs",
+      "Alvin Ailey at New York City Center": "Alvin Ailey American Dance Theater at New York City Center",
+      "Rock Center Tree Lighting": "Rockefeller Center Christmas Tree Lighting"
+    },
+    "discoverDetails": false,
+    "quality": {
+      "scope": "url-024-default-calendar-v2",
+      "minRecords": 1,
+      "minCoverage": {
+        "startDate": 1,
+        "endDate": 0.9,
+        "textLocation": 0.9
+      },
+      "maxRejectedRate": 0.02,
+      "maxReviewRate": 0.1,
+      "maxCoverageDrop": 0.2,
+      "baselineMinRecords": 20
+    },
+    "pagination": {
+      "mode": "nyc-browser",
+      "maxPages": 20
+    },
+    "enrichDetails": true,
+    "detailReadySelector": "[class*=\"BroadwaySummary_textContent\"]",
+    "minIntervalMs": 5000
   },
   {
     "id": "url-025",
@@ -895,7 +919,7 @@
     "categoryHints": [],
     "intervalHours": 168,
     "enabled": false,
-    "adapterVersion": "framework-v1",
+    "adapterVersion": "source-validation-v2",
     "timeZone": "America/New_York",
     "adapter": "nyc-tourism",
     "coverage": "discovery",
@@ -909,8 +933,8 @@
       ".views-row",
       "article"
     ],
-    "readySelector": "[class*=ContentCard_headerLink]",
-    "notes": "Use as event/detail-page discovery; do not assume all guide entries are dated occurrences. Field audit: follow sparse event cards to same-host detail pages; retain listing and detail evidence separately. Full enumeration remains unverified for partial sources.",
+    "readySelector": "ul[class*=\"SearchPagination_pagination\"]",
+    "notes": "Use as event/detail-page discovery; do not assume all guide entries are dated occurrences. Field audit: follow sparse event cards to same-host detail pages; retain listing and detail evidence separately. Full enumeration remains unverified for partial sources. Inspected four-page client calendar; browser next controls and active page must reconcile. Default unfiltered interface only; hours may be unavailable.",
     "role": "editorial / discovery guide",
     "allowedHosts": [
       "www.nyctourism.com"
@@ -920,8 +944,31 @@
     "script": "scrapers/url-025.mjs",
     "enrichDetails": true,
     "detailTitleAliases": {
-      "NY Auto Show": "New York International Auto Show"
-    }
+      "NY Auto Show": "New York International Auto Show",
+      "Lighting Hanukkah Menorahs": "Lighting Largest Hanukkah Menorahs",
+      "Alvin Ailey at New York City Center": "Alvin Ailey American Dance Theater at New York City Center",
+      "Rock Center Tree Lighting": "Rockefeller Center Christmas Tree Lighting"
+    },
+    "discoverDetails": false,
+    "quality": {
+      "scope": "url-025-default-calendar-v2",
+      "minRecords": 1,
+      "minCoverage": {
+        "startDate": 1,
+        "endDate": 0.9,
+        "textLocation": 0.9
+      },
+      "maxRejectedRate": 0.02,
+      "maxReviewRate": 0.1,
+      "maxCoverageDrop": 0.2,
+      "baselineMinRecords": 20
+    },
+    "pagination": {
+      "mode": "nyc-browser",
+      "maxPages": 20
+    },
+    "detailReadySelector": "[class*=\"BroadwaySummary_textContent\"]",
+    "minIntervalMs": 5000
   },
   {
     "id": "url-026",
@@ -1250,17 +1297,17 @@
     "categoryHints": [],
     "intervalHours": 12,
     "enabled": false,
-    "adapterVersion": "framework-v1",
+    "adapterVersion": "source-validation-v2",
     "timeZone": "America/Los_Angeles",
-    "adapter": "cards",
+    "adapter": "discover-la",
     "coverage": "unverified",
     "detailPattern": "/event/|/events/[^/?]+",
     "cardSelectors": [
       "article.node--type-event",
       ".views-row"
     ],
-    "readySelector": null,
-    "notes": "Inspect event containers, detail pages, identity, pagination, date scope, and any published feed; then implement a bounded adapter probe. Field audit: follow sparse event cards to same-host detail pages; retain listing and detail evidence separately. Full enumeration remains unverified for partial sources.",
+    "readySelector": ".view-events-day article.node--type-event",
+    "notes": "Inspect event containers, detail pages, identity, pagination, date scope, and any published feed; then implement a bounded adapter probe. Field audit: follow sparse event cards to same-host detail pages; retain listing and detail evidence separately. Full enumeration remains unverified for partial sources. Extract calendar day blocks only, excluding sponsored carousels and mobile duplicates; use explicit data-start-date/data-venue. Day-block AJAX paging still requires validation.",
     "role": "collection candidate",
     "allowedHosts": [
       "www.discoverlosangeles.com"
@@ -1268,7 +1315,22 @@
     "maxDepth": 2,
     "validationStatus": "needs-validation",
     "script": "scrapers/url-035.mjs",
-    "enrichDetails": true
+    "enrichDetails": true,
+    "discoverDetails": false,
+    "quality": {
+      "scope": "url-035-default-calendar-v2",
+      "minRecords": 1,
+      "minCoverage": {
+        "startDate": 1,
+        "endDate": 0.9,
+        "textLocation": 0.9
+      },
+      "maxRejectedRate": 0.02,
+      "maxReviewRate": 0.1,
+      "maxCoverageDrop": 0.2,
+      "baselineMinRecords": 20
+    },
+    "listingContract": ".view-events-day"
   },
   {
     "id": "url-036",
@@ -1390,10 +1452,10 @@
     "categoryHints": [],
     "intervalHours": 6,
     "enabled": false,
-    "adapterVersion": "framework-v1",
+    "adapterVersion": "source-validation-v2",
     "timeZone": "America/Chicago",
     "adapter": "tribe",
-    "coverage": "unverified",
+    "coverage": "verified-list",
     "detailPattern": "/event/",
     "cardSelectors": [
       ".event-card",
@@ -1404,9 +1466,9 @@
       ".views-row",
       "article"
     ],
-    "readySelector": null,
+    "readySelector": ".tribe-events-c-nav",
     "apiEndpoint": "https://www.choosechicago.com/wp-json/tribe/events/v1/events",
-    "notes": "Inspect event containers, detail pages, identity, pagination, date scope, and any published feed; then implement a bounded adapter probe. Field audit: follow sparse event cards to same-host detail pages; retain listing and detail evidence separately. Full enumeration remains unverified for partial sources.",
+    "notes": "Inspect event containers, detail pages, identity, pagination, date scope, and any published feed; then implement a bounded adapter probe. Field audit: follow sparse event cards to same-host detail pages; retain listing and detail evidence separately. Full enumeration remains unverified for partial sources. Public TEC API inspected October 25; native all_day claims satisfy boundary coverage without inventing times.",
     "role": "collection candidate",
     "allowedHosts": [
       "www.choosechicago.com"
@@ -1414,7 +1476,25 @@
     "maxDepth": 2,
     "validationStatus": "needs-validation",
     "script": "scrapers/url-039.mjs",
-    "enrichDetails": true
+    "enrichDetails": true,
+    "discoverDetails": false,
+    "quality": {
+      "scope": "url-039-tec-start-date-query-v2",
+      "minRecords": 1,
+      "minCoverage": {
+        "startDate": 1,
+        "endDate": 0.9,
+        "textLocation": 0.9,
+        "startBoundary": 1,
+        "endBoundary": 0.95
+      },
+      "maxRejectedRate": 0.02,
+      "maxReviewRate": 0.1,
+      "maxCoverageDrop": 0.2,
+      "baselineMinRecords": 20
+    },
+    "listingContract": ".tribe-events-c-nav",
+    "defaultTransport": "api"
   },
   {
     "id": "url-040",
@@ -1905,7 +1985,7 @@
     "categoryHints": [],
     "intervalHours": 12,
     "enabled": false,
-    "adapterVersion": "framework-v1",
+    "adapterVersion": "source-validation-v2",
     "timeZone": "America/New_York",
     "adapter": "boston",
     "coverage": "verified-list",
@@ -1920,14 +2000,30 @@
       "article"
     ],
     "readySelector": "article.calendar-listing-wrapper",
-    "notes": "Playwright extracted 35 records from two pages; visible date groups and recurring node/date keys validated.",
+    "notes": "Playwright extracted 35 records from two pages; visible date groups and recurring node/date keys validated. Current visible listing occurrences; unknown ends and virtual locations remain explicit.",
     "role": "tested collection",
     "allowedHosts": [
       "www.boston.gov"
     ],
     "maxDepth": 2,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-054.mjs"
+    "script": "scrapers/url-054.mjs",
+    "discoverDetails": false,
+    "quality": {
+      "scope": "url-054-default-calendar-v2",
+      "minRecords": 1,
+      "minCoverage": {
+        "startDate": 1,
+        "endDate": 0.9,
+        "textLocation": 0.9,
+        "startTime": 0.95,
+        "endTime": 0.9
+      },
+      "maxRejectedRate": 0.02,
+      "maxReviewRate": 0.1,
+      "maxCoverageDrop": 0.2,
+      "baselineMinRecords": 20
+    }
   },
   {
     "id": "url-055",
@@ -2780,7 +2876,7 @@
     "categoryHints": [],
     "intervalHours": 12,
     "enabled": false,
-    "adapterVersion": "framework-v1",
+    "adapterVersion": "source-validation-v2",
     "timeZone": "America/New_York",
     "adapter": "opencities",
     "coverage": "unverified",
@@ -2790,8 +2886,8 @@
       ".list-item",
       "article"
     ],
-    "readySelector": null,
-    "notes": "Inspect event containers, detail pages, identity, pagination, date scope, and any published feed; then implement a bounded adapter probe. Field audit: follow sparse event cards to same-host detail pages; retain listing and detail evidence separately. Full enumeration remains unverified for partial sources.",
+    "readySelector": ".seamless-pagination-info",
+    "notes": "Inspect event containers, detail pages, identity, pagination, date scope, and any published feed; then implement a bounded adapter probe. Field audit: follow sparse event cards to same-host detail pages; retain listing and detail evidence separately. Full enumeration remains unverified for partial sources. Inspected Next navigation generates dlv_OC CL Downtown Events Listing Full Width=(pageindex=N); reconcile displayed Page N of M and options.",
     "role": "collection candidate",
     "allowedHosts": [
       "www.downtownorlando.com"
@@ -2799,7 +2895,30 @@
     "maxDepth": 2,
     "validationStatus": "needs-validation",
     "script": "scrapers/url-080.mjs",
-    "enrichDetails": true
+    "enrichDetails": true,
+    "discoverDetails": false,
+    "quality": {
+      "scope": "url-080-default-calendar-sessions-v3",
+      "minRecords": 1,
+      "minCoverage": {
+        "startDate": 1,
+        "endDate": 0.9,
+        "textLocation": 0.9,
+        "startTime": 0.9,
+        "endTime": 0.9
+      },
+      "maxRejectedRate": 0.02,
+      "maxReviewRate": 0.1,
+      "maxCoverageDrop": 0.2,
+      "baselineMinRecords": 20
+    },
+    "pagination": {
+      "mode": "opencities-query",
+      "parameter": "dlv_OC CL Downtown Events Listing Full Width",
+      "maxPages": 100
+    },
+    "detailReadySelector": ".multi-date-item[data-start-year]",
+    "expandSameDaySessions": true
   },
   {
     "id": "url-081",

@@ -1,0 +1,672 @@
+{
+  "generatedAt": "2026-10-25T21:04:01.004Z",
+  "extractionBuild": "33de67b6d25ae39a355091320f94694a360fc1f37635931dc2d9413b0a7d9947",
+  "tests": 105,
+  "storage": ".artifacts/source-validation/acceptance",
+  "scope": "Five publisher collectors; counts are source observations, not cross-source canonical events.",
+  "sources": [
+    {
+      "id": "url-054",
+      "url": "https://www.boston.gov/events",
+      "adapter": "boston",
+      "transport": "browser",
+      "enabled": false,
+      "currentRevision": "270382f31554eefb5fde70c629b33d6385216b91a951579028b151835ad02dba",
+      "lastAttempt": {
+        "id": "81ecdfdb-66a9-4ef4-be04-62e0c6cf8ab5",
+        "status": "complete",
+        "build": "33de67b6d25ae39a355091320f94694a360fc1f37635931dc2d9413b0a7d9947",
+        "requests": 10,
+        "records": 293,
+        "scope": {
+          "entrypoints": [
+            "https://www.boston.gov/events"
+          ],
+          "asOf": "2026-10-25",
+          "transport": "browser",
+          "basis": "declared listing interface",
+          "validation": "core listing fields; not a guarantee of all events on the publisher domain"
+        },
+        "fields": {
+          "records": 293,
+          "startDate": 293,
+          "endDate": 293,
+          "startTime": 293,
+          "endTime": 289,
+          "textLocation": 272,
+          "city": 270,
+          "coordinates": 0,
+          "needsDetail": 25,
+          "needsReview": 0
+        },
+        "quality": {
+          "status": "passed",
+          "scope": "url-054-default-calendar-v2",
+          "metrics": {
+            "fields": {
+              "records": 293,
+              "startDate": 293,
+              "endDate": 293,
+              "startTime": 293,
+              "endTime": 289,
+              "textLocation": 272,
+              "city": 270,
+              "coordinates": 0,
+              "needsDetail": 25,
+              "needsReview": 0,
+              "startBoundary": 293,
+              "endBoundary": 289
+            },
+            "rates": {
+              "startDate": 1,
+              "endDate": 1,
+              "startTime": 1,
+              "endTime": 0.9863481228668942,
+              "startBoundary": 1,
+              "endBoundary": 0.9863481228668942,
+              "textLocation": 0.9283276450511946,
+              "city": 0.9215017064846417,
+              "coordinates": 0
+            },
+            "rejected": 0,
+            "observed": 295,
+            "rejectedRate": 0,
+            "reviewRate": 0
+          },
+          "failures": [],
+          "baselineCompared": true
+        },
+        "error": null
+      },
+      "runsOnCurrentRevision": [
+        {
+          "id": "4c1ae2a3-afd7-440f-874e-047c790dc0f7",
+          "status": "complete",
+          "requests": 10,
+          "records": 293,
+          "fields": {
+            "records": 293,
+            "startDate": 293,
+            "endDate": 293,
+            "startTime": 293,
+            "endTime": 289,
+            "textLocation": 272,
+            "city": 270,
+            "coordinates": 0,
+            "needsDetail": 25,
+            "needsReview": 0
+          }
+        },
+        {
+          "id": "81ecdfdb-66a9-4ef4-be04-62e0c6cf8ab5",
+          "status": "complete",
+          "requests": 10,
+          "records": 293,
+          "fields": {
+            "records": 293,
+            "startDate": 293,
+            "endDate": 293,
+            "startTime": 293,
+            "endTime": 289,
+            "textLocation": 272,
+            "city": 270,
+            "coordinates": 0,
+            "needsDetail": 25,
+            "needsReview": 0
+          }
+        }
+      ],
+      "twoCompleteValidatedRuns": true,
+      "lastComplete": "81ecdfdb-66a9-4ef4-be04-62e0c6cf8ab5",
+      "repairs": []
+    },
+    {
+      "id": "url-039",
+      "url": "https://www.choosechicago.com/events/",
+      "adapter": "tribe",
+      "transport": "api",
+      "enabled": false,
+      "currentRevision": "4508a369e2684749f5eb1d8b6c02e3c36edae490e6f1a3f3371065b79463fe60",
+      "lastAttempt": {
+        "id": "3702f1ff-5dd5-4cf4-b3d3-2446239c91d4",
+        "status": "complete",
+        "build": "33de67b6d25ae39a355091320f94694a360fc1f37635931dc2d9413b0a7d9947",
+        "requests": 124,
+        "records": 6193,
+        "scope": {
+          "entrypoints": [
+            "https://www.choosechicago.com/events/"
+          ],
+          "asOf": "2026-10-25",
+          "transport": "api",
+          "basis": "all pages of the recorded start_date query",
+          "validation": "core listing fields; not a guarantee of all events on the publisher domain"
+        },
+        "fields": {
+          "records": 6193,
+          "startDate": 6193,
+          "endDate": 6193,
+          "startTime": 5727,
+          "endTime": 5727,
+          "textLocation": 6193,
+          "city": 5911,
+          "coordinates": 0,
+          "needsDetail": 0,
+          "needsReview": 39
+        },
+        "quality": {
+          "status": "passed",
+          "scope": "url-039-tec-start-date-query-v2",
+          "metrics": {
+            "fields": {
+              "records": 6193,
+              "startDate": 6193,
+              "endDate": 6193,
+              "startTime": 5727,
+              "endTime": 5727,
+              "textLocation": 6193,
+              "city": 5911,
+              "coordinates": 0,
+              "needsDetail": 0,
+              "needsReview": 39,
+              "startBoundary": 6193,
+              "endBoundary": 6193
+            },
+            "rates": {
+              "startDate": 1,
+              "endDate": 1,
+              "startTime": 0.9247537542386566,
+              "endTime": 0.9247537542386566,
+              "startBoundary": 1,
+              "endBoundary": 1,
+              "textLocation": 1,
+              "city": 0.95446471823026,
+              "coordinates": 0
+            },
+            "rejected": 0,
+            "observed": 6193,
+            "rejectedRate": 0,
+            "reviewRate": 0.006297432585176813
+          },
+          "failures": [],
+          "baselineCompared": true
+        },
+        "error": null
+      },
+      "runsOnCurrentRevision": [
+        {
+          "id": "536c902a-61c4-4813-b170-612b29e5b0e6",
+          "status": "complete",
+          "requests": 124,
+          "records": 6193,
+          "fields": {
+            "records": 6193,
+            "startDate": 6193,
+            "endDate": 6193,
+            "startTime": 5727,
+            "endTime": 5727,
+            "textLocation": 6193,
+            "city": 5911,
+            "coordinates": 0,
+            "needsDetail": 0,
+            "needsReview": 39
+          }
+        },
+        {
+          "id": "3702f1ff-5dd5-4cf4-b3d3-2446239c91d4",
+          "status": "complete",
+          "requests": 124,
+          "records": 6193,
+          "fields": {
+            "records": 6193,
+            "startDate": 6193,
+            "endDate": 6193,
+            "startTime": 5727,
+            "endTime": 5727,
+            "textLocation": 6193,
+            "city": 5911,
+            "coordinates": 0,
+            "needsDetail": 0,
+            "needsReview": 39
+          }
+        }
+      ],
+      "twoCompleteValidatedRuns": true,
+      "lastComplete": "3702f1ff-5dd5-4cf4-b3d3-2446239c91d4",
+      "repairs": []
+    },
+    {
+      "id": "url-080",
+      "url": "https://www.downtownorlando.com/Fun/Events",
+      "adapter": "opencities",
+      "transport": "browser",
+      "enabled": false,
+      "currentRevision": "d5b483ff593dbb7b139247274fe126600727aa4d6906ecd99d18f11bf0717403",
+      "lastAttempt": {
+        "id": "15f2f2bb-ff99-4ef3-b211-e60964e08af8",
+        "status": "blocked_access",
+        "build": "33de67b6d25ae39a355091320f94694a360fc1f37635931dc2d9413b0a7d9947",
+        "requests": 17,
+        "records": 160,
+        "scope": {
+          "entrypoints": [
+            "https://www.downtownorlando.com/Fun/Events"
+          ],
+          "asOf": "2026-10-25",
+          "transport": "browser",
+          "basis": "declared listing interface",
+          "validation": "core listing fields; not a guarantee of all events on the publisher domain"
+        },
+        "fields": {
+          "records": 160,
+          "startDate": 160,
+          "endDate": 160,
+          "startTime": 0,
+          "endTime": 0,
+          "textLocation": 0,
+          "city": 0,
+          "coordinates": 0,
+          "needsDetail": 160,
+          "needsReview": 0
+        },
+        "quality": {
+          "status": "failed",
+          "scope": "url-080-default-calendar-sessions-v3",
+          "metrics": {
+            "fields": {
+              "records": 160,
+              "startDate": 160,
+              "endDate": 160,
+              "startTime": 0,
+              "endTime": 0,
+              "textLocation": 0,
+              "city": 0,
+              "coordinates": 0,
+              "needsDetail": 160,
+              "needsReview": 0,
+              "startBoundary": 0,
+              "endBoundary": 0
+            },
+            "rates": {
+              "startDate": 1,
+              "endDate": 1,
+              "startTime": 0,
+              "endTime": 0,
+              "startBoundary": 0,
+              "endBoundary": 0,
+              "textLocation": 0,
+              "city": 0,
+              "coordinates": 0
+            },
+            "rejected": 0,
+            "observed": 160,
+            "rejectedRate": 0,
+            "reviewRate": 0
+          },
+          "failures": [
+            {
+              "code": "source_quality_failed",
+              "rule": "minCoverage",
+              "field": "textLocation",
+              "actual": 0,
+              "expected": 0.9
+            },
+            {
+              "code": "source_quality_failed",
+              "rule": "minCoverage",
+              "field": "startTime",
+              "actual": 0,
+              "expected": 0.9
+            },
+            {
+              "code": "source_quality_failed",
+              "rule": "minCoverage",
+              "field": "endTime",
+              "actual": 0,
+              "expected": 0.9
+            },
+            {
+              "code": "source_quality_failed",
+              "rule": "maxCoverageDrop",
+              "field": "startTime",
+              "actual": 0,
+              "expected": 0.8
+            },
+            {
+              "code": "source_quality_failed",
+              "rule": "maxCoverageDrop",
+              "field": "endTime",
+              "actual": 0,
+              "expected": 0.7107981220657278
+            },
+            {
+              "code": "source_quality_failed",
+              "rule": "maxCoverageDrop",
+              "field": "startBoundary",
+              "actual": 0,
+              "expected": 0.8
+            },
+            {
+              "code": "source_quality_failed",
+              "rule": "maxCoverageDrop",
+              "field": "endBoundary",
+              "actual": 0,
+              "expected": 0.7107981220657278
+            },
+            {
+              "code": "source_quality_failed",
+              "rule": "maxCoverageDrop",
+              "field": "textLocation",
+              "actual": 0,
+              "expected": 0.8
+            },
+            {
+              "code": "source_quality_failed",
+              "rule": "maxCoverageDrop",
+              "field": "coordinates",
+              "actual": 0,
+              "expected": 0.8
+            }
+          ],
+          "baselineCompared": true
+        },
+        "error": {
+          "code": "access_blocked",
+          "message": "Access challenge or denial (HTTP 403)",
+          "capture": {
+            "path": "/Users/pshorey/git/events/.artifacts/source-validation/acceptance/runs/15f2f2bb-ff99-4ef3-b211-e60964e08af8/0357cf5f-3abd-4ab2-a559-cd14f3b9c0c1/page-1245.html",
+            "hash": "e443612bbd1550ed7cb52b5157724a449b5b95770d433e8eb0ade43e8e55ad4f",
+            "url": "https://www.downtownorlando.com/Fun/Events?dlv_OC+CL+Downtown+Events+Listing+Full+Width=%28pageindex%3D17%29",
+            "kind": "html"
+          }
+        }
+      },
+      "runsOnCurrentRevision": [
+        {
+          "id": "ba4be418-fc30-4072-9a51-8cbcb1deddb0",
+          "status": "complete",
+          "requests": 217,
+          "records": 213,
+          "fields": {
+            "records": 213,
+            "startDate": 213,
+            "endDate": 213,
+            "startTime": 213,
+            "endTime": 194,
+            "textLocation": 213,
+            "city": 0,
+            "coordinates": 213,
+            "needsDetail": 19,
+            "needsReview": 0
+          }
+        },
+        {
+          "id": "15f2f2bb-ff99-4ef3-b211-e60964e08af8",
+          "status": "blocked_access",
+          "requests": 17,
+          "records": 160,
+          "fields": {
+            "records": 160,
+            "startDate": 160,
+            "endDate": 160,
+            "startTime": 0,
+            "endTime": 0,
+            "textLocation": 0,
+            "city": 0,
+            "coordinates": 0,
+            "needsDetail": 160,
+            "needsReview": 0
+          }
+        }
+      ],
+      "twoCompleteValidatedRuns": false,
+      "lastComplete": "ba4be418-fc30-4072-9a51-8cbcb1deddb0",
+      "repairs": [
+        {
+          "id": "c23d502f-1037-4329-ba04-c581cc6cad0d",
+          "code": "access_blocked",
+          "status": "open"
+        },
+        {
+          "id": "ca3da597-71e9-464f-b456-c47327905fdf",
+          "code": "source_quality_failed",
+          "status": "probation"
+        }
+      ]
+    },
+    {
+      "id": "url-024",
+      "url": "https://www.nyctourism.com/events/",
+      "adapter": "nyc-tourism",
+      "transport": "browser",
+      "enabled": false,
+      "currentRevision": "81c0db675da3b0e0b24944ea9a1f5295a5426910bba313babaa0e98a8bf05948",
+      "lastAttempt": {
+        "id": "6508fa90-ea21-474f-81b7-995a71d4f3c4",
+        "status": "retry_wait",
+        "build": "33de67b6d25ae39a355091320f94694a360fc1f37635931dc2d9413b0a7d9947",
+        "requests": 25,
+        "records": 37,
+        "scope": {
+          "entrypoints": [
+            "https://www.nyctourism.com/events/"
+          ],
+          "asOf": "2026-10-25",
+          "transport": "browser",
+          "basis": "declared listing interface",
+          "validation": "core listing fields; not a guarantee of all events on the publisher domain"
+        },
+        "fields": {
+          "records": 37,
+          "startDate": 37,
+          "endDate": 37,
+          "startTime": 0,
+          "endTime": 0,
+          "textLocation": 20,
+          "city": 20,
+          "coordinates": 15,
+          "needsDetail": 37,
+          "needsReview": 0
+        },
+        "quality": {
+          "status": "failed",
+          "scope": "url-024-default-calendar-v2",
+          "metrics": {
+            "fields": {
+              "records": 37,
+              "startDate": 37,
+              "endDate": 37,
+              "startTime": 0,
+              "endTime": 0,
+              "textLocation": 20,
+              "city": 20,
+              "coordinates": 15,
+              "needsDetail": 37,
+              "needsReview": 0,
+              "startBoundary": 0,
+              "endBoundary": 0
+            },
+            "rates": {
+              "startDate": 1,
+              "endDate": 1,
+              "startTime": 0,
+              "endTime": 0,
+              "startBoundary": 0,
+              "endBoundary": 0,
+              "textLocation": 0.5405405405405406,
+              "city": 0.5405405405405406,
+              "coordinates": 0.40540540540540543
+            },
+            "rejected": 0,
+            "observed": 59,
+            "rejectedRate": 0,
+            "reviewRate": 0
+          },
+          "failures": [
+            {
+              "code": "source_quality_failed",
+              "rule": "minCoverage",
+              "field": "textLocation",
+              "actual": 0.5405405405405406,
+              "expected": 0.9
+            }
+          ],
+          "baselineCompared": false
+        },
+        "error": {
+          "code": "transport_error",
+          "message": "Upstream HTTP 500",
+          "capture": {
+            "path": "/Users/pshorey/git/events/.artifacts/source-validation/acceptance/runs/6508fa90-ea21-474f-81b7-995a71d4f3c4/1bc2190c-8c17-43ae-b02e-8b0eaa870965/page-1298.html",
+            "hash": "9090013bc90216b61d6eee257c6d16b801b3bd872891384a007b21c5661a299c",
+            "url": "https://www.nyctourism.com/events/the-new-yorker-festival/",
+            "kind": "html"
+          }
+        }
+      },
+      "runsOnCurrentRevision": [
+        {
+          "id": "6508fa90-ea21-474f-81b7-995a71d4f3c4",
+          "status": "retry_wait",
+          "requests": 25,
+          "records": 37,
+          "fields": {
+            "records": 37,
+            "startDate": 37,
+            "endDate": 37,
+            "startTime": 0,
+            "endTime": 0,
+            "textLocation": 20,
+            "city": 20,
+            "coordinates": 15,
+            "needsDetail": 37,
+            "needsReview": 0
+          }
+        }
+      ],
+      "twoCompleteValidatedRuns": false,
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "ff6e1c77-b53f-4bae-9430-84f10c81bce9",
+          "code": "pagination_changed",
+          "status": "probation"
+        }
+      ]
+    },
+    {
+      "id": "url-035",
+      "url": "https://www.discoverlosangeles.com/events",
+      "adapter": "discover-la",
+      "transport": "browser",
+      "enabled": false,
+      "currentRevision": "8b4b2659594c922238afc29400d1d0ccee626ff619a29489518901ebd951ced8",
+      "lastAttempt": {
+        "id": "4ffe5658-1fac-4ddc-9839-7b82eed1965d",
+        "status": "blocked_access",
+        "build": "fec98b14a374ae7fbc090ec7401b789404dd0fc383f75189ffda7c18700f9658",
+        "requests": 2,
+        "records": 86,
+        "scope": {
+          "entrypoints": [
+            "https://www.discoverlosangeles.com/events"
+          ],
+          "asOf": "2026-10-25",
+          "transport": "browser",
+          "basis": "declared listing interface",
+          "validation": "core listing fields; not a guarantee of all events on the publisher domain"
+        },
+        "fields": {
+          "records": 97,
+          "startDate": 97,
+          "endDate": 0,
+          "startTime": 0,
+          "endTime": 0,
+          "textLocation": 97,
+          "city": 0,
+          "coordinates": 0,
+          "needsDetail": 97,
+          "needsReview": 65
+        },
+        "quality": {
+          "status": "failed",
+          "scope": "url-035-default-calendar-v2",
+          "metrics": {
+            "fields": {
+              "records": 97,
+              "startDate": 97,
+              "endDate": 0,
+              "startTime": 0,
+              "endTime": 0,
+              "textLocation": 97,
+              "city": 0,
+              "coordinates": 0,
+              "needsDetail": 97,
+              "needsReview": 65,
+              "startBoundary": 0,
+              "endBoundary": 0
+            },
+            "rates": {
+              "startDate": 1,
+              "endDate": 0,
+              "startTime": 0,
+              "endTime": 0,
+              "startBoundary": 0,
+              "endBoundary": 0,
+              "textLocation": 1,
+              "city": 0,
+              "coordinates": 0
+            },
+            "rejected": 0,
+            "observed": 150,
+            "rejectedRate": 0,
+            "reviewRate": 0.6701030927835051
+          },
+          "failures": [
+            {
+              "code": "source_quality_failed",
+              "rule": "minCoverage",
+              "field": "endDate",
+              "actual": 0,
+              "expected": 0.9
+            },
+            {
+              "code": "source_quality_failed",
+              "rule": "maxReviewRate",
+              "actual": 0.6701030927835051,
+              "expected": 0.1
+            }
+          ],
+          "baselineCompared": false
+        },
+        "error": {
+          "code": "robots_disallowed",
+          "message": "robots.txt disallows this collection path"
+        }
+      },
+      "runsOnCurrentRevision": [],
+      "twoCompleteValidatedRuns": false,
+      "lastComplete": null,
+      "repairs": [
+        {
+          "id": "a0acfd66-1e5c-40cd-93a9-b42fade1b06f",
+          "code": "robots_disallowed",
+          "status": "open"
+        }
+      ]
+    }
+  ],
+  "orlandoRepairReplay": {
+    "runId": "d964659b-3218-4be1-a4b4-81732a6ef839",
+    "before": 197,
+    "after": 213,
+    "addedSessions": 32,
+    "replacedDateOnlyParents": 16,
+    "packet": ".artifacts/source-validation/orlando-repair-packet"
+  },
+  "relatedNYCEditorialView": {
+    "id": "url-025",
+    "status": "retry_wait",
+    "reason": "HTTP 429 in the earlier bounded acceptance campaign; no exact-current-revision live certification."
+  }
+}

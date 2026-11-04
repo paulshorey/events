@@ -105,7 +105,7 @@ export function eventRecord(config, input, evidence) {
     url = safeUrl(input.url, base) ?? safeUrl(input["@id"], base);
   if (
     !title ||
-    title.length < 3 ||
+    !title.length ||
     title.length > 500 ||
     !url ||
     !startDate ||

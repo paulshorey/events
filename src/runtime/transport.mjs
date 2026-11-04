@@ -84,8 +84,16 @@ export class Transport {
     journal,
     timeoutMs = 25000,
     leaseCheck = () => {},
+    runtimeCheck = () => {},
   }) {
-    Object.assign(this, { root, run, journal, timeoutMs, leaseCheck });
+    Object.assign(this, {
+      root,
+      run,
+      journal,
+      timeoutMs,
+      leaseCheck,
+      runtimeCheck,
+    });
     this.robots = new Map();
     this.browser = null;
     this.context = null;
@@ -131,10 +139,14 @@ export class Transport {
       try {
         const api = await this.initApi();
         const r = await api.get(`${u.origin}/robots.txt`, { timeout: 12000 });
-        if (r.status() === 429)
+        if (r.status() === 429) {
+          const retryAfterMs = retryDelay(r.headers()["retry-after"]);
+          this.journal.deferRate(this.run.source_key, retryAfterMs);
           throw Object.assign(new Error("Robots request throttled"), {
             code: "rate_limited",
+            retryAfterMs,
           });
+        }
         if (r.ok()) entry = { body: await r.text(), state: "loaded" };
         else if (r.status() >= 500)
           throw Object.assign(
@@ -158,10 +170,127 @@ export class Transport {
         { code: "robots_disallowed" },
       );
   }
-  async fetch(task) {
+  async pace(recovery = false) {
     this.leaseCheck();
+    if (recovery) this.runtimeCheck();
+    const delay = this.journal.reserveRate(
+      this.run.source_key,
+      this.run.config.minIntervalMs ?? 1000,
+    );
+    if (delay > 5000)
+      throw Object.assign(new Error("Publisher cooldown is still active"), {
+        code: "rate_limited",
+        retryAfterMs: delay,
+      });
+    // Stop before a pacing wait that would consume the remaining active budget.
+    if (recovery) this.runtimeCheck(delay);
+    await sleep(delay);
+    this.leaseCheck();
+    if (recovery) this.runtimeCheck();
+  }
+  async checkBrowserResponse(response) {
+    if (!response) return;
+    // Redirects must pass collection policy before HTTP errors can affect
+    // the publisher's retry state. The failure path still retains evidence.
+    await this.permit(response.url());
+    try {
+      classifyResponse(response.status());
+    } catch (error) {
+      const retry = response.headers()["retry-after"];
+      if (retry) error.retryAfterMs = retryDelay(retry);
+      if (error.code === "rate_limited")
+        this.journal.deferRate(
+          this.run.source_key,
+          error.retryAfterMs ?? 60000,
+        );
+      error.httpResponse = response;
+      throw error;
+    }
+  }
+  async clickListingPage(page, current, before) {
+    const requests = new Set();
+    const hosts = [
+      new URL(this.run.config.url).hostname,
+      ...(this.run.config.allowedHosts ?? []),
+    ].map((host) => host.replace(/^www\./, ""));
+    const publisherRequest = (request) =>
+      ["document", "xhr", "fetch"].includes(request.resourceType()) &&
+      request.frame() === page.mainFrame() &&
+      hosts.includes(new URL(request.url()).hostname.replace(/^www\./, ""));
+    const onRequest = (request) => {
+      if (publisherRequest(request)) requests.add(request);
+    };
+    let lastResponse, fail, block;
+    const failed = new Promise((resolve) => {
+      fail = resolve;
+    });
+    const blocked = new Promise((_, reject) => {
+      block = reject;
+    });
+    const guardRequest = async (route, request) => {
+      if (publisherRequest(request)) {
+        try {
+          this.leaseCheck();
+          await this.permit(request.url());
+          this.leaseCheck();
+        } catch (error) {
+          // Surface the policy failure before aborting can become a generic
+          // navigation error. The publisher must never receive this request.
+          block(error);
+          await route.abort("blockedbyclient").catch(() => {});
+          return;
+        }
+      }
+      // Preserve the context's existing resource blocking and other routes.
+      await route.fallback();
+    };
+    const onResponse = (response) => {
+      if (!requests.has(response.request())) return;
+      lastResponse = response;
+      // HTTP errors are response events, not requestfailed events. Race them
+      // against rendering so a denied click cannot become a generic timeout.
+      if (response.status() >= 400) fail(response);
+    };
+    page.on("request", onRequest);
+    page.on("response", onResponse);
+    try {
+      await page.route("**/*", guardRequest);
+      const rendered = (async () => {
+        await page
+          .locator(
+            'ul[class*="SearchPagination_pagination"] li.next:not(.disabled) a',
+          )
+          .click({ timeout: 7000 });
+        await page.waitForFunction(
+          ({ n, before }) =>
+            Number(
+              document
+                .querySelector(
+                  'ul[class*="SearchPagination_pagination"] li[class*="SearchPagination_active"]',
+                )
+                ?.textContent.trim(),
+            ) === n &&
+            [...document.querySelectorAll('a[class*="ContentCard_headerLink"]')]
+              .map((a) => a.textContent.trim())
+              .sort()
+              .join("|") !== before,
+          { n: current + 1, before },
+          { timeout: 15000 },
+        );
+        return lastResponse;
+      })();
+      const response = await Promise.race([rendered, failed, blocked]);
+      await this.checkBrowserResponse(response);
+      return response;
+    } finally {
+      page.off("request", onRequest);
+      page.off("response", onResponse);
+      await page.unroute("**/*", guardRequest);
+    }
+  }
+  async fetch(task) {
+    await this.pace();
     await this.permit(task.url);
-    await sleep(this.journal.reserveRate(this.run.source_key, 1000));
     this.leaseCheck();
     if (task.kind === "api") {
       const api = await this.initApi(),
@@ -184,23 +313,119 @@ export class Transport {
         error.capture = capture;
         const retry = response.headers()["retry-after"];
         if (retry) error.retryAfterMs = retryDelay(retry);
+        if (error.code === "rate_limited")
+          this.journal.deferRate(
+            this.run.source_key,
+            error.retryAfterMs ?? 60000,
+          );
         throw error;
       }
       return { body, url: response.url(), capture, status: response.status() };
     }
     const context = await this.initBrowser(),
-      page = await context.newPage();
+      browserPaging =
+        task.kind === "listing" &&
+        this.run.config.pagination?.mode === "nyc-browser",
+      page = browserPaging
+        ? (this.listingPage ??= await context.newPage())
+        : await context.newPage();
+    const diagnostics = {
+      requestedUrl: redactUrl(task.url),
+      startedAt: new Date().toISOString(),
+      errors: [],
+      failedRequests: [],
+      selectors: [],
+    };
+    const onPageError = (error) => {
+      if (diagnostics.errors.length < 20)
+        diagnostics.errors.push(error.message.slice(0, 400));
+    };
+    const onRequestFailed = (request) => {
+      if (
+        diagnostics.failedRequests.length < 30 &&
+        ["document", "xhr", "fetch"].includes(request.resourceType())
+      )
+        diagnostics.failedRequests.push({
+          url: redactUrl(request.url()),
+          error: request.failure()?.errorText,
+        });
+    };
+    if (this.run.options?.diagnostics) {
+      page.on("pageerror", onPageError);
+      page.on("requestfailed", onRequestFailed);
+    }
     let capture, snapshot;
     try {
-      const response = await page.goto(task.url, {
-        waitUntil: "domcontentloaded",
-        timeout: this.timeoutMs,
-      });
+      let response,
+        browserRequestUsed = false;
+      const target = task.meta?.browserPage ?? 1;
+      if (
+        !browserPaging ||
+        !this.listingPageNumber ||
+        target <= this.listingPageNumber
+      ) {
+        const navigationUrl = new URL(task.url);
+        if (browserPaging) navigationUrl.hash = "";
+        response = await page.goto(navigationUrl.href, {
+          waitUntil: "domcontentloaded",
+          timeout: this.timeoutMs,
+        });
+        await this.checkBrowserResponse(response);
+        browserRequestUsed = true;
+        if (browserPaging) {
+          this.listingPageNumber = 1;
+          this.journal.deferRate(
+            this.run.source_key,
+            this.run.config.minIntervalMs ?? 1000,
+          );
+        }
+      }
+      if (browserPaging) {
+        if (
+          !Number.isSafeInteger(target) ||
+          target < 1 ||
+          target > this.run.config.pagination.maxPages
+        )
+          throw Object.assign(new Error("Invalid browser page target"), {
+            code: "pagination_changed",
+          });
+        while (this.listingPageNumber < target) {
+          const recovery = browserRequestUsed;
+          // nextPage reserved the first action. Reconstructing the browser's
+          // lost state consumes another paced, fenced request for each click.
+          if (recovery) {
+            this.runtimeCheck();
+            this.journal.reserveAdditionalRequest(this.run.id, this.run.token);
+            await this.pace(true);
+          }
+          this.leaseCheck();
+          browserRequestUsed = true;
+          const current = this.listingPageNumber;
+          const before = await page
+            .locator('a[class*="ContentCard_headerLink"]')
+            .evaluateAll((links) =>
+              links
+                .map((a) => a.textContent.trim())
+                .sort()
+                .join("|"),
+            );
+          if (recovery) this.runtimeCheck();
+          response = await this.clickListingPage(page, current, before);
+          this.listingPageNumber++;
+          this.journal.deferRate(
+            this.run.source_key,
+            this.run.config.minIntervalMs ?? 1000,
+          );
+        }
+      }
       snapshot = await snapshotPage(page);
       await this.permit(snapshot.url);
       // Capture denials before attempting a selector wait.
       try {
-        classifyResponse(response?.status() ?? 0, snapshot.body);
+        classifyResponse(
+          response?.status() ?? (browserPaging ? 200 : 0),
+          snapshot.body,
+        );
       } catch (error) {
         capture = await saveCapture(
           this.root,
@@ -211,10 +436,20 @@ export class Transport {
           "html",
         );
         error.capture = capture;
+        const retry = await response?.headerValue("retry-after");
+        if (retry) error.retryAfterMs = retryDelay(retry);
+        if (error.code === "rate_limited")
+          this.journal.deferRate(
+            this.run.source_key,
+            error.retryAfterMs ?? 60000,
+          );
         throw error;
       }
-      const selector = this.run.config.readySelector;
-      if (selector && task.kind === "listing") {
+      const selector =
+        task.kind === "detail"
+          ? this.run.config.detailReadySelector
+          : this.run.config.readySelector;
+      if (selector) {
         try {
           await page
             .locator(selector)
@@ -233,6 +468,22 @@ export class Transport {
           .catch(() => {});
       }
       snapshot = await snapshotPage(page);
+      if (this.run.options?.diagnostics) {
+        diagnostics.url = redactUrl(snapshot.url);
+        diagnostics.status = response?.status() ?? 0;
+        for (const selector of [
+          ...new Set(
+            [
+              this.run.config.readySelector,
+              ...(this.run.config.cardSelectors ?? []),
+            ].filter(Boolean),
+          ),
+        ])
+          diagnostics.selectors.push({
+            selector,
+            count: await page.locator(selector).count(),
+          });
+      }
       capture = await saveCapture(
         this.root,
         this.run,
@@ -247,9 +498,22 @@ export class Transport {
         body: snapshot.body,
         url: snapshot.url,
         capture,
-        status: response?.status() ?? 0,
+        status: response?.status() ?? (browserPaging ? 200 : 0),
       };
     } catch (error) {
+      if (!capture && error.httpResponse) {
+        const denied = error.httpResponse;
+        capture = await saveCapture(
+          this.root,
+          this.run,
+          task,
+          await denied.text().catch(() => ""),
+          denied.url(),
+          /json/i.test(denied.headers()["content-type"] ?? "")
+            ? "json"
+            : "html",
+        ).catch(() => null);
+      }
       if (!capture) {
         const failure = await snapshotPage(page).catch(() => snapshot);
         if (failure)
@@ -276,7 +540,21 @@ export class Transport {
         .catch(() => {});
       throw error;
     } finally {
-      await page.close().catch(() => {});
+      page.off("pageerror", onPageError);
+      page.off("requestfailed", onRequestFailed);
+      if (this.run.options?.diagnostics && capture) {
+        diagnostics.finishedAt = new Date().toISOString();
+        const dir = resolve(this.root, "runs", this.run.id, this.run.attemptId);
+        await writeFile(
+          resolve(dir, `page-${task.id}-diagnostics.json`),
+          JSON.stringify(diagnostics, null, 2),
+          { flag: "wx" },
+        ).catch(() => {});
+        await page
+          .screenshot({ path: resolve(dir, `page-${task.id}-sample.png`) })
+          .catch(() => {});
+      }
+      if (!browserPaging) await page.close().catch(() => {});
     }
   }
   async close() {

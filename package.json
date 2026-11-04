@@ -14,6 +14,7 @@
     "framework": "node scripts/framework.mjs",
     "audit:fields": "node scripts/audit-source-fields.mjs",
     "audit:report": "node scripts/report-source-fields.mjs",
+    "validate:collectors": "node scripts/validate-collectors.mjs",
     "registry:build": "node scripts/build-registry.mjs",
     "start": "node src/server.mjs",
     "railway:check": "tsc -p .railway/tsconfig.json",
