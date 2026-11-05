@@ -75,7 +75,8 @@ const overrides = {
   },
   "conventiongrid.com": {
     adapter: "conventiongrid",
-    detailPattern: "/shows/|/calendar/\\d{4}/",
+    detailPattern: "/shows/[^/?#]+/\\d{4}/[^/?#]+/?$",
+    discoverDetails: false,
   },
   "thetradeshowcalendar.com": {
     adapter: "trade-table",

@@ -2,6 +2,7 @@
 import { load } from "cheerio";
 import { dates, eventRecord, text } from "../records.mjs";
 export const inspectedAdapters = new Set([
+  "conventiongrid",
   "nyc-tourism",
   "opencities",
   "san-diego",
@@ -109,7 +110,129 @@ export function parseInspected({ html, url, config, interaction }) {
     if (r) records.push(r);
     else rejected++;
   };
-  if (config.adapter === "discover-la") {
+  if (config.adapter === "conventiongrid") {
+    // Inspected November 5, 2026: /calendar/ server-renders every upcoming show
+    // once, grouped under "<Month> <Year>" headings. Cards show "Mon D - Mon D"
+    // without a year; the year comes from the heading of the start month, and
+    // the end rolls into the next year only when its month precedes the start.
+    const MONTHS = [
+      "jan",
+      "feb",
+      "mar",
+      "apr",
+      "may",
+      "jun",
+      "jul",
+      "aug",
+      "sep",
+      "oct",
+      "nov",
+      "dec",
+    ];
+    const monthIndex = (label) =>
+      MONTHS.indexOf(label.slice(0, 3).toLowerCase());
+    let cards = 0,
+      mismatched = 0;
+    $("h3").each((_, h) => {
+      const heading = text($(h).text()).match(/^([A-Za-z]+)\s+(\d{4})$/);
+      if (!heading || monthIndex(heading[1]) < 0) return;
+      const year = Number(heading[2]),
+        groupMonth = monthIndex(heading[1]);
+      $(h)
+        .next()
+        .children('a[href^="/shows/"]')
+        .each((_, el) => {
+          cards++;
+          const c = $(el),
+            spans = c.find("span"),
+            range = text(spans.first().text()).match(
+              /^([A-Za-z]{3,9})\.?\s+(\d{1,2})\s*-\s*([A-Za-z]{3,9})\.?\s+(\d{1,2})$/,
+            );
+          const startMonth = range ? monthIndex(range[1]) : -1,
+            endMonth = range ? monthIndex(range[3]) : -1;
+          if (!range || startMonth < 0 || endMonth < 0) {
+            rejected++;
+            return;
+          }
+          if (startMonth !== groupMonth) mismatched++;
+          const endYear = endMonth < startMonth ? year + 1 : year,
+            iso = (y, m, d) =>
+              `${y}-${String(m + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+          const place = text(spans.eq(2).text()).match(/^(.*?)\s*,\s*([^,]+)$/);
+          count++;
+          const r = eventRecord(
+            config,
+            {
+              title: c.find("h4").first().text(),
+              url: c.attr("href"),
+              startDate: iso(year, startMonth, Number(range[2])),
+              endDate: iso(endYear, endMonth, Number(range[4])),
+              dateTimeBasis: {
+                start: "visible listing month/day with month-heading year",
+                end: "visible listing month/day with month-heading year",
+              },
+              location: {
+                locality: place?.[1],
+                country: place?.[2],
+                basis: "upstream card city and country; venue on detail page",
+              },
+              categoryTags: c
+                .find(".flex-wrap span")
+                .map((_, e) => ({
+                  label: text($(e).text()),
+                  basis: "upstream card tag",
+                }))
+                .get(),
+              raw: {
+                date: text(spans.first().text()),
+                heading: text($(h).text()),
+              },
+            },
+            { url, selector: "h3 + div > a[href^=/shows/]" },
+          );
+          if (r) records.push(r);
+          else rejected++;
+        });
+    });
+    // The page states its own total and per-month counts; completeness is
+    // claimed only when every card is accounted for against both.
+    const stated = Number(
+      ($("title,meta[name=description]")
+        .toArray()
+        .map((e) => $(e).attr("content") ?? $(e).text())
+        .join(" ")
+        .match(/([\d,]+)\s+upcoming/) ?? [])[1]?.replace(/,/g, ""),
+    );
+    const monthTotal = $('a[href^="/calendar/"]')
+      .map((_, e) =>
+        /^\/calendar\/\d{4}\/[a-z]+\/$/.test($(e).attr("href"))
+          ? Number(text($(e).text()).match(/\((\d+)\)\s*$/)?.[1] ?? NaN)
+          : NaN,
+      )
+      .get()
+      .filter(Number.isFinite)
+      .reduce((a, b) => a + b, 0);
+    const unique = new Set(records.map((r) => r.sourceRecordId)).size;
+    if (
+      cards &&
+      !rejected &&
+      !mismatched &&
+      unique === cards &&
+      cards === stated &&
+      cards === monthTotal
+    ) {
+      coverage = "verified-list";
+      terminal = true;
+    } else
+      issues.push({
+        code: "single_page_contract_unverified",
+        cards,
+        stated,
+        monthTotal,
+        unique,
+        mismatched,
+      });
+  } else if (config.adapter === "discover-la") {
     $(".view-events-day article.node--type-event").each((_, el) => {
       const a = $(el)
         .find('a[data-description="Title link"][data-start-date][data-nid]')

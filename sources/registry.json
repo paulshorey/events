@@ -464,7 +464,7 @@
     "timeZone": "America/New_York",
     "adapter": "conventiongrid",
     "coverage": "unverified",
-    "detailPattern": "/shows/|/calendar/\\d{4}/",
+    "detailPattern": "/shows/[^/?#]+/\\d{4}/[^/?#]+/?$",
     "cardSelectors": [
       ".event-card",
       ".event-item",
@@ -483,7 +483,8 @@
     "maxDepth": 2,
     "validationStatus": "needs-validation",
     "script": "scrapers/url-013.mjs",
-    "enrichDetails": true
+    "enrichDetails": true,
+    "discoverDetails": false
   },
   {
     "id": "url-014",
