@@ -524,3 +524,51 @@ test("quality-quarantined samples preserve last good and a page cannot be commit
   });
   assert.equal(j.collection(la.id).last_good, good.id);
 });
+
+test("a detail link that leaves the publisher is recorded and does not stop the run", async (t) => {
+  const dir = await mkdtemp(join(tmpdir(), "events-offhost-"));
+  t.after(() => rm(dir, { recursive: true, force: true }));
+  const orlando = configs.find((c) => c.id === "url-079"),
+    html = await readFile(
+      new URL("fixtures/orlando.html", import.meta.url),
+      "utf8",
+    );
+  const j = new Journal(":memory:");
+  j.register([orlando]);
+  t.after(() => j.close());
+  const requested = [];
+  const transportFactory = () => ({
+    fetch: async (task) => {
+      requested.push(task.kind);
+      if (task.kind === "detail")
+        throw Object.assign(new Error("Out-of-scope navigation host"), {
+          code: "scope_violation",
+          capture: {
+            path: "/saved/venue.html",
+            hash: "venue",
+            url: "https://venue.example.org/festival",
+          },
+        });
+      return { body: html, url: orlando.url, capture, status: 200 };
+    },
+    close: async () => {},
+  });
+  const q = j.enqueue(
+    orlando.id,
+    optionsFor(orlando, { asOf: "2026-10-16" }, "test-build"),
+  );
+  const [result] = await work(j, {
+    root: dir,
+    runId: q.runId,
+    build: "test-build",
+    transportFactory,
+  });
+  assert.ok(requested.includes("detail"));
+  assert.notEqual(result.status, "repair_needed");
+  assert.notEqual(result.error?.code, "scope_violation");
+  assert.equal(result.pendingPages, 0);
+  const skipped = j
+    .pages(q.runId)
+    .filter((p) => p.kind === "detail" && p.state === "done");
+  assert.ok(skipped.length > 0);
+});

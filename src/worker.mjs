@@ -335,14 +335,46 @@ export async function work(
         }
         task = journal.nextPage(run.id, run.token);
         if (!task) break;
-        input = await transport.fetch(task);
+        let offHost = null;
+        try {
+          input = await transport.fetch(task);
+        } catch (error) {
+          // A listing's detail link may legitimately leave the publisher (a
+          // city page that forwards to a venue). Record it and keep going; the
+          // listing observation stays un-enriched and the issue is visible.
+          if (
+            error.code === "scope_violation" &&
+            task.kind === "detail" &&
+            error.capture
+          ) {
+            offHost = error.capture.url;
+            input = {
+              body: "",
+              url: error.capture.url ?? task.url,
+              capture: error.capture,
+              status: 0,
+            };
+          } else throw error;
+        }
         leaseCheck();
         const config = {
           ...run.config,
           maxDepth: run.options.probe ? 0 : run.config.maxDepth,
         };
-        const parsed =
-          task.kind === "api"
+        const parsed = offHost
+          ? {
+              records: [],
+              nextRequests: [],
+              issues: [
+                {
+                  code: "detail_redirected_off_host",
+                  requested: task.url,
+                  host: new URL(offHost).hostname,
+                },
+              ],
+              method: "detail-off-host-skip",
+            }
+          : task.kind === "api"
             ? parseApi(input.body, input.url, config, task)
             : parseDocument({
                 html: input.body,
@@ -384,7 +416,7 @@ export async function work(
               ]),
             );
         }
-        if (task.meta.enrichRecordIds) {
+        if (task.meta.enrichRecordIds && !offHost) {
           const targets = journal
             .records(run.id)
             .filter((r) =>
