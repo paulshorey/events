@@ -55,6 +55,25 @@ test("a requested month that the page does not display fails closed", async () =
   );
 });
 
+test("a destination that states it has no events is a verified empty listing", () => {
+  const c = configs.find((c) => c.id === "url-015");
+  const empty = `<html><body><ul class="nav cc-tabs"><li>Events</li></ul><div>No events available to display</div></body></html>`;
+  const page = parseDocument({
+    html: empty,
+    url: "https://conventioncalendar.com/ca/ab/edmonton",
+    config: c,
+  });
+  assert.equal(page.records.length, 0);
+  assert.deepEqual(page.issues, []);
+  // The same shell without the explicit statement is not accepted.
+  const unstated = parseDocument({
+    html: empty.replace("No events available to display", "Loading"),
+    url: "https://conventioncalendar.com/ca/ab/edmonton",
+    config: c,
+  });
+  assert.ok(unstated.issues.length > 0);
+});
+
 test("the destinations index queues city pages only for the hub", async () => {
   const html = await fixture("conventioncalendar-destinations");
   const hub = configs.find((c) => c.id === "url-015");

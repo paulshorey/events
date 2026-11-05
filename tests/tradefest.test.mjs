@@ -70,8 +70,12 @@ test("Tradefest pages fail closed when the page, offset or counts disagree", () 
 });
 
 test("the Tradefest directory is read as start-date windows because rating order is unstable", () => {
-  const c = configs.find((c) => c.id === "url-012");
-  assert.equal(c.windowedSearch, true);
+  // Disabled for url-012: the filter keeps only events wholly inside a window,
+  // so splitting a window loses events that cross the split.
+  const c = {
+    ...configs.find((c) => c.id === "url-012"),
+    windowedSearch: true,
+  };
   const root = parseDocument({
     html: offset(html, 3, 0),
     url: "https://tradefest.io/en/search",
@@ -146,7 +150,10 @@ test("the Tradefest directory is read as start-date windows because rating order
 });
 
 test("a window the upstream count proves empty is a verified empty page, not a missing contract", () => {
-  const c = configs.find((c) => c.id === "url-012");
+  const c = {
+    ...configs.find((c) => c.id === "url-012"),
+    windowedSearch: true,
+  };
   const match = html.match(
     /(<script id="__NEXT_DATA__" type="application\/json">)(.*)(<\/script>)/s,
   );

@@ -183,6 +183,7 @@ export function mergeDetail(
     value
       .toLowerCase()
       .replace(/(?:\.{3}|…).*$/, "")
+      .replace(/\s*\((?:formerly|previously|aka)\b[^)]*\)\s*$/i, "")
       .replace(/[^\p{L}\p{N}]+/gu, " ")
       .trim();
   const alias =

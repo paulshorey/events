@@ -586,6 +586,15 @@ export function parseInspected({ html, url, config, interaction }) {
           meta: { month: date },
         });
       });
+      // Destinations with nothing scheduled say so explicitly ("Events 0",
+      // "No events available to display"); that is an empty listing, not a
+      // missing contract.
+      if (
+        !cards.length &&
+        !monthButton &&
+        /No events available to display/i.test($("body").text())
+      )
+        verifiedEmpty = true;
       if (!cards.length && !monthButton && !requestedMonth) {
         if (!$(".cc-tabs").length)
           throw Object.assign(

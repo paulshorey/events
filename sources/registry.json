@@ -456,7 +456,7 @@
     "script": "scrapers/url-012.mjs",
     "enrichDetails": false,
     "discoverDetails": false,
-    "windowedSearch": true,
+    "windowedSearch": false,
     "windowHorizon": "2031-12-31"
   },
   {

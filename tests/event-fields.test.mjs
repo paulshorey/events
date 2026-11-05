@@ -431,6 +431,23 @@ test("a detail heading that only adds the edition year still binds, but only on 
     mergeDetail(listing, make("EASTEC Asia 2027", "2027-05-11")),
     null,
   );
+  // A trailing "(formerly ...)" note on one side is not part of the name.
+  assert.ok(
+    mergeDetail(
+      make(
+        "ADLM Annual Meeting (formerly AACC Annual Scientific Meeting)",
+        "2027-07-25",
+      ),
+      make("ADLM Annual Meeting 2027", "2027-07-25"),
+    ),
+  );
+  assert.equal(
+    mergeDetail(
+      make("ADLM Annual Meeting (formerly AACC)", "2027-07-25"),
+      make("AACC Annual Meeting 2027", "2027-07-25"),
+    ),
+    null,
+  );
   // A listing that already names a year is not loosened.
   assert.equal(
     mergeDetail(
