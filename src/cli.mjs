@@ -36,8 +36,16 @@ const flags = {
   "--config-mode": "configMode",
   "--out": "out",
   "--diagnostics": "diagnostics",
+  "--ignore-robots": "ignoreRobots",
 };
-const booleans = new Set(["probe", "all", "primary", "json", "diagnostics"]);
+const booleans = new Set([
+  "probe",
+  "all",
+  "primary",
+  "json",
+  "diagnostics",
+  "ignoreRobots",
+]);
 const numbers = new Set([
   "maxPages",
   "maxRecords",

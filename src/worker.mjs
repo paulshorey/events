@@ -48,6 +48,7 @@ export function optionsFor(config, options, build) {
     perPage: options.perPage ?? 50,
     acceptCountChange: options.acceptCountChange ?? null,
     diagnostics: options.diagnostics ?? false,
+    ignoreRobots: options.ignoreRobots ?? false,
   };
   for (const k of [
     "maxPages",
