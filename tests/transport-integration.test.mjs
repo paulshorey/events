@@ -711,9 +711,14 @@ test("reveal probe distinguishes unhiding rows from loading rows", async (t) => 
       hidden().slice(0, 10).forEach((e) => (e.style.display = "block"));
       if (!hidden().length) e.target.style.display = "none";
     });</script></body></html>`;
-  let moreRequests = 0;
+  let moreRequests = 0,
+    staticHits = 0;
   const server = createServer((req, res) => {
     if (req.url === "/robots.txt") return res.end("User-agent: *\nAllow: /");
+    if (req.url === "/x.css") {
+      staticHits++;
+      return res.end("");
+    }
     if (req.url === "/more") {
       moreRequests++;
       return res.end("[]");
@@ -726,6 +731,10 @@ test("reveal probe distinguishes unhiding rows from loading rows", async (t) => 
       "/later": 'setTimeout(() => fetch("/more"), 300);',
       "/widget": `fetch("http://localhost:${server.address().port}/widget");`,
       "/socket": `new WebSocket("ws://127.0.0.1:${server.address().port}/ws");`,
+      "/static":
+        'const l = document.createElement("link"); l.rel = "stylesheet"; l.href = "/x.css"; document.head.appendChild(l);',
+      "/vishidden":
+        'document.querySelector(".calendar .item").style.visibility = "hidden";',
     };
     res.end(page(handlers[req.url] ?? ""));
   });
@@ -776,6 +785,7 @@ test("reveal probe distinguishes unhiding rows from loading rows", async (t) => 
       controlVisibleAfter: false,
       requests: [],
       ignoredRequests: 0,
+      staticBlocked: 0,
       error: null,
     },
   );
@@ -803,6 +813,22 @@ test("reveal probe distinguishes unhiding rows from loading rows", async (t) => 
     );
   }
   assert.equal(moreRequests, 0);
+  // Static resources a click loads are aborted too, without failing.
+  const stat = await transport.fetch({
+    id: "static",
+    url: `${base}/static`,
+    kind: "listing",
+  });
+  assert.equal(staticHits, 0);
+  assert.ok(stat.interaction.staticBlocked >= 1);
+  assert.deepEqual(stat.interaction.requests, []);
+  // visibility:hidden rows are not visible, whatever their display.
+  const hiddenRow = await transport.fetch({
+    id: "vis",
+    url: `${base}/vishidden`,
+    kind: "listing",
+  });
+  assert.equal(hiddenRow.interaction.visibleAfter, 24);
   // Reviewed unrelated hosts are aborted and counted, not recorded.
   transport.run.config.revealProbe.ignoreHosts = ["localhost"];
   const widget = await transport.fetch({

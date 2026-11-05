@@ -118,8 +118,21 @@ export async function deliver({
             });
             if (out.superseded) {
               // The database already holds a later state of this run (from
-              // another root); this older copy is not a failure.
+              // another root); this older copy is not a failure, but it may
+              // still hold bytes the newer copy lacked.
               entry.superseded = (entry.superseded ?? 0) + 1;
+              if (evidence) {
+                for (const h of await evidenceLackingContent(await db()))
+                  lacking.add(h);
+                const filled = await backfillEvidence(
+                  await db(),
+                  snap,
+                  lacking,
+                );
+                if (filled)
+                  entry.evidenceBackfilled =
+                    (entry.evidenceBackfilled ?? 0) + filled;
+              }
               continue;
             }
             outbox.record(target, id, snap.digest, {

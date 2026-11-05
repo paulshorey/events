@@ -33,11 +33,16 @@ function otherPagingControls($, url) {
           .find(
             "a, button, form, input, select, textarea, [role=button], [onclick]",
           )
-          .filter(
-            (_, e) =>
-              !$(e).is(".calendar .loadMore") &&
-              !EVENT_PATH.test($(e).attr("href") ?? ""),
-          )
+          .filter((_, e) => {
+            const el = $(e);
+            if (el.is(".calendar .loadMore")) return false;
+            const href = el.attr("href") ?? "";
+            if (!EVENT_PATH.test(href)) return true;
+            // An event link must belong to a row whose heading is that event;
+            // an orphan link would be an event nobody parsed.
+            const heading = el.closest(".calendar .item").find("h2 a");
+            return heading.length !== 1 || heading.attr("href") !== href;
+          })
           .toArray();
   const pathOf = (value) => {
     try {
@@ -66,6 +71,8 @@ function otherPagingControls($, url) {
           !EVENT_PATH.test(path)
         )
           return true;
+        // A confirmed event link is not paging, whatever its title says.
+        if (el.is("a") && path && EVENT_PATH.test(path)) return false;
       }
       if (
         el.is(

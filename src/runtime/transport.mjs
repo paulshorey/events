@@ -594,12 +594,17 @@ export async function revealProbe(page, config) {
   const probe = config.revealProbe,
     ignore = new Set(probe.ignoreHosts ?? []),
     requests = [];
-  let ignored = 0;
+  let ignored = 0,
+    staticBlocked = 0;
   const guard = (route) => {
     const request = route.request(),
       type = request.resourceType();
-    if (["image", "media", "font", "stylesheet"].includes(type))
-      return route.fallback();
+    // Static resources are aborted too (nothing leaves the browser), but a
+    // lazy-loaded image or stylesheet is not evidence of more rows.
+    if (["image", "media", "font", "stylesheet"].includes(type)) {
+      staticBlocked++;
+      return route.abort("blockedbyclient");
+    }
     let host = null;
     try {
       host = new URL(request.url()).hostname;
@@ -613,9 +618,13 @@ export async function revealProbe(page, config) {
   const visible = () =>
     items.evaluateAll(
       (els) =>
-        els.filter(
-          (e) =>
-            getComputedStyle(e).display !== "none" && e.getClientRects().length,
+        els.filter((e) =>
+          // The browser's own rule: display, visibility (inherited) and
+          // opacity, plus a rendered box.
+          e.checkVisibility({
+            visibilityProperty: true,
+            opacityProperty: true,
+          }),
         ).length,
     );
   const itemsBefore = await items.count(),
@@ -665,6 +674,7 @@ export async function revealProbe(page, config) {
         controlVisibleAfter: await control.isVisible().catch(() => false),
         requests: [...requests],
         ignoredRequests: ignored,
+        staticBlocked,
         error,
       };
       await page.unroute("**/*", guard).catch(() => {});

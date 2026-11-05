@@ -189,6 +189,19 @@ test("San Diego single-page calendar is verified only with observed reveal behav
     ),
   );
   unverified(html, observed(html, { controls: 2 }));
+  // An event link outside every row is an event nobody parsed.
+  unverified(
+    html.replace(
+      '<a href="#" class="sppb-btn loadMore">',
+      '<a href="/calendar/999-orphan-event">Orphan</a><a href="#" class="sppb-btn loadMore">',
+    ),
+  );
+  // An event titled like a paging word is still an event, not paging.
+  const titled = html.replace(
+    " ECKHART TOLLE WEEKEND INTENSIVE </a>",
+    "Next</a>",
+  );
+  assert.equal(parse(titled).coverage, "verified-list");
   // A "Private" row carrying a public event link is not a placeholder.
   unverified(
     html.replace(

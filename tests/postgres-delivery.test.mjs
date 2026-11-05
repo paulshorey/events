@@ -815,3 +815,36 @@ test("an older copy of a run already delivered in a later state is superseded, n
   );
   assert.equal(await count(c, "SELECT count(*) n FROM import_receipts"), 1);
 });
+
+test("a superseded older copy still backfills bytes the newer copy lacked", async (t) => {
+  const url = await withDb(t);
+  if (!url) return;
+  const older = await journalRoot(t, { status: "partial" });
+  const newer = await mkdtemp(join(tmpdir(), "events-delivery-copy-"));
+  t.after(() => rm(newer, { recursive: true, force: true }));
+  await cp(older.root, newer, { recursive: true });
+  const db = new DatabaseSync(join(newer, "journal.sqlite"));
+  db.prepare("UPDATE pages SET capture=replace(capture,?,?)").run(
+    older.root,
+    newer,
+  );
+  db.prepare("UPDATE runs SET status='complete', updated=updated+1000").run();
+  db.close();
+  await rm(join(newer, "page-1.html"));
+  const report = await deliver({
+    url,
+    roots: [newer, older.root],
+    applyMigrations: true,
+  });
+  assert.equal(report.journals[1].superseded, 1);
+  assert.equal(report.journals[1].evidenceBackfilled, 1);
+  const c = await connect(url);
+  t.after(() => c.end());
+  assert.equal(
+    await count(
+      c,
+      "SELECT count(*) n FROM evidence_objects WHERE content_gzip IS NULL",
+    ),
+    0,
+  );
+});
