@@ -741,6 +741,8 @@ test("reveal probe distinguishes unhiding rows from loading rows", async (t) => 
       "/popup": 'window.open("/popup-target");',
       "/scrolls":
         'document.body.style.height = "5000px"; window.addEventListener("scroll", () => fetch("/more"), { once: true });',
+      "/rewrite":
+        'document.querySelector(".calendar .item").textContent = "Replaced";',
       "/vishidden":
         'document.querySelector(".calendar .item").style.visibility = "hidden";',
     };
@@ -787,6 +789,7 @@ test("reveal probe distinguishes unhiding rows from loading rows", async (t) => 
       clicks: undefined,
       itemsBefore: 25,
       itemsAfter: 25,
+      itemsUnchanged: true,
       visibleBefore: 10,
       visibleAfter: 25,
       controlVisibleBefore: true,
@@ -841,6 +844,14 @@ test("reveal probe distinguishes unhiding rows from loading rows", async (t) => 
   assert.equal(staticHits, 0);
   assert.ok(stat.interaction.staticBlocked >= 1);
   assert.deepEqual(stat.interaction.requests, []);
+  // A handler that rewrites a row is caught even though counts hold.
+  const rewritten = await transport.fetch({
+    id: "rw",
+    url: `${base}/rewrite`,
+    kind: "listing",
+  });
+  assert.equal(rewritten.interaction.itemsUnchanged, false);
+  assert.equal(rewritten.interaction.itemsAfter, 25);
   // visibility:hidden rows are not visible, whatever their display.
   const hiddenRow = await transport.fetch({
     id: "vis",

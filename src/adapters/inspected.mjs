@@ -281,6 +281,7 @@ export function parseInspected({ html, url, config, interaction }) {
         interaction.controlVisibleAfter === false &&
         interaction.itemsBefore === items &&
         interaction.itemsAfter === items &&
+        interaction.itemsUnchanged === true &&
         interaction.visibleAfter === items;
       const paged = otherPagingControls($, url).length;
       if (

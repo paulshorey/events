@@ -627,6 +627,16 @@ export async function revealProbe(page, config) {
           }),
         ).length,
     );
+  // Item identities (first link plus text), compared after the probe: a
+  // handler that rewrites or replaces rows changes them even if counts hold.
+  const signatures = () =>
+    items.evaluateAll((els) =>
+      els.map(
+        (e) =>
+          `${e.querySelector("a[href]")?.getAttribute("href") ?? ""}|${(e.textContent ?? "").replace(/\s+/g, " ").trim()}`,
+      ),
+    );
+  const before = await signatures();
   const itemsBefore = await items.count(),
     controls = await page.locator(probe.control).count(),
     visibleBefore = await visible(),
@@ -679,6 +689,8 @@ export async function revealProbe(page, config) {
         clicks,
         itemsBefore,
         itemsAfter: await items.count(),
+        itemsUnchanged:
+          JSON.stringify(await signatures()) === JSON.stringify(before),
         visibleBefore,
         visibleAfter: await visible(),
         controlVisibleBefore,

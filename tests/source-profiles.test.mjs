@@ -83,6 +83,7 @@ test("San Diego single-page calendar is verified only with observed reveal behav
       clicks: 1,
       itemsBefore: items,
       itemsAfter: items,
+      itemsUnchanged: true,
       visibleBefore: items - 1,
       visibleAfter: items,
       controlVisibleBefore: true,
@@ -137,6 +138,7 @@ test("San Diego single-page calendar is verified only with observed reveal behav
   );
   // Rows appeared, stayed hidden, or the control never went away.
   unverified(html, observed(html, { itemsAfter: 4 }));
+  unverified(html, observed(html, { itemsUnchanged: false }));
   unverified(html, observed(html, { visibleAfter: 2 }));
   unverified(html, observed(html, { controlVisibleAfter: true }));
   unverified(html, observed(html, { error: "Timeout 5000ms exceeded" }));
