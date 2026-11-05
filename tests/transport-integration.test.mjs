@@ -766,6 +766,7 @@ test("reveal probe distinguishes unhiding rows from loading rows", async (t) => 
     { ...revealed.interaction, clicks: undefined },
     {
       probe: "reveal",
+      controls: 1,
       clicks: undefined,
       itemsBefore: 25,
       itemsAfter: 25,

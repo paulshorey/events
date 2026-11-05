@@ -263,6 +263,9 @@ export function parseInspected({ html, url, config, interaction }) {
       const reveal =
         interaction?.probe === "reveal" &&
         !interaction.error &&
+        // Exactly one control, so the exercised element is the exempted one.
+        interaction.controls === 1 &&
+        $(".calendar .loadMore").length === 1 &&
         // The control existed, started hidden rows, and was actually used.
         interaction.controlVisibleBefore === true &&
         interaction.clicks > 0 &&

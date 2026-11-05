@@ -619,6 +619,7 @@ export async function revealProbe(page, config) {
         ).length,
     );
   const itemsBefore = await items.count(),
+    controls = await page.locator(probe.control).count(),
     visibleBefore = await visible(),
     controlVisibleBefore = await control.isVisible().catch(() => false);
   let clicks = 0,
@@ -654,6 +655,7 @@ export async function revealProbe(page, config) {
     async release() {
       const observed = {
         probe: "reveal",
+        controls,
         clicks,
         itemsBefore,
         itemsAfter: await items.count(),

@@ -79,6 +79,7 @@ test("San Diego single-page calendar is verified only with observed reveal behav
       (h.match(/class="item"/g) ?? []).length;
     return {
       probe: "reveal",
+      controls: 1,
       clicks: 1,
       itemsBefore: items,
       itemsAfter: items,
@@ -180,6 +181,14 @@ test("San Diego single-page calendar is verified only with observed reveal behav
       '<select name="month"><option>December</option></select><a href="#" class="sppb-btn loadMore">',
     ),
   );
+  // A second control would be exempted from paging checks but never clicked.
+  unverified(
+    html.replace(
+      "Load more</a>",
+      'Load more</a><a href="#" class="loadMore">Load more</a>',
+    ),
+  );
+  unverified(html, observed(html, { controls: 2 }));
   // A "Private" row carrying a public event link is not a placeholder.
   unverified(
     html.replace(
