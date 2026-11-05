@@ -402,16 +402,23 @@ export async function deliverSnapshot(
       [run.source_key],
     );
     await client.query(
-      `INSERT INTO collections(id,source_id,url,latest_revision,latest_run_at) VALUES($1,$2,$3,$4,$5)
+      `INSERT INTO collections(id,source_id,url,latest_revision,latest_run_at,latest_run_created_at,latest_run_id)
+       VALUES($1,$2,$3,$4,$5,$6,$7)
        ON CONFLICT(id) DO UPDATE SET url=excluded.url, latest_revision=excluded.latest_revision,
-         source_id=excluded.source_id, latest_run_at=excluded.latest_run_at, updated_at=now()
-       WHERE collections.latest_run_at IS NULL OR collections.latest_run_at <= excluded.latest_run_at`,
+         source_id=excluded.source_id, latest_run_at=excluded.latest_run_at,
+         latest_run_created_at=excluded.latest_run_created_at, latest_run_id=excluded.latest_run_id, updated_at=now()
+       -- Same ordering as current_complete_runs: update time, creation, id.
+       WHERE collections.latest_run_at IS NULL
+          OR (collections.latest_run_at, collections.latest_run_created_at, collections.latest_run_id)
+             <= (excluded.latest_run_at, excluded.latest_run_created_at, excluded.latest_run_id)`,
       [
         run.collection_id,
         run.source_key,
         config.url,
         run.revision,
         ts(run.updated),
+        ts(run.created),
+        run.id,
       ],
     );
     await client.query(

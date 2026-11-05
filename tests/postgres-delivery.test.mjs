@@ -144,6 +144,7 @@ test("migrations apply once, are serialized and reject edited history", async (t
     "001_source_observations.sql",
     "002_error_captures_latest_runs.sql",
     "003_current_run_tiebreak.sql",
+    "004_collection_latest_tiebreak.sql",
   ]);
   assert.deepEqual((await migrate(c)).applied, []);
   const dir = await mkdtemp(join(tmpdir(), "events-migrations-"));
@@ -166,6 +167,7 @@ test("a complete run is delivered once with counts, evidence and projections int
     "001_source_observations.sql",
     "002_error_captures_latest_runs.sql",
     "003_current_run_tiebreak.sql",
+    "004_collection_latest_tiebreak.sql",
   ]);
   assert.deepEqual(
     await readFile(join(root, "journal.sqlite")),
@@ -868,6 +870,12 @@ test("current complete run ties on update time are broken deterministically", as
   t.after(() => c.end());
   assert.equal(
     (await c.query("SELECT id::text FROM current_complete_runs")).rows[0].id,
+    b.runId,
+  );
+  // Collection metadata follows the same tie-break, whatever the delivery order.
+  assert.equal(
+    (await c.query("SELECT latest_run_id::text id FROM collections")).rows[0]
+      .id,
     b.runId,
   );
 });

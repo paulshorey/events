@@ -106,8 +106,8 @@ export class Transport {
     }));
   }
   async initBrowser() {
-    if (!this.browser) {
-      this.browser = await chromium.launch({ headless: true });
+    this.browser ??= await chromium.launch({ headless: true });
+    if (!this.context) {
       this.context = await this.browser.newContext({
         timezoneId: this.run.config.timeZone,
         serviceWorkers: "block",
@@ -471,6 +471,9 @@ export class Transport {
         task.kind === "listing" && this.run.config.revealProbe && !browserPaging
           ? await revealProbe(page, this.run.config)
           : null;
+      // The probe leaves a context-level WebSocket route that cannot be
+      // removed; this task's context is replaced afterwards.
+      if (reveal) this.retireContext = true;
       let interaction;
       try {
         snapshot = await snapshotPage(page);
@@ -565,6 +568,12 @@ export class Transport {
           .catch(() => {});
       }
       if (!browserPaging) await page.close().catch(() => {});
+      if (this.retireContext) {
+        this.retireContext = false;
+        await this.context?.close().catch(() => {});
+        this.context = null;
+        this.listingPage = null;
+      }
     }
   }
   async close() {

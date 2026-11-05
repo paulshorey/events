@@ -203,6 +203,10 @@ test("San Diego single-page calendar is verified only with observed reveal behav
       '<a href="/calendar/999-orphan-event">Orphan</a><a href="#" class="sppb-btn loadMore">',
     ),
   );
+  // An event link anywhere else on the page must belong to a parsed row.
+  unverified(
+    html + '<p><a href="/calendar/777-featured-elsewhere">Featured</a></p>',
+  );
   // An event titled like a paging word is still an event, not paging.
   const titled = html.replace(
     " ECKHART TOLLE WEEKEND INTENSIVE </a>",

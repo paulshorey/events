@@ -71,8 +71,14 @@ function otherPagingControls($, url) {
           !EVENT_PATH.test(path)
         )
           return true;
-        // A confirmed event link is not paging, whatever its title says.
-        if (el.is("a") && path && EVENT_PATH.test(path)) return false;
+        // An event link anywhere on the page must be the heading of an
+        // accounted row; then it is not paging, whatever its title says.
+        if (el.is("a") && path && EVENT_PATH.test(path)) {
+          const heading = el.closest(".calendar .item").find("h2 a");
+          return !(
+            heading.length === 1 && pathOf(heading.attr("href") ?? "") === path
+          );
+        }
       }
       if (
         el.is(

@@ -802,6 +802,9 @@ test("reveal probe distinguishes unhiding rows from loading rows", async (t) => 
     },
   );
   assert.equal(revealed.interaction.clicks, 2);
+  // The probe's unremovable WebSocket route dies with its context; later
+  // tasks get a fresh one.
+  assert.equal(transport.context, null);
   const loading = await transport.fetch({
     id: "b",
     url: `${base}/loads`,
