@@ -29,16 +29,20 @@ export async function deliver({
 }) {
   const target = targetId(url),
     report = { target, migrations: null, journals: [] };
-  let client = null;
+  let client = null,
+    receipts = null;
   const db = async () => {
     if (!client) {
       client = await connect(url);
-      if (applyMigrations) report.migrations = await migrate(client);
+      if (applyMigrations && !dryRun) report.migrations = await migrate(client);
     }
     return client;
   };
   try {
-    if (applyMigrations && !dryRun) await db();
+    // The database's receipts are authoritative: after a restore or
+    // recreation at the same address, runs whose receipts are gone are
+    // delivered again even though the local outbox recorded them.
+    receipts = await remoteReceipts(await db());
     for (const root of roots) {
       const path = join(root, "journal.sqlite"),
         label = relative(PROJECT, root) || root,
@@ -73,10 +77,18 @@ export async function deliver({
             status: snap.run.status,
             counts: snap.counts,
           };
-          if (outbox.delivered(target, id, snap.digest)) {
+          const remote = receipts.get(`${id}:${snap.digest}`);
+          if (remote != null) {
+            if (!outbox.delivered(target, id, snap.digest))
+              outbox.record(target, id, snap.digest, {
+                receiptId: remote,
+                counts: snap.counts,
+              });
             entry.skipped++;
             continue;
           }
+          if (outbox.delivered(target, id, snap.digest))
+            entry.missingRemote = (entry.missingRemote ?? 0) + 1;
           if (dryRun) {
             entry.runs.push({ ...base, pending: true });
             continue;
@@ -125,10 +137,24 @@ export async function deliver({
         outbox?.close();
       }
     }
+  } catch (e) {
+    throw Object.assign(e, { report });
   } finally {
     await client?.end().catch(() => {});
   }
   return report;
+}
+
+async function remoteReceipts(client) {
+  try {
+    const rows = (
+      await client.query("SELECT id, run_id::text, digest FROM import_receipts")
+    ).rows;
+    return new Map(rows.map((r) => [`${r.run_id}:${r.digest}`, Number(r.id)]));
+  } catch (e) {
+    if (e.code === "42P01") return new Map(); // schema not migrated yet
+    throw e;
+  }
 }
 
 export function isConnectionError(e) {

@@ -100,6 +100,15 @@ test("San Diego single-page calendar is verified only under its client-reveal co
   );
   // An unlinked row that is not a private placeholder is unexplained.
   unverified(html.replace("<span>Private</span>", "<span>Mystery</span>"));
+  // A handler that also requests rows may append beyond the server batch.
+  unverified(
+    html.replace(
+      "e.preventDefault();",
+      'e.preventDefault(); fetch("/calendar?start=11").then((r) => r.text());',
+    ),
+  );
+  // A linked row that fails to parse must not count toward the whole list.
+  unverified(html.replace("<span>11/07/2026</span>", "<span>TBA</span>"));
   // Without the registry declaration the adapter stays conservative.
   assert.equal(
     parseDocument({

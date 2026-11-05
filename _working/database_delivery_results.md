@@ -12,7 +12,7 @@ Milestone 1 of [`review_and_next_steps.md`](review_and_next_steps.md): terminal 
 | `.artifacts/source-validation/2026-11-04-pg` | 2 | 12,210 | Chicago two-run validation on the current build |
 | `.artifacts/collection/2026-11-04` | 20 | 1,168 | Full bounded runs of open sources (below); `url-023` still in `retry_wait` |
 
-At the last check the database held 179 runs, 44,605 append-only observations, 1,743 distinct evidence objects with gzip bytes, one receipt per run state, and occupied 211 MB. Database counts of pages and observations equalled the SQLite totals for every delivered journal (for example 2,201 pages and 30,941 observations after the first two journals). A second delivery pass skipped every run and created no receipts.
+After review fixes (migration `002`, delivery format 2: failed-page captures, validated evidence metadata, resumed-run options, newest-run collection metadata) every run was redelivered once. The database then held 181 runs, 44,721 append-only observations, 1,775 distinct evidence objects, all with gzip bytes (including 30 failed/denied page captures), 360 receipts (one per run state per delivery format), and occupied 215 MB. Database counts of pages and observations equalled the SQLite totals for every delivered journal (for example 2,201 pages and 30,941 observations after the first two journals). A second delivery pass skipped every run and created no receipts.
 
 `current_source_records` (latest complete run per collection) contains 7,198 records from nine collections; 7,021 are upcoming as of November 4. 6,838 distinct event URLs: Las Vegas `url-019`/`url-020` and LA `url-037`/`url-038` are overlapping views of the same publishers. These are source observations, not deduplicated canonical events.
 
@@ -44,7 +44,7 @@ Full bounded runs (`--max-pages 80`, explicit runtime) of 19 sources with earlie
 
 ### Collector improvement made
 
-San Diego (`url-082`) was partial only because its single page had no completeness contract. The captured script shows `Load more` merely unhides `.calendar .item` rows already in the server HTML (no request). The adapter now marks the page `verified-list`/terminal under `listCompleteness: "client-reveal"` only while every row is public or an unlinked `Private` placeholder, the reveal script exists and no server pagination link exists. Ten private bookings are reported as `excluded.privatePlaceholders`, not invented events. Replay of the saved capture and two live runs produced 58 events each.
+San Diego (`url-082`) was partial only because its single page had no completeness contract. The captured script shows `Load more` merely unhides `.calendar .item` rows already in the server HTML (no request). The adapter now marks the page `verified-list`/terminal under `listCompleteness: "client-reveal"` only while every row is public or an unlinked `Private` placeholder, the reveal script exists and no server pagination link exists. Ten private bookings are reported as `excluded.privatePlaceholders`, not invented events. The contract also requires zero rejected linked rows and an inline handler with no request APIs (`fetch`, AJAX, `XMLHttpRequest`, `.load()`). Replay of the saved capture and two live runs on the final adapter produced 58 events each.
 
 ## Recommended next collector work
 

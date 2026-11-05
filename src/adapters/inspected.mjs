@@ -172,17 +172,30 @@ export function parseInspected({ html, url, config }) {
     });
     // Inspected November 4, 2026: "Load more" only unhides `.calendar .item`
     // rows already in the server HTML (jQuery slice/slideDown, no request).
-    // The single document is the whole list only while every row is public or
-    // a private placeholder and no server-side pagination link exists.
+    // The single document is the whole list only while every row is public and
+    // parsed or a private placeholder, the inline script that binds the control
+    // only unhides rows and makes no request, and no server pagination exists.
     if (config.listCompleteness === "client-reveal") {
+      const handlers = $("script")
+        .map((_, e) => $(e).text())
+        .get()
+        .filter((t) => /\.calendar \.loadMore/.test(t));
       const reveal =
         $(".calendar .loadMore").length &&
-        /\.calendar \.item:hidden/.test($("script").text());
+        handlers.length > 0 &&
+        handlers.every(
+          (t) =>
+            /\.calendar \.item:hidden/.test(t) &&
+            !/\b(fetch|ajax|XMLHttpRequest|getJSON|axios|sendBeacon|EventSource|WebSocket)\b|\$\.(get|post)\b|jQuery\.(get|post)\b|\.load\(/.test(
+              t,
+            ),
+        );
       const paged = $('a[rel="next"], .pagination a, a[href*="page="]').length;
       if (
         reveal &&
         !paged &&
         !unclassified &&
+        !rejected &&
         rows === count + privateRows &&
         rows === $(".calendar .item .event-row").length
       ) {

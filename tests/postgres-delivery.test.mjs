@@ -132,7 +132,10 @@ test("migrations apply once, are serialized and reject edited history", async (t
   const c = await connect(url);
   t.after(() => c.end());
   const first = await migrate(c);
-  assert.deepEqual(first.applied, ["001_source_observations.sql"]);
+  assert.deepEqual(first.applied, [
+    "001_source_observations.sql",
+    "002_error_captures_latest_runs.sql",
+  ]);
   assert.deepEqual((await migrate(c)).applied, []);
   const dir = await mkdtemp(join(tmpdir(), "events-migrations-"));
   t.after(() => rm(dir, { recursive: true, force: true }));
@@ -150,7 +153,10 @@ test("a complete run is delivered once with counts, evidence and projections int
   const journalBytes = await readFile(join(root, "journal.sqlite"));
   const report = await deliver({ url, roots: [root], applyMigrations: true });
   assert.equal(report.journals[0].delivered, 1);
-  assert.deepEqual(report.migrations.applied, ["001_source_observations.sql"]);
+  assert.deepEqual(report.migrations.applied, [
+    "001_source_observations.sql",
+    "002_error_captures_latest_runs.sql",
+  ]);
   assert.deepEqual(
     await readFile(join(root, "journal.sqlite")),
     journalBytes,
@@ -215,19 +221,29 @@ test("a complete run is delivered once with counts, evidence and projections int
     assert.equal(sha(gunzipSync(e.content_gzip)), e.content_hash);
   assert.equal(await count(c, "SELECT count(*) n FROM import_receipts"), 1);
 
-  // Second pass: the local outbox already holds the receipt.
+  // Second pass: the database already holds the receipt.
   const again = await deliver({ url, roots: [root] });
   assert.equal(again.journals[0].skipped, 1);
-  // Crash after the database commit but before the local receipt: replay is a duplicate.
+  // Crash after the database commit but before the local receipt: the
+  // database receipt still governs, and a direct replay is a duplicate.
   await rm(join(root, "delivery.sqlite"));
   const replay = await deliver({ url, roots: [root] });
-  assert.equal(replay.journals[0].duplicates, 1);
-  assert.equal(
-    replay.journals[0].runs[0].receiptId,
-    report.journals[0].runs[0].receiptId,
-  );
+  assert.equal(replay.journals[0].skipped, 1);
+  const j = new Journal(join(root, "journal.sqlite"), Date.now, {
+    readOnly: true,
+  });
+  t.after(() => j.close());
+  const dup = await deliverSnapshot(c, snapshotRun(j, runId));
+  assert.equal(dup.duplicate, true);
+  assert.equal(dup.receiptId, report.journals[0].runs[0].receiptId);
   assert.equal(await count(c, "SELECT count(*) n FROM source_observations"), 3);
   assert.equal(await count(c, "SELECT count(*) n FROM import_receipts"), 1);
+  // A restore that lost the receipt is redelivered despite the local outbox.
+  await c.query("DELETE FROM import_receipts");
+  const restored = await deliver({ url, roots: [root] });
+  assert.equal(restored.journals[0].delivered, 1);
+  assert.equal(restored.journals[0].missingRemote, 1);
+  assert.equal(await count(c, "SELECT count(*) n FROM source_observations"), 3);
 });
 
 test("an interrupted delivery rolls back completely and a retry succeeds", async (t) => {
@@ -277,18 +293,10 @@ test("a database outage changes nothing locally and is retried later", async (t)
   const before = await readFile(join(root, "journal.sqlite"));
   const down = "postgres://nobody:secret@127.0.0.1:9/none?sslmode=disable";
   await assert.rejects(deliver({ url: down, roots: [root] }), (e) => {
-    assert.equal(e.report.journals[0].failed, 1);
+    assert.ok(e.report);
     return true;
   });
   assert.deepEqual(await readFile(join(root, "journal.sqlite")), before);
-  const outbox = new DatabaseSync(join(root, "delivery.sqlite"), {
-    readOnly: true,
-  });
-  assert.equal(
-    outbox.prepare("SELECT status FROM deliveries").get().status,
-    "failed",
-  );
-  outbox.close();
   const later = await deliver({ url, roots: [root], applyMigrations: true });
   assert.equal(later.journals[0].delivered, 1);
 });
@@ -307,16 +315,23 @@ test("a resumed run gets a new receipt; changed payloads for a delivered key are
     "UPDATE runs SET status='complete', updated=updated+1000 WHERE id=?",
   ).run(runId);
   db.close();
+  const resumedDb = new DatabaseSync(join(root, "journal.sqlite"));
+  resumedDb
+    .prepare(
+      "UPDATE runs SET options=json_set(options,'$.maxPages',400) WHERE id=?",
+    )
+    .run(runId);
+  resumedDb.close();
   const resumed = await deliver({ url, roots: [root] });
   assert.equal(resumed.journals[0].delivered, 1);
   const c = await connect(url);
   t.after(() => c.end());
   assert.equal(await count(c, "SELECT count(*) n FROM source_observations"), 4);
   assert.equal(await count(c, "SELECT count(*) n FROM import_receipts"), 2);
-  assert.equal(
-    (await c.query("SELECT status FROM extraction_runs")).rows[0].status,
-    "complete",
-  );
+  const live = (await c.query("SELECT status, options FROM extraction_runs"))
+    .rows[0];
+  assert.equal(live.status, "complete");
+  assert.equal(live.options.maxPages, 400, "resumed budget is recorded");
   assert.equal(
     await count(c, "SELECT count(*) n FROM current_complete_runs"),
     1,
@@ -390,12 +405,113 @@ test("connection policy uses only DB_EVENTS_URL and TLS by default", () => {
     rejectUnauthorized: false,
   });
   assert.equal(
-    clientConfig("postgres://u:p@h:1/db?sslmode=disable").ssl,
+    clientConfig("postgres://u:p@127.0.0.1:1/db?sslmode=disable").ssl,
     false,
+  );
+  assert.throws(
+    () => clientConfig("postgres://u:p@db.example.net:5432/db?sslmode=disable"),
+    /loopback/,
   );
   assert.ok(
     !clientConfig(
       "postgres://u:p@h:1/db?sslmode=require",
     ).connectionString.includes("sslmode"),
+  );
+});
+
+test("failed-page captures are kept and evidence metadata is recorded only when it matches", async (t) => {
+  const url = await withDb(t);
+  if (!url) return;
+  const root = await mkdtemp(join(tmpdir(), "events-delivery-"));
+  t.after(() => rm(root, { recursive: true, force: true }));
+  const j = new Journal(join(root, "journal.sqlite"));
+  j.register([config]);
+  const q = j.enqueue(config.id, { asOf: "2026-11-04" });
+  const r = j.claim("test", 60000, q.runId);
+  const page = j.nextPage(q.runId, r.token);
+  const denied = "<html>403 denied</html>",
+    path = join(root, "page-1.html");
+  await writeFile(path, denied);
+  const capture = { path, hash: sha(denied), kind: "html" };
+  j.pageError(
+    r.id,
+    r.token,
+    page.id,
+    { code: "access_denied", capture },
+    false,
+    capture,
+  );
+  j.finish(
+    r.id,
+    r.token,
+    "blocked_access",
+    {},
+    { code: "access_denied", capture },
+  );
+  j.close();
+  await deliver({ url, roots: [root], applyMigrations: true });
+  const c = await connect(url);
+  t.after(() => c.end());
+  const ev = (
+    await c.query(
+      "SELECT content_hash, byte_size, local_path, content_gzip FROM evidence_objects",
+    )
+  ).rows;
+  assert.equal(ev.length, 1);
+  assert.equal(ev[0].content_hash, capture.hash);
+  assert.equal(gunzipSync(ev[0].content_gzip).toString(), denied);
+  assert.equal(
+    (await c.query("SELECT error_capture_hash FROM run_pages")).rows[0]
+      .error_capture_hash,
+    capture.hash,
+  );
+
+  // A capture file altered after collection keeps only its recorded identity.
+  const other = await journalRoot(t);
+  await writeFile(join(other.root, "page-1.html"), "<html>altered</html>");
+  const report = await deliver({ url, roots: [other.root], evidence: false });
+  assert.equal(report.journals[0].runs[0].evidence.mismatched, 1);
+  const listing = (
+    await c.query(
+      "SELECT e.byte_size, e.local_path, e.content_gzip FROM run_pages p JOIN evidence_objects e ON e.content_hash=p.content_hash WHERE p.run_id=$1 AND p.page_id=1",
+      [other.runId],
+    )
+  ).rows[0];
+  assert.deepEqual(listing, {
+    byte_size: null,
+    local_path: null,
+    content_gzip: null,
+  });
+});
+
+test("an older journal delivered later does not replace the latest collection revision", async (t) => {
+  const url = await withDb(t);
+  if (!url) return;
+  const newer = await journalRoot(t);
+  const older = await journalRoot(t);
+  const db = new DatabaseSync(join(older.root, "journal.sqlite"));
+  db.prepare(
+    "UPDATE runs SET revision='old-revision', updated=updated-86400000, created=created-86400000",
+  ).run();
+  db.close();
+  const c = await connect(url);
+  t.after(() => c.end());
+  await deliver({ url, roots: [newer.root], applyMigrations: true });
+  const latest = (await c.query("SELECT latest_revision FROM collections"))
+    .rows[0].latest_revision;
+  // The older run needs its frozen revision; register it as the journal would.
+  const fix = new DatabaseSync(join(older.root, "journal.sqlite"));
+  fix.prepare("UPDATE collections SET revision='old-revision'").run();
+  fix.close();
+  const report = await deliver({ url, roots: [older.root] });
+  assert.equal(report.journals[0].delivered, 1);
+  assert.equal(
+    (await c.query("SELECT latest_revision FROM collections")).rows[0]
+      .latest_revision,
+    latest,
+  );
+  assert.equal(
+    await count(c, "SELECT count(*) n FROM collection_revisions"),
+    2,
   );
 });

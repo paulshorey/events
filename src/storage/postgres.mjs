@@ -13,6 +13,9 @@ export const MIGRATIONS_DIR = fileURLToPath(
 );
 // Statuses written by Journal.finish/cancel that will not gain more pages
 // without an explicit resume. A resumed run is redelivered with a new digest.
+// Bump when a delivery adds data for unchanged runs, so receipts are re-earned.
+// 2: failed-page/run-error captures, validated evidence metadata, run options.
+export const DELIVERY_FORMAT = 2;
 export const TERMINAL = [
   "complete",
   "partial",
@@ -36,11 +39,15 @@ export function eventsDatabaseUrl({ local = false, env = process.env } = {}) {
 }
 
 // Railway's public TCP proxy is used with TLS (libpq sslmode=require: encrypted,
-// certificate not verified). Loopback/unix-socket test clusters may disable TLS
-// with sslmode=disable.
+// certificate not verified). Only loopback test clusters may disable TLS.
+const LOOPBACK = new Set(["127.0.0.1", "localhost", "[::1]", "::1"]);
 export function clientConfig(connectionString) {
   const url = new URL(connectionString);
   const mode = url.searchParams.get("sslmode") ?? "require";
+  if (mode === "disable" && !LOOPBACK.has(url.hostname))
+    throw new Error(
+      "sslmode=disable is only allowed for loopback test databases",
+    );
   url.searchParams.delete("sslmode");
   return {
     connectionString: url.href,
@@ -178,6 +185,7 @@ export function snapshotRun(journal, runId) {
     attempts: attempts.length,
   };
   const digest = hash({
+    format: DELIVERY_FORMAT,
     run: [run.id, run.status, run.updated, run.result, run.error, run.revision],
     pages: pages.map((p) => [p.id, p.state, p.content_hash, p.tries]),
     observations: observations.map((o) => [o.record_key, hash(o.payload)]),
@@ -279,10 +287,17 @@ export async function deliverSnapshot(
       [run.source_key],
     );
     await client.query(
-      `INSERT INTO collections(id,source_id,url,latest_revision) VALUES($1,$2,$3,$4)
+      `INSERT INTO collections(id,source_id,url,latest_revision,latest_run_at) VALUES($1,$2,$3,$4,$5)
        ON CONFLICT(id) DO UPDATE SET url=excluded.url, latest_revision=excluded.latest_revision,
-         source_id=excluded.source_id, updated_at=now()`,
-      [run.collection_id, run.source_key, config.url, run.revision],
+         source_id=excluded.source_id, latest_run_at=excluded.latest_run_at, updated_at=now()
+       WHERE collections.latest_run_at IS NULL OR collections.latest_run_at <= excluded.latest_run_at`,
+      [
+        run.collection_id,
+        run.source_key,
+        config.url,
+        run.revision,
+        ts(run.updated),
+      ],
     );
     await client.query(
       `INSERT INTO collection_revisions(collection_id,revision,config) VALUES($1,$2,$3)
@@ -293,7 +308,8 @@ export async function deliverSnapshot(
       `INSERT INTO extraction_runs(id,collection_id,config_revision,source_key,status,options,build_id,
          result,error,expected_total,requests,active_ms,created_at,journal_updated_at,origin)
        VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)
-       ON CONFLICT(id) DO UPDATE SET status=excluded.status,result=excluded.result,error=excluded.error,
+       ON CONFLICT(id) DO UPDATE SET status=excluded.status,options=excluded.options,
+         result=excluded.result,error=excluded.error,
          expected_total=excluded.expected_total,requests=excluded.requests,active_ms=excluded.active_ms,
          journal_updated_at=excluded.journal_updated_at,last_delivered_at=now()
        WHERE extraction_runs.journal_updated_at <= excluded.journal_updated_at
@@ -358,30 +374,42 @@ export async function deliverSnapshot(
       ]),
       "ON CONFLICT(id) DO UPDATE SET finished_at=excluded.finished_at,outcome=excluded.outcome,error=excluded.error",
     );
-    // Evidence: one row per distinct capture hash, bytes stored when the local
-    // file still exists and hashes to the recorded value.
+    // Evidence: one row per distinct capture hash, from successful pages and
+    // from failed pages/run errors (journal keeps those in error.capture).
+    // Size, path and bytes are recorded only when the local file still hashes
+    // to the recorded identity; otherwise only the identity is kept.
     const evidenceRows = [],
       seen = new Set(),
       evidenceStats = { objects: 0, withContent: 0, missing: 0, mismatched: 0 };
-    for (const p of snap.pages) {
-      if (!p.content_hash || seen.has(p.content_hash)) continue;
-      seen.add(p.content_hash);
+    const captureOf = (value) => {
+      const c = json(jsonText(value))?.capture;
+      return c && /^[0-9a-f]{64}$/.test(c.hash ?? "") ? c : null;
+    };
+    const captures = [
+      ...snap.pages.map((p) =>
+        p.content_hash
+          ? { hash: p.content_hash, path: p.capture }
+          : captureOf(p.error),
+      ),
+      captureOf(run.error),
+    ].filter(Boolean);
+    for (const c of captures) {
+      if (seen.has(c.hash)) continue;
+      seen.add(c.hash);
       let size = null,
+        path = null,
         content = null;
-      if (p.capture && existsSync(p.capture)) {
-        size = statSync(p.capture).size;
-        if (evidence) {
-          const body = readFileSync(p.capture);
-          if (
-            createHash("sha256").update(body).digest("hex") === p.content_hash
-          )
-            content = gzipSync(body);
-          else evidenceStats.mismatched++;
-        }
+      if (c.path && existsSync(c.path)) {
+        const body = readFileSync(c.path);
+        if (createHash("sha256").update(body).digest("hex") === c.hash) {
+          size = body.length;
+          path = c.path;
+          if (evidence) content = gzipSync(body);
+        } else evidenceStats.mismatched++;
       } else evidenceStats.missing++;
       if (content) evidenceStats.withContent++;
       evidenceStats.objects++;
-      evidenceRows.push([p.content_hash, size, p.capture, content]);
+      evidenceRows.push([c.hash, size, path, content]);
     }
     await insertRows(
       client,
@@ -389,7 +417,8 @@ export async function deliverSnapshot(
       ["content_hash", "byte_size", "local_path", "content_gzip"],
       evidenceRows,
       "ON CONFLICT(content_hash) DO UPDATE SET content_gzip=coalesce(evidence_objects.content_gzip,excluded.content_gzip)," +
-        "byte_size=coalesce(evidence_objects.byte_size,excluded.byte_size)",
+        "byte_size=coalesce(evidence_objects.byte_size,excluded.byte_size)," +
+        "local_path=coalesce(evidence_objects.local_path,excluded.local_path)",
     );
     await insertRows(
       client,
@@ -404,6 +433,7 @@ export async function deliverSnapshot(
         "tries",
         "meta",
         "content_hash",
+        "error_capture_hash",
         "fingerprint",
         "result",
         "error",
@@ -418,12 +448,13 @@ export async function deliverSnapshot(
         p.tries,
         jsonText(p.meta) ?? "{}",
         p.content_hash,
+        p.content_hash ? null : (captureOf(p.error)?.hash ?? null),
         p.fingerprint,
         jsonText(p.result),
         jsonText(p.error),
       ]),
       `ON CONFLICT(run_id,page_id) DO UPDATE SET state=excluded.state,tries=excluded.tries,
-        content_hash=excluded.content_hash,fingerprint=excluded.fingerprint,result=excluded.result,error=excluded.error`,
+        content_hash=excluded.content_hash,error_capture_hash=excluded.error_capture_hash,fingerprint=excluded.fingerprint,result=excluded.result,error=excluded.error`,
     );
     const obs = snap.observations.map((o) => {
       const p = JSON.parse(o.payload);
