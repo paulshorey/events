@@ -167,6 +167,7 @@ export class Journal {
         per_page: String(options.perPage ?? 50),
         page: "1",
         start_date: options.asOf,
+        ...(c.config.apiQuery ?? {}),
       });
       this._addPage(runId, { url: url.href, kind: "api", depth: 0 });
     } else

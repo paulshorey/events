@@ -607,7 +607,7 @@
     "enabled": false,
     "adapterVersion": "framework-v1",
     "timeZone": "America/Los_Angeles",
-    "adapter": "discovery",
+    "adapter": "vegas-festival-guide",
     "coverage": "unverified",
     "detailPattern": "/events?/[^/?#]+|/calendar/[^/?#]+|/shows/|/festivals?/[^/?#]+",
     "cardSelectors": [
@@ -619,15 +619,16 @@
       ".views-row",
       "article"
     ],
-    "readySelector": null,
-    "notes": "Inspect event containers, detail pages, identity, pagination, date scope, and any published feed; then implement a bounded adapter probe.",
+    "readySelector": "h3[id]",
+    "notes": "Editorial festival guide rendered client-side; h3 sections with When/Dates lines. Only fully dated entries become observations; TBD and postponed entries stay undated.",
     "role": "collection candidate",
     "allowedHosts": [
       "www.vegas.com"
     ],
     "maxDepth": 2,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-017.mjs"
+    "script": "scrapers/url-017.mjs",
+    "discoverDetails": false
   },
   {
     "id": "url-018",
@@ -727,8 +728,8 @@
       "article"
     ],
     "readySelector": ".tribe-events-calendar-list__event",
-    "apiEndpoint": null,
-    "notes": "Use source-level acquisition with upstream category tags; validate category filtering against this view. Field audit: follow sparse event cards to same-host detail pages; retain listing and detail evidence separately. Full enumeration remains unverified for partial sources.",
+    "apiEndpoint": "https://network.vegas/wp-json/tribe/events/v1/events",
+    "notes": "TEC REST categories=convention filter reproduces this category view via --transport api. Field audit: follow sparse event cards to same-host detail pages; retain listing and detail evidence separately. Full enumeration remains unverified for partial sources.",
     "role": "overlapping category view",
     "allowedHosts": [
       "network.vegas"
@@ -736,7 +737,10 @@
     "maxDepth": 2,
     "validationStatus": "needs-validation",
     "script": "scrapers/url-020.mjs",
-    "enrichDetails": true
+    "enrichDetails": true,
+    "apiQuery": {
+      "categories": "convention"
+    }
   },
   {
     "id": "url-021",
@@ -823,7 +827,7 @@
     "enabled": false,
     "adapterVersion": "framework-v1",
     "timeZone": "America/Los_Angeles",
-    "adapter": "jsonld",
+    "adapter": "eventbrite-search",
     "coverage": "unverified",
     "detailPattern": "/e/",
     "cardSelectors": [
@@ -835,8 +839,8 @@
       ".views-row",
       "article"
     ],
-    "readySelector": ".event-card",
-    "notes": "Inspect event containers, detail pages, identity, pagination, date scope, and any published feed; then implement a bounded adapter probe. Field audit: follow sparse event cards to same-host detail pages; retain listing and detail evidence separately. Full enumeration remains unverified for partial sources.",
+    "readySelector": null,
+    "notes": "Eventbrite search results embedded as window.__SERVER_DATA__ (dates, clock times, time zone, venue). Server pages the search at ?page=N and caps the number of pages below the advertised object_count, so the run stays coverage-unverified.",
     "role": "collection candidate",
     "allowedHosts": [
       "www.eventbrite.com"
@@ -844,7 +848,12 @@
     "maxDepth": 2,
     "validationStatus": "needs-validation",
     "script": "scrapers/url-023.mjs",
-    "enrichDetails": true
+    "enrichDetails": false,
+    "entrypoints": [
+      "https://www.eventbrite.com/d/nv--las-vegas/all-events/"
+    ],
+    "discoverDetails": false,
+    "searchMaxPages": 100
   },
   {
     "id": "url-024",
@@ -1263,7 +1272,7 @@
     "enabled": false,
     "adapterVersion": "framework-v1",
     "timeZone": "America/New_York",
-    "adapter": "jsonld",
+    "adapter": "eventbrite-search",
     "coverage": "unverified",
     "detailPattern": "/e/",
     "cardSelectors": [
@@ -1275,8 +1284,8 @@
       ".views-row",
       "article"
     ],
-    "readySelector": ".event-card",
-    "notes": "Inspect event containers, detail pages, identity, pagination, date scope, and any published feed; then implement a bounded adapter probe. Field audit: follow sparse event cards to same-host detail pages; retain listing and detail evidence separately. Full enumeration remains unverified for partial sources.",
+    "readySelector": null,
+    "notes": "Eventbrite search results embedded as window.__SERVER_DATA__ (dates, clock times, time zone, venue). Server pages the search at ?page=N and caps the number of pages below the advertised object_count, so the run stays coverage-unverified.",
     "role": "collection candidate",
     "allowedHosts": [
       "www.eventbrite.com"
@@ -1284,7 +1293,12 @@
     "maxDepth": 2,
     "validationStatus": "needs-validation",
     "script": "scrapers/url-034.mjs",
-    "enrichDetails": true
+    "enrichDetails": false,
+    "entrypoints": [
+      "https://www.eventbrite.com/d/ny--new-york/all-events/"
+    ],
+    "discoverDetails": false,
+    "searchMaxPages": 100
   },
   {
     "id": "url-035",
@@ -2977,7 +2991,10 @@
       "maxClicks": 20,
       "settleMs": 800,
       "quietMs": 2500,
-      "ignoreHosts": ["api.userway.org", "cdn.userway.org"]
+      "ignoreHosts": [
+        "api.userway.org",
+        "cdn.userway.org"
+      ]
     },
     "detailPattern": "/event/|/calendar/[^/?]+",
     "cardSelectors": [

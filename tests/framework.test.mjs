@@ -282,6 +282,20 @@ test("all API pages reconcile total, resume consumes original request budget, re
     (e) => e.code === "pagination_changed",
   );
 });
+test("apiQuery filters the seeded API request and cannot override paging or date parameters", async (t) => {
+  const c = {
+    ...config(),
+    apiEndpoint: "https://network.vegas/wp-json/tribe/events/v1/events",
+    apiQuery: { categories: "convention" },
+  };
+  const { j } = setup(t, [c]);
+  const q = j.enqueue(c.id, options({ transport: "api" }));
+  const u = new URL(j.pages(q.runId)[0].url);
+  assert.equal(u.searchParams.get("categories"), "convention");
+  assert.equal(u.searchParams.get("page"), "1");
+  assert.equal(u.searchParams.get("start_date"), "2026-10-16");
+  assert.ok((await registry()).some((x) => x.id === "url-020" && x.apiQuery));
+});
 test("source failures preserve the last complete and last good pointers", (t) => {
   const { j } = setup(t);
   const good = complete(j, la.id),
