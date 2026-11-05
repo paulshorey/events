@@ -633,7 +633,10 @@ export async function revealProbe(page, config) {
     controlVisibleBefore = await control.isVisible().catch(() => false);
   let clicks = 0,
     error = null;
-  await page.route("**/*", guard);
+  // Context-level so a popup's first document request is guarded as well
+  // (a page route would not see it). Registered last, it runs first.
+  const context = page.context();
+  await context.route("**/*", guard);
   // WebSockets bypass page.route. Without connectToServer() the socket never
   // reaches the network; it is recorded (failing the contract) and closed.
   // The probe page is closed after the task, so this route is not removed.
@@ -653,6 +656,14 @@ export async function revealProbe(page, config) {
     ) {
       await control.click({ timeout: 5000 });
       clicks++;
+      await page.waitForTimeout(probe.settleMs ?? 800);
+    }
+    // Scroll-triggered loading (e.g. IntersectionObserver) is exercised
+    // under the same guard.
+    for (let i = 0; i < (probe.scrolls ?? 3); i++) {
+      await page.evaluate(() =>
+        window.scrollTo(0, document.documentElement.scrollHeight),
+      );
       await page.waitForTimeout(probe.settleMs ?? 800);
     }
     // Delayed handlers get a bounded window while still guarded.
@@ -677,7 +688,7 @@ export async function revealProbe(page, config) {
         staticBlocked,
         error,
       };
-      await page.unroute("**/*", guard).catch(() => {});
+      await context.unroute("**/*", guard).catch(() => {});
       return observed;
     },
   };

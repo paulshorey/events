@@ -712,9 +712,14 @@ test("reveal probe distinguishes unhiding rows from loading rows", async (t) => 
       if (!hidden().length) e.target.style.display = "none";
     });</script></body></html>`;
   let moreRequests = 0,
-    staticHits = 0;
+    staticHits = 0,
+    popupHits = 0;
   const server = createServer((req, res) => {
     if (req.url === "/robots.txt") return res.end("User-agent: *\nAllow: /");
+    if (req.url === "/popup-target") {
+      popupHits++;
+      return res.end("<html></html>");
+    }
     if (req.url === "/x.css") {
       staticHits++;
       return res.end("");
@@ -733,6 +738,9 @@ test("reveal probe distinguishes unhiding rows from loading rows", async (t) => 
       "/socket": `new WebSocket("ws://127.0.0.1:${server.address().port}/ws");`,
       "/static":
         'const l = document.createElement("link"); l.rel = "stylesheet"; l.href = "/x.css"; document.head.appendChild(l);',
+      "/popup": 'window.open("/popup-target");',
+      "/scrolls":
+        'document.body.style.height = "5000px"; window.addEventListener("scroll", () => fetch("/more"), { once: true });',
       "/vishidden":
         'document.querySelector(".calendar .item").style.visibility = "hidden";',
     };
@@ -799,7 +807,13 @@ test("reveal probe distinguishes unhiding rows from loading rows", async (t) => 
   assert.ok(loading.interaction.requests.some((r) => r.url.endsWith("/more")));
   assert.equal(moreRequests, 0);
   // Third-party and delayed requests are recorded too.
-  for (const path of ["/elsewhere", "/later", "/socket"]) {
+  for (const path of [
+    "/elsewhere",
+    "/later",
+    "/socket",
+    "/popup",
+    "/scrolls",
+  ]) {
     const r = await transport.fetch({
       id: path.slice(1),
       url: `${base}${path}`,
@@ -807,12 +821,17 @@ test("reveal probe distinguishes unhiding rows from loading rows", async (t) => 
     });
     assert.ok(
       r.interaction.requests.some((q) =>
-        path === "/socket" ? q.type === "websocket" : q.url.endsWith("/more"),
+        path === "/socket"
+          ? q.type === "websocket"
+          : path === "/popup"
+            ? q.url.endsWith("/popup-target")
+            : q.url.endsWith("/more"),
       ),
       path,
     );
   }
   assert.equal(moreRequests, 0);
+  assert.equal(popupHits, 0, "popup document never transmitted");
   // Static resources a click loads are aborted too, without failing.
   const stat = await transport.fetch({
     id: "static",

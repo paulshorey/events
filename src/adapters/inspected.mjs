@@ -289,6 +289,8 @@ export function parseInspected({ html, url, config, interaction }) {
         !unclassified &&
         !rejected &&
         rows === count + privateRows &&
+        // Every public row is a distinct emitted identity (none merged).
+        new Set(records.map((r) => r.sourceRecordId)).size === count &&
         // Every revealable item must be exactly one accounted row.
         rows === $(".calendar .item").length &&
         $(".calendar .item")

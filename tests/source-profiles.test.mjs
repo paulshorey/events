@@ -189,6 +189,11 @@ test("San Diego single-page calendar is verified only with observed reveal behav
     ),
   );
   unverified(html, observed(html, { controls: 2 }));
+  // Two rows that resolve to one identity would be merged and one dropped.
+  const twin = html.match(/<div class="item[\s\S]*?(?=<div class="item)/)[0];
+  unverified(
+    html.replace(twin, twin + twin.replace("11/08/2026", "11/08/2026 ")),
+  );
   // An event link outside every row is an event nobody parsed.
   unverified(
     html.replace(
