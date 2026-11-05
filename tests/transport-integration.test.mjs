@@ -739,6 +739,7 @@ test("reveal probe distinguishes unhiding rows from loading rows", async (t) => 
       "/static":
         'const l = document.createElement("link"); l.rel = "stylesheet"; l.href = "/x.css"; document.head.appendChild(l);',
       "/popup": 'window.open("/popup-target");',
+      "/blankpopup": `const w = window.open("about:blank"); new w.WebSocket("ws://127.0.0.1:${server.address().port}/ws");`,
       "/scrolls":
         'document.body.style.height = "5000px"; window.addEventListener("scroll", () => fetch("/more"), { once: true });',
       "/rewrite":
@@ -816,6 +817,7 @@ test("reveal probe distinguishes unhiding rows from loading rows", async (t) => 
     "/socket",
     "/popup",
     "/scrolls",
+    "/blankpopup",
   ]) {
     const r = await transport.fetch({
       id: path.slice(1),
@@ -824,11 +826,13 @@ test("reveal probe distinguishes unhiding rows from loading rows", async (t) => 
     });
     assert.ok(
       r.interaction.requests.some((q) =>
-        path === "/socket"
-          ? q.type === "websocket"
-          : path === "/popup"
-            ? q.url.endsWith("/popup-target")
-            : q.url.endsWith("/more"),
+        path === "/blankpopup"
+          ? q.type === "popup"
+          : path === "/socket"
+            ? q.type === "websocket"
+            : path === "/popup"
+              ? q.url.endsWith("/popup-target")
+              : q.url.endsWith("/more"),
       ),
       path,
     );

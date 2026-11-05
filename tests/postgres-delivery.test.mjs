@@ -143,6 +143,7 @@ test("migrations apply once, are serialized and reject edited history", async (t
   assert.deepEqual(first.applied, [
     "001_source_observations.sql",
     "002_error_captures_latest_runs.sql",
+    "003_current_run_tiebreak.sql",
   ]);
   assert.deepEqual((await migrate(c)).applied, []);
   const dir = await mkdtemp(join(tmpdir(), "events-migrations-"));
@@ -164,6 +165,7 @@ test("a complete run is delivered once with counts, evidence and projections int
   assert.deepEqual(report.migrations.applied, [
     "001_source_observations.sql",
     "002_error_captures_latest_runs.sql",
+    "003_current_run_tiebreak.sql",
   ]);
   assert.deepEqual(
     await readFile(join(root, "journal.sqlite")),
@@ -846,5 +848,26 @@ test("a superseded older copy still backfills bytes the newer copy lacked", asyn
       "SELECT count(*) n FROM evidence_objects WHERE content_gzip IS NULL",
     ),
     0,
+  );
+});
+
+test("current complete run ties on update time are broken deterministically", async (t) => {
+  const url = await withDb(t);
+  if (!url) return;
+  const a = await journalRoot(t);
+  const b = await journalRoot(t);
+  // Same collection, same journal update millisecond, later creation for b.
+  const da = new DatabaseSync(join(a.root, "journal.sqlite"));
+  da.prepare("UPDATE runs SET updated=5000000, created=1000").run();
+  da.close();
+  const db = new DatabaseSync(join(b.root, "journal.sqlite"));
+  db.prepare("UPDATE runs SET updated=5000000, created=2000").run();
+  db.close();
+  await deliver({ url, roots: [b.root, a.root], applyMigrations: true });
+  const c = await connect(url);
+  t.after(() => c.end());
+  assert.equal(
+    (await c.query("SELECT id::text FROM current_complete_runs")).rows[0].id,
+    b.runId,
   );
 });

@@ -650,7 +650,15 @@ export async function revealProbe(page, config) {
   // WebSockets bypass page.route. Without connectToServer() the socket never
   // reaches the network; it is recorded (failing the contract) and closed.
   // The probe page is closed after the task, so this route is not removed.
-  await page.routeWebSocket(/.*/, (ws) => {
+  // Context-level, so sockets from popups are covered too. Playwright has no
+  // WebSocket unroute; the route stays for this run's context, where sockets
+  // are not part of collection.
+  const onPopup = (popup) => {
+    requests.push({ url: redactUrl(popup.url()), host: null, type: "popup" });
+    popup.close().catch(() => {});
+  };
+  context.on("page", onPopup);
+  await context.routeWebSocket(/.*/, (ws) => {
     let host = null;
     try {
       host = new URL(ws.url()).hostname;
@@ -700,6 +708,7 @@ export async function revealProbe(page, config) {
         staticBlocked,
         error,
       };
+      context.off("page", onPopup);
       await context.unroute("**/*", guard).catch(() => {});
       return observed;
     },
