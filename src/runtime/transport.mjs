@@ -326,6 +326,11 @@ export class Transport {
       }
       return { body, url: response.url(), capture, status: response.status() };
     }
+    if (
+      task.kind === "listing" &&
+      this.run.config.pagination?.mode === "javits-months"
+    )
+      return this.fetchJavitsMonth(task);
     const context = await this.initBrowser(),
       browserPaging =
         task.kind === "listing" &&
@@ -578,6 +583,121 @@ export class Transport {
         this.context = null;
         this.listingPage = null;
       }
+    }
+  }
+  // Javits calendar: the first month is the server-rendered page; every other
+  // month is obtained by clicking its button, which makes the site's own JSON
+  // request. Buttons are independent, so a lost browser reloads the page and
+  // clicks only the target month (one extra paced, fenced request).
+  async fetchJavitsMonth(task) {
+    const month = task.meta?.monthIndex ?? 0,
+      context = await this.initBrowser(),
+      page = (this.listingPage ??= await context.newPage());
+    let used = false;
+    try {
+      if (!this.javitsLoaded || month === 0) {
+        const entry = new URL(this.run.config.url);
+        entry.hash = "";
+        const response = await page.goto(entry.href, {
+          waitUntil: "domcontentloaded",
+          timeout: this.timeoutMs,
+        });
+        await this.checkBrowserResponse(response);
+        await page
+          .locator(this.run.config.readySelector)
+          .first()
+          .waitFor({ state: "attached", timeout: 10000 })
+          .catch(() => {
+            throw Object.assign(new Error("Expected selector missing"), {
+              code: "contract_changed",
+            });
+          });
+        this.javitsLoaded = true;
+        used = true;
+        this.journal.deferRate(
+          this.run.source_key,
+          this.run.config.minIntervalMs ?? 1000,
+        );
+      }
+      if (month === 0) {
+        const snapshot = await snapshotPage(page);
+        await this.permit(snapshot.url);
+        const capture = await saveCapture(
+          this.root,
+          this.run,
+          task,
+          snapshot.body,
+          snapshot.url,
+          "html",
+        );
+        return { body: snapshot.body, url: snapshot.url, capture, status: 200 };
+      }
+      if (used) {
+        this.runtimeCheck();
+        this.journal.reserveAdditionalRequest(this.run.id, this.run.token);
+        await this.pace(true);
+      }
+      this.leaseCheck();
+      const button = page.locator(".month-selector-scroll button").nth(month);
+      const label = String(await button.textContent({ timeout: 7000 }))
+        .replace(/\s+/g, " ")
+        .trim();
+      if (label !== task.meta.monthLabel)
+        throw Object.assign(
+          new Error(
+            `Javits month ${month} is "${label}", expected "${task.meta.monthLabel}"`,
+          ),
+          { code: "pagination_changed" },
+        );
+      const [response] = await Promise.all([
+        page.waitForResponse((r) => /\/api\/momentus\/events\?/.test(r.url()), {
+          timeout: 20000,
+        }),
+        button.click({ timeout: 7000 }),
+      ]);
+      const body = await response.text();
+      const capture = await saveCapture(
+        this.root,
+        this.run,
+        task,
+        body,
+        response.url(),
+        "json",
+      );
+      this.journal.deferRate(
+        this.run.source_key,
+        this.run.config.minIntervalMs ?? 1000,
+      );
+      try {
+        await this.permit(response.url());
+        classifyResponse(response.status(), body);
+      } catch (error) {
+        error.capture = capture;
+        const retry = response.headers()["retry-after"];
+        if (retry) error.retryAfterMs = retryDelay(retry);
+        if (error.code === "rate_limited")
+          this.journal.deferRate(
+            this.run.source_key,
+            error.retryAfterMs ?? 60000,
+          );
+        throw error;
+      }
+      return { body, url: response.url(), capture, status: response.status() };
+    } catch (error) {
+      if (!error.capture) {
+        const failure = await snapshotPage(page).catch(() => null);
+        if (failure)
+          error.capture = await saveCapture(
+            this.root,
+            this.run,
+            task,
+            failure.body,
+            failure.url,
+            "html",
+          ).catch(() => undefined);
+      }
+      this.javitsLoaded = false;
+      throw error;
     }
   }
   async close() {

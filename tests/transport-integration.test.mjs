@@ -273,6 +273,8 @@ for (const budget of [4, 5]) {
     const url = `http://127.0.0.1:${server.address().port}/events/`;
     const config = {
       ...(await registry()).find((c) => c.id === "url-024"),
+      // The browser pagination contract is exercised; the live default is the search API.
+      defaultTransport: "browser",
       url,
       allowedHosts: ["127.0.0.1"],
       sourceKey: "fixture",
@@ -352,6 +354,8 @@ test("browser recovery stops at the runtime boundary and preserves its pending t
   const url = `http://127.0.0.1:${server.address().port}/events/`;
   const config = {
     ...(await registry()).find((c) => c.id === "url-024"),
+      // The browser pagination contract is exercised; the live default is the search API.
+      defaultTransport: "browser",
     url,
     allowedHosts: ["127.0.0.1"],
     sourceKey: "fixture",
@@ -479,6 +483,8 @@ test("ordinary NYC task finishes when pacing crosses the runtime boundary", asyn
   t.after(() => new Promise((resolve) => server.close(resolve)));
   const config = {
     ...(await registry()).find((c) => c.id === "url-024"),
+      // The browser pagination contract is exercised; the live default is the search API.
+      defaultTransport: "browser",
     url: `http://127.0.0.1:${server.address().port}/events/`,
     allowedHosts: ["127.0.0.1"],
     sourceKey: "fixture",
@@ -557,6 +563,8 @@ for (const mode of ["fetch", "xhr", "navigation"]) {
       t.after(() => new Promise((resolve) => server.close(resolve)));
       const config = {
         ...(await registry()).find((c) => c.id === "url-024"),
+      // The browser pagination contract is exercised; the live default is the search API.
+      defaultTransport: "browser",
         url: `http://127.0.0.1:${server.address().port}/events/`,
         allowedHosts: ["127.0.0.1"],
         sourceKey: "fixture",
@@ -635,6 +643,8 @@ for (const mode of ["fetch", "fetch-stalled", "navigation"]) {
       t.after(() => new Promise((resolve) => server.close(resolve)));
       const config = {
         ...(await registry()).find((c) => c.id === "url-024"),
+      // The browser pagination contract is exercised; the live default is the search API.
+      defaultTransport: "browser",
         url: `http://127.0.0.1:${server.address().port}/events/`,
         allowedHosts: ["127.0.0.1"],
         sourceKey: "fixture",
