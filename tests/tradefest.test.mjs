@@ -13,9 +13,14 @@ const at = "https://tradefest.io/en/search?page=2";
 const offset = (h, from, to) =>
   h.replace(`\\"offset\\":${from}`, `\\"offset\\":${to}`);
 const total = (h, to) => h.replace('"totalCount": 8', `"totalCount": ${to}`);
+const window = (h, min, max) =>
+  h
+    .replace('\\"minDate\\":\\"2026-11-01\\"', `\\"minDate\\":\\"${min}\\"`)
+    .replace('\\"maxDate\\":null', `\\"maxDate\\":\\"${max}\\"`);
 
-test("Tradefest search pages parse the embedded events query and follow ?page=N", () => {
-  const c = configs.find((c) => c.id === "url-012");
+test("Tradefest tag pages parse the embedded events query and follow ?page=N", () => {
+  const c = configs.find((c) => c.id === "url-083");
+  assert.ok(!c.windowedSearch);
   const page = parseDocument({ html, url: at, config: c });
   assert.equal(page.records.length, 3);
   assert.equal(page.rejected, 0);
@@ -47,7 +52,7 @@ test("Tradefest search pages parse the embedded events query and follow ?page=N"
 });
 
 test("Tradefest pages fail closed when the page, offset or counts disagree", () => {
-  const c = configs.find((c) => c.id === "url-012");
+  const c = configs.find((c) => c.id === "url-083");
   const fails = (h, url = at, code = "pagination_changed") =>
     assert.throws(
       () => parseDocument({ html: h, url, config: c }),
@@ -62,4 +67,106 @@ test("Tradefest pages fail closed when the page, offset or counts disagree", () 
     at,
     "contract_changed",
   );
+});
+
+test("the Tradefest directory is read as start-date windows because rating order is unstable", () => {
+  const c = configs.find((c) => c.id === "url-012");
+  assert.equal(c.windowedSearch, true);
+  const root = parseDocument({
+    html: offset(html, 3, 0),
+    url: "https://tradefest.io/en/search",
+    config: c,
+  });
+  assert.equal(root.expectedTotal, 8);
+  assert.equal(root.terminal, true);
+  const months = root.nextRequests.map((r) => new URL(r.url).searchParams);
+  assert.equal(months.length, 62);
+  assert.equal(months[0].get("minDate"), "2026-11-01");
+  assert.equal(months[0].get("maxDate"), "2026-11-30");
+  assert.equal(months.at(-1).get("minDate"), "2031-12-01");
+  assert.equal(months.at(-1).get("maxDate"), "2031-12-31");
+  // A window holding more than a page is split in two, without a total claim.
+  const wide = parseDocument({
+    html: offset(window(html, "2027-03-01", "2028-04-30"), 3, 0),
+    url: "https://tradefest.io/en/search?minDate=2027-03-01&maxDate=2028-04-30",
+    config: c,
+  });
+  assert.equal(wide.expectedTotal, undefined);
+  assert.deepEqual(
+    wide.nextRequests.map((r) => [
+      new URL(r.url).searchParams.get("minDate"),
+      new URL(r.url).searchParams.get("maxDate"),
+    ]),
+    [
+      ["2027-03-01", "2027-09-30"],
+      ["2027-10-01", "2028-04-30"],
+    ],
+  );
+  // A window that fits one page ends there.
+  const small = parseDocument({
+    html: total(offset(window(html, "2027-03-01", "2028-04-30"), 3, 0), 3),
+    url: "https://tradefest.io/en/search?minDate=2027-03-01&maxDate=2028-04-30",
+    config: c,
+  });
+  assert.deepEqual(small.nextRequests, []);
+  assert.equal(small.records.length, 3);
+  // A single day larger than a page is paged.
+  const day = parseDocument({
+    html: offset(
+      window(html, "2027-06-10", "2027-06-10")
+        .replace('"startDate": "2028-04-02"', '"startDate": "2027-06-10"')
+        .replace('"startDate": "2027-03-18"', '"startDate": "2027-06-10"'),
+      3,
+      0,
+    ),
+    url: "https://tradefest.io/en/search?minDate=2027-06-10&maxDate=2027-06-10",
+    config: c,
+  });
+  assert.equal(day.nextRequests.length, 1);
+  assert.equal(new URL(day.nextRequests[0].url).searchParams.get("page"), "2");
+  // Events outside the requested bounds, or a window the page ignores, fail.
+  assert.throws(
+    () =>
+      parseDocument({
+        html: offset(window(html, "2027-03-01", "2027-03-31"), 3, 0),
+        url: "https://tradefest.io/en/search?minDate=2027-03-01&maxDate=2027-03-31",
+        config: c,
+      }),
+    (e) => e.code === "pagination_changed",
+  );
+  assert.throws(
+    () =>
+      parseDocument({
+        html: offset(html, 3, 0),
+        url: "https://tradefest.io/en/search?minDate=2027-03-01&maxDate=2028-04-30",
+        config: c,
+      }),
+    (e) => e.code === "pagination_changed",
+  );
+});
+
+test("a window the upstream count proves empty is a verified empty page, not a missing contract", () => {
+  const c = configs.find((c) => c.id === "url-012");
+  const match = html.match(
+    /(<script id="__NEXT_DATA__" type="application\/json">)(.*)(<\/script>)/s,
+  );
+  const data = JSON.parse(match[2]);
+  const cache = data.props.pageProps.props.__APOLLO_STATE__;
+  const key = Object.keys(cache.ROOT_QUERY).find((k) =>
+    k.startsWith("events("),
+  );
+  cache.ROOT_QUERY[key].nodes = [];
+  cache.ROOT_QUERY[key].totalCount = 0;
+  const empty = html.replace(
+    match[0],
+    match[1] + JSON.stringify(data) + match[3],
+  );
+  const page = parseDocument({
+    html: offset(window(empty, "2031-01-01", "2031-01-31"), 3, 0),
+    url: "https://tradefest.io/en/search?minDate=2031-01-01&maxDate=2031-01-31",
+    config: c,
+  });
+  assert.equal(page.records.length, 0);
+  assert.equal(page.terminal, true);
+  assert.deepEqual(page.issues, []);
 });

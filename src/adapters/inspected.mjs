@@ -105,6 +105,7 @@ export function parseInspected({ html, url, config, interaction }) {
     rejected = 0,
     coverage = "unverified",
     expectedTotal,
+    verifiedEmpty = false,
     terminal = false;
   const excluded = {};
   const add = (input, selector) => {
@@ -324,20 +325,104 @@ export function parseInspected({ html, url, config, interaction }) {
       else rejected++;
     }
     const shown = offset + nodes.length;
-    terminal = shown >= total;
     coverage = "verified-list";
-    if (!terminal) {
-      const next = new URL(url);
-      next.hash = "";
-      next.searchParams.set("page", String(page + 1));
-      nextRequests.push({
-        url: next.href,
-        kind: "listing",
-        depth: 0,
-        meta: { pagination: true },
-      });
+    const next = (params) => {
+      const u = new URL(url);
+      u.hash = "";
+      for (const [k, v] of Object.entries(params)) u.searchParams.set(k, v);
+      return u;
+    };
+    if (!config.windowedSearch) {
+      terminal = shown >= total;
+      if (!terminal)
+        nextRequests.push({
+          url: next({ page: String(page + 1) }).href,
+          kind: "listing",
+          depth: 0,
+          meta: { pagination: true },
+        });
+      expectedTotal = total;
+    } else {
+      // Rating order has ties and is not stable between requests, so paging
+      // the whole directory repeats some events and misses others. Start-date
+      // windows (`minDate`/`maxDate`, inspected as inclusive filters on the
+      // start day) are split until each holds at most one page; only a single
+      // day with more than a page is paged. The root request states the
+      // directory total; every window is verified against its own bounds.
+      terminal = true;
+      const query = new URL(url).searchParams;
+      const day = (value) => new Date(`${value}T00:00:00Z`);
+      const iso = (date) => date.toISOString().slice(0, 10);
+      const plus = (date, n) => new Date(date.getTime() + n * 86400000);
+      const min = query.get("minDate"),
+        max = query.get("maxDate");
+      if (min == null && max == null) {
+        // Root: months from the server's default start to the horizon.
+        expectedTotal = total;
+        const from = day(args.filters?.minDate ?? "");
+        const horizon = day(config.windowHorizon ?? "");
+        if (Number.isNaN(from.getTime()) || Number.isNaN(horizon.getTime()))
+          throw Object.assign(new Error("Tradefest window bounds missing"), {
+            code: "contract_changed",
+          });
+        for (
+          let start = from;
+          start <= horizon;
+          start = new Date(
+            Date.UTC(start.getUTCFullYear(), start.getUTCMonth() + 1, 1),
+          )
+        ) {
+          const end = plus(
+            new Date(
+              Date.UTC(start.getUTCFullYear(), start.getUTCMonth() + 1, 1),
+            ),
+            -1,
+          );
+          nextRequests.push({
+            url: next({ minDate: iso(start), maxDate: iso(end) }).href,
+            kind: "listing",
+            depth: 0,
+            meta: { window: [iso(start), iso(end)] },
+          });
+        }
+      } else {
+        if (
+          !/^\d{4}-\d\d-\d\d$/.test(min ?? "") ||
+          !/^\d{4}-\d\d-\d\d$/.test(max ?? "") ||
+          args.filters?.minDate !== min ||
+          args.filters?.maxDate !== max ||
+          nodes.some((n) => n.startDate < min || n.startDate > max)
+        )
+          throw Object.assign(
+            new Error(`Tradefest window ${min}..${max} not honoured`),
+            { code: "pagination_changed" },
+          );
+        if (total === 0 && !nodes.length) verifiedEmpty = true;
+        if (total > limit && min < max) {
+          const mid = iso(
+            plus(day(min), Math.floor((day(max) - day(min)) / 86400000 / 2)),
+          );
+          for (const [a, b] of [
+            [min, mid],
+            [iso(plus(day(mid), 1)), max],
+          ])
+            nextRequests.push({
+              url: next({ minDate: a, maxDate: b, page: "1" }).href,
+              kind: "listing",
+              depth: 0,
+              meta: { window: [a, b] },
+            });
+        } else if (shown < total)
+          // One day larger than a page: page it. Ties may reorder rows
+          // between requests, so the run's count check decides completeness.
+          nextRequests.push({
+            url: next({ page: String(page + 1) }).href,
+            kind: "listing",
+            depth: 0,
+            meta: { window: [min, max], page: page + 1 },
+          });
+      }
     }
-    expectedTotal = total;
   } else if (config.adapter === "conventioncalendar") {
     // Inspected November 5, 2026. conventioncalendar.com serves destinations
     // (/destinations, paginated), city pages (/us/st/city) and venue pages
@@ -861,7 +946,8 @@ export function parseInspected({ html, url, config, interaction }) {
   }
   if (rejected)
     issues.push({ code: "records_require_parse_review", count: rejected });
-  if (!count) issues.push({ code: "expected_source_cards_missing" });
+  if (!count && !verifiedEmpty)
+    issues.push({ code: "expected_source_cards_missing" });
   return {
     records,
     method: config.adapter,
@@ -872,6 +958,7 @@ export function parseInspected({ html, url, config, interaction }) {
     terminal,
     nextRequests,
     ...(expectedTotal != null ? { expectedTotal } : {}),
+    ...(verifiedEmpty ? { verifiedEmpty } : {}),
     ...(Object.keys(excluded).length ? { excluded } : {}),
   };
 }

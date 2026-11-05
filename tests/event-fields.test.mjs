@@ -417,6 +417,30 @@ test("a department discovery page cannot publish its misleading Event metadata",
   assert.equal(detail.records[0].startDate, "2026-10-18");
 });
 
+test("a detail heading that only adds the edition year still binds, but only on the same date", () => {
+  const make = (title, startDate) =>
+    eventRecord(
+      config,
+      { ...input, title, startDate, endDate: startDate },
+      evidence,
+    );
+  const listing = make("EASTEC", "2027-05-11");
+  assert.ok(mergeDetail(listing, make("EASTEC 2027", "2027-05-11")));
+  assert.equal(mergeDetail(listing, make("EASTEC 2027", "2027-05-12")), null);
+  assert.equal(
+    mergeDetail(listing, make("EASTEC Asia 2027", "2027-05-11")),
+    null,
+  );
+  // A listing that already names a year is not loosened.
+  assert.equal(
+    mergeDetail(
+      make("EASTEC 2026", "2027-05-11"),
+      make("EASTEC 2027", "2027-05-11"),
+    ),
+    null,
+  );
+});
+
 test("reviewed title aliases retain the date guard rather than enabling generic fuzzy matching", () => {
   const listing = eventRecord(
     config,

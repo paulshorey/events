@@ -75,6 +75,7 @@ export function parseDocument({
     method = "jsonld",
     rejected = 0,
     pagingTotal,
+    verifiedEmpty = false,
     excluded;
   if (config.discoveryOnly) {
     method = "discovery-only";
@@ -94,6 +95,7 @@ export function parseDocument({
     coverage = parsed.coverage;
     terminal = parsed.terminal;
     pagingTotal = parsed.expectedTotal;
+    verifiedEmpty = parsed.verifiedEmpty === true;
     excluded = parsed.excluded;
   } else if (config.adapter === "la") {
     const parsed = parseLaCalendar(html, url);
@@ -517,7 +519,7 @@ export function parseDocument({
           },
         });
   }
-  if (!all.length && !nextRequests.length)
+  if (!all.length && !nextRequests.length && !verifiedEmpty)
     issues.push({
       code: "no_event_contract_found",
       message:
