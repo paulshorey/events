@@ -459,12 +459,9 @@ export async function deliverSnapshot(
         throw Object.assign(new Error(`Run ${run.id} identity conflict`), {
           code: "run_conflict",
         });
-      throw Object.assign(
-        new Error(
-          `Run ${run.id} in the database is newer than this journal snapshot`,
-        ),
-        { code: "stale_snapshot" },
-      );
+      // Another copy delivered a later state of this run: nothing to do.
+      await client.query("ROLLBACK");
+      return { superseded: true, duplicate: false, inserted: {} };
     }
     await insertRows(
       client,

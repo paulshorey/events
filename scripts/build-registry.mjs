@@ -163,6 +163,10 @@ const overrides = {
       item: ".calendar .item",
       maxClicks: 20,
       settleMs: 800,
+      quietMs: 2500,
+      // Observed November 4, 2026: the UserWay accessibility widget's
+      // requests during clicks; unrelated to calendar rows.
+      ignoreHosts: ["api.userway.org", "cdn.userway.org"],
     },
   },
 };

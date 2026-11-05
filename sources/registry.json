@@ -2975,7 +2975,9 @@
       "control": ".calendar .loadMore",
       "item": ".calendar .item",
       "maxClicks": 20,
-      "settleMs": 800
+      "settleMs": 800,
+      "quietMs": 2500,
+      "ignoreHosts": ["api.userway.org", "cdn.userway.org"]
     },
     "detailPattern": "/event/|/calendar/[^/?]+",
     "cardSelectors": [

@@ -719,7 +719,14 @@ test("reveal probe distinguishes unhiding rows from loading rows", async (t) => 
       return res.end("[]");
     }
     res.setHeader("content-type", "text/html");
-    res.end(page(req.url === "/loads" ? 'fetch("/more");' : ""));
+    const handlers = {
+      "/loads": 'fetch("/more");',
+      // Cross-origin from the page's point of view (different hostname).
+      "/elsewhere": `fetch("http://localhost:${server.address().port}/more");`,
+      "/later": 'setTimeout(() => fetch("/more"), 300);',
+      "/widget": `fetch("http://localhost:${server.address().port}/widget");`,
+    };
+    res.end(page(handlers[req.url] ?? ""));
   });
   await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
   t.after(() => new Promise((resolve) => server.close(resolve)));
@@ -743,6 +750,7 @@ test("reveal probe distinguishes unhiding rows from loading rows", async (t) => 
           item: ".calendar .item",
           maxClicks: 10,
           settleMs: 50,
+          quietMs: 1000,
         },
       },
     },
@@ -765,7 +773,7 @@ test("reveal probe distinguishes unhiding rows from loading rows", async (t) => 
       controlVisibleBefore: true,
       controlVisibleAfter: false,
       requests: [],
-      thirdPartyBlocked: 0,
+      ignoredRequests: 0,
       error: null,
     },
   );
@@ -778,4 +786,26 @@ test("reveal probe distinguishes unhiding rows from loading rows", async (t) => 
   // The click's request is recorded but aborted before it reaches the server.
   assert.ok(loading.interaction.requests.some((r) => r.url.endsWith("/more")));
   assert.equal(moreRequests, 0);
+  // Third-party and delayed requests are recorded too.
+  for (const path of ["/elsewhere", "/later"]) {
+    const r = await transport.fetch({
+      id: path.slice(1),
+      url: `${base}${path}`,
+      kind: "listing",
+    });
+    assert.ok(
+      r.interaction.requests.some((q) => q.url.endsWith("/more")),
+      path,
+    );
+  }
+  assert.equal(moreRequests, 0);
+  // Reviewed unrelated hosts are aborted and counted, not recorded.
+  transport.run.config.revealProbe.ignoreHosts = ["localhost"];
+  const widget = await transport.fetch({
+    id: "w",
+    url: `${base}/widget`,
+    kind: "listing",
+  });
+  assert.deepEqual(widget.interaction.requests, []);
+  assert.ok(widget.interaction.ignoredRequests >= 1);
 });

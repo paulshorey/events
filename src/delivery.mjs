@@ -116,6 +116,12 @@ export async function deliver({
               origin: originFor(label),
               evidence,
             });
+            if (out.superseded) {
+              // The database already holds a later state of this run (from
+              // another root); this older copy is not a failure.
+              entry.superseded = (entry.superseded ?? 0) + 1;
+              continue;
+            }
             outbox.record(target, id, snap.digest, {
               receiptId: out.receiptId,
               counts: snap.counts,

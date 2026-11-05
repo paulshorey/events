@@ -788,3 +788,30 @@ test("a dry run creates no local delivery state", async (t) => {
   // Dry runs never migrate either.
   await assert.rejects(c.query("SELECT 1 FROM import_receipts"));
 });
+
+test("an older copy of a run already delivered in a later state is superseded, not failed", async (t) => {
+  const url = await withDb(t);
+  if (!url) return;
+  const older = await journalRoot(t, { status: "partial" });
+  const newer = await mkdtemp(join(tmpdir(), "events-delivery-copy-"));
+  t.after(() => rm(newer, { recursive: true, force: true }));
+  await cp(older.root, newer, { recursive: true });
+  const db = new DatabaseSync(join(newer, "journal.sqlite"));
+  db.prepare("UPDATE runs SET status='complete', updated=updated+1000").run();
+  db.close();
+  const report = await deliver({
+    url,
+    roots: [newer, older.root],
+    applyMigrations: true,
+  });
+  assert.equal(report.journals[0].delivered, 1);
+  assert.equal(report.journals[1].superseded, 1);
+  assert.equal(report.journals[1].failed, 0);
+  const c = await connect(url);
+  t.after(() => c.end());
+  assert.equal(
+    (await c.query("SELECT status FROM extraction_runs")).rows[0].status,
+    "complete",
+  );
+  assert.equal(await count(c, "SELECT count(*) n FROM import_receipts"), 1);
+});

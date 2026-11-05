@@ -467,11 +467,16 @@ export class Transport {
           .waitForLoadState("networkidle", { timeout: 2500 })
           .catch(() => {});
       }
-      const interaction =
+      const reveal =
         task.kind === "listing" && this.run.config.revealProbe
-          ? await revealProbe(page, this.run.config, snapshotHost(page))
-          : undefined;
-      snapshot = await snapshotPage(page);
+          ? await revealProbe(page, this.run.config)
+          : null;
+      let interaction;
+      try {
+        snapshot = await snapshotPage(page);
+      } finally {
+        interaction = await reveal?.release();
+      }
       if (this.run.options?.diagnostics) {
         diagnostics.url = redactUrl(snapshot.url);
         diagnostics.status = response?.status() ?? 0;
@@ -575,27 +580,21 @@ export function retryDelay(raw, now = Date.now()) {
   return Number.isFinite(date) ? Math.max(1000, date - now) : 60000;
 }
 
-const snapshotHost = (page) => {
-  try {
-    return new URL(page.url()).hostname;
-  } catch {
-    return null;
-  }
-};
-
 // Behavioural evidence for a "Load more" control: click it until it is gone
-// (bounded) and record every publisher-host request it causes plus item
-// counts. Static reading of page scripts cannot prove a handler makes no
-// request; observing the click can. Images/media/fonts stay blocked.
-export async function revealProbe(page, config, pageHost) {
+// (bounded) and record every dynamic request it causes plus item counts.
+// Static reading of page scripts cannot prove a handler makes no request;
+// observing the click can. Nothing leaves the browser while the guard is on:
+// every non-static request is aborted before transmission, so robots, pacing
+// and budgets are never bypassed. Requests to `ignoreHosts` (reviewed,
+// unrelated widgets) are aborted and counted; any other request, publisher or
+// third-party, is recorded and fails the contract. The guard stays installed
+// through a quiet period and the caller's snapshot; `release()` removes it
+// and returns the final observation.
+export async function revealProbe(page, config) {
   const probe = config.revealProbe,
-    hosts = new Set([...(config.allowedHosts ?? []), pageHost].filter(Boolean)),
+    ignore = new Set(probe.ignoreHosts ?? []),
     requests = [];
-  let thirdParty = 0;
-  // Nothing a click triggers may leave the browser: every non-static request
-  // is aborted before transmission (so robots, pacing and request budgets are
-  // never bypassed) and publisher-host ones are recorded. Any recorded
-  // request fails the contract, so it never needs a response.
+  let ignored = 0;
   const guard = (route) => {
     const request = route.request(),
       type = request.resourceType();
@@ -605,8 +604,8 @@ export async function revealProbe(page, config, pageHost) {
     try {
       host = new URL(request.url()).hostname;
     } catch {}
-    if (hosts.has(host)) requests.push({ url: redactUrl(request.url()), type });
-    else thirdParty++;
+    if (ignore.has(host)) ignored++;
+    else requests.push({ url: redactUrl(request.url()), host, type });
     return route.abort("blockedbyclient");
   };
   const items = page.locator(probe.item),
@@ -634,22 +633,28 @@ export async function revealProbe(page, config, pageHost) {
       clicks++;
       await page.waitForTimeout(probe.settleMs ?? 800);
     }
+    // Delayed handlers get a bounded window while still guarded.
+    await page.waitForTimeout(probe.quietMs ?? 2500);
   } catch (e) {
     error = e.message.slice(0, 200);
-  } finally {
-    await page.unroute("**/*", guard).catch(() => {});
   }
   return {
-    probe: "reveal",
-    clicks,
-    itemsBefore,
-    itemsAfter: await items.count(),
-    visibleBefore,
-    visibleAfter: await visible(),
-    controlVisibleBefore,
-    controlVisibleAfter: await control.isVisible().catch(() => false),
-    requests,
-    thirdPartyBlocked: thirdParty,
-    error,
+    async release() {
+      const observed = {
+        probe: "reveal",
+        clicks,
+        itemsBefore,
+        itemsAfter: await items.count(),
+        visibleBefore,
+        visibleAfter: await visible(),
+        controlVisibleBefore,
+        controlVisibleAfter: await control.isVisible().catch(() => false),
+        requests: [...requests],
+        ignoredRequests: ignored,
+        error,
+      };
+      await page.unroute("**/*", guard).catch(() => {});
+      return observed;
+    },
   };
 }
