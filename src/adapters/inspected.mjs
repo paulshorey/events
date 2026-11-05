@@ -607,6 +607,7 @@ export function parseInspected({ html, url, config, interaction }) {
       // Within-month paging is followed through rel=next links by the shared
       // navigation; an unrecognised page control must not look exhausted.
       if (
+        !verifiedEmpty &&
         $('a[href*="page="]').length &&
         !$('a[rel="next"],.pagination .next a').length
       )
