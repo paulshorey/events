@@ -1594,7 +1594,8 @@
     "maxDepth": 2,
     "validationStatus": "needs-validation",
     "script": "scrapers/url-042.mjs",
-    "enrichDetails": true
+    "enrichDetails": true,
+    "discoverDetails": false
   },
   {
     "id": "url-043",

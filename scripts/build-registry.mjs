@@ -188,6 +188,9 @@ const sourceOverrides = {
   // observations; multi-day cards are enriched from theirs. Inspected Nov 5, 2026.
   "url-042": {
     enrichDetails: true,
+    // The listing already queues every event card's detail page; link
+    // discovery would also follow site furniture such as /events/map.
+    discoverDetails: false,
     notes:
       "Drupal event finder: pages follow the pager's next link; single-day cards print only month/day, so each detail page (which prints the year and clock) is its own observation. Multi-day cards print full dates and are enriched from their detail page. Inspected November 5, 2026.",
   },
