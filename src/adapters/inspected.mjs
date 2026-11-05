@@ -181,6 +181,10 @@ export function parseInspected({ html, url, config, interaction }) {
       const reveal =
         interaction?.probe === "reveal" &&
         !interaction.error &&
+        // The control existed, started hidden rows, and was actually used.
+        interaction.controlVisibleBefore === true &&
+        interaction.clicks > 0 &&
+        interaction.visibleBefore < items &&
         interaction.requests?.length === 0 &&
         interaction.controlVisibleAfter === false &&
         interaction.itemsBefore === items &&

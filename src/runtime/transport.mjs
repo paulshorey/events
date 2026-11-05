@@ -591,19 +591,23 @@ export async function revealProbe(page, config, pageHost) {
   const probe = config.revealProbe,
     hosts = new Set([...(config.allowedHosts ?? []), pageHost].filter(Boolean)),
     requests = [];
-  const onRequest = (request) => {
+  let thirdParty = 0;
+  // Nothing a click triggers may leave the browser: every non-static request
+  // is aborted before transmission (so robots, pacing and request budgets are
+  // never bypassed) and publisher-host ones are recorded. Any recorded
+  // request fails the contract, so it never needs a response.
+  const guard = (route) => {
+    const request = route.request(),
+      type = request.resourceType();
+    if (["image", "media", "font", "stylesheet"].includes(type))
+      return route.fallback();
     let host = null;
     try {
       host = new URL(request.url()).hostname;
     } catch {}
-    if (
-      hosts.has(host) &&
-      !["image", "media", "font", "stylesheet"].includes(request.resourceType())
-    )
-      requests.push({
-        url: redactUrl(request.url()),
-        type: request.resourceType(),
-      });
+    if (hosts.has(host)) requests.push({ url: redactUrl(request.url()), type });
+    else thirdParty++;
+    return route.abort("blockedbyclient");
   };
   const items = page.locator(probe.item),
     control = page.locator(probe.control).first();
@@ -616,10 +620,11 @@ export async function revealProbe(page, config, pageHost) {
         ).length,
     );
   const itemsBefore = await items.count(),
-    visibleBefore = await visible();
+    visibleBefore = await visible(),
+    controlVisibleBefore = await control.isVisible().catch(() => false);
   let clicks = 0,
     error = null;
-  page.on("request", onRequest);
+  await page.route("**/*", guard);
   try {
     while (
       clicks < (probe.maxClicks ?? 20) &&
@@ -629,13 +634,10 @@ export async function revealProbe(page, config, pageHost) {
       clicks++;
       await page.waitForTimeout(probe.settleMs ?? 800);
     }
-    await page
-      .waitForLoadState("networkidle", { timeout: 2500 })
-      .catch(() => {});
   } catch (e) {
     error = e.message.slice(0, 200);
   } finally {
-    page.off("request", onRequest);
+    await page.unroute("**/*", guard).catch(() => {});
   }
   return {
     probe: "reveal",
@@ -644,8 +646,10 @@ export async function revealProbe(page, config, pageHost) {
     itemsAfter: await items.count(),
     visibleBefore,
     visibleAfter: await visible(),
+    controlVisibleBefore,
     controlVisibleAfter: await control.isVisible().catch(() => false),
     requests,
+    thirdPartyBlocked: thirdParty,
     error,
   };
 }

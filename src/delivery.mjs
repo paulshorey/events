@@ -64,7 +64,10 @@ export async function deliver({
       let journal, outbox;
       try {
         journal = new Journal(path, Date.now, { readOnly: true });
-        outbox = new Outbox(join(root, "delivery.sqlite"));
+        // A dry run reads only: no outbox file is created or written.
+        outbox = dryRun
+          ? { delivered: () => null, record: () => {}, close: () => {} }
+          : new Outbox(join(root, "delivery.sqlite"));
         const rows = journal.db
           .prepare(
             `SELECT id,status FROM runs WHERE status IN (${TERMINAL.map(() => "?").join(",")}) ORDER BY created`,

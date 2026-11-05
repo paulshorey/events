@@ -762,8 +762,10 @@ test("reveal probe distinguishes unhiding rows from loading rows", async (t) => 
       itemsAfter: 25,
       visibleBefore: 10,
       visibleAfter: 25,
+      controlVisibleBefore: true,
       controlVisibleAfter: false,
       requests: [],
+      thirdPartyBlocked: 0,
       error: null,
     },
   );
@@ -773,6 +775,7 @@ test("reveal probe distinguishes unhiding rows from loading rows", async (t) => 
     url: `${base}/loads`,
     kind: "listing",
   });
-  assert.ok(moreRequests >= 1);
+  // The click's request is recorded but aborted before it reaches the server.
   assert.ok(loading.interaction.requests.some((r) => r.url.endsWith("/more")));
+  assert.equal(moreRequests, 0);
 });

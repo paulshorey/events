@@ -1,6 +1,14 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { mkdtemp, writeFile, readFile, rm, cp, mkdir } from "node:fs/promises";
+import {
+  mkdtemp,
+  writeFile,
+  readFile,
+  rm,
+  cp,
+  mkdir,
+  access,
+} from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { createHash } from "node:crypto";
@@ -767,4 +775,16 @@ test("a retried page keeps both captures and resumed page metadata is refreshed"
       .ids,
     ["a", "z"],
   );
+});
+
+test("a dry run creates no local delivery state", async (t) => {
+  const url = await withDb(t);
+  if (!url) return;
+  const { root } = await journalRoot(t);
+  await deliver({ url, roots: [root], applyMigrations: true, dryRun: true });
+  await assert.rejects(access(join(root, "delivery.sqlite")));
+  const c = await connect(url);
+  t.after(() => c.end());
+  // Dry runs never migrate either.
+  await assert.rejects(c.query("SELECT 1 FROM import_receipts"));
 });

@@ -82,8 +82,9 @@ test("San Diego single-page calendar is verified only with observed reveal behav
       clicks: 1,
       itemsBefore: items,
       itemsAfter: items,
-      visibleBefore: Math.min(items, 10),
+      visibleBefore: items - 1,
       visibleAfter: items,
+      controlVisibleBefore: true,
       controlVisibleAfter: false,
       requests: [],
       error: null,
@@ -138,6 +139,10 @@ test("San Diego single-page calendar is verified only with observed reveal behav
   unverified(html, observed(html, { visibleAfter: 2 }));
   unverified(html, observed(html, { controlVisibleAfter: true }));
   unverified(html, observed(html, { error: "Timeout 5000ms exceeded" }));
+  // The control was gone or never used (e.g. replaced by infinite scroll).
+  unverified(html, observed(html, { clicks: 0 }));
+  unverified(html, observed(html, { controlVisibleBefore: false }));
+  unverified(html, observed(html, { visibleBefore: 3 }));
   // Server pagination means one document is not the whole list.
   unverified(
     html.replace(
