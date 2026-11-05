@@ -515,3 +515,90 @@ test("an older journal delivered later does not replace the latest collection re
     2,
   );
 });
+
+test("a hash shared by several captures uses whichever copy still validates", async (t) => {
+  const url = await withDb(t);
+  if (!url) return;
+  const root = await mkdtemp(join(tmpdir(), "events-delivery-"));
+  t.after(() => rm(root, { recursive: true, force: true }));
+  const j = new Journal(join(root, "journal.sqlite"));
+  j.register([config]);
+  const q = j.enqueue(config.id, { asOf: "2026-11-04" });
+  const r = j.claim("test", 60000, q.runId);
+  const body = "<html>same</html>";
+  const listing = j.nextPage(q.runId, r.token);
+  const first = join(root, "first.html"),
+    second = join(root, "second.html");
+  await writeFile(first, body);
+  await writeFile(second, body);
+  j.commitPage(
+    r.id,
+    r.token,
+    listing,
+    {
+      records: [record("a")],
+      nextRequests: [
+        { url: "https://example.test/again", kind: "listing", depth: 0 },
+      ],
+      issues: [],
+      terminal: true,
+    },
+    { path: first, hash: sha(body) },
+  );
+  const again = j.nextPage(q.runId, r.token);
+  j.commitPage(
+    r.id,
+    r.token,
+    again,
+    { records: [], nextRequests: [], issues: [] },
+    { path: second, hash: sha(body) },
+  );
+  j.finish(r.id, r.token, "complete", {});
+  j.close();
+  await writeFile(first, "<html>altered</html>");
+  const report = await deliver({ url, roots: [root], applyMigrations: true });
+  assert.equal(report.journals[0].runs[0].evidence.mismatched, 0);
+  const c = await connect(url);
+  t.after(() => c.end());
+  const ev = (
+    await c.query("SELECT local_path, content_gzip FROM evidence_objects")
+  ).rows;
+  assert.equal(ev.length, 1);
+  assert.equal(ev[0].local_path, second);
+  assert.equal(gunzipSync(ev[0].content_gzip).toString(), body);
+});
+
+test("a delivery that fails verification commits nothing and stays pending", async (t) => {
+  const url = await withDb(t);
+  if (!url) return;
+  const { root, runId } = await journalRoot(t);
+  const c = await connect(url);
+  t.after(() => c.end());
+  await migrate(c);
+  const j = new Journal(join(root, "journal.sqlite"), Date.now, {
+    readOnly: true,
+  });
+  t.after(() => j.close());
+  const snap = snapshotRun(j, runId);
+  // Simulate a database that reports one observation fewer than delivered.
+  const skewed = {
+    query: async (sql, params) => {
+      const res = await c.query(sql, params);
+      return /SELECT count\(\*\) n FROM source_observations/.test(sql)
+        ? { ...res, rows: [{ n: Number(res.rows[0].n) - 1 }] }
+        : res;
+    },
+  };
+  await assert.rejects(
+    deliverSnapshot(skewed, snap),
+    (e) => e.code === "verification_mismatch",
+  );
+  for (const table of [
+    "import_receipts",
+    "source_observations",
+    "extraction_runs",
+  ])
+    assert.equal(await count(c, `SELECT count(*) n FROM ${table}`), 0, table);
+  const report = await deliver({ url, roots: [root] });
+  assert.equal(report.journals[0].delivered, 1);
+});

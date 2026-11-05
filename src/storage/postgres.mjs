@@ -393,23 +393,37 @@ export async function deliverSnapshot(
       ),
       captureOf(run.error),
     ].filter(Boolean);
+    // Several pages can share content under different paths: use the first
+    // path whose bytes still match, and count a hash as missing/mismatched
+    // only when no candidate validates.
+    const candidates = new Map();
     for (const c of captures) {
-      if (seen.has(c.hash)) continue;
-      seen.add(c.hash);
+      if (!candidates.has(c.hash)) candidates.set(c.hash, []);
+      if (c.path) candidates.get(c.hash).push(c.path);
+    }
+    for (const [hashValue, paths] of candidates) {
+      if (seen.has(hashValue)) continue;
+      seen.add(hashValue);
       let size = null,
         path = null,
-        content = null;
-      if (c.path && existsSync(c.path)) {
-        const body = readFileSync(c.path);
-        if (createHash("sha256").update(body).digest("hex") === c.hash) {
+        content = null,
+        mismatch = false;
+      for (const candidate of new Set(paths)) {
+        if (!existsSync(candidate)) continue;
+        const body = readFileSync(candidate);
+        if (createHash("sha256").update(body).digest("hex") === hashValue) {
           size = body.length;
-          path = c.path;
+          path = candidate;
           if (evidence) content = gzipSync(body);
-        } else evidenceStats.mismatched++;
-      } else evidenceStats.missing++;
+          break;
+        }
+        mismatch = true;
+      }
+      if (!path)
+        mismatch ? evidenceStats.mismatched++ : evidenceStats.missing++;
       if (content) evidenceStats.withContent++;
       evidenceStats.objects++;
-      evidenceRows.push([c.hash, size, path, content]);
+      evidenceRows.push([hashValue, size, path, content]);
     }
     await insertRows(
       client,
@@ -564,6 +578,14 @@ export async function deliverSnapshot(
       exp,
       run.id,
     );
+    // Verify before the receipt so a receipt always means a verified delivery;
+    // a mismatch rolls the whole delivery back and stays pending.
+    const check = await verifyRun(client, snap, { receipt: false });
+    if (!check.matches)
+      throw Object.assign(new Error("delivery verification mismatch"), {
+        code: "verification_mismatch",
+        detail: check,
+      });
     const receipt = await client.query(
       `INSERT INTO import_receipts(run_id,digest,run_status,counts) VALUES($1,$2,$3,$4)
        RETURNING id`,
@@ -588,7 +610,7 @@ export async function deliverSnapshot(
 }
 
 // Compare a delivered run with its journal snapshot.
-export async function verifyRun(client, snap) {
+export async function verifyRun(client, snap, { receipt = true } = {}) {
   const id = snap.run.id;
   const q = async (sql, params = [id]) =>
     Number((await client.query(sql, params)).rows[0].n);
@@ -609,10 +631,12 @@ export async function verifyRun(client, snap) {
     pagesMissingEvidence: await q(
       "SELECT count(*) n FROM run_pages p WHERE run_id=$1 AND content_hash IS NOT NULL AND NOT EXISTS (SELECT 1 FROM evidence_objects e WHERE e.content_hash=p.content_hash)",
     ),
-    receipt: await q(
-      "SELECT count(*) n FROM import_receipts WHERE run_id=$1 AND digest=$2",
-      [id, snap.digest],
-    ),
+    receipt: receipt
+      ? await q(
+          "SELECT count(*) n FROM import_receipts WHERE run_id=$1 AND digest=$2",
+          [id, snap.digest],
+        )
+      : null,
   };
   const matches =
     db.pages === snap.counts.pages &&
@@ -621,7 +645,7 @@ export async function verifyRun(client, snap) {
     db.expansions === snap.counts.expansions &&
     db.attempts === snap.counts.attempts &&
     db.pagesMissingEvidence === 0 &&
-    db.receipt === 1;
+    (!receipt || db.receipt === 1);
   return { runId: id, matches, journal: snap.counts, database: db };
 }
 

@@ -109,6 +109,13 @@ test("San Diego single-page calendar is verified only under its client-reveal co
   );
   // A linked row that fails to parse must not count toward the whole list.
   unverified(html.replace("<span>11/07/2026</span>", "<span>TBA</span>"));
+  // A revealable item without an event row would be shown but not parsed.
+  unverified(
+    html.replace(
+      '<a href="#" class="sppb-btn loadMore">',
+      '<div class="item"><h3>Unparsed event</h3></div><a href="#" class="sppb-btn loadMore">',
+    ),
+  );
   // Without the registry declaration the adapter stays conservative.
   assert.equal(
     parseDocument({

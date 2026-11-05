@@ -197,6 +197,11 @@ export function parseInspected({ html, url, config }) {
         !unclassified &&
         !rejected &&
         rows === count + privateRows &&
+        // Every revealable item must be exactly one accounted row.
+        rows === $(".calendar .item").length &&
+        $(".calendar .item")
+          .toArray()
+          .every((item) => $(item).find(".event-row").length === 1) &&
         rows === $(".calendar .item .event-row").length
       ) {
         coverage = "verified-list";
