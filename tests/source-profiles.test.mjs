@@ -150,6 +150,26 @@ test("San Diego single-page calendar is verified only with observed reveal behav
       'Load more</a><a rel="next" href="?page=2">2</a>',
     ),
   );
+  // A navigation control the probe never exercised.
+  unverified(
+    html.replace(
+      "Load more</a>",
+      'Load more</a><button class="pagination-next">Next</button>',
+    ),
+  );
+  unverified(
+    html.replace(
+      "Load more</a>",
+      'Load more</a><a aria-label="Next page" href="#">›</a>',
+    ),
+  );
+  // A row carrying a second distinct event link would drop that event.
+  unverified(
+    html.replace(
+      'itemprop="url">',
+      'itemprop="url">Eckhart</a> <a href="/calendar/999-second-event">Second',
+    ),
+  );
   // An unlinked row that is not a private placeholder is unexplained.
   unverified(html.replace("<span>Private</span>", "<span>Mystery</span>"));
   // A linked row that fails to parse must not count toward the whole list.

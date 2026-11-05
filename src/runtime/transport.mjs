@@ -468,7 +468,7 @@ export class Transport {
           .catch(() => {});
       }
       const reveal =
-        task.kind === "listing" && this.run.config.revealProbe
+        task.kind === "listing" && this.run.config.revealProbe && !browserPaging
           ? await revealProbe(page, this.run.config)
           : null;
       let interaction;
@@ -624,6 +624,18 @@ export async function revealProbe(page, config) {
   let clicks = 0,
     error = null;
   await page.route("**/*", guard);
+  // WebSockets bypass page.route. Without connectToServer() the socket never
+  // reaches the network; it is recorded (failing the contract) and closed.
+  // The probe page is closed after the task, so this route is not removed.
+  await page.routeWebSocket(/.*/, (ws) => {
+    let host = null;
+    try {
+      host = new URL(ws.url()).hostname;
+    } catch {}
+    if (ignore.has(host)) ignored++;
+    else requests.push({ url: redactUrl(ws.url()), host, type: "websocket" });
+    ws.close();
+  });
   try {
     while (
       clicks < (probe.maxClicks ?? 20) &&

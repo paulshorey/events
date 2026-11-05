@@ -725,6 +725,7 @@ test("reveal probe distinguishes unhiding rows from loading rows", async (t) => 
       "/elsewhere": `fetch("http://localhost:${server.address().port}/more");`,
       "/later": 'setTimeout(() => fetch("/more"), 300);',
       "/widget": `fetch("http://localhost:${server.address().port}/widget");`,
+      "/socket": `new WebSocket("ws://127.0.0.1:${server.address().port}/ws");`,
     };
     res.end(page(handlers[req.url] ?? ""));
   });
@@ -787,14 +788,16 @@ test("reveal probe distinguishes unhiding rows from loading rows", async (t) => 
   assert.ok(loading.interaction.requests.some((r) => r.url.endsWith("/more")));
   assert.equal(moreRequests, 0);
   // Third-party and delayed requests are recorded too.
-  for (const path of ["/elsewhere", "/later"]) {
+  for (const path of ["/elsewhere", "/later", "/socket"]) {
     const r = await transport.fetch({
       id: path.slice(1),
       url: `${base}${path}`,
       kind: "listing",
     });
     assert.ok(
-      r.interaction.requests.some((q) => q.url.endsWith("/more")),
+      r.interaction.requests.some((q) =>
+        path === "/socket" ? q.type === "websocket" : q.url.endsWith("/more"),
+      ),
       path,
     );
   }

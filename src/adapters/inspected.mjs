@@ -10,6 +10,29 @@ export const inspectedAdapters = new Set([
   "chicago-parks",
   "discover-la",
 ]);
+// Any navigation-like control other than the probed reveal control: the probe
+// never exercises it, so its presence means the document may not be the list.
+function otherPagingControls($) {
+  const token =
+    /^(pagination|pager|paging|next|nav-next|page-next|load-?more|show-?more|view-?more|infinite)/i;
+  return $("body *")
+    .filter((_, e) => {
+      const el = $(e);
+      if (el.is(".calendar .loadMore")) return false;
+      if ((el.attr("rel") ?? "").split(/\s+/).includes("next")) return true;
+      if (/\b(next|more)\b/i.test(el.attr("aria-label") ?? "")) return true;
+      if (
+        el.is("a, form") &&
+        /[?&](page|start|limitstart|offset)=/i.test(
+          el.attr("href") ?? el.attr("action") ?? "",
+        )
+      )
+        return true;
+      return (el.attr("class") ?? "").split(/\s+/).some((c) => token.test(c));
+    })
+    .toArray();
+}
+
 export function parseInspected({ html, url, config, interaction }) {
   const $ = load(html),
     records = [],
@@ -151,6 +174,15 @@ export function parseInspected({ html, url, config, interaction }) {
         else unclassified++;
         return;
       }
+      // One row is one event: a second distinct event link would be dropped.
+      const links = new Set(
+        c
+          .find("a[href]")
+          .map((_, e) => $(e).attr("href"))
+          .get()
+          .filter((h) => /\/calendar\/[^/?#]+/.test(h)),
+      );
+      if (c.find("h2 a").length !== 1 || links.size !== 1) unclassified++;
       add(
         {
           title: a.text(),
@@ -190,7 +222,7 @@ export function parseInspected({ html, url, config, interaction }) {
         interaction.itemsBefore === items &&
         interaction.itemsAfter === items &&
         interaction.visibleAfter === items;
-      const paged = $('a[rel="next"], .pagination a, a[href*="page="]').length;
+      const paged = otherPagingControls($).length;
       if (
         reveal &&
         !paged &&
