@@ -16,7 +16,10 @@ export function parseInspected({ html, url, config }) {
     issues = [],
     nextRequests = [];
   let count = 0,
-    rejected = 0;
+    rejected = 0,
+    coverage = "unverified",
+    terminal = false;
+  const excluded = {};
   const add = (input, selector) => {
     count++;
     const r = eventRecord(config, input, { url, selector });
@@ -130,14 +133,24 @@ export function parseInspected({ html, url, config }) {
       );
     });
   } else if (config.adapter === "san-diego") {
+    let rows = 0,
+      privateRows = 0,
+      unclassified = 0;
     $(".event-row").each((_, el) => {
+      rows++;
       const c = $(el),
         a = c.find("h2 a").first(),
         values = c
           .find(".row.data span")
           .map((_, e) => text($(e).text()))
           .get();
-      if (!a.length) return;
+      // Unnamed "Private" bookings have no public identity or page; they are
+      // counted, not invented as events.
+      if (!a.length) {
+        if (values[0] === "Private") privateRows++;
+        else unclassified++;
+        return;
+      }
       add(
         {
           title: a.text(),
@@ -157,6 +170,27 @@ export function parseInspected({ html, url, config }) {
         ".event-row .row.data span",
       );
     });
+    // Inspected November 4, 2026: "Load more" only unhides `.calendar .item`
+    // rows already in the server HTML (jQuery slice/slideDown, no request).
+    // The single document is the whole list only while every row is public or
+    // a private placeholder and no server-side pagination link exists.
+    if (config.listCompleteness === "client-reveal") {
+      const reveal =
+        $(".calendar .loadMore").length &&
+        /\.calendar \.item:hidden/.test($("script").text());
+      const paged = $('a[rel="next"], .pagination a, a[href*="page="]').length;
+      if (
+        reveal &&
+        !paged &&
+        !unclassified &&
+        rows === count + privateRows &&
+        rows === $(".calendar .item .event-row").length
+      ) {
+        coverage = "verified-list";
+        terminal = true;
+      } else issues.push({ code: "single_page_contract_unverified" });
+    }
+    if (privateRows) excluded.privatePlaceholders = privateRows;
   } else if (config.adapter === "sf-portal") {
     $("tr.resultlist").each((_, el) => {
       const c = $(el),
@@ -242,8 +276,9 @@ export function parseInspected({ html, url, config }) {
     observedCount: count,
     rejected,
     issues,
-    coverage: "unverified",
-    terminal: false,
+    coverage,
+    terminal,
     nextRequests,
+    ...(Object.keys(excluded).length ? { excluded } : {}),
   };
 }

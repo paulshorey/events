@@ -156,6 +156,8 @@ const overrides = {
     cardSelectors: [".event", ".event-item", ".event-card"],
     detailPattern: "/event/|/calendar/[^/?]+",
     timeZone: "America/Los_Angeles",
+    coverage: "verified-list",
+    listCompleteness: "client-reveal",
   },
 };
 const sourceOverrides = {

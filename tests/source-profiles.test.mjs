@@ -65,3 +65,48 @@ test("ISO timestamps retain their separate end date and invalid explicit ends ar
     null,
   );
 });
+test("San Diego single-page calendar is verified only under its client-reveal contract", async () => {
+  const c = configs.find((c) => c.id === "url-082"),
+    html = await readFile(
+      new URL("fixtures/san-diego-calendar.html", import.meta.url),
+      "utf8",
+    );
+  const parse = (h) =>
+    parseDocument({ html: h, url: c.url, config: { ...c, maxDepth: 0 } });
+  const ok = parse(html);
+  assert.equal(ok.records.length, 2);
+  assert.equal(ok.coverage, "verified-list");
+  assert.equal(ok.terminal, true);
+  assert.deepEqual(ok.issues, []);
+  assert.deepEqual(ok.excluded, { privatePlaceholders: 1 });
+  assert.equal(ok.nextRequests.length, 0);
+  assert.ok(!ok.records.some((r) => /private/i.test(r.title)));
+  const unverified = (h) => {
+    const r = parse(h);
+    assert.notEqual(r.coverage, "verified-list");
+    assert.equal(r.terminal, false);
+    assert.ok(
+      r.issues.some((i) => i.code === "single_page_contract_unverified"),
+    );
+  };
+  // The reveal script disappearing may mean rows are fetched on demand.
+  unverified(html.replace(/<script>[\s\S]*<\/script>/, ""));
+  // Server pagination means one document is not the whole list.
+  unverified(
+    html.replace(
+      "Load more</a>",
+      'Load more</a><a rel="next" href="?page=2">2</a>',
+    ),
+  );
+  // An unlinked row that is not a private placeholder is unexplained.
+  unverified(html.replace("<span>Private</span>", "<span>Mystery</span>"));
+  // Without the registry declaration the adapter stays conservative.
+  assert.equal(
+    parseDocument({
+      html,
+      url: c.url,
+      config: { ...c, maxDepth: 0, listCompleteness: undefined },
+    }).coverage,
+    "unverified",
+  );
+});

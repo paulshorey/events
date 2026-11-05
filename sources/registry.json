@@ -2969,7 +2969,8 @@
     "adapterVersion": "framework-v1",
     "timeZone": "America/Los_Angeles",
     "adapter": "san-diego",
-    "coverage": "unverified",
+    "coverage": "verified-list",
+    "listCompleteness": "client-reveal",
     "detailPattern": "/event/|/calendar/[^/?]+",
     "cardSelectors": [
       ".event",

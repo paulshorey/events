@@ -72,7 +72,8 @@ export function parseDocument({
     terminal = false,
     observedCount = 0,
     method = "jsonld",
-    rejected = 0;
+    rejected = 0,
+    excluded;
   if (config.discoveryOnly) {
     method = "discovery-only";
     coverage = "discovery";
@@ -90,6 +91,7 @@ export function parseDocument({
     nextRequests.push(...(parsed.nextRequests ?? []));
     coverage = parsed.coverage;
     terminal = parsed.terminal;
+    excluded = parsed.excluded;
   } else if (config.adapter === "la") {
     const parsed = parseLaCalendar(html, url);
     all.push(...normalizedLegacy(config, parsed.records, url));
@@ -549,6 +551,7 @@ export function parseDocument({
     issues,
     coverage,
     terminal,
+    ...(excluded ? { excluded } : {}),
     discoveryLinks: [...new Set(discovered.map((r) => r.url))].slice(0, 100),
   };
 }
