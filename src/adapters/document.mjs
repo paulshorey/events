@@ -533,7 +533,9 @@ export function parseDocument({
           },
         });
   }
-  if (!all.length && !nextRequests.length)
+  // A page whose verified pager contract says the dated list has ended is an
+  // expected empty result, not a missing event contract.
+  if (!all.length && !nextRequests.length && !paging?.terminal)
     issues.push({
       code: "no_event_contract_found",
       message:

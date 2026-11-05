@@ -63,7 +63,7 @@
       ".views-row",
       "article"
     ],
-    "readySelector": ".event-card",
+    "readySelector": null,
     "notes": "Inspect event containers, detail pages, identity, pagination, date scope, and any published feed; then implement a bounded adapter probe. Field audit: follow sparse event cards to same-host detail pages; retain listing and detail evidence separately. Full enumeration remains unverified for partial sources. Verified AllEvents-owned all.events redirect; its displayed zone and UTC-marked structured times can conflict. Preserve the visible clock and zone label, flag for review.",
     "role": "collection candidate",
     "allowedHosts": [

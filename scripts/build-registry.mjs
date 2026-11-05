@@ -206,6 +206,8 @@ function festivalSourceOverrides() {
     // AllEvents: city list pages, "?page=N" via <link rel=next>; no detail follow.
     "url-002": {
       entrypoints: cities.map((c) => `https://allevents.in/${c}/all`),
+      // Event JSON-LD is server-rendered; a missing .event-card must not stop a run.
+      readySelector: null,
       enrichDetails: false,
       discoverDetails: false,
       maxDepth: 0,
