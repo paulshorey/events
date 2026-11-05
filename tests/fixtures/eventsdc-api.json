@@ -1,0 +1,33 @@
+[
+ {
+  "title": "2026 Skyscanner Capital Showcase ",
+  "field_end_date": "2026-11-08T15:30:00",
+  "field_image": "/sites/default/files/styles/upcoming_event_782_x_440_/public/2026-11/Cap%20Showcase%20600x400.jpg.webp?itok=VE7GQUxH",
+  "field_start_date": "2026-11-08T13:00:00",
+  "field_venue": [],
+  "nid": "150820",
+  "field_event_type": ""
+ },
+ {
+  "title": "Society for Neuroscience Annual Convention",
+  "field_end_date": "2026-11-18T23:59:00",
+  "field_image": "",
+  "field_start_date": "2026-11-14T07:00:00",
+  "field_venue": [
+   "2"
+  ],
+  "nid": "2829",
+  "field_event_type": ""
+ },
+ {
+  "title": "Capital City Go-Go vs  Raptors 905",
+  "field_end_date": "2026-11-14T21:30:00",
+  "field_image": "",
+  "field_start_date": "2026-11-14T19:00:00",
+  "field_venue": [
+   "18"
+  ],
+  "nid": "149788",
+  "field_event_type": ""
+ }
+]

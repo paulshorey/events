@@ -1,0 +1,240 @@
+{
+ "total": 3,
+ "events": [
+  {
+   "year": 2026,
+   "month": 9,
+   "day": 14,
+   "events": [
+    {
+     "id": 106488,
+     "meta": {
+      "html_url": "http://api.sf.gov/event-20260914-2026-zsfg-employee-flu-vaccine-clinic-is-now-open/",
+      "seo_title": "",
+      "search_description": "",
+      "url_path": "/home/event-20260914-2026-zsfg-employee-flu-vaccine-clinic-is-now-open/",
+      "slug": "event-20260914-2026-zsfg-employee-flu-vaccine-clinic-is-now-open",
+      "type": "sf.Event"
+     },
+     "title": "2026 ZSFG Employee Flu Vaccine Clinic Is Now Open",
+     "live": true,
+     "date_time": [
+      {
+       "type": "date_time",
+       "value": {
+        "is_all_day": false,
+        "start_date": "2026-09-14",
+        "start_time": "07:30:00",
+        "end_date": "2026-11-20",
+        "end_time": "15:30:00",
+        "include_end_date_time": "yes"
+       },
+       "id": "29f5db89-8a6a-4c6c-bb69-8f2578591c8d"
+      }
+     ],
+     "location": [
+      {
+       "type": "address",
+       "value": {
+        "address_title": "Zuckerberg San Francisco General Hospital",
+        "agency": null,
+        "organization": null,
+        "addressee": null,
+        "location_name": "Zuckerberg San Francisco General Hospital",
+        "line1": "1001 Potrero avenue",
+        "line2": null,
+        "city": "San Francisco",
+        "state": "CA",
+        "zip": "94110",
+        "location_notes": "",
+        "hours": null
+       },
+       "id": "a5103634-39d8-4a84-abf0-1ca9fc4577f5"
+      }
+     ],
+     "start_datetime": "2026-09-14T07:30:00-07:00",
+     "end_datetime": "2026-11-20T15:30:00-08:00",
+     "start_date": "2026-09-14",
+     "primary_agency": {
+      "title": "Occupational Health Services (OHS) at Zuckerberg San Francisco General Hospital (ZSFG)",
+      "html_url": "http://api.sf.gov/departments--occupational-health-service-ohs-zuckerberg-san-francisco-general-hospital-zsfg/"
+     }
+    }
+   ]
+  },
+  {
+   "year": 2026,
+   "month": 11,
+   "day": 5,
+   "events": [
+    {
+     "id": 109275,
+     "meta": {
+      "html_url": "http://api.sf.gov/meeting--november-2026-homelessness-oversight-commission-meeting/",
+      "seo_title": "",
+      "search_description": "",
+      "url_path": "/home/meeting--november-2026-homelessness-oversight-commission-meeting/",
+      "slug": "meeting--november-2026-homelessness-oversight-commission-meeting",
+      "type": "sf.Meeting"
+     },
+     "title": "November Homelessness Oversight Commission",
+     "live": true,
+     "cancelled": false,
+     "date_time": [
+      {
+       "type": "date_time",
+       "value": {
+        "is_all_day": false,
+        "start_date": "2026-11-05",
+        "start_time": "09:00:00",
+        "end_date": null,
+        "end_time": null,
+        "include_end_date_time": "no"
+       },
+       "id": "7507f26d-5e35-4fa7-b708-a74b87c68d4f"
+      }
+     ],
+     "meeting_location": [
+      {
+       "type": "address",
+       "value": {
+        "address_title": "City Hall",
+        "agency": null,
+        "organization": null,
+        "addressee": null,
+        "location_name": "City Hall",
+        "line1": "1 Dr Carlton B Goodlett Pl",
+        "line2": "Room 416",
+        "city": "San Francisco",
+        "state": "CA",
+        "zip": "94102",
+        "location_notes": null,
+        "hours": null
+       },
+       "id": "3d33288d-f259-4ae3-a64c-4d63f55024b6"
+      },
+      {
+       "type": "online",
+       "value": {
+        "description": "Please see the new SFGovTV channel locations below:\r\n•\tSFGovTV- Comcast Channel 28, Astound Channel 70, AT&T Channel 99\r\n•\tSFGovTV2- Comcast Channel 78, Astound Channel 71, AT&T Chann el 99",
+        "link": {
+         "link_to": "url",
+         "url": "https://sfgovtv.org/ch2live",
+         "page": null,
+         "link_text": "SFgov TV"
+        },
+        "phone": [
+         {
+          "type": "phone",
+          "value": {
+           "owner": "",
+           "phone_number": "415-655-0001",
+           "extension": "",
+           "details": "Access Code 2662 815 6059  then #"
+          },
+          "id": "83420f6f-7baf-44f3-ada1-a6d75dc871b0"
+         }
+        ]
+       },
+       "id": "637801a3-f999-4075-b2c2-d00c39435692"
+      }
+     ],
+     "start_datetime": "2026-11-05T09:00:00-08:00",
+     "end_datetime": "2026-11-05T23:59:59-08:00",
+     "start_date": "2026-11-05",
+     "primary_agency": {
+      "title": "Homelessness and Supportive Housing",
+      "html_url": "http://api.sf.gov/departments--homelessness-and-supportive-housing/"
+     }
+    }
+   ]
+  },
+  {
+   "year": 2026,
+   "month": 11,
+   "day": 5,
+   "events": [
+    {
+     "id": 94858,
+     "meta": {
+      "html_url": "http://api.sf.gov/meeting--november-2026-homelessness-oversight-commission-meeting/",
+      "seo_title": "",
+      "search_description": "",
+      "url_path": "/home/meeting--november-2026-homelessness-oversight-commission-meeting/",
+      "slug": "event-district-1-office-hours-december",
+      "type": "sf.Meeting"
+     },
+     "title": "District 1 Office Hours - December",
+     "live": true,
+     "cancelled": false,
+     "date_time": [
+      {
+       "type": "date_time",
+       "value": {
+        "is_all_day": false,
+        "start_date": "2026-12-11",
+        "start_time": "10:00:00",
+        "end_date": "2026-03-13",
+        "end_time": "12:00:00",
+        "include_end_date_time": "yes"
+       },
+       "id": "7507f26d-5e35-4fa7-b708-a74b87c68d4f"
+      }
+     ],
+     "meeting_location": [
+      {
+       "type": "address",
+       "value": {
+        "address_title": "City Hall",
+        "agency": null,
+        "organization": null,
+        "addressee": null,
+        "location_name": "City Hall",
+        "line1": "1 Dr Carlton B Goodlett Pl",
+        "line2": "Room 416",
+        "city": "San Francisco",
+        "state": "CA",
+        "zip": "94102",
+        "location_notes": null,
+        "hours": null
+       },
+       "id": "3d33288d-f259-4ae3-a64c-4d63f55024b6"
+      },
+      {
+       "type": "online",
+       "value": {
+        "description": "Please see the new SFGovTV channel locations below:\r\n•\tSFGovTV- Comcast Channel 28, Astound Channel 70, AT&T Channel 99\r\n•\tSFGovTV2- Comcast Channel 78, Astound Channel 71, AT&T Chann el 99",
+        "link": {
+         "link_to": "url",
+         "url": "https://sfgovtv.org/ch2live",
+         "page": null,
+         "link_text": "SFgov TV"
+        },
+        "phone": [
+         {
+          "type": "phone",
+          "value": {
+           "owner": "",
+           "phone_number": "415-655-0001",
+           "extension": "",
+           "details": "Access Code 2662 815 6059  then #"
+          },
+          "id": "83420f6f-7baf-44f3-ada1-a6d75dc871b0"
+         }
+        ]
+       },
+       "id": "637801a3-f999-4075-b2c2-d00c39435692"
+      }
+     ],
+     "start_datetime": "2026-12-11T10:00:00-08:00",
+     "end_datetime": "2026-03-13T12:00:00-07:00",
+     "start_date": "2026-11-05",
+     "primary_agency": {
+      "title": "Homelessness and Supportive Housing",
+      "html_url": "http://api.sf.gov/departments--homelessness-and-supportive-housing/"
+     }
+    }
+   ]
+  }
+ ]
+}

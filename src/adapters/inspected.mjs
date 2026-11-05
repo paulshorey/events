@@ -311,26 +311,58 @@ export function parseInspected({ html, url, config, interaction }) {
     }
     if (privateRows) excluded.privatePlaceholders = privateRows;
   } else if (config.adapter === "sf-portal") {
+    // Convention calendar form (GET startdate/enddate). The page states how
+    // many meetings matched ("N found") and renders them all in one document;
+    // the server clamps the window to one year from today, so a wider enddate
+    // cannot be requested. Observed 2026-11-05.
     $("tr.resultlist").each((_, el) => {
       const c = $(el),
         title = text(c.find("strong").first().text()),
         rawDate = dates(c.text());
       const venue = text(c.find("span").first().text());
+      // "Venue Type" is sometimes a category (Hotel) rather than a venue name.
+      const genericVenue = /^(?:hotel|other|various|tbd|tba)$/i.test(venue);
+      const organizer = text(
+        c.find("strong").first().nextAll("br").first()[0]?.nextSibling?.data ?? "",
+      );
       add(
         {
           title,
           url: `${url}#event=${encodeURIComponent(title)}&date=${rawDate.startDate}`,
           startDate: rawDate.startDate,
           endDate: rawDate.endDate,
-          location: {
-            venue,
-            basis: "upstream venue row; city market is separate provenance",
+          location:
+            venue && !genericVenue
+              ? {
+                  venue,
+                  basis: "upstream venue row; city market is separate provenance",
+                }
+              : null,
+          raw: {
+            rowText: text(c.text()),
+            organizer: organizer || undefined,
+            venueType: genericVenue ? venue : undefined,
           },
-          raw: { rowText: text(c.text()) },
         },
         "tr.resultlist",
       );
     });
+    const found = text($("form[name=searchform]").text()).match(
+        /\b(\d+) found\b/,
+      ),
+      rows = $("tr.resultlist").length;
+    if (
+      found &&
+      Number(found[1]) === rows &&
+      rows === records.length &&
+      !rejected &&
+      $("form[name=searchform] input[name=startdate]").length === 1 &&
+      $("form[name=searchform] input[name=enddate]").length === 1 &&
+      !$("a[rel=next], [class*=pager], [class*=pagination]").length
+    ) {
+      coverage = "verified-list";
+      terminal = true;
+    } else issues.push({ code: "single_page_contract_unverified" });
   } else if (config.adapter === "trade-table") {
     $("tr.row").each((_, el) => {
       const c = $(el),

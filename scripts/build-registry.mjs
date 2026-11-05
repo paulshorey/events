@@ -175,6 +175,130 @@ const sourceOverrides = {
     entrypoints: ["https://www.laconventioncenter.com/events/all"],
     aliasOf: "url-038",
   },
+  // Collected 2026-11-05 from the endpoints observed behind each page; see
+  // src/adapters/{washington,eventsdc,sfgov,lacity}.mjs and sources/registry.json.
+  "url-036": {
+    "adapter": "lacity-api",
+    "apiParser": "lacity",
+    "apiEndpoint": "https://api.lacity.org/city_calendar",
+    "defaultTransport": "api",
+    "allowedHosts": [
+      "lacity.gov",
+      "api.lacity.org",
+      "calendar.lacity.org"
+    ],
+    "coverage": "verified-list",
+    "notes": "lacity.gov/calendar is a directory of other calendars. Its meeting pages embed calendarui.lacity.org, which reads the City calendar feed at api.lacity.org/city_calendar (public meetings plus community events); this entry collects that feed from the as-of date."
+  },
+  "url-049": {
+    "entrypoints": [
+      "https://washington.org/find-dc-listings/events"
+    ],
+    "readySelector": ".dcevent-wrapper",
+    "pagination": {
+      "mode": "drupal-pager",
+      "parameter": "page",
+      "maxPages": 300
+    },
+    "discoverDetails": false
+  },
+  "url-051": {
+    "adapter": "eventsdc-api",
+    "apiParser": "eventsdc",
+    "apiEndpoint": "https://eventsdc.com/api/events",
+    "defaultTransport": "api",
+    "coverage": "verified-list",
+    "venueOptions": [
+      {
+        "id": "2",
+        "name": "Walter E. Washington Convention Center"
+      },
+      {
+        "id": "11",
+        "name": "Carnegie Library at Mt. Vernon Square"
+      },
+      {
+        "id": "12",
+        "name": "RFK Stadium"
+      },
+      {
+        "id": "13",
+        "name": "The Fields at RFK Campus"
+      },
+      {
+        "id": "14",
+        "name": "Festival Grounds at RFK Campus"
+      },
+      {
+        "id": "15",
+        "name": "Skate Park at RFK Campus"
+      },
+      {
+        "id": "16",
+        "name": "DC Armory"
+      },
+      {
+        "id": "17",
+        "name": "Nationals Park"
+      },
+      {
+        "id": "18",
+        "name": "CareFirst Arena"
+      },
+      {
+        "id": "19",
+        "name": "Gateway DC"
+      },
+      {
+        "id": "20",
+        "name": "R.I.S.E. Demonstration Center"
+      },
+      {
+        "id": "289",
+        "name": "GATHER by Events DC"
+      }
+    ],
+    "eventTypeOptions": [
+      {
+        "id": "5",
+        "name": "Conventions & Meetings"
+      },
+      {
+        "id": "6",
+        "name": "Cultural Programs"
+      },
+      {
+        "id": "29",
+        "name": "Entertainment"
+      },
+      {
+        "id": "28",
+        "name": "Sports"
+      },
+      {
+        "id": "7",
+        "name": "Sports & Entertainment"
+      }
+    ]
+  },
+  "url-066": {
+    "adapter": "sfgov-api",
+    "apiParser": "sfgov",
+    "apiPageSize": 10,
+    "entrypoints": [
+      {
+        "url": "https://api.sf.gov/api/related-events/?list=upcoming&locale=en&page=1&groupby=date",
+        "kind": "api",
+        "depth": 0
+      }
+    ],
+    "allowedHosts": [
+      "www.sf.gov",
+      "api.sf.gov"
+    ],
+    "coverage": "verified-list",
+    "notes": "Mayor's calendar route shows almost no events. The page is a Next.js app over api.sf.gov related-events (list=upcoming), which backs the citywide Upcoming calendar (meetings and events from all agencies); this entry collects that citywide query."
+  },
   "url-054": { adapter: "boston", coverage: "verified-list" },
   "url-055": {
     adapter: "discovery",
@@ -241,7 +365,7 @@ const configs = assessed.map((row) => {
     ...generic,
     ...overrides[row.sourceHost],
     ...sourceOverrides[row.id],
-    notes: row.nextStep,
+    notes: sourceOverrides[row.id]?.notes ?? row.nextStep,
     role: row.role,
     allowedHosts: [new URL(row.url).hostname],
     maxDepth: 2,

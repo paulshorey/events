@@ -1,6 +1,7 @@
 import { load } from "cheerio";
 import { inspectedAdapters, parseInspected } from "./inspected.mjs";
 import { parseDetail } from "./detail.mjs";
+import { parseDcListing } from "./washington.mjs";
 import { inspectedPagination } from "./pagination.mjs";
 import {
   parseLaCalendar,
@@ -145,6 +146,12 @@ export function parseDocument({
         rejected++;
       }
     });
+  } else if (config.adapter === "dc-tourism" && $(".dcevent-wrapper").length) {
+    const parsed = parseDcListing($, url, config);
+    method = "dc-listing-cards";
+    all.push(...parsed.records);
+    observedCount = parsed.observedCount;
+    rejected += parsed.rejected;
   } else if (config.adapter === "dc-tourism") {
     method = "dc-calendar-cards";
     const cards = $(".event-wrapper");

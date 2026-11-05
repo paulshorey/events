@@ -2,6 +2,8 @@ import { DatabaseSync } from "node:sqlite";
 import { mkdirSync } from "node:fs";
 import { dirname } from "node:path";
 import { randomUUID, createHash } from "node:crypto";
+import { eventsDcApiUrl } from "../adapters/eventsdc.mjs";
+import { laCityApiUrl } from "../adapters/lacity.mjs";
 
 export const hash = (value) =>
   createHash("sha256")
@@ -168,7 +170,16 @@ export class Journal {
         page: "1",
         start_date: options.asOf,
       });
-      this._addPage(runId, { url: url.href, kind: "api", depth: 0 });
+      this._addPage(runId, {
+        url:
+          c.config.apiParser === "eventsdc"
+            ? eventsDcApiUrl(c.config, options.asOf)
+            : c.config.apiParser === "lacity"
+              ? laCityApiUrl(c.config, options.asOf)
+              : url.href,
+        kind: "api",
+        depth: 0,
+      });
     } else
       for (const seed of c.config.entrypoints ?? [c.config.url])
         this._addPage(
