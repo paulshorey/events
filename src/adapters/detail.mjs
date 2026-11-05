@@ -21,7 +21,7 @@ const canonical = (value) => {
 };
 export function parseDetail({ html, url, config }) {
   const $ = load(html),
-    ld = jsonLdEvents(html),
+    ld = jsonLdEvents(html, { series: config.detailSeriesAsEvent === true }),
     records = [],
     issues = [];
   const title = text($("main h1,h1").first().text());
@@ -33,8 +33,11 @@ export function parseDetail({ html, url, config }) {
     const own = safeUrl(event.url, url) ?? safeUrl(event["@id"], url);
     // On a detail page, an Event without a URL can use the page's own identity
     // only when it is the sole Event and agrees with the main heading.
+    // Some publishers render a different canonical URL inside the Event markup
+    // than the page address (config.detailEventUrlAlias); accept that alias only
+    // for the sole Event whose name equals the heading, never a related Event.
     const fallback =
-      !own &&
+      (!own || config.detailEventUrlAlias === true) &&
       ld.events.length === 1 &&
       text(event.name).toLowerCase() === title.toLowerCase();
     if (!fallback && (!own || canonical(own) !== canonical(url))) continue;
@@ -336,6 +339,14 @@ export function parseDetail({ html, url, config }) {
       }
       return record;
     });
+  }
+  if (config.tentativeMarker && selected.length) {
+    const marker = String(config.tentativeMarker).toLowerCase();
+    if (text($("body").text()).toLowerCase().includes(marker))
+      for (const record of selected)
+        record.warnings = [
+          ...new Set([...record.warnings, "source_marks_event_tentative"]),
+        ];
   }
   if (!selected.length)
     issues.push({ code: "detail_event_fields_unavailable" });

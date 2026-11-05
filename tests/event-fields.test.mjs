@@ -16,7 +16,16 @@ import { Journal } from "../src/storage/journal.mjs";
 import { work, optionsFor, parseApi } from "../src/worker.mjs";
 
 const configs = await registry(),
-  config = configs.find((c) => c.id === "url-002");
+  // These tests exercise the generic detail-enrichment path with the AllEvents
+  // profile; the production url-002 entry now collects city lists instead.
+  config = {
+    ...configs.find((c) => c.id === "url-002"),
+    entrypoints: undefined,
+    pagination: undefined,
+    enrichDetails: true,
+    discoverDetails: undefined,
+    maxDepth: 2,
+  };
 const fixture = (name) =>
   readFile(new URL(`fixtures/${name}.html`, import.meta.url), "utf8");
 const evidence = { url: config.url };

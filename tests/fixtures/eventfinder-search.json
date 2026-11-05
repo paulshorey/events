@@ -1,0 +1,153 @@
+{
+ "pagination": {
+  "page": 2,
+  "limit": 250,
+  "totalItems": 46591,
+  "totalPages": 187,
+  "hasNextPage": true,
+  "hasPreviousPage": true
+ },
+ "sort": {
+  "field": "StartDate",
+  "direction": "ASC"
+ },
+ "events": [
+  {
+   "eventId": 241158,
+   "title": "Nasuniverse on the Road: Chicago",
+   "startDate": "2026-11-05",
+   "endDate": "2026-11-05",
+   "type": "event",
+   "venue": {
+    "id": 53110,
+    "name": "Whitton Road, Twickenham TW2 7BA",
+    "streetAddress": null,
+    "formattedAddress": null,
+    "postalCode": null,
+    "latitude": null,
+    "longitude": null
+   },
+   "city": "Chicago",
+   "state": null,
+   "country": "United States",
+   "isVirtual": false,
+   "timeOfDay": null,
+   "primaryVibe": "NETWORKING",
+   "eventUrl": null,
+   "canonicalUrl": "/event/241158/nasuniverse-on-the-road-chicago",
+   "eventSources": [
+    "https://www.nasuni.com/about-us/events/"
+   ],
+   "entity": {
+    "id": 57579,
+    "name": "Nasuni Corporation",
+    "type": "Partner"
+   },
+   "registrationUrl": null,
+   "location": {
+    "id": 218,
+    "city": "Chicago",
+    "state": null,
+    "country": "United States",
+    "postalCode": null,
+    "formattedAddress": "Chicago, IL",
+    "latitude": 41.883229,
+    "longitude": -87.632398,
+    "geocodeStatus": "success",
+    "geocodedAt": "2026-05-01T02:35:25.590Z"
+   },
+   "coordinates": {
+    "latitude": 41.883229,
+    "longitude": -87.632398,
+    "source": "location"
+   }
+  },
+  {
+   "eventId": 240924,
+   "title": "Restorative Justice Distance Learning - District Attorney-Led Restorative Approaches to Domestic Violence",
+   "startDate": "2026-11-05",
+   "endDate": "2026-11-05",
+   "type": "webinar",
+   "venue": {
+    "id": 2232,
+    "name": "VIRTUAL",
+    "streetAddress": null,
+    "formattedAddress": null,
+    "postalCode": null,
+    "latitude": null,
+    "longitude": null
+   },
+   "city": null,
+   "state": null,
+   "country": null,
+   "isVirtual": true,
+   "timeOfDay": null,
+   "primaryVibe": "SEMINAR",
+   "eventUrl": null,
+   "canonicalUrl": "/event/240924/restorative-justice-distance-learning-district-attorney-led-restorative-approaches-to-domestic-violence",
+   "eventSources": [
+    "https://registrations.cdaa.org/CDAA/iCore/Events/Events_List.aspx"
+   ],
+   "entity": {
+    "id": 57618,
+    "name": "Difenda Inc.",
+    "type": "Partner"
+   },
+   "registrationUrl": null,
+   "location": null,
+   "coordinates": null
+  },
+  {
+   "eventId": 254324,
+   "title": "\"Green & Blue: Irish Americans in the Union Army,\" with Damian Shiels, PhD Sanders Lecture in Irish Studies",
+   "startDate": "2026-11-05T00:00:00",
+   "endDate": "2026-11-05T02:00:00",
+   "type": "event",
+   "venue": {
+    "id": 55123,
+    "name": "University Hall (Armstrong Campus)",
+    "streetAddress": null,
+    "formattedAddress": "Library Drive, Savannah, GA 31419",
+    "postalCode": null,
+    "latitude": 31.979067,
+    "longitude": -81.16171
+   },
+   "city": "Statesboro",
+   "state": "GA",
+   "country": "United States",
+   "isVirtual": false,
+   "timeOfDay": "MORNING",
+   "primaryVibe": "SEMINAR",
+   "eventUrl": null,
+   "canonicalUrl": "/event/254324/green-and-blue-irish-americans-in-the-union-army-with-damian-shiels-phd-sanders-lecture-in-irish-studies",
+   "eventSources": [
+    "https://calendar.georgiasouthern.edu/",
+    "https://calendar.georgiasouthern.edu/calendar/upcoming/3?order=date",
+    "https://calendar.georgiasouthern.edu/armstrong-campus"
+   ],
+   "entity": {
+    "id": 58895,
+    "name": "Georgia Southern University",
+    "type": "University"
+   },
+   "registrationUrl": null,
+   "location": {
+    "id": 5750,
+    "city": "Statesboro",
+    "state": "GA",
+    "country": "United States",
+    "postalCode": null,
+    "formattedAddress": "Statesboro, GA",
+    "latitude": 32.44877,
+    "longitude": -81.777753,
+    "geocodeStatus": "success",
+    "geocodedAt": "2026-09-16T09:30:01.393Z"
+   },
+   "coordinates": {
+    "latitude": 31.979067,
+    "longitude": -81.16171,
+    "source": "venue"
+   }
+  }
+ ]
+}

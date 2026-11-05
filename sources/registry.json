@@ -70,10 +70,40 @@
       "allevents.in",
       "all.events"
     ],
-    "maxDepth": 2,
+    "maxDepth": 0,
     "validationStatus": "needs-validation",
     "script": "scrapers/url-002.mjs",
-    "enrichDetails": true
+    "enrichDetails": false,
+    "entrypoints": [
+      "https://allevents.in/new-york/all",
+      "https://allevents.in/los-angeles/all",
+      "https://allevents.in/chicago/all",
+      "https://allevents.in/houston/all",
+      "https://allevents.in/london/all",
+      "https://allevents.in/toronto/all",
+      "https://allevents.in/san-francisco/all",
+      "https://allevents.in/miami/all",
+      "https://allevents.in/dallas/all",
+      "https://allevents.in/atlanta/all",
+      "https://allevents.in/boston/all",
+      "https://allevents.in/seattle/all",
+      "https://allevents.in/sydney/all",
+      "https://allevents.in/melbourne/all",
+      "https://allevents.in/mumbai/all",
+      "https://allevents.in/singapore/all",
+      "https://allevents.in/dubai/all",
+      "https://allevents.in/paris/all",
+      "https://allevents.in/berlin/all",
+      "https://allevents.in/las-vegas/all",
+      "https://allevents.in/philadelphia/all",
+      "https://allevents.in/denver/all"
+    ],
+    "discoverDetails": false,
+    "pagination": {
+      "mode": "page-query-links",
+      "parameter": "page",
+      "maxPages": 400
+    }
   },
   {
     "id": "url-003",
@@ -127,8 +157,8 @@
     "enabled": false,
     "adapterVersion": "framework-v1",
     "timeZone": "America/New_York",
-    "adapter": "discovery",
-    "coverage": "unverified",
+    "adapter": "eventfinder",
+    "coverage": "api-query",
     "detailPattern": "/events?/[^/?#]+|/calendar/[^/?#]+|/shows/|/festivals?/[^/?#]+",
     "cardSelectors": [
       ".event-card",
@@ -143,11 +173,16 @@
     "notes": "Inspect event containers, detail pages, identity, pagination, date scope, and any published feed; then implement a bounded adapter probe.",
     "role": "collection candidate",
     "allowedHosts": [
-      "eventfinder.site"
+      "eventfinder.site",
+      "www.eventfinder.site"
     ],
     "maxDepth": 2,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-004.mjs"
+    "script": "scrapers/url-004.mjs",
+    "apiFormat": "eventfinder",
+    "apiEndpoint": "https://www.eventfinder.site/api/getEvents",
+    "apiPageSize": 250,
+    "defaultTransport": "api"
   },
   {
     "id": "url-005",
@@ -164,7 +199,7 @@
     "enabled": false,
     "adapterVersion": "framework-v1",
     "timeZone": "America/New_York",
-    "adapter": "discovery",
+    "adapter": "microdata",
     "coverage": "unverified",
     "detailPattern": "/events?/[^/?#]+|/calendar/[^/?#]+|/shows/|/festivals?/[^/?#]+",
     "cardSelectors": [
@@ -182,9 +217,92 @@
     "allowedHosts": [
       "festivalnet.com"
     ],
-    "maxDepth": 2,
+    "maxDepth": 0,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-005.mjs"
+    "script": "scrapers/url-005.mjs",
+    "itemSelector": ".festiv-block[itemtype$=\"schema.org/Festival\"]",
+    "itemIdPattern": "^https?://[^/]+/(\\d+)/",
+    "entrypoints": [
+      "https://festivalnet.com/fairs-festivals/Alabama",
+      "https://festivalnet.com/fairs-festivals/Alaska",
+      "https://festivalnet.com/fairs-festivals/Arizona",
+      "https://festivalnet.com/fairs-festivals/Arkansas",
+      "https://festivalnet.com/fairs-festivals/Armed-Forces-Americas",
+      "https://festivalnet.com/fairs-festivals/Armed-Forces-Europe",
+      "https://festivalnet.com/fairs-festivals/Armed-Forces-Pacific",
+      "https://festivalnet.com/fairs-festivals/American-Samoa",
+      "https://festivalnet.com/fairs-festivals/California",
+      "https://festivalnet.com/fairs-festivals/Colorado",
+      "https://festivalnet.com/fairs-festivals/Connecticut",
+      "https://festivalnet.com/fairs-festivals/Delaware",
+      "https://festivalnet.com/fairs-festivals/Washington-DC",
+      "https://festivalnet.com/fairs-festivals/Florida",
+      "https://festivalnet.com/fairs-festivals/Georgia",
+      "https://festivalnet.com/fairs-festivals/Guam",
+      "https://festivalnet.com/fairs-festivals/Hawaii",
+      "https://festivalnet.com/fairs-festivals/Idaho",
+      "https://festivalnet.com/fairs-festivals/Illinois",
+      "https://festivalnet.com/fairs-festivals/Indiana",
+      "https://festivalnet.com/fairs-festivals/Iowa",
+      "https://festivalnet.com/fairs-festivals/Kansas",
+      "https://festivalnet.com/fairs-festivals/Kentucky",
+      "https://festivalnet.com/fairs-festivals/Louisiana",
+      "https://festivalnet.com/fairs-festivals/Maine",
+      "https://festivalnet.com/fairs-festivals/Maryland",
+      "https://festivalnet.com/fairs-festivals/Massachusetts",
+      "https://festivalnet.com/fairs-festivals/Michigan",
+      "https://festivalnet.com/fairs-festivals/Minnesota",
+      "https://festivalnet.com/fairs-festivals/Mississippi",
+      "https://festivalnet.com/fairs-festivals/Missouri",
+      "https://festivalnet.com/fairs-festivals/Montana",
+      "https://festivalnet.com/fairs-festivals/Nebraska",
+      "https://festivalnet.com/fairs-festivals/Nevada",
+      "https://festivalnet.com/fairs-festivals/New-Hampshire",
+      "https://festivalnet.com/fairs-festivals/New-Jersey",
+      "https://festivalnet.com/fairs-festivals/New-Mexico",
+      "https://festivalnet.com/fairs-festivals/New-York",
+      "https://festivalnet.com/fairs-festivals/North-Carolina",
+      "https://festivalnet.com/fairs-festivals/North-Dakota",
+      "https://festivalnet.com/fairs-festivals/Northern-Mariana-Islands",
+      "https://festivalnet.com/fairs-festivals/Ohio",
+      "https://festivalnet.com/fairs-festivals/Oklahoma",
+      "https://festivalnet.com/fairs-festivals/Oregon",
+      "https://festivalnet.com/fairs-festivals/Pennsylvania",
+      "https://festivalnet.com/fairs-festivals/Puerto-Rico",
+      "https://festivalnet.com/fairs-festivals/Rhode-Island",
+      "https://festivalnet.com/fairs-festivals/South-Carolina",
+      "https://festivalnet.com/fairs-festivals/South-Dakota",
+      "https://festivalnet.com/fairs-festivals/Tennessee",
+      "https://festivalnet.com/fairs-festivals/Texas",
+      "https://festivalnet.com/fairs-festivals/Utah",
+      "https://festivalnet.com/fairs-festivals/Vermont",
+      "https://festivalnet.com/fairs-festivals/Virgin-Islands",
+      "https://festivalnet.com/fairs-festivals/Virginia",
+      "https://festivalnet.com/fairs-festivals/Washington",
+      "https://festivalnet.com/fairs-festivals/West-Virginia",
+      "https://festivalnet.com/fairs-festivals/Wisconsin",
+      "https://festivalnet.com/fairs-festivals/Wyoming",
+      "https://festivalnet.com/fairs-festivals/Alberta",
+      "https://festivalnet.com/fairs-festivals/British-Columbia",
+      "https://festivalnet.com/fairs-festivals/Manitoba",
+      "https://festivalnet.com/fairs-festivals/New-Brunswick",
+      "https://festivalnet.com/fairs-festivals/Newfoundland-and-Labrador",
+      "https://festivalnet.com/fairs-festivals/Northwest-Territories",
+      "https://festivalnet.com/fairs-festivals/Nova-Scotia",
+      "https://festivalnet.com/fairs-festivals/Nunavut",
+      "https://festivalnet.com/fairs-festivals/Ontario",
+      "https://festivalnet.com/fairs-festivals/Prince-Edward-Island",
+      "https://festivalnet.com/fairs-festivals/Qu%C3%A9bec",
+      "https://festivalnet.com/fairs-festivals/Saskatchewan",
+      "https://festivalnet.com/fairs-festivals/Yukon-Territory"
+    ],
+    "discoverDetails": false,
+    "pagination": {
+      "mode": "festivalnet-list",
+      "listSelector": ".festiv-list",
+      "cardSelector": ".festiv-block[itemtype$=\"schema.org/Festival\"]",
+      "maxPages": 200
+    }
   },
   {
     "id": "url-006",
@@ -200,8 +318,7 @@
     "intervalHours": 168,
     "enabled": false,
     "adapterVersion": "framework-v1",
-    "timeZone": "America/New_York",
-    "adapter": "discovery",
+    "adapter": "geodirectory",
     "coverage": "discovery",
     "detailPattern": "/events?/[^/?#]+|/calendar/[^/?#]+|/shows/|/festivals?/[^/?#]+",
     "cardSelectors": [
@@ -221,7 +338,11 @@
     ],
     "maxDepth": 2,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-006.mjs"
+    "script": "scrapers/url-006.mjs",
+    "apiFormat": "geodirectory",
+    "apiEndpoint": "https://festivaltrekker.com/wp-json/geodir/v2/events",
+    "defaultTransport": "api",
+    "timeZone": "America/New_York"
   },
   {
     "id": "url-007",
@@ -259,7 +380,16 @@
     "maxDepth": 2,
     "validationStatus": "needs-validation",
     "script": "scrapers/url-007.mjs",
-    "enrichDetails": true
+    "enrichDetails": false,
+    "entrypoints": [
+      "https://festivalindex.com/en-us/explore"
+    ],
+    "discoverDetails": false,
+    "pagination": {
+      "mode": "festivalindex-explore",
+      "maxPages": 40,
+      "pageSize": 12
+    }
   },
   {
     "id": "url-008",
@@ -276,8 +406,8 @@
     "enabled": false,
     "adapterVersion": "framework-v1",
     "timeZone": "America/New_York",
-    "adapter": "discovery",
-    "coverage": "unverified",
+    "adapter": "countyfairgrounds",
+    "coverage": "api-query",
     "detailPattern": "/events?/[^/?#]+|/calendar/[^/?#]+|/shows/|/festivals?/[^/?#]+",
     "cardSelectors": [
       ".event-card",
@@ -294,9 +424,263 @@
     "allowedHosts": [
       "www.countyfairgrounds.net"
     ],
-    "maxDepth": 2,
+    "maxDepth": 0,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-008.mjs"
+    "script": "scrapers/url-008.mjs",
+    "apiFormat": "countyfairgrounds",
+    "entrypoints": [
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=AK&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=AL&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=AR&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=AZ&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=CA&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=CO&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=CT&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=DE&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=FL&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=GA&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=HI&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=IA&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=ID&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=IL&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=IN&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=KS&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=KY&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=LA&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=MA&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=MD&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=ME&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=MI&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=MN&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=MO&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=MS&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=MT&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=NC&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=ND&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=NE&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=NH&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=NJ&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=NM&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=NV&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=NY&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=OH&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=OK&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=OR&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=PA&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=RI&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=SC&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=SD&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=TN&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=TX&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=UT&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=VA&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=VT&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=WA&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=WI&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=WV&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=WY&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      }
+    ],
+    "discoverDetails": false
   },
   {
     "id": "url-009",
@@ -315,7 +699,7 @@
     "timeZone": "America/New_York",
     "adapter": "discovery",
     "coverage": "unverified",
-    "detailPattern": "/events/(?!all(?:[/?#]|$)|past(?:[/?#]|$)|undefined(?:[/?#]|$)|null(?:[/?#]|$))[^/?#]+",
+    "detailPattern": "^(?:https://meetmeatthefair\\.com)?/events/(?!(?:all|past|undefined|null|maine|vermont|new-hampshire|massachusetts|connecticut|rhode-island)(?:[/?#]|$))[^/?#]+/?$",
     "cardSelectors": [
       ".event-card",
       ".event-item",
@@ -331,9 +715,16 @@
     "allowedHosts": [
       "meetmeatthefair.com"
     ],
-    "maxDepth": 2,
+    "maxDepth": 1,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-009.mjs"
+    "script": "scrapers/url-009.mjs",
+    "detailEventUrlAlias": true,
+    "tentativeMarker": "This event has not yet been verified by our team",
+    "pagination": {
+      "mode": "itemlist-total",
+      "maxItems": 2000
+    },
+    "detailSeriesAsEvent": true
   },
   {
     "id": "url-010",

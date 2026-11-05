@@ -212,7 +212,7 @@ export function eventRecord(config, input, evidence) {
   record.fieldQuality = fieldQuality(record);
   return record;
 }
-export function jsonLdEvents(html) {
+export function jsonLdEvents(html, { series = false } = {}) {
   const $ = load(html),
     events = [],
     references = Object.create(null),
@@ -234,7 +234,12 @@ export function jsonLdEvents(html) {
         (type) =>
           /(?:^|\/)(?:[A-Za-z]*Event|Festival)$/.test(type) &&
           !["EventVenue", "EventSeries"].includes(type),
-      )
+      ) ||
+      // An EventSeries is an occurrence only when the publisher gives it its
+      // own start date (opt-in per source; nested superEvent stubs have none).
+      (series &&
+        types.some((type) => /(?:^|\/)EventSeries$/.test(type)) &&
+        obj.startDate)
     )
       events.push({ event: obj, path });
     for (const [key, v] of Object.entries(obj))

@@ -2,6 +2,9 @@ import { mkdir, writeFile, rename, readFile, readdir } from "node:fs/promises";
 import { resolve, join } from "node:path";
 import { createHash, randomUUID } from "node:crypto";
 import { parseDocument } from "./adapters/document.mjs";
+import { parseGeoDirectoryPage } from "./adapters/geodirectory.mjs";
+import { parseCountyfairgroundsState } from "./adapters/countyfairgrounds.mjs";
+import { parseEventfinderPage } from "./adapters/eventfinder.mjs";
 import { parseTribePage } from "../examples/parsers.mjs";
 import { validDate, eventRecord } from "./records.mjs";
 import { fieldSummary, matchDetailBindings } from "./event-fields.mjs";
@@ -64,7 +67,13 @@ export function optionsFor(config, options, build) {
     throw new Error("Unknown transport");
   return out;
 }
-export function parseApi(body, url, config, task) {
+export function parseApi(body, url, config, task, totals) {
+  if (config.apiFormat === "geodirectory")
+    return parseGeoDirectoryPage(body, url, config, totals);
+  if (config.apiFormat === "countyfairgrounds")
+    return parseCountyfairgroundsState(body, url, config);
+  if (config.apiFormat === "eventfinder")
+    return parseEventfinderPage(body, url, config, task);
   let data;
   try {
     data = JSON.parse(body);
@@ -184,7 +193,9 @@ export function evaluate(journal, run, stopReason) {
       transport: run.options.transport,
       basis:
         run.options.transport === "api"
-          ? "all pages of the recorded start_date query"
+          ? run.config.apiFormat === "geodirectory"
+            ? "all pages of the default GeoDirectory events query"
+            : "all pages of the recorded start_date query"
           : "declared listing interface",
       validation:
         "core listing fields; not a guarantee of all events on the publisher domain",
@@ -343,7 +354,7 @@ export async function work(
         };
         const parsed =
           task.kind === "api"
-            ? parseApi(input.body, input.url, config, task)
+            ? parseApi(input.body, input.url, config, task, input.apiTotals)
             : parseDocument({
                 html: input.body,
                 url: input.url,
