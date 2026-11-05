@@ -467,6 +467,10 @@ export class Transport {
           .waitForLoadState("networkidle", { timeout: 2500 })
           .catch(() => {});
       }
+      const interaction =
+        task.kind === "listing" && this.run.config.revealProbe
+          ? await revealProbe(page, this.run.config, snapshotHost(page))
+          : undefined;
       snapshot = await snapshotPage(page);
       if (this.run.options?.diagnostics) {
         diagnostics.url = redactUrl(snapshot.url);
@@ -499,6 +503,7 @@ export class Transport {
         url: snapshot.url,
         capture,
         status: response?.status() ?? (browserPaging ? 200 : 0),
+        ...(interaction ? { interaction } : {}),
       };
     } catch (error) {
       if (!capture && error.httpResponse) {
@@ -568,4 +573,79 @@ export function retryDelay(raw, now = Date.now()) {
   if (Number.isFinite(seconds)) return Math.max(1000, seconds * 1000);
   const date = Date.parse(raw);
   return Number.isFinite(date) ? Math.max(1000, date - now) : 60000;
+}
+
+const snapshotHost = (page) => {
+  try {
+    return new URL(page.url()).hostname;
+  } catch {
+    return null;
+  }
+};
+
+// Behavioural evidence for a "Load more" control: click it until it is gone
+// (bounded) and record every publisher-host request it causes plus item
+// counts. Static reading of page scripts cannot prove a handler makes no
+// request; observing the click can. Images/media/fonts stay blocked.
+export async function revealProbe(page, config, pageHost) {
+  const probe = config.revealProbe,
+    hosts = new Set([...(config.allowedHosts ?? []), pageHost].filter(Boolean)),
+    requests = [];
+  const onRequest = (request) => {
+    let host = null;
+    try {
+      host = new URL(request.url()).hostname;
+    } catch {}
+    if (
+      hosts.has(host) &&
+      !["image", "media", "font", "stylesheet"].includes(request.resourceType())
+    )
+      requests.push({
+        url: redactUrl(request.url()),
+        type: request.resourceType(),
+      });
+  };
+  const items = page.locator(probe.item),
+    control = page.locator(probe.control).first();
+  const visible = () =>
+    items.evaluateAll(
+      (els) =>
+        els.filter(
+          (e) =>
+            getComputedStyle(e).display !== "none" && e.getClientRects().length,
+        ).length,
+    );
+  const itemsBefore = await items.count(),
+    visibleBefore = await visible();
+  let clicks = 0,
+    error = null;
+  page.on("request", onRequest);
+  try {
+    while (
+      clicks < (probe.maxClicks ?? 20) &&
+      (await control.isVisible().catch(() => false))
+    ) {
+      await control.click({ timeout: 5000 });
+      clicks++;
+      await page.waitForTimeout(probe.settleMs ?? 800);
+    }
+    await page
+      .waitForLoadState("networkidle", { timeout: 2500 })
+      .catch(() => {});
+  } catch (e) {
+    error = e.message.slice(0, 200);
+  } finally {
+    page.off("request", onRequest);
+  }
+  return {
+    probe: "reveal",
+    clicks,
+    itemsBefore,
+    itemsAfter: await items.count(),
+    visibleBefore,
+    visibleAfter: await visible(),
+    controlVisibleAfter: await control.isVisible().catch(() => false),
+    requests,
+    error,
+  };
 }

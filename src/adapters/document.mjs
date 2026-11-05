@@ -62,6 +62,7 @@ export function parseDocument({
   url,
   config,
   task = { depth: 0, kind: "listing", meta: {} },
+  interaction,
 }) {
   if (task.kind === "detail") return parseDetail({ html, url, config });
   const $ = load(html),
@@ -78,7 +79,7 @@ export function parseDocument({
     method = "discovery-only";
     coverage = "discovery";
   } else if (inspectedAdapters.has(config.adapter)) {
-    const parsed = parseInspected({ html, url, config });
+    const parsed = parseInspected({ html, url, config, interaction });
     all.push(...parsed.records);
     issues.push(
       ...parsed.issues.filter(

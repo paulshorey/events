@@ -15,7 +15,8 @@ export const MIGRATIONS_DIR = fileURLToPath(
 // without an explicit resume. A resumed run is redelivered with a new digest.
 // Bump when a delivery adds data for unchanged runs, so receipts are re-earned.
 // 2: failed-page/run-error captures, validated evidence metadata, run options.
-export const DELIVERY_FORMAT = 2;
+// 3: retried-page error captures, refreshed page meta, meta/error in digest.
+export const DELIVERY_FORMAT = 3;
 export const TERMINAL = [
   "complete",
   "partial",
@@ -205,7 +206,14 @@ function readSnapshot(journal, runId) {
   const digest = hash({
     format: DELIVERY_FORMAT,
     run: [run.id, run.status, run.updated, run.result, run.error, run.revision],
-    pages: pages.map((p) => [p.id, p.state, p.content_hash, p.tries]),
+    pages: pages.map((p) => [
+      p.id,
+      p.state,
+      p.content_hash,
+      p.tries,
+      p.meta,
+      p.error,
+    ]),
     observations: observations.map((o) => [o.record_key, hash(o.payload)]),
     enrichments: enrichments.map((o) => [
       o.record_key,
@@ -291,11 +299,12 @@ export function collectEvidence(snap, { evidence = true } = {}) {
     seen = new Set(),
     evidenceStats = { objects: 0, withContent: 0, missing: 0, mismatched: 0 };
   const captures = [
-    ...snap.pages.map((p) =>
-      p.content_hash
-        ? { hash: p.content_hash, path: p.capture }
-        : captureOf(p.error),
-    ),
+    // A retried page can hold a successful capture and the failed
+    // attempt's capture; both are evidence.
+    ...snap.pages.flatMap((p) => [
+      p.content_hash ? { hash: p.content_hash, path: p.capture } : null,
+      captureOf(p.error),
+    ]),
     captureOf(snap.run.error),
   ].filter(Boolean);
   // Several pages can share content under different paths: use the first
@@ -341,7 +350,7 @@ export function collectEvidence(snap, { evidence = true } = {}) {
 // Only rows still lacking content are touched; identities never change.
 export async function backfillEvidence(client, snap, lacking) {
   const hashes = [
-    ...snap.pages.map((p) => p.content_hash ?? captureOf(p.error)?.hash),
+    ...snap.pages.flatMap((p) => [p.content_hash, captureOf(p.error)?.hash]),
     captureOf(snap.run.error)?.hash,
   ];
   if (!hashes.some((h) => h && lacking.has(h))) return 0;
@@ -520,12 +529,12 @@ export async function deliverSnapshot(
         p.tries,
         jsonText(p.meta) ?? "{}",
         p.content_hash,
-        p.content_hash ? null : (captureOf(p.error)?.hash ?? null),
+        captureOf(p.error)?.hash ?? null,
         p.fingerprint,
         jsonText(p.result),
         jsonText(p.error),
       ]),
-      `ON CONFLICT(run_id,page_id) DO UPDATE SET state=excluded.state,tries=excluded.tries,
+      `ON CONFLICT(run_id,page_id) DO UPDATE SET state=excluded.state,meta=excluded.meta,tries=excluded.tries,
         content_hash=excluded.content_hash,error_capture_hash=excluded.error_capture_hash,fingerprint=excluded.fingerprint,result=excluded.result,error=excluded.error`,
     );
     const obs = snap.observations.map((o) => {
@@ -660,6 +669,9 @@ export async function deliverSnapshot(
       duplicate: false,
       inserted,
       evidence: evidenceStats,
+      lackingContent: evidenceRows
+        .filter((row) => !row[3])
+        .map((row) => row[0]),
     };
   } catch (e) {
     await client.query("ROLLBACK").catch(() => {});

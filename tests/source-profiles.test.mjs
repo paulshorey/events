@@ -65,14 +65,38 @@ test("ISO timestamps retain their separate end date and invalid explicit ends ar
     null,
   );
 });
-test("San Diego single-page calendar is verified only under its client-reveal contract", async () => {
+test("San Diego single-page calendar is verified only with observed reveal behaviour", async () => {
   const c = configs.find((c) => c.id === "url-082"),
     html = await readFile(
       new URL("fixtures/san-diego-calendar.html", import.meta.url),
       "utf8",
     );
-  const parse = (h) =>
-    parseDocument({ html: h, url: c.url, config: { ...c, maxDepth: 0 } });
+  // What the browser probe records on the live page: clicking until the
+  // control disappears reveals every item and makes no publisher request.
+  const observed = (h, extra = {}) => {
+    const items =
+      (h.match(/class="item /g) ?? []).length +
+      (h.match(/class="item"/g) ?? []).length;
+    return {
+      probe: "reveal",
+      clicks: 1,
+      itemsBefore: items,
+      itemsAfter: items,
+      visibleBefore: Math.min(items, 10),
+      visibleAfter: items,
+      controlVisibleAfter: false,
+      requests: [],
+      error: null,
+      ...extra,
+    };
+  };
+  const parse = (h, interaction = observed(h)) =>
+    parseDocument({
+      html: h,
+      url: c.url,
+      config: { ...c, maxDepth: 0 },
+      interaction,
+    });
   const ok = parse(html);
   assert.equal(ok.records.length, 2);
   assert.equal(ok.coverage, "verified-list");
@@ -81,16 +105,39 @@ test("San Diego single-page calendar is verified only under its client-reveal co
   assert.deepEqual(ok.excluded, { privatePlaceholders: 1 });
   assert.equal(ok.nextRequests.length, 0);
   assert.ok(!ok.records.some((r) => /private/i.test(r.title)));
-  const unverified = (h) => {
-    const r = parse(h);
+  const unverified = (h, interaction) => {
+    const r = parse(h, interaction === undefined ? observed(h) : interaction);
     assert.notEqual(r.coverage, "verified-list");
     assert.equal(r.terminal, false);
     assert.ok(
       r.issues.some((i) => i.code === "single_page_contract_unverified"),
     );
   };
-  // The reveal script disappearing may mean rows are fetched on demand.
-  unverified(html.replace(/<script>[\s\S]*<\/script>/, ""));
+  // No browser observation (HTTP transport, old capture): never inferred.
+  unverified(html, null);
+  // Any publisher request during the clicks may have loaded more rows,
+  // whatever API or binding style the script used.
+  unverified(
+    html,
+    observed(html, {
+      requests: [
+        { url: "https://www.visitsandiego.com/calendar/more", type: "xhr" },
+      ],
+    }),
+  );
+  unverified(
+    html,
+    observed(html, {
+      requests: [
+        { url: "https://www.visitsandiego.com/more.js", type: "script" },
+      ],
+    }),
+  );
+  // Rows appeared, stayed hidden, or the control never went away.
+  unverified(html, observed(html, { itemsAfter: 4 }));
+  unverified(html, observed(html, { visibleAfter: 2 }));
+  unverified(html, observed(html, { controlVisibleAfter: true }));
+  unverified(html, observed(html, { error: "Timeout 5000ms exceeded" }));
   // Server pagination means one document is not the whole list.
   unverified(
     html.replace(
@@ -100,27 +147,6 @@ test("San Diego single-page calendar is verified only under its client-reveal co
   );
   // An unlinked row that is not a private placeholder is unexplained.
   unverified(html.replace("<span>Private</span>", "<span>Mystery</span>"));
-  // A handler that also requests rows may append beyond the server batch.
-  unverified(
-    html.replace(
-      "e.preventDefault();",
-      'e.preventDefault(); fetch("/calendar?start=11").then((r) => r.text());',
-    ),
-  );
-  // Script loading is a request too; the handler body is allowlisted.
-  unverified(
-    html.replace(
-      "e.preventDefault();",
-      'e.preventDefault(); jQuery.getScript("/calendar/more.js");',
-    ),
-  );
-  // A second, unscoped binding can also act on the calendar control.
-  unverified(
-    html.replace(
-      "</script>",
-      '\njQuery(".loadMore").on("click", function () { loadNextBatch(); });</script>',
-    ),
-  );
   // A linked row that fails to parse must not count toward the whole list.
   unverified(html.replace("<span>11/07/2026</span>", "<span>TBA</span>"));
   // A revealable item without an event row would be shown but not parsed.
@@ -136,6 +162,7 @@ test("San Diego single-page calendar is verified only under its client-reveal co
       html,
       url: c.url,
       config: { ...c, maxDepth: 0, listCompleteness: undefined },
+      interaction: observed(html),
     }).coverage,
     "unverified",
   );

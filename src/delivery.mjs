@@ -117,6 +117,25 @@ export async function deliver({
               receiptId: out.receiptId,
               counts: snap.counts,
             });
+            // Keep this invocation's view current: a later root holding the
+            // same run then takes the skip path and can backfill bytes this
+            // copy could not supply.
+            receipts.set(`${id}:${snap.digest}`, out.receiptId);
+            if (evidence) {
+              for (const h of out.lackingContent ?? []) lacking.add(h);
+              if (out.duplicate) {
+                for (const h of await evidenceLackingContent(await db()))
+                  lacking.add(h);
+                const filled = await backfillEvidence(
+                  await db(),
+                  snap,
+                  lacking,
+                );
+                if (filled)
+                  entry.evidenceBackfilled =
+                    (entry.evidenceBackfilled ?? 0) + filled;
+              }
+            }
             out.duplicate ? entry.duplicates++ : entry.delivered++;
             entry.runs.push({
               ...base,

@@ -343,12 +343,19 @@ export async function work(
         const parsed =
           task.kind === "api"
             ? parseApi(input.body, input.url, config, task)
-            : parseDocument({ html: input.body, url: input.url, config, task });
+            : parseDocument({
+                html: input.body,
+                url: input.url,
+                config,
+                task,
+                interaction: input.interaction,
+              });
         parsed.acquisition = {
           url: input.url,
           status: input.status,
           kind: task.kind,
           contentHash: input.capture.hash,
+          ...(input.interaction ? { interaction: input.interaction } : {}),
         };
         for (const r of parsed.records) {
           if (

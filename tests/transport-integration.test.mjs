@@ -692,3 +692,87 @@ for (const mode of ["fetch", "fetch-stalled", "navigation"]) {
     });
   }
 }
+
+// Real Chromium against a loopback server: the reveal probe observes what a
+// "Load more" click does instead of inferring it from script text.
+test("reveal probe distinguishes unhiding rows from loading rows", async (t) => {
+  const dir = await mkdtemp(join(tmpdir(), "events-reveal-"));
+  t.after(() => rm(dir, { recursive: true, force: true }));
+  const rows = Array.from(
+    { length: 25 },
+    (_, i) => `<div class="item" style="display:none">Row ${i}</div>`,
+  ).join("");
+  const page = (handler) => `<html><body><div class="calendar">${rows}
+    <a href="#" class="loadMore">Load more</a></div><script>
+    const hidden = () => [...document.querySelectorAll(".calendar .item")].filter((e) => e.style.display === "none");
+    hidden().slice(0, 10).forEach((e) => (e.style.display = "block"));
+    document.querySelector(".calendar .loadMore").addEventListener("click", (e) => {
+      e.preventDefault(); ${handler}
+      hidden().slice(0, 10).forEach((e) => (e.style.display = "block"));
+      if (!hidden().length) e.target.style.display = "none";
+    });</script></body></html>`;
+  let moreRequests = 0;
+  const server = createServer((req, res) => {
+    if (req.url === "/robots.txt") return res.end("User-agent: *\nAllow: /");
+    if (req.url === "/more") {
+      moreRequests++;
+      return res.end("[]");
+    }
+    res.setHeader("content-type", "text/html");
+    res.end(page(req.url === "/loads" ? 'fetch("/more");' : ""));
+  });
+  await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
+  t.after(() => new Promise((resolve) => server.close(resolve)));
+  const base = `http://127.0.0.1:${server.address().port}`;
+  const journal = new Journal(join(dir, "journal.sqlite"));
+  t.after(() => journal.close());
+  const transport = new Transport({
+    root: dir,
+    journal,
+    run: {
+      id: "reveal",
+      attemptId: "one",
+      source_key: "loopback",
+      config: {
+        url: `${base}/reveal`,
+        timeZone: "UTC",
+        minIntervalMs: 1,
+        allowedHosts: ["127.0.0.1"],
+        revealProbe: {
+          control: ".calendar .loadMore",
+          item: ".calendar .item",
+          maxClicks: 10,
+          settleMs: 50,
+        },
+      },
+    },
+  });
+  t.after(() => transport.close());
+  const revealed = await transport.fetch({
+    id: "a",
+    url: `${base}/reveal`,
+    kind: "listing",
+  });
+  assert.deepEqual(
+    { ...revealed.interaction, clicks: undefined },
+    {
+      probe: "reveal",
+      clicks: undefined,
+      itemsBefore: 25,
+      itemsAfter: 25,
+      visibleBefore: 10,
+      visibleAfter: 25,
+      controlVisibleAfter: false,
+      requests: [],
+      error: null,
+    },
+  );
+  assert.equal(revealed.interaction.clicks, 2);
+  const loading = await transport.fetch({
+    id: "b",
+    url: `${base}/loads`,
+    kind: "listing",
+  });
+  assert.ok(moreRequests >= 1);
+  assert.ok(loading.interaction.requests.some((r) => r.url.endsWith("/more")));
+});

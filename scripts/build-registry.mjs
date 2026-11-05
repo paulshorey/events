@@ -158,6 +158,12 @@ const overrides = {
     timeZone: "America/Los_Angeles",
     coverage: "verified-list",
     listCompleteness: "client-reveal",
+    revealProbe: {
+      control: ".calendar .loadMore",
+      item: ".calendar .item",
+      maxClicks: 20,
+      settleMs: 800,
+    },
   },
 };
 const sourceOverrides = {

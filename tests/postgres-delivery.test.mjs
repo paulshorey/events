@@ -665,3 +665,106 @@ test("a run resumed after listing is skipped as not terminal instead of torn", a
   // The read transaction is closed again after a refused snapshot.
   assert.equal(j.db.prepare("SELECT count(*) n FROM runs").get().n, 1);
 });
+
+test("a later root holding the same run backfills bytes the first copy lacked", async (t) => {
+  const url = await withDb(t);
+  if (!url) return;
+  const first = await journalRoot(t);
+  const second = await mkdtemp(join(tmpdir(), "events-delivery-copy-"));
+  t.after(() => rm(second, { recursive: true, force: true }));
+  await cp(first.root, second, { recursive: true });
+  // The copy's journal points at its own captures, as a real copy would.
+  const db = new DatabaseSync(join(second, "journal.sqlite"));
+  db.prepare("UPDATE pages SET capture=replace(capture,?,?)").run(
+    first.root,
+    second,
+  );
+  db.close();
+  await rm(join(first.root, "page-1.html"));
+  const report = await deliver({
+    url,
+    roots: [first.root, second],
+    applyMigrations: true,
+  });
+  assert.equal(report.journals[0].delivered, 1);
+  assert.equal(report.journals[1].skipped, 1);
+  assert.equal(report.journals[1].evidenceBackfilled, 1);
+  const c = await connect(url);
+  t.after(() => c.end());
+  assert.equal(
+    await count(
+      c,
+      "SELECT count(*) n FROM evidence_objects WHERE content_gzip IS NULL",
+    ),
+    0,
+  );
+});
+
+test("a retried page keeps both captures and resumed page metadata is refreshed", async (t) => {
+  const url = await withDb(t);
+  if (!url) return;
+  const root = await mkdtemp(join(tmpdir(), "events-delivery-"));
+  t.after(() => rm(root, { recursive: true, force: true }));
+  const j = new Journal(join(root, "journal.sqlite"));
+  j.register([config]);
+  const q = j.enqueue(config.id, { asOf: "2026-11-04" });
+  const r = j.claim("test", 60000, q.runId);
+  let page = j.nextPage(q.runId, r.token);
+  const failedBody = "<html>503</html>",
+    failedPath = join(root, "failed.html");
+  await writeFile(failedPath, failedBody);
+  const failed = { path: failedPath, hash: sha(failedBody), kind: "html" };
+  j.pageError(
+    r.id,
+    r.token,
+    page.id,
+    { code: "transport_error", capture: failed },
+    true,
+    failed,
+  );
+  page = j.nextPage(q.runId, r.token);
+  const okBody = "<html>ok</html>",
+    okPath = join(root, "ok.html");
+  await writeFile(okPath, okBody);
+  j.commitPage(
+    r.id,
+    r.token,
+    page,
+    { records: [record("a")], nextRequests: [], issues: [], terminal: true },
+    { path: okPath, hash: sha(okBody) },
+  );
+  j.finish(r.id, r.token, "partial", {});
+  j.close();
+  await deliver({ url, roots: [root], applyMigrations: true });
+  const c = await connect(url);
+  t.after(() => c.end());
+  const row = (
+    await c.query("SELECT content_hash, error_capture_hash FROM run_pages")
+  ).rows[0];
+  assert.deepEqual(row, {
+    content_hash: sha(okBody),
+    error_capture_hash: failed.hash,
+  });
+  assert.equal(
+    await count(
+      c,
+      "SELECT count(*) n FROM evidence_objects WHERE content_gzip IS NOT NULL",
+    ),
+    2,
+  );
+  // A resume that binds more records to an existing page changes its meta.
+  const live = new DatabaseSync(join(root, "journal.sqlite"));
+  live
+    .prepare(
+      "UPDATE pages SET meta=json_set(meta,'$.enrichRecordIds',json('[\"a\",\"z\"]'))",
+    )
+    .run();
+  live.prepare("UPDATE runs SET updated=updated+1000").run();
+  live.close();
+  await deliver({ url, roots: [root] });
+  assert.deepEqual(
+    (await c.query("SELECT meta->'enrichRecordIds' ids FROM run_pages")).rows[0]
+      .ids,
+    ["a", "z"],
+  );
+});
