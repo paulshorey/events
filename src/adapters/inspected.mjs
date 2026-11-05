@@ -12,25 +12,72 @@ export const inspectedAdapters = new Set([
 ]);
 // Any navigation-like control other than the probed reveal control: the probe
 // never exercises it, so its presence means the document may not be the list.
-function otherPagingControls($) {
+// Allowlist inside the list (the one container holding every item may contain
+// only event-detail links); page-wide, any control that looks like paging by
+// class, rel, label, visible text or a non-event /calendar URL counts.
+const EVENT_PATH = /^\/calendar\/\d+-[^/?#]+$/;
+const PAGING_TEXT =
+  /^(next|next page|older|newer|previous|prev|more|more events|show more|view more|see more|load more|[›»>]+|\d{1,3})$/i;
+function otherPagingControls($, url) {
   const token =
     /^(pagination|pager|paging|next|nav-next|page-next|load-?more|show-?more|view-?more|infinite)/i;
-  return $("body *")
+  const containers = new Set(
+    $(".calendar .item")
+      .map((_, e) => e.parent)
+      .get(),
+  );
+  const listControls =
+    containers.size !== 1
+      ? [null]
+      : $([...containers][0])
+          .find(
+            "a, button, form, input, select, textarea, [role=button], [onclick]",
+          )
+          .filter(
+            (_, e) =>
+              !$(e).is(".calendar .loadMore") &&
+              !EVENT_PATH.test($(e).attr("href") ?? ""),
+          )
+          .toArray();
+  const pathOf = (value) => {
+    try {
+      return new URL(value, url).pathname.replace(/\/+$/, "") || "/";
+    } catch {
+      return null;
+    }
+  };
+  const pageControls = $("body *")
     .filter((_, e) => {
       const el = $(e);
       if (el.is(".calendar .loadMore")) return false;
       if ((el.attr("rel") ?? "").split(/\s+/).includes("next")) return true;
       if (/\b(next|more)\b/i.test(el.attr("aria-label") ?? "")) return true;
-      if (
-        el.is("a, form") &&
-        /[?&](page|start|limitstart|offset)=/i.test(
-          el.attr("href") ?? el.attr("action") ?? "",
+      const target = el.is("a")
+        ? el.attr("href")
+        : el.is("form")
+          ? el.attr("action")
+          : null;
+      if (target != null) {
+        if (/[?&](page|start|limitstart|offset)=/i.test(target)) return true;
+        const path = pathOf(target);
+        if (
+          path?.startsWith("/calendar") &&
+          path !== "/calendar" &&
+          !EVENT_PATH.test(path)
         )
+          return true;
+      }
+      if (
+        el.is(
+          "a, button, [role=button], input[type=submit], input[type=button]",
+        ) &&
+        PAGING_TEXT.test(text(el.text() || el.attr("value") || "") ?? "")
       )
         return true;
       return (el.attr("class") ?? "").split(/\s+/).some((c) => token.test(c));
     })
     .toArray();
+  return [...listControls, ...pageControls];
 }
 
 export function parseInspected({ html, url, config, interaction }) {
@@ -170,7 +217,10 @@ export function parseInspected({ html, url, config, interaction }) {
       // Unnamed "Private" bookings have no public identity or page; they are
       // counted, not invented as events.
       if (!a.length) {
-        if (values[0] === "Private") privateRows++;
+        // A placeholder carries no event identity; a linked "Private" row
+        // would be a public event that must not be excluded.
+        const linked = c.find("a[href]").length > 0;
+        if (values[0] === "Private" && !linked) privateRows++;
         else unclassified++;
         return;
       }
@@ -222,7 +272,7 @@ export function parseInspected({ html, url, config, interaction }) {
         interaction.itemsBefore === items &&
         interaction.itemsAfter === items &&
         interaction.visibleAfter === items;
-      const paged = otherPagingControls($).length;
+      const paged = otherPagingControls($, url).length;
       if (
         reveal &&
         !paged &&

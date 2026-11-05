@@ -163,6 +163,30 @@ test("San Diego single-page calendar is verified only with observed reveal behav
       'Load more</a><a aria-label="Next page" href="#">›</a>',
     ),
   );
+  // Paging identified only by visible text or a calendar URL.
+  unverified(
+    html.replace("Load more</a>", "Load more</a><button>Next</button>"),
+  );
+  unverified(
+    html.replace(
+      "Load more</a>",
+      'Load more</a><a href="/calendar/page/2">Older</a>',
+    ),
+  );
+  // Any other control inside the list container is outside the allowlist.
+  unverified(
+    html.replace(
+      '<a href="#" class="sppb-btn loadMore">',
+      '<select name="month"><option>December</option></select><a href="#" class="sppb-btn loadMore">',
+    ),
+  );
+  // A "Private" row carrying a public event link is not a placeholder.
+  unverified(
+    html.replace(
+      "<span>Private</span>",
+      '<span>Private</span><a href="/calendar/2209999-hidden-event">details</a>',
+    ),
+  );
   // A row carrying a second distinct event link would drop that event.
   unverified(
     html.replace(
