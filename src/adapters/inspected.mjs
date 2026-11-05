@@ -1,6 +1,7 @@
 // Additional contracts derived from captured publisher HTML, not guessed from platform names.
 import { load } from "cheerio";
 import { dates, eventRecord, text } from "../records.mjs";
+import { parseVisitSeattle } from "./regional.mjs";
 export const inspectedAdapters = new Set([
   "nyc-tourism",
   "opencities",
@@ -9,6 +10,7 @@ export const inspectedAdapters = new Set([
   "trade-table",
   "chicago-parks",
   "discover-la",
+  "visitseattle",
 ]);
 // Any navigation-like control other than the probed reveal control: the probe
 // never exercises it, so its presence means the document may not be the list.
@@ -93,7 +95,9 @@ function otherPagingControls($, url) {
   return [...listControls, ...pageControls];
 }
 
-export function parseInspected({ html, url, config, interaction }) {
+export function parseInspected({ html, url, config, interaction, task }) {
+  if (config.adapter === "visitseattle")
+    return parseVisitSeattle({ html, url, config, task });
   const $ = load(html),
     records = [],
     issues = [],

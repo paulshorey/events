@@ -184,6 +184,83 @@ const sourceOverrides = {
   "url-019": { coverage: "verified-list" },
   "url-020": { coverage: "verified-list", apiEndpoint: null },
   "url-084": { coverage: "historical-view" },
+  // Seattle, Dallas and Miami (inspected November 5, 2026). Keep in step with
+  // sources/registry.json; see adapters/regional.mjs for the parsers.
+  "url-058": {
+    adapter: "visitseattle",
+    discoverDetails: false,
+    coverage: "unverified",
+    minIntervalMs: 2000,
+  },
+  "url-059": {
+    adapter: "visitseattle",
+    discoverDetails: false,
+    coverage: "unverified",
+    minIntervalMs: 2000,
+    entrypoints: ["https://visitseattle.org/?s=&frm=events"],
+  },
+  "url-060": {
+    adapter: "visitseattle",
+    discoverDetails: false,
+    coverage: "unverified",
+    minIntervalMs: 2000,
+    entrypoints: [
+      "https://visitseattle.org/?s=&frm=events&event_begin=&event_end=&event_type%5B%5D=festivals-special-events&partner_parent_cat=",
+    ],
+  },
+  "url-086": {
+    adapter: "visitseattle",
+    discoverDetails: false,
+    coverage: "unverified",
+    minIntervalMs: 2000,
+    entrypoints: [
+      "https://visitseattle.org/?s=&frm=events&event_type=festivals-special-events",
+    ],
+  },
+  "url-070": {
+    entrypoints: [
+      {
+        url: "https://www.visitdallas.com/sitemaps-1-event-default-1-sitemap.xml",
+        kind: "api",
+        depth: 0,
+      },
+    ],
+    apiMode: "sitemap",
+    detailPattern: "^/events/[^/]+/?$",
+    discoverDetails: false,
+    coverage: "unverified",
+    minIntervalMs: 1500,
+    detailTransport: "http",
+  },
+  "url-072": {
+    entrypoints: [
+      {
+        url: "https://dallascityhall.com/calendar/_api/Web/Lists/GetByTitle('City%20Calendar')/items?$filter=EventDate%20ge%20datetime'{asOf}T00:00:00'&$orderby=EventDate&$top=1000",
+        kind: "api",
+        depth: 0,
+      },
+    ],
+    apiMode: "sharepoint-calendar",
+    apiHeaders: { Accept: "application/json;odata=nometadata" },
+    discoverDetails: false,
+    coverage: "api-query",
+  },
+  "url-056": {
+    entrypoints: [
+      {
+        url: "https://www.miamiandbeaches.com/sitemap.xml",
+        kind: "api",
+        depth: 0,
+      },
+    ],
+    apiMode: "sitemap",
+    detailPattern: "^/event/[^/]+/\\d+$",
+    discoverDetails: false,
+    coverage: "unverified",
+    minIntervalMs: 1000,
+    enrichDetails: false,
+    detailTransport: "http",
+  },
 };
 const timeZones = {
   "Las Vegas": "America/Los_Angeles",

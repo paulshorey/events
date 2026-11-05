@@ -170,13 +170,15 @@ export class Journal {
       });
       this._addPage(runId, { url: url.href, kind: "api", depth: 0 });
     } else
-      for (const seed of c.config.entrypoints ?? [c.config.url])
-        this._addPage(
-          runId,
+      for (const seed of c.config.entrypoints ?? [c.config.url]) {
+        const page =
           typeof seed === "string"
             ? { url: seed, kind: "listing", depth: 0 }
-            : seed,
-        );
+            : { ...seed };
+        // An entrypoint may template the run's as-of date (YYYY-MM-DD).
+        page.url = page.url.replaceAll("{asOf}", options.asOf);
+        this._addPage(runId, page);
+      }
     this.action(runId, "enqueued", { id, options, slot });
     return { runId, created: true };
   }

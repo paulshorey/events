@@ -6,6 +6,10 @@ import { parseTribePage } from "../examples/parsers.mjs";
 import { validDate, eventRecord } from "./records.mjs";
 import { fieldSummary, matchDetailBindings } from "./event-fields.mjs";
 import { assessQuality } from "./quality.mjs";
+import {
+  parseSharePointCalendar,
+  parseSitemapEntries,
+} from "./adapters/regional.mjs";
 import { Transport, sleep } from "./runtime/transport.mjs";
 import { LeaseLost } from "./storage/journal.mjs";
 
@@ -65,6 +69,9 @@ export function optionsFor(config, options, build) {
   return out;
 }
 export function parseApi(body, url, config, task) {
+  if (config.apiMode === "sitemap") return parseSitemapEntries({ body, url, config });
+  if (config.apiMode === "sharepoint-calendar")
+    return parseSharePointCalendar({ body, url, config });
   let data;
   try {
     data = JSON.parse(body);
