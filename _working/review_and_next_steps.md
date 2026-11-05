@@ -35,7 +35,10 @@ These changes pass offline/controlled tests. They do not revalidate historical l
 
 ## Remaining work, in order
 
-### 1. Implement the development storage boundary
+### 1. Implement the development storage boundary — done in dev, November 4, 2026
+
+Implemented as `db/migrations/001_source_observations.sql`, `src/storage/postgres.mjs`, the per-journal outbox and `npm run db:deliver`; acceptance results are in [`database_delivery_results.md`](database_delivery_results.md). The original plan follows.
+
 
 Create forward-only development migrations for source/collection identity, extraction runs, evidence metadata, append-only source observations and import receipts. Keep canonical events/occurrences and city/category dictionaries separate from extracted claims. The proposed table responsibilities and time/location rules are in `database_handoff.md`.
 
