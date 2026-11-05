@@ -15,7 +15,6 @@ const { values } = parseArgs({
     "migrate-only": { type: "boolean", default: false },
     "dry-run": { type: "boolean", default: false },
     "no-evidence": { type: "boolean", default: false },
-    "no-verify": { type: "boolean", default: false },
     quiet: { type: "boolean", default: false },
   },
 });
@@ -56,7 +55,6 @@ try {
     runIds: values.run ?? null,
     dryRun: values["dry-run"],
     evidence: !values["no-evidence"],
-    verify: !values["no-verify"],
     applyMigrations: values.migrate,
     log,
   });

@@ -8,7 +8,7 @@ import {
   migrate,
   snapshotRun,
   deliverSnapshot,
-  verifyRun,
+  backfillEvidence,
   originFor,
 } from "./storage/postgres.mjs";
 
@@ -23,7 +23,6 @@ export async function deliver({
   runIds = null,
   dryRun = false,
   evidence = true,
-  verify = true,
   applyMigrations = false,
   log = () => {},
 }) {
@@ -43,6 +42,9 @@ export async function deliver({
     // recreation at the same address, runs whose receipts are gone are
     // delivered again even though the local outbox recorded them.
     receipts = await remoteReceipts(await db());
+    const lacking = evidence
+      ? await evidenceLackingContent(await db())
+      : new Set();
     for (const root of roots) {
       const path = join(root, "journal.sqlite"),
         label = relative(PROJECT, root) || root,
@@ -70,7 +72,14 @@ export async function deliver({
           .all(...TERMINAL)
           .filter((r) => !runIds || runIds.includes(r.id));
         for (const { id } of rows) {
-          const snap = snapshotRun(journal, id);
+          let snap;
+          try {
+            snap = snapshotRun(journal, id);
+          } catch (e) {
+            if (e.code !== "not_terminal") throw e;
+            entry.notTerminal = (entry.notTerminal ?? 0) + 1; // resumed meanwhile
+            continue;
+          }
           const base = {
             runId: id,
             collection: snap.run.collection_id,
@@ -85,6 +94,12 @@ export async function deliver({
                 counts: snap.counts,
               });
             entry.skipped++;
+            if (lacking.size && !dryRun) {
+              const filled = await backfillEvidence(await db(), snap, lacking);
+              if (filled)
+                entry.evidenceBackfilled =
+                  (entry.evidenceBackfilled ?? 0) + filled;
+            }
             continue;
           }
           if (outbox.delivered(target, id, snap.digest))
@@ -98,12 +113,6 @@ export async function deliver({
               origin: originFor(label),
               evidence,
             });
-            const check = verify ? await verifyRun(await db(), snap) : null;
-            if (check && !check.matches)
-              throw Object.assign(
-                new Error("post-delivery verification mismatch"),
-                { detail: check },
-              );
             outbox.record(target, id, snap.digest, {
               receiptId: out.receiptId,
               counts: snap.counts,
@@ -143,6 +152,21 @@ export async function deliver({
     await client?.end().catch(() => {});
   }
   return report;
+}
+
+async function evidenceLackingContent(client) {
+  try {
+    return new Set(
+      (
+        await client.query(
+          "SELECT content_hash FROM evidence_objects WHERE content_gzip IS NULL",
+        )
+      ).rows.map((r) => r.content_hash),
+    );
+  } catch (e) {
+    if (e.code === "42P01") return new Set();
+    throw e;
+  }
 }
 
 async function remoteReceipts(client) {

@@ -10,6 +10,56 @@ export const inspectedAdapters = new Set([
   "chicago-parks",
   "discover-la",
 ]);
+// An allowlist, not a denylist: the inspected handler only prevents the link
+// default, slides down hidden `.calendar .item` rows and hides the control.
+// Any other statement (a request, script load or custom loader) or any other
+// click binding that selects the calendar control fails the contract.
+const REVEAL_BODY =
+  /^e\.preventDefault\(\);(?:jQuery|\$)\("\.calendar\.item:hidden"\)\.slice\(0,\d+\)\.slideDown\(\);(?:if\((?:jQuery|\$)\("\.calendar\.item:hidden"\)\.length===?0\)\{(?:jQuery|\$)\("\.calendar\.loadMore"\)\.fadeOut\("[a-z]*"\);?\})?$/;
+const stripComments = (code) =>
+  code.replace(/\/\*[\s\S]*?\*\//g, "").replace(/(^|[^:"'])\/\/[^\n]*/g, "$1");
+function revealOnly($) {
+  const scripts = $("script:not([src])")
+    .map((_, e) => stripComments($(e).text()))
+    .get();
+  let bodies = 0;
+  for (const code of scripts) {
+    const binding =
+      /(?:jQuery|\$)\(\s*["']([^"']+)["']\s*\)\s*\.(?:on|click|bind|one|delegate)\(/g;
+    let m;
+    while ((m = binding.exec(code))) {
+      const selector = m[1];
+      let hits;
+      try {
+        hits = $(selector).filter(".calendar .loadMore").length;
+      } catch {
+        return false; // unparseable selector: cannot rule it out
+      }
+      if (!hits) continue;
+      if (selector.trim() !== ".calendar .loadMore") return false;
+      const head = code
+        .slice(m.index)
+        .match(
+          /^[^{]*?\.on\(\s*["']click["']\s*,\s*function\s*\(\s*e\s*\)\s*\{/,
+        );
+      if (!head) return false;
+      let depth = 1,
+        i = m.index + head[0].length;
+      const start = i;
+      for (; i < code.length && depth; i++)
+        if (code[i] === "{") depth++;
+        else if (code[i] === "}") depth--;
+      if (depth) return false;
+      const body = code
+        .slice(start, i - 1)
+        .replace(/'/g, '"')
+        .replace(/\s+/g, "");
+      if (!REVEAL_BODY.test(body)) return false;
+      bodies++;
+    }
+  }
+  return bodies === 1;
+}
 export function parseInspected({ html, url, config }) {
   const $ = load(html),
     records = [],
@@ -176,20 +226,7 @@ export function parseInspected({ html, url, config }) {
     // parsed or a private placeholder, the inline script that binds the control
     // only unhides rows and makes no request, and no server pagination exists.
     if (config.listCompleteness === "client-reveal") {
-      const handlers = $("script")
-        .map((_, e) => $(e).text())
-        .get()
-        .filter((t) => /\.calendar \.loadMore/.test(t));
-      const reveal =
-        $(".calendar .loadMore").length &&
-        handlers.length > 0 &&
-        handlers.every(
-          (t) =>
-            /\.calendar \.item:hidden/.test(t) &&
-            !/\b(fetch|ajax|XMLHttpRequest|getJSON|axios|sendBeacon|EventSource|WebSocket)\b|\$\.(get|post)\b|jQuery\.(get|post)\b|\.load\(/.test(
-              t,
-            ),
-        );
+      const reveal = $(".calendar .loadMore").length && revealOnly($);
       const paged = $('a[rel="next"], .pagination a, a[href*="page="]').length;
       if (
         reveal &&

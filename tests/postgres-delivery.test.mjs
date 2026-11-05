@@ -412,6 +412,15 @@ test("connection policy uses only DB_EVENTS_URL and TLS by default", () => {
     () => clientConfig("postgres://u:p@db.example.net:5432/db?sslmode=disable"),
     /loopback/,
   );
+  for (const mode of ["verify-ca", "prefer", "allow"])
+    assert.throws(
+      () => clientConfig(`postgres://u:p@h:1/db?sslmode=${mode}`),
+      /Unsupported sslmode/,
+    );
+  assert.deepEqual(
+    clientConfig("postgres://u:p@h:1/db?sslmode=verify-full").ssl,
+    { rejectUnauthorized: true },
+  );
   assert.ok(
     !clientConfig(
       "postgres://u:p@h:1/db?sslmode=require",
@@ -601,4 +610,58 @@ test("a delivery that fails verification commits nothing and stays pending", asy
     assert.equal(await count(c, `SELECT count(*) n FROM ${table}`), 0, table);
   const report = await deliver({ url, roots: [root] });
   assert.equal(report.journals[0].delivered, 1);
+});
+
+test("metadata-only deliveries are backfilled with bytes; unreadable captures do not block delivery", async (t) => {
+  const url = await withDb(t);
+  if (!url) return;
+  const { root } = await journalRoot(t);
+  await deliver({ url, roots: [root], applyMigrations: true, evidence: false });
+  const c = await connect(url);
+  t.after(() => c.end());
+  assert.equal(
+    await count(
+      c,
+      "SELECT count(*) n FROM evidence_objects WHERE content_gzip IS NULL",
+    ),
+    3,
+  );
+  const later = await deliver({ url, roots: [root] });
+  assert.equal(later.journals[0].skipped, 1);
+  assert.equal(later.journals[0].evidenceBackfilled, 3);
+  assert.equal(
+    await count(
+      c,
+      "SELECT count(*) n FROM evidence_objects WHERE content_gzip IS NULL",
+    ),
+    0,
+  );
+  assert.equal(await count(c, "SELECT count(*) n FROM import_receipts"), 1);
+
+  // A capture path that became a directory is treated as unavailable.
+  const other = await journalRoot(t);
+  await rm(join(other.root, "page-1.html"));
+  await mkdir(join(other.root, "page-1.html"));
+  const report = await deliver({ url, roots: [other.root] });
+  assert.equal(report.journals[0].delivered, 1);
+  assert.equal(report.journals[0].runs[0].evidence.missing, 1);
+});
+
+test("a run resumed after listing is skipped as not terminal instead of torn", async (t) => {
+  const url = await withDb(t);
+  if (!url) return;
+  const { root, runId } = await journalRoot(t);
+  const db = new DatabaseSync(join(root, "journal.sqlite"));
+  db.prepare("UPDATE runs SET status='queued' WHERE id=?").run(runId);
+  db.close();
+  const j = new Journal(join(root, "journal.sqlite"), Date.now, {
+    readOnly: true,
+  });
+  t.after(() => j.close());
+  assert.throws(
+    () => snapshotRun(j, runId),
+    (e) => e.code === "not_terminal",
+  );
+  // The read transaction is closed again after a refused snapshot.
+  assert.equal(j.db.prepare("SELECT count(*) n FROM runs").get().n, 1);
 });

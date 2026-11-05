@@ -107,6 +107,20 @@ test("San Diego single-page calendar is verified only under its client-reveal co
       'e.preventDefault(); fetch("/calendar?start=11").then((r) => r.text());',
     ),
   );
+  // Script loading is a request too; the handler body is allowlisted.
+  unverified(
+    html.replace(
+      "e.preventDefault();",
+      'e.preventDefault(); jQuery.getScript("/calendar/more.js");',
+    ),
+  );
+  // A second, unscoped binding can also act on the calendar control.
+  unverified(
+    html.replace(
+      "</script>",
+      '\njQuery(".loadMore").on("click", function () { loadNextBatch(); });</script>',
+    ),
+  );
   // A linked row that fails to parse must not count toward the whole list.
   unverified(html.replace("<span>11/07/2026</span>", "<span>TBA</span>"));
   // A revealable item without an event row would be shown but not parsed.

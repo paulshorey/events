@@ -44,6 +44,10 @@ const LOOPBACK = new Set(["127.0.0.1", "localhost", "[::1]", "::1"]);
 export function clientConfig(connectionString) {
   const url = new URL(connectionString);
   const mode = url.searchParams.get("sslmode") ?? "require";
+  // verify-ca (CA check without hostname check) has no equivalent here;
+  // refuse it and other modes rather than silently weakening them.
+  if (!["require", "verify-full", "disable"].includes(mode))
+    throw new Error(`Unsupported sslmode=${mode}; use require or verify-full`);
   if (mode === "disable" && !LOOPBACK.has(url.hostname))
     throw new Error(
       "sslmode=disable is only allowed for loopback test databases",
@@ -146,12 +150,26 @@ const text = (v) => (typeof v === "string" && v.trim() ? v : null);
 
 // Read everything a terminal run needs from a (possibly legacy, read-only)
 // journal. The digest covers the exact rows so a resumed run gets a new receipt.
+// One SQLite read transaction: a run resumed while delivery reads it cannot
+// produce a torn snapshot (new rows under an old status), and terminality is
+// checked inside the same snapshot.
 export function snapshotRun(journal, runId) {
+  journal.db.exec("BEGIN");
+  try {
+    return readSnapshot(journal, runId);
+  } finally {
+    journal.db.exec("COMMIT");
+  }
+}
+function readSnapshot(journal, runId) {
   const db = journal.db;
   const run = db.prepare("SELECT * FROM runs WHERE id=?").get(runId);
   if (!run) throw new Error(`Unknown run ${runId}`);
   if (!TERMINAL.includes(run.status))
-    throw new Error(`Run ${runId} is ${run.status}, not terminal`);
+    throw Object.assign(
+      new Error(`Run ${runId} is ${run.status}, not terminal`),
+      { code: "not_terminal" },
+    );
   const pages = db
     .prepare("SELECT * FROM pages WHERE run_id=? ORDER BY id")
     .all(runId);
@@ -255,6 +273,94 @@ async function assertSamePayloads(client, table, keyCols, rows, runId) {
         new Error(`${table} payload conflict for run ${runId}`),
         { code: "payload_conflict" },
       );
+}
+
+// Capture identity from a page/run error (the journal stores failed-page
+// captures there rather than in pages.content_hash).
+const captureOf = (value) => {
+  const c = json(jsonText(value))?.capture;
+  return c && /^[0-9a-f]{64}$/.test(c.hash ?? "") ? c : null;
+};
+
+export function collectEvidence(snap, { evidence = true } = {}) {
+  // Evidence: one row per distinct capture hash, from successful pages and
+  // from failed pages/run errors (journal keeps those in error.capture).
+  // Size, path and bytes are recorded only when the local file still hashes
+  // to the recorded identity; otherwise only the identity is kept.
+  const evidenceRows = [],
+    seen = new Set(),
+    evidenceStats = { objects: 0, withContent: 0, missing: 0, mismatched: 0 };
+  const captures = [
+    ...snap.pages.map((p) =>
+      p.content_hash
+        ? { hash: p.content_hash, path: p.capture }
+        : captureOf(p.error),
+    ),
+    captureOf(snap.run.error),
+  ].filter(Boolean);
+  // Several pages can share content under different paths: use the first
+  // path whose bytes still match, and count a hash as missing/mismatched
+  // only when no candidate validates.
+  const candidates = new Map();
+  for (const c of captures) {
+    if (!candidates.has(c.hash)) candidates.set(c.hash, []);
+    if (c.path) candidates.get(c.hash).push(c.path);
+  }
+  for (const [hashValue, paths] of candidates) {
+    if (seen.has(hashValue)) continue;
+    seen.add(hashValue);
+    let size = null,
+      path = null,
+      content = null,
+      mismatch = false;
+    for (const candidate of new Set(paths)) {
+      let body;
+      try {
+        body = readFileSync(candidate); // missing, unreadable or a directory
+      } catch {
+        continue;
+      }
+      if (createHash("sha256").update(body).digest("hex") === hashValue) {
+        size = body.length;
+        path = candidate;
+        if (evidence) content = gzipSync(body);
+        break;
+      }
+      mismatch = true;
+    }
+    if (!path) mismatch ? evidenceStats.mismatched++ : evidenceStats.missing++;
+    if (content) evidenceStats.withContent++;
+    evidenceStats.objects++;
+    evidenceRows.push([hashValue, size, path, content]);
+  }
+  return { rows: evidenceRows, stats: evidenceStats };
+}
+
+// Fill evidence bytes that an earlier delivery could not store (metadata-only
+// mode or a temporarily unavailable file) from local captures that validate.
+// Only rows still lacking content are touched; identities never change.
+export async function backfillEvidence(client, snap, lacking) {
+  const hashes = [
+    ...snap.pages.map((p) => p.content_hash ?? captureOf(p.error)?.hash),
+    captureOf(snap.run.error)?.hash,
+  ];
+  if (!hashes.some((h) => h && lacking.has(h))) return 0;
+  const wanted = collectEvidence(snap).rows.filter(
+    ([hashValue, , , content]) => content && lacking.has(hashValue),
+  );
+  let filled = 0;
+  for (const [hashValue, size, path, content] of wanted) {
+    const res = await client.query(
+      `UPDATE evidence_objects SET content_gzip=$2, byte_size=coalesce(byte_size,$3),
+         local_path=coalesce(local_path,$4) WHERE content_hash=$1 AND content_gzip IS NULL`,
+      [hashValue, content, size, path],
+    );
+    if (res.rowCount) {
+      filled++;
+      lacking.delete(hashValue);
+    }
+  }
+  return filled;
 }
 
 // Deliver one run snapshot in a single transaction. Idempotent: replaying the
@@ -374,57 +480,9 @@ export async function deliverSnapshot(
       ]),
       "ON CONFLICT(id) DO UPDATE SET finished_at=excluded.finished_at,outcome=excluded.outcome,error=excluded.error",
     );
-    // Evidence: one row per distinct capture hash, from successful pages and
-    // from failed pages/run errors (journal keeps those in error.capture).
-    // Size, path and bytes are recorded only when the local file still hashes
-    // to the recorded identity; otherwise only the identity is kept.
-    const evidenceRows = [],
-      seen = new Set(),
-      evidenceStats = { objects: 0, withContent: 0, missing: 0, mismatched: 0 };
-    const captureOf = (value) => {
-      const c = json(jsonText(value))?.capture;
-      return c && /^[0-9a-f]{64}$/.test(c.hash ?? "") ? c : null;
-    };
-    const captures = [
-      ...snap.pages.map((p) =>
-        p.content_hash
-          ? { hash: p.content_hash, path: p.capture }
-          : captureOf(p.error),
-      ),
-      captureOf(run.error),
-    ].filter(Boolean);
-    // Several pages can share content under different paths: use the first
-    // path whose bytes still match, and count a hash as missing/mismatched
-    // only when no candidate validates.
-    const candidates = new Map();
-    for (const c of captures) {
-      if (!candidates.has(c.hash)) candidates.set(c.hash, []);
-      if (c.path) candidates.get(c.hash).push(c.path);
-    }
-    for (const [hashValue, paths] of candidates) {
-      if (seen.has(hashValue)) continue;
-      seen.add(hashValue);
-      let size = null,
-        path = null,
-        content = null,
-        mismatch = false;
-      for (const candidate of new Set(paths)) {
-        if (!existsSync(candidate)) continue;
-        const body = readFileSync(candidate);
-        if (createHash("sha256").update(body).digest("hex") === hashValue) {
-          size = body.length;
-          path = candidate;
-          if (evidence) content = gzipSync(body);
-          break;
-        }
-        mismatch = true;
-      }
-      if (!path)
-        mismatch ? evidenceStats.mismatched++ : evidenceStats.missing++;
-      if (content) evidenceStats.withContent++;
-      evidenceStats.objects++;
-      evidenceRows.push([hashValue, size, path, content]);
-    }
+    const { rows: evidenceRows, stats: evidenceStats } = collectEvidence(snap, {
+      evidence,
+    });
     await insertRows(
       client,
       "evidence_objects",
