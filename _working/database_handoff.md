@@ -1,4 +1,6 @@
-# Database handoff — provisioned, event schema and importer pending
+# Database handoff — source-observation delivery implemented in dev
+
+**November 4, 2026:** the evidence and source-observation layers below are implemented in `db/migrations/001_source_observations.sql` and delivered by `npm run db:deliver` (see README and [`database_delivery_results.md`](database_delivery_results.md)). The `sources`, `collections`, `extraction_runs`, `source_observations` and `evidence_objects` rows of the table below exist; canonical events, claims, dictionaries and normalization jobs remain proposed. Production has no schema.
 
 The crawler framework currently uses a local SQLite operational journal and JSONL exports. Separate Railway PostgreSQL 18 services now exist in dev and production, with independent persistent volumes and credentials. Both passed read-only SQL connections over TLS on October 17, 2026, and had zero public application tables. A database URL is still not needed to run or improve a scraper.
 

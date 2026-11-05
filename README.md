@@ -2,11 +2,11 @@
 
 A deterministic Node.js CLI framework for collecting event observations from the supplied websites. Each of the **97 supplied URLs** has a runnable Playwright entry point and a registry record. They share browser operations, parsers, validation, persistence, and repair handling. Many sources still need source-specific development; having an entry point does not mean a complete crawler has been validated.
 
-No model calls occur during extraction. AI agents or engineers improve the code using captured evidence and regression tests. The local SQLite journal remains operational storage. Separate Railway PostgreSQL databases now exist for dev and production; event tables and the importer have not been implemented. Railway hosts passive dev and production services, with all collection schedules disabled. See [.railway/README.md](.railway/README.md) for infrastructure operations and [_working/review_and_next_steps.md](_working/review_and_next_steps.md) for the review and next milestones.
+No model calls occur during extraction. AI agents or engineers improve the code using captured evidence and regression tests. The local SQLite journal remains operational storage. Terminal runs are delivered to the dev Railway PostgreSQL database as append-only source observations with their evidence (see [Deliver observations to PostgreSQL](#deliver-observations-to-postgresql)); production has no schema yet. Canonical events and normalization are not implemented. Railway hosts passive dev and production services, with all collection schedules disabled. See [.railway/README.md](.railway/README.md) for infrastructure operations and [_working/review_and_next_steps.md](_working/review_and_next_steps.md) for the review and next milestones.
 
 ## Hosting
 
-GitHub repository: [paulshorey/events](https://github.com/paulshorey/events). Railway project: [Events](https://railway.com/project/a0315029-9b64-41a0-9c83-e4367366947d). Pushes to `main` deploy dev; pushes to `prod` deploy production after CI passes. The deployment host exposes `/api/health`, checks Chromium/SQLite/registry readiness, and runs no collection schedule. Each environment has a project-specific `DB_EVENTS_URL` reference to its own PostgreSQL service’s `DATABASE_PUBLIC_URL`. The application does not yet use that connection or have durable cloud job storage.
+GitHub repository: [paulshorey/events](https://github.com/paulshorey/events). Railway project: [Events](https://railway.com/project/a0315029-9b64-41a0-9c83-e4367366947d). Pushes to `main` deploy dev; pushes to `prod` deploy production after CI passes. The deployment host exposes `/api/health`, checks Chromium/SQLite/registry readiness, and runs no collection schedule. Each environment has a project-specific `DB_EVENTS_URL` reference to its own PostgreSQL service’s `DATABASE_PUBLIC_URL`. The hosted service does not use that connection yet; delivery runs from the machine that holds the journal. There is no durable cloud job storage.
 
 Run `npm start` locally to inspect the passive host on port 4500. Set `PORT` to override it. `.railway/project.json` owns target IDs and branch mapping; `.railway/railway.ts` owns applied configuration. Changes to IaC require a separate reviewed plan/apply.
 
@@ -20,6 +20,20 @@ npm run db:check
 ```
 
 This explicitly selects the active `DB_EVENTS_URL` from `.env.local`, overriding any inherited value, and executes read-only SQL, reporting the PostgreSQL major version, TLS state and public application-table count. Missing or invalid local credentials fail rather than falling back to a global URL. Direct `node scripts/check-database.mjs` is the separate environment-based check for explicitly selected operational targets. Neither mode prints the connection URL, runs migrations, or uploads events. See [_working/database_handoff.md](_working/database_handoff.md) for the ingestion boundary and remaining schema work.
+
+## Deliver observations to PostgreSQL
+
+```sh
+npm run db:migrate                     # forward-only migrations in db/migrations
+npm run db:deliver -- --dry-run        # list terminal runs without a receipt
+npm run db:deliver -- --root .artifacts/framework --root .artifacts/source-validation/my-candidate
+```
+
+`db:deliver` reads each journal read-only and delivers every terminal run (`complete`, `partial`, `repair_needed`, `blocked_access`, `cancelled`, `failed`) that the target has no receipt for. One transaction per run writes the frozen configuration revision, run/attempt metadata, page outcomes, append-only observations, detail enrichments, same-day expansions, evidence objects and an import receipt keyed by the run-state digest. Counts are verified against the journal inside that transaction, before the receipt, so a receipt always means a verified delivery. Each run is read from the journal in one SQLite read transaction. Captures from successful pages, failed pages and run errors are stored gzip-compressed in `evidence_objects`; size, path and bytes are kept only when the local file still matches its recorded SHA-256. `sslmode=disable` is refused except for loopback test databases. `--no-evidence` stores metadata only; a later delivery without it backfills missing bytes from captures that still validate.
+
+Local delivery state is a separate `delivery.sqlite` beside each journal; delivery never writes the crawler journal. Receipts in the database are authoritative: a run is skipped only when the target holds its receipt, so a database restored from an older backup is refilled even though local outboxes recorded the runs. A crash after the database commit replays as a duplicate of the same receipt; a resumed run gets a new digest and appends its new rows; a database outage changes nothing locally and the run stays pending. A delivered observation key whose payload later differs is rejected as `payload_conflict`, never overwritten. Collection does not wait on or call delivery.
+
+Views: `run_records` applies the same expansion/enrichment projection as `Journal.records()`; `current_complete_runs` and `current_source_records` select the latest complete (enumeration and quality gates passed) run per collection, so a later partial or failed run never replaces it. These are source observations, not deduplicated canonical events. The npm scripts use `.env.local`; direct `node scripts/deliver.mjs` reads `DB_EVENTS_URL` from the environment. Tests use a disposable `initdb` cluster (or `EVENTS_TEST_PG_URL` in CI), never `DB_EVENTS_URL`. Current contents are recorded in [_working/database_delivery_results.md](_working/database_delivery_results.md).
 
 ## Start here
 

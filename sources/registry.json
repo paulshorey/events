@@ -2969,7 +2969,16 @@
     "adapterVersion": "framework-v1",
     "timeZone": "America/Los_Angeles",
     "adapter": "san-diego",
-    "coverage": "unverified",
+    "coverage": "verified-list",
+    "listCompleteness": "client-reveal",
+    "revealProbe": {
+      "control": ".calendar .loadMore",
+      "item": ".calendar .item",
+      "maxClicks": 20,
+      "settleMs": 800,
+      "quietMs": 2500,
+      "ignoreHosts": ["api.userway.org", "cdn.userway.org"]
+    },
     "detailPattern": "/event/|/calendar/[^/?]+",
     "cardSelectors": [
       ".event",

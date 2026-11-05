@@ -57,7 +57,13 @@ export async function replayPage(journal, runId, pageId, config) {
   const result =
     page.kind === "api"
       ? parseApi(body, url, config, page)
-      : parseDocument({ html: body, url, config, task: page });
+      : parseDocument({
+          html: body,
+          url,
+          config,
+          task: page,
+          interaction: page.result?.acquisition?.interaction,
+        });
   const $ = page.kind === "api" ? null : load(body);
   const selectors = [
     ...new Set(

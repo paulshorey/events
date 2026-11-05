@@ -692,3 +692,187 @@ for (const mode of ["fetch", "fetch-stalled", "navigation"]) {
     });
   }
 }
+
+// Real Chromium against a loopback server: the reveal probe observes what a
+// "Load more" click does instead of inferring it from script text.
+test("reveal probe distinguishes unhiding rows from loading rows", async (t) => {
+  const dir = await mkdtemp(join(tmpdir(), "events-reveal-"));
+  t.after(() => rm(dir, { recursive: true, force: true }));
+  const rows = Array.from(
+    { length: 25 },
+    (_, i) => `<div class="item" style="display:none">Row ${i}</div>`,
+  ).join("");
+  const page = (handler) => `<html><body><div class="calendar">${rows}
+    <a href="#" class="loadMore">Load more</a></div><script>
+    const hidden = () => [...document.querySelectorAll(".calendar .item")].filter((e) => e.style.display === "none");
+    hidden().slice(0, 10).forEach((e) => (e.style.display = "block"));
+    document.querySelector(".calendar .loadMore").addEventListener("click", (e) => {
+      e.preventDefault(); ${handler}
+      hidden().slice(0, 10).forEach((e) => (e.style.display = "block"));
+      if (!hidden().length) e.target.style.display = "none";
+    });</script></body></html>`;
+  let moreRequests = 0,
+    staticHits = 0,
+    popupHits = 0;
+  const server = createServer((req, res) => {
+    if (req.url === "/robots.txt") return res.end("User-agent: *\nAllow: /");
+    if (req.url === "/popup-target") {
+      popupHits++;
+      return res.end("<html></html>");
+    }
+    if (req.url === "/x.css") {
+      staticHits++;
+      return res.end("");
+    }
+    if (req.url === "/more") {
+      moreRequests++;
+      return res.end("[]");
+    }
+    res.setHeader("content-type", "text/html");
+    const handlers = {
+      "/loads": 'fetch("/more");',
+      // Cross-origin from the page's point of view (different hostname).
+      "/elsewhere": `fetch("http://localhost:${server.address().port}/more");`,
+      "/later": 'setTimeout(() => fetch("/more"), 300);',
+      "/widget": `fetch("http://localhost:${server.address().port}/widget");`,
+      "/socket": `new WebSocket("ws://127.0.0.1:${server.address().port}/ws");`,
+      "/static":
+        'const l = document.createElement("link"); l.rel = "stylesheet"; l.href = "/x.css"; document.head.appendChild(l);',
+      "/popup": 'window.open("/popup-target");',
+      "/blankpopup": `const w = window.open("about:blank"); new w.WebSocket("ws://127.0.0.1:${server.address().port}/ws");`,
+      "/scrolls":
+        'document.body.style.height = "5000px"; window.addEventListener("scroll", () => fetch("/more"), { once: true });',
+      "/rewrite":
+        'document.querySelector(".calendar .item").textContent = "Replaced";',
+      "/vishidden":
+        'document.querySelector(".calendar .item").style.visibility = "hidden";',
+    };
+    res.end(page(handlers[req.url] ?? ""));
+  });
+  await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
+  t.after(() => new Promise((resolve) => server.close(resolve)));
+  const base = `http://127.0.0.1:${server.address().port}`;
+  const journal = new Journal(join(dir, "journal.sqlite"));
+  t.after(() => journal.close());
+  const transport = new Transport({
+    root: dir,
+    journal,
+    run: {
+      id: "reveal",
+      attemptId: "one",
+      source_key: "loopback",
+      config: {
+        url: `${base}/reveal`,
+        timeZone: "UTC",
+        minIntervalMs: 1,
+        allowedHosts: ["127.0.0.1"],
+        revealProbe: {
+          control: ".calendar .loadMore",
+          item: ".calendar .item",
+          maxClicks: 10,
+          settleMs: 50,
+          quietMs: 1000,
+        },
+      },
+    },
+  });
+  t.after(() => transport.close());
+  const revealed = await transport.fetch({
+    id: "a",
+    url: `${base}/reveal`,
+    kind: "listing",
+  });
+  assert.deepEqual(
+    { ...revealed.interaction, clicks: undefined },
+    {
+      probe: "reveal",
+      controls: 1,
+      clicks: undefined,
+      itemsBefore: 25,
+      itemsAfter: 25,
+      itemsUnchanged: true,
+      visibleBefore: 10,
+      visibleAfter: 25,
+      controlVisibleBefore: true,
+      controlVisibleAfter: false,
+      requests: [],
+      ignoredRequests: 0,
+      staticBlocked: 0,
+      error: null,
+    },
+  );
+  assert.equal(revealed.interaction.clicks, 2);
+  // The probe's unremovable WebSocket route dies with its context; later
+  // tasks get a fresh one.
+  assert.equal(transport.context, null);
+  const loading = await transport.fetch({
+    id: "b",
+    url: `${base}/loads`,
+    kind: "listing",
+  });
+  // The click's request is recorded but aborted before it reaches the server.
+  assert.ok(loading.interaction.requests.some((r) => r.url.endsWith("/more")));
+  assert.equal(moreRequests, 0);
+  // Third-party and delayed requests are recorded too.
+  for (const path of [
+    "/elsewhere",
+    "/later",
+    "/socket",
+    "/popup",
+    "/scrolls",
+    "/blankpopup",
+  ]) {
+    const r = await transport.fetch({
+      id: path.slice(1),
+      url: `${base}${path}`,
+      kind: "listing",
+    });
+    assert.ok(
+      r.interaction.requests.some((q) =>
+        path === "/blankpopup"
+          ? q.type === "popup"
+          : path === "/socket"
+            ? q.type === "websocket"
+            : path === "/popup"
+              ? q.url.endsWith("/popup-target")
+              : q.url.endsWith("/more"),
+      ),
+      path,
+    );
+  }
+  assert.equal(moreRequests, 0);
+  assert.equal(popupHits, 0, "popup document never transmitted");
+  // Static resources a click loads are aborted too, without failing.
+  const stat = await transport.fetch({
+    id: "static",
+    url: `${base}/static`,
+    kind: "listing",
+  });
+  assert.equal(staticHits, 0);
+  assert.ok(stat.interaction.staticBlocked >= 1);
+  assert.deepEqual(stat.interaction.requests, []);
+  // A handler that rewrites a row is caught even though counts hold.
+  const rewritten = await transport.fetch({
+    id: "rw",
+    url: `${base}/rewrite`,
+    kind: "listing",
+  });
+  assert.equal(rewritten.interaction.itemsUnchanged, false);
+  assert.equal(rewritten.interaction.itemsAfter, 25);
+  // visibility:hidden rows are not visible, whatever their display.
+  const hiddenRow = await transport.fetch({
+    id: "vis",
+    url: `${base}/vishidden`,
+    kind: "listing",
+  });
+  assert.equal(hiddenRow.interaction.visibleAfter, 24);
+  // Reviewed unrelated hosts are aborted and counted, not recorded.
+  transport.run.config.revealProbe.ignoreHosts = ["localhost"];
+  const widget = await transport.fetch({
+    id: "w",
+    url: `${base}/widget`,
+    kind: "listing",
+  });
+  assert.deepEqual(widget.interaction.requests, []);
+  assert.ok(widget.interaction.ignoredRequests >= 1);
+});

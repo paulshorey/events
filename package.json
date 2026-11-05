@@ -21,13 +21,16 @@
     "railway:plan": "railway config plan --file .railway/railway.ts",
     "railway:apply": "railway config apply --file .railway/railway.ts",
     "hosting:verify": "node scripts/verify-hosting.mjs",
-    "db:check": "node scripts/check-database.mjs --local"
+    "db:check": "node scripts/check-database.mjs --local",
+    "db:migrate": "node scripts/deliver.mjs --local --migrate-only",
+    "db:deliver": "node scripts/deliver.mjs --local --migrate"
   },
   "engines": {
     "node": ">=24"
   },
   "dependencies": {
     "cheerio": "1.2.0",
+    "pg": "8.23.1",
     "playwright": "1.64.1"
   },
   "devDependencies": {

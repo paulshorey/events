@@ -106,8 +106,8 @@ export class Transport {
     }));
   }
   async initBrowser() {
-    if (!this.browser) {
-      this.browser = await chromium.launch({ headless: true });
+    this.browser ??= await chromium.launch({ headless: true });
+    if (!this.context) {
       this.context = await this.browser.newContext({
         timezoneId: this.run.config.timeZone,
         serviceWorkers: "block",
@@ -467,7 +467,19 @@ export class Transport {
           .waitForLoadState("networkidle", { timeout: 2500 })
           .catch(() => {});
       }
-      snapshot = await snapshotPage(page);
+      const reveal =
+        task.kind === "listing" && this.run.config.revealProbe && !browserPaging
+          ? await revealProbe(page, this.run.config)
+          : null;
+      // The probe leaves a context-level WebSocket route that cannot be
+      // removed; this task's context is replaced afterwards.
+      if (reveal) this.retireContext = true;
+      let interaction;
+      try {
+        snapshot = await snapshotPage(page);
+      } finally {
+        interaction = await reveal?.release();
+      }
       if (this.run.options?.diagnostics) {
         diagnostics.url = redactUrl(snapshot.url);
         diagnostics.status = response?.status() ?? 0;
@@ -499,6 +511,7 @@ export class Transport {
         url: snapshot.url,
         capture,
         status: response?.status() ?? (browserPaging ? 200 : 0),
+        ...(interaction ? { interaction } : {}),
       };
     } catch (error) {
       if (!capture && error.httpResponse) {
@@ -555,6 +568,12 @@ export class Transport {
           .catch(() => {});
       }
       if (!browserPaging) await page.close().catch(() => {});
+      if (this.retireContext) {
+        this.retireContext = false;
+        await this.context?.close().catch(() => {});
+        this.context = null;
+        this.listingPage = null;
+      }
     }
   }
   async close() {
@@ -568,4 +587,139 @@ export function retryDelay(raw, now = Date.now()) {
   if (Number.isFinite(seconds)) return Math.max(1000, seconds * 1000);
   const date = Date.parse(raw);
   return Number.isFinite(date) ? Math.max(1000, date - now) : 60000;
+}
+
+// Behavioural evidence for a "Load more" control: click it until it is gone
+// (bounded) and record every dynamic request it causes plus item counts.
+// Static reading of page scripts cannot prove a handler makes no request;
+// observing the click can. Nothing leaves the browser while the guard is on:
+// every non-static request is aborted before transmission, so robots, pacing
+// and budgets are never bypassed. Requests to `ignoreHosts` (reviewed,
+// unrelated widgets) are aborted and counted; any other request, publisher or
+// third-party, is recorded and fails the contract. The guard stays installed
+// through a quiet period and the caller's snapshot; `release()` removes it
+// and returns the final observation.
+export async function revealProbe(page, config) {
+  const probe = config.revealProbe,
+    ignore = new Set(probe.ignoreHosts ?? []),
+    requests = [];
+  let ignored = 0,
+    staticBlocked = 0;
+  const guard = (route) => {
+    const request = route.request(),
+      type = request.resourceType();
+    // Static resources are aborted too (nothing leaves the browser), but a
+    // lazy-loaded image or stylesheet is not evidence of more rows.
+    if (["image", "media", "font", "stylesheet"].includes(type)) {
+      staticBlocked++;
+      return route.abort("blockedbyclient");
+    }
+    let host = null;
+    try {
+      host = new URL(request.url()).hostname;
+    } catch {}
+    if (ignore.has(host)) ignored++;
+    else requests.push({ url: redactUrl(request.url()), host, type });
+    return route.abort("blockedbyclient");
+  };
+  const items = page.locator(probe.item),
+    control = page.locator(probe.control).first();
+  const visible = () =>
+    items.evaluateAll(
+      (els) =>
+        els.filter((e) =>
+          // The browser's own rule: display, visibility (inherited) and
+          // opacity, plus a rendered box.
+          e.checkVisibility({
+            visibilityProperty: true,
+            opacityProperty: true,
+          }),
+        ).length,
+    );
+  // Item identities (first link plus text), compared after the probe: a
+  // handler that rewrites or replaces rows changes them even if counts hold.
+  const signatures = () =>
+    items.evaluateAll((els) =>
+      els.map(
+        (e) =>
+          `${e.querySelector("a[href]")?.getAttribute("href") ?? ""}|${(e.textContent ?? "").replace(/\s+/g, " ").trim()}`,
+      ),
+    );
+  const before = await signatures();
+  const itemsBefore = await items.count(),
+    controls = await page.locator(probe.control).count(),
+    visibleBefore = await visible(),
+    controlVisibleBefore = await control.isVisible().catch(() => false);
+  let clicks = 0,
+    error = null;
+  // Context-level so a popup's first document request is guarded as well
+  // (a page route would not see it). Registered last, it runs first.
+  const context = page.context();
+  await context.route("**/*", guard);
+  // WebSockets bypass page.route. Without connectToServer() the socket never
+  // reaches the network; it is recorded (failing the contract) and closed.
+  // The probe page is closed after the task, so this route is not removed.
+  // Context-level, so sockets from popups are covered too. Playwright has no
+  // WebSocket unroute; the route stays for this run's context, where sockets
+  // are not part of collection.
+  const onPopup = (popup) => {
+    requests.push({ url: redactUrl(popup.url()), host: null, type: "popup" });
+    popup.close().catch(() => {});
+  };
+  context.on("page", onPopup);
+  await context.routeWebSocket(/.*/, (ws) => {
+    let host = null;
+    try {
+      host = new URL(ws.url()).hostname;
+    } catch {}
+    if (ignore.has(host)) ignored++;
+    else requests.push({ url: redactUrl(ws.url()), host, type: "websocket" });
+    ws.close();
+  });
+  try {
+    while (
+      clicks < (probe.maxClicks ?? 20) &&
+      (await control.isVisible().catch(() => false))
+    ) {
+      await control.click({ timeout: 5000 });
+      clicks++;
+      await page.waitForTimeout(probe.settleMs ?? 800);
+    }
+    // Scroll-triggered loading (e.g. IntersectionObserver) is exercised
+    // under the same guard.
+    for (let i = 0; i < (probe.scrolls ?? 3); i++) {
+      await page.evaluate(() =>
+        window.scrollTo(0, document.documentElement.scrollHeight),
+      );
+      await page.waitForTimeout(probe.settleMs ?? 800);
+    }
+    // Delayed handlers get a bounded window while still guarded.
+    await page.waitForTimeout(probe.quietMs ?? 2500);
+  } catch (e) {
+    error = e.message.slice(0, 200);
+  }
+  return {
+    async release() {
+      const observed = {
+        probe: "reveal",
+        controls,
+        clicks,
+        itemsBefore,
+        itemsAfter: await items.count(),
+        itemsUnchanged:
+          JSON.stringify(await signatures()) === JSON.stringify(before),
+        visibleBefore,
+        visibleAfter: await visible(),
+        controlVisibleBefore,
+        controlVisibleAfter: await control.isVisible().catch(() => false),
+        requests: [...requests],
+        ignoredRequests: ignored,
+        staticBlocked,
+        error,
+      };
+      context.off("page", onPopup);
+      await context.unroute("**/*", guard).catch(() => {});
+      return observed;
+    },
+  };
 }
