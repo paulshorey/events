@@ -355,3 +355,56 @@ export function parseSharePointCalendar({ body, url, config }) {
       "Items with EventDate on or after the as-of date; recurring list items are not expanded and the list holds only entries its editors published",
   };
 }
+
+// Visit Dallas (Simpleview) Event JSON-LD, inspected November 5, 2026, repeats the
+// event title as the venue name and street address, and writes a date-only claim
+// as a 00:00:00 to 23:59:59 span. Neither is a venue or a clock time, so the span
+// becomes an all-day date claim and the venue comes from the page's own visible
+// address block, or is withheld when that block is absent or ambiguous.
+export function refineSimpleviewEvent($, event) {
+  const refined = { ...event };
+  const day = (value) => String(value ?? "").slice(0, 10);
+  if (
+    /^\d{4}-\d\d-\d\dT00:00:00(?:Z|[+-]\d\d:\d\d)?$/.test(event.startDate ?? "") &&
+    /^\d{4}-\d\d-\d\dT23:59:59(?:Z|[+-]\d\d:\d\d)?$/.test(event.endDate ?? "")
+  ) {
+    refined.startDate = day(event.startDate);
+    refined.endDate = day(event.endDate);
+    refined.allDay = true;
+  }
+  const loc = event.location;
+  const title = text(event.name).toLowerCase();
+  const echoes = (value) =>
+    typeof value === "string" && text(value).toLowerCase() === title;
+  if (
+    loc &&
+    typeof loc === "object" &&
+    (echoes(loc.name) ||
+      echoes(loc.address) ||
+      echoes(loc.address?.streetAddress))
+  ) {
+    const blocks = $(".detail__address");
+    if (blocks.length === 1) {
+      const venue = text(blocks.find(".location").first().text());
+      const spans = blocks
+        .find("span:not(.location)")
+        .map((_, e) => text($(e).text()))
+        .get()
+        .filter(Boolean);
+      const cityLine = spans
+        .at(-1)
+        ?.match(/^(.*?),\s*([A-Z]{2})\s+(\d{5}(?:-\d{4})?)$/);
+      refined.location = {
+        "@type": "Place",
+        name: venue && !echoes(venue) ? venue : undefined,
+        address: {
+          streetAddress: cityLine && spans.length > 1 ? spans[0] : undefined,
+          addressLocality: cityLine?.[1],
+          addressRegion: cityLine?.[2],
+          postalCode: cityLine?.[3],
+        },
+      };
+    } else refined.location = undefined;
+  }
+  return refined;
+}

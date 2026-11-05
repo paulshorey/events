@@ -249,3 +249,47 @@ test("regional source entrypoints are templated and bound to their adapters", ()
   assert.equal(config("url-070").apiMode, "sitemap");
   assert.equal(config("url-056").apiMode, "sitemap");
 });
+
+test("Visit Dallas detail: echoed venue and midnight span are not recorded as a venue or clock times", async () => {
+  const c = config("url-070");
+  const html = await fixture("visitdallas-detail.html");
+  const r = parseDocument({
+    html,
+    url: "https://www.visitdallas.com/events/diy-con/",
+    config: c,
+    task: { depth: 1, kind: "detail", meta: {} },
+  });
+  assert.equal(r.records.length, 1);
+  const [e] = r.records;
+  assert.equal(e.startDate, "2026-11-06");
+  assert.equal(e.endDate, "2026-11-06");
+  assert.equal(e.allDay, true);
+  assert.equal(e.startLocal, null);
+  assert.equal(e.endLocal, null);
+  assert.equal(e.location.venue, "Fair Park");
+  assert.equal(e.location.streetAddress, "3921 Martin Luther King, Jr. Blvd");
+  assert.equal(e.location.locality, "Dallas");
+  assert.equal(e.location.region, "TX");
+  assert.equal(e.location.postalCode, "75210");
+  // Without the visible block the echoed structured venue is withheld, never kept.
+  const stripped = html.replace(/<div class="detail__meta.*<\/div>/s, "");
+  const w = parseDocument({
+    html: stripped,
+    url: "https://www.visitdallas.com/events/diy-con/",
+    config: c,
+    task: { depth: 1, kind: "detail", meta: {} },
+  });
+  assert.equal(w.records[0].location, null);
+  // A real clock time is untouched.
+  const timed = html
+    .replace("2026-11-06T00:00:00-06:00", "2026-11-06T19:00:00-06:00")
+    .replace("2026-11-06T23:59:59-06:00", "2026-11-06T22:00:00-06:00");
+  const t = parseDocument({
+    html: timed,
+    url: "https://www.visitdallas.com/events/diy-con/",
+    config: c,
+    task: { depth: 1, kind: "detail", meta: {} },
+  });
+  assert.equal(t.records[0].startLocal, "2026-11-06T19:00:00-06:00");
+  assert.equal(t.records[0].allDay, null);
+});

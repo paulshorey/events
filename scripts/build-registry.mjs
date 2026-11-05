@@ -231,7 +231,9 @@ const sourceOverrides = {
     coverage: "unverified",
     minIntervalMs: 1500,
     detailTransport: "http",
+    detailProfile: "simpleview",
   },
+  "url-071": { detailProfile: "simpleview" },
   "url-072": {
     entrypoints: [
       {

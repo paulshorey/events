@@ -8,6 +8,7 @@ import {
   recordFromJsonLd,
 } from "../records.mjs";
 import { parseTimeRange } from "../../examples/parsers.mjs";
+import { refineSimpleviewEvent } from "./regional.mjs";
 import {
   mergeDetail,
   fieldQuality,
@@ -38,9 +39,12 @@ export function parseDetail({ html, url, config }) {
       ld.events.length === 1 &&
       text(event.name).toLowerCase() === title.toLowerCase();
     if (!fallback && (!own || canonical(own) !== canonical(url))) continue;
+    const source = fallback ? { ...event, url } : event;
     const record = recordFromJsonLd(
       config,
-      fallback ? { ...event, url } : event,
+      config.detailProfile === "simpleview"
+        ? refineSimpleviewEvent($, source)
+        : source,
       { url, jsonPath: path },
       ld.references,
     );

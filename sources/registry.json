@@ -2590,7 +2590,8 @@
     "apiMode": "sitemap",
     "discoverDetails": false,
     "minIntervalMs": 1500,
-    "detailTransport": "http"
+    "detailTransport": "http",
+    "detailProfile": "simpleview"
   },
   {
     "id": "url-071",
@@ -2619,7 +2620,8 @@
     ],
     "maxDepth": 2,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-071.mjs"
+    "script": "scrapers/url-071.mjs",
+    "detailProfile": "simpleview"
   },
   {
     "id": "url-072",
