@@ -15,7 +15,11 @@ export function redactUrl(value) {
 export async function saveCapture(root, run, task, body, url, kind) {
   const dir = resolve(root, "runs", run.id, run.attemptId);
   await mkdir(dir, { recursive: true });
-  const path = `${dir}/page-${task.id}.${kind === "json" ? "json" : "html"}`;
+  const extension =
+    kind === "json"
+      ? ({ ics: "ics", sitemap: "xml" }[run.config?.apiFormat] ?? "json")
+      : "html";
+  const path = `${dir}/page-${task.id}.${extension}`;
   await writeFile(path, body, { flag: "wx" });
   return { path, hash: hash(body), url: redactUrl(url), kind };
 }

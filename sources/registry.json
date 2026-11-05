@@ -1586,14 +1586,15 @@
       ".views-row"
     ],
     "readySelector": null,
-    "notes": "Inspect event containers, detail pages, identity, pagination, date scope, and any published feed; then implement a bounded adapter probe.",
+    "notes": "Drupal event finder: pages follow the pager's next link; single-day cards print only month/day, so each detail page (which prints the year and clock) is its own observation. Multi-day cards print full dates and are enriched from their detail page. Inspected November 5, 2026.",
     "role": "collection candidate",
     "allowedHosts": [
       "www.chicagoparkdistrict.com"
     ],
     "maxDepth": 2,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-042.mjs"
+    "script": "scrapers/url-042.mjs",
+    "enrichDetails": true
   },
   {
     "id": "url-043",
@@ -1678,7 +1679,7 @@
     "enabled": false,
     "adapterVersion": "framework-v1",
     "timeZone": "America/Chicago",
-    "adapter": "discovery",
+    "adapter": "icalendar",
     "coverage": "unverified",
     "detailPattern": "/events?/[^/?#]+|/calendar/[^/?#]+|/shows/|/festivals?/[^/?#]+",
     "cardSelectors": [
@@ -1691,14 +1692,24 @@
       "article"
     ],
     "readySelector": null,
-    "notes": "Title describes selected events/venues; assess actual dates and outbound event pages before treating it as complete.",
+    "notes": "The page embeds the city's published Outlook calendar (iframe); its calendar.ics sibling is the public iCalendar feed of the same calendar. Inspected November 5, 2026: 904 VEVENTs, no RRULEs, Central time zone ids. A curated selection of venue and city events, not every Houston event.",
     "role": "selected-event index",
     "allowedHosts": [
-      "www.houstontx.gov"
+      "www.houstontx.gov",
+      "outlook.office365.com"
     ],
     "maxDepth": 2,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-045.mjs"
+    "script": "scrapers/url-045.mjs",
+    "apiFormat": "ics",
+    "entrypoints": [
+      {
+        "url": "https://outlook.office365.com/owa/calendar/378a27e8d0ee477ebd4c9db5ce3a600f@houstontx.gov/9d0692828d624e8bb74ce935644940f417387657915531835411/calendar.ics",
+        "kind": "api",
+        "depth": 0
+      }
+    ],
+    "discoverDetails": false
   },
   {
     "id": "url-046",
@@ -1748,9 +1759,9 @@
     "enabled": false,
     "adapterVersion": "framework-v1",
     "timeZone": "America/Chicago",
-    "adapter": "discovery",
+    "adapter": "houston-com",
     "coverage": "unverified",
-    "detailPattern": "/events?/[^/?#]+|/calendar/[^/?#]+|/shows/|/festivals?/[^/?#]+",
+    "detailPattern": "^/events/[a-z0-9][a-z0-9-]*-[a-z0-9]{8}$",
     "cardSelectors": [
       ".event-card",
       ".event-item",
@@ -1761,14 +1772,25 @@
       "article"
     ],
     "readySelector": null,
-    "notes": "Inspect event containers, detail pages, identity, pagination, date scope, and any published feed; then implement a bounded adapter probe.",
+    "notes": "Next.js listing without pagination; each /events/<slug> page carries schema.org Event JSON-LD whose startDate is a UTC instant (converted to America/Chicago and checked against the listing's printed local time). The published events sitemap adds pages the listing does not show. Inspected November 5, 2026.",
     "role": "collection candidate",
     "allowedHosts": [
       "houston.com"
     ],
     "maxDepth": 2,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-047.mjs"
+    "script": "scrapers/url-047.mjs",
+    "apiFormat": "sitemap",
+    "localizeUtcInstants": true,
+    "discoveryOnly": true,
+    "entrypoints": [
+      "https://houston.com/events",
+      {
+        "url": "https://houston.com/events-sitemap.xml",
+        "kind": "api",
+        "depth": 0
+      }
+    ]
   },
   {
     "id": "url-048",
@@ -2977,7 +2999,10 @@
       "maxClicks": 20,
       "settleMs": 800,
       "quietMs": 2500,
-      "ignoreHosts": ["api.userway.org", "cdn.userway.org"]
+      "ignoreHosts": [
+        "api.userway.org",
+        "cdn.userway.org"
+      ]
     },
     "detailPattern": "/event/|/calendar/[^/?]+",
     "cardSelectors": [
@@ -3460,7 +3485,7 @@
     "enabled": false,
     "adapterVersion": "framework-v1",
     "timeZone": "America/Chicago",
-    "adapter": "discovery",
+    "adapter": "live-calendar",
     "coverage": "unverified",
     "detailPattern": "/events?/[^/?#]+|/calendar/[^/?#]+|/shows/|/festivals?/[^/?#]+",
     "cardSelectors": [
@@ -3473,14 +3498,23 @@
       "article"
     ],
     "readySelector": null,
-    "notes": "Inspect structured calendar/feed, public-attendance scope, and pagination.",
+    "notes": "Public JSON API linked from the calendar's feed page (/live/json/events). Default window is the next ~3 months of occurrences, 100 per page, links.next pagination, explicit local ISO timestamps and IANA time zone. Includes internal campus events; audience is kept as raw metadata. Inspected November 5, 2026.",
     "role": "university calendar candidate",
     "allowedHosts": [
       "events.uchicago.edu"
     ],
     "maxDepth": 2,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-096.mjs"
+    "script": "scrapers/url-096.mjs",
+    "apiFormat": "live-json",
+    "entrypoints": [
+      {
+        "url": "https://events.uchicago.edu/live/json/events/response_fields/location,event_types,event_types_audience,event_types_campus,tags",
+        "kind": "api",
+        "depth": 0
+      }
+    ],
+    "discoverDetails": false
   },
   {
     "id": "url-097",

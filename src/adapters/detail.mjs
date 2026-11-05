@@ -14,6 +14,51 @@ import {
   sameOccurrenceTime,
 } from "../event-fields.mjs";
 
+// Some structured data states an instant in UTC while the page shows venue-local
+// time. Convert only when the adapter declares it, using the collection zone,
+// and drop an end identical to the start (no real end was supplied).
+function localTimestamp(instant, timeZone) {
+  const ms = Date.parse(instant);
+  if (!Number.isFinite(ms) || !/Z$/.test(instant)) return null;
+  const parts = Object.fromEntries(
+    new Intl.DateTimeFormat("en-CA", {
+      timeZone,
+      hourCycle: "h23",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    })
+      .formatToParts(new Date(ms))
+      .map((p) => [p.type, p.value]),
+  );
+  return `${parts.year}-${parts.month}-${parts.day}T${parts.hour}:${parts.minute}:${parts.second}`;
+}
+function localizeUtcEvent(event, timeZone) {
+  const start = localTimestamp(String(event.startDate ?? ""), timeZone);
+  if (!start) return event;
+  const sameEnd = event.endDate === event.startDate;
+  const end = sameEnd ? null : localTimestamp(String(event.endDate ?? ""), timeZone);
+  const { endDate: _dropped, ...rest } = event;
+  return {
+    ...rest,
+    startDate: start,
+    ...(end ? { endDate: end } : {}),
+    sourceUtc: { startDate: event.startDate, endDate: event.endDate ?? null },
+    timeZone,
+    timeZoneBasis: "structured UTC instant converted to the collection time zone",
+    dateTimeBasis: {
+      start: "structured UTC instant converted to venue-local time",
+      end: end ? "structured UTC instant converted to venue-local time" : null,
+    },
+    warnings: [
+      "utc_instant_converted_to_collection_time_zone",
+      ...(sameEnd ? ["source_end_equals_start_ignored"] : []),
+    ],
+  };
+}
 const canonical = (value) => {
   const u = new URL(value);
   u.hash = "";
@@ -38,9 +83,13 @@ export function parseDetail({ html, url, config }) {
       ld.events.length === 1 &&
       text(event.name).toLowerCase() === title.toLowerCase();
     if (!fallback && (!own || canonical(own) !== canonical(url))) continue;
+    const prepared =
+      config.localizeUtcInstants && config.timeZone
+        ? localizeUtcEvent(event, config.timeZone)
+        : event;
     const record = recordFromJsonLd(
       config,
-      fallback ? { ...event, url } : event,
+      fallback ? { ...prepared, url } : prepared,
       { url, jsonPath: path },
       ld.references,
     );
@@ -284,6 +333,87 @@ export function parseDetail({ html, url, config }) {
       ".event-detail-page .date-title; .evt-sb-i; [itemprop=address]",
     );
     method = "boston-detail";
+  } else if (config.adapter === "chicago-parks") {
+    const root = $("article.node--type-event.node--view-mode-full").first(),
+      when = root.find(".event--date-time .field__item").first(),
+      lines = (when.html() ?? "")
+        .split(/<br\s*\/?>/i)
+        .map((part) => text(part))
+        .filter(Boolean);
+    const range = dates(lines[0] ?? ""),
+      clocks = parseTimeRange(lines.slice(1).join(" "));
+    const multiDay = range.endDate && range.endDate !== range.startDate;
+    const warnings = [];
+    let startLocal = null,
+      endLocal = null;
+    if (!multiDay && range.startDate && clocks.startTime) {
+      startLocal = `${range.startDate}T${clocks.startTime}`;
+      if (clocks.endTime && clocks.endTime >= clocks.startTime)
+        endLocal = `${range.startDate}T${clocks.endTime}`;
+      else if (clocks.endTime) warnings.push("end_time_requires_date_review");
+    } else if (multiDay && clocks.startTime)
+      warnings.push("multi_day_clock_semantics_unverified");
+    // The page's own "Add to calendar" link restates the occurrence; a
+    // disagreement is retained as a warning, never silently corrected.
+    const link = root
+      .find('a[href*="calendar.google.com/calendar/render"]')
+      .first()
+      .attr("href");
+    const linked = link?.match(/[?&]dates=(\d{8})T(\d{6})\/(\d{8})T(\d{6})/);
+    if (linked && startLocal) {
+      const iso = (d, t) =>
+        `${d.slice(0, 4)}-${d.slice(4, 6)}-${d.slice(6, 8)}T${t.slice(0, 2)}:${t.slice(2, 4)}:${t.slice(4, 6)}`;
+      if (iso(linked[1], linked[2]) !== startLocal)
+        warnings.push("calendar_link_conflicts_with_visible_datetime");
+    }
+    const street = text(root.find(".facility .address").first().text()),
+      parsedAddress = street.match(
+        /^(.*?)\s+(Chicago),\s*(IL)\s+(\d{5}(?:-\d{4})?)$/,
+      );
+    const categories = text(
+      root.find(".field--name-field-event-category").first().text(),
+    )
+      .replace(/^Categories:\s*/i, "")
+      .split(",")
+      .map((label) => text(label))
+      .filter(Boolean);
+    add(
+      {
+        startDate: range.startDate,
+        endDate: multiDay ? range.endDate : endLocal ? range.startDate : undefined,
+        startLocal: startLocal ?? undefined,
+        endLocal: endLocal ?? undefined,
+        dateTimeBasis: {
+          start: "visible detail date and clock",
+          end: endLocal || multiDay ? "visible detail date and clock" : null,
+        },
+        location: {
+          venue: text(root.find(".facility--address > a").first().text()),
+          formattedAddress: street,
+          streetAddress: parsedAddress?.[1],
+          locality: parsedAddress?.[2],
+          region: parsedAddress?.[3],
+          postalCode: parsedAddress?.[4],
+          basis: "event detail facility address",
+        },
+        categoryTags: categories.map((label) => ({
+          label,
+          basis: "upstream event category",
+        })),
+        warnings,
+        raw: {
+          dateTime: lines,
+          fee: text(
+            root.find(".field--name-field-event-fee .field__item").text(),
+          ),
+          ageRange: text(
+            root.find(".field--name-field-age-range .field__item").text(),
+          ),
+        },
+      },
+      "article.node--type-event .event--date-time; .facility; .field--name-field-event-category",
+    );
+    method = "chicago-parks-detail";
   } else if (!records.length && config.adapter === "la") {
     const rawDate = text($(".sidebar_event_date > span").first().text());
     add(

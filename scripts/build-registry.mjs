@@ -184,6 +184,60 @@ const sourceOverrides = {
   "url-019": { coverage: "verified-list" },
   "url-020": { coverage: "verified-list", apiEndpoint: null },
   "url-084": { coverage: "historical-view" },
+  // Chicago Parks: single-day cards print no year, so detail pages are the
+  // observations; multi-day cards are enriched from theirs. Inspected Nov 5, 2026.
+  "url-042": {
+    enrichDetails: true,
+    notes:
+      "Drupal event finder: pages follow the pager's next link; single-day cards print only month/day, so each detail page (which prints the year and clock) is its own observation. Multi-day cards print full dates and are enriched from their detail page. Inspected November 5, 2026.",
+  },
+  // Houston city calendar: the page embeds a published Outlook calendar; its
+  // calendar.ics sibling is the public iCalendar feed (904 VEVENTs, no RRULEs).
+  "url-045": {
+    adapter: "icalendar",
+    apiFormat: "ics",
+    entrypoints: [
+      {
+        url: "https://outlook.office365.com/owa/calendar/378a27e8d0ee477ebd4c9db5ce3a600f@houstontx.gov/9d0692828d624e8bb74ce935644940f417387657915531835411/calendar.ics",
+        kind: "api",
+        depth: 0,
+      },
+    ],
+    allowedHosts: ["www.houstontx.gov", "outlook.office365.com"],
+    discoverDetails: false,
+    notes:
+      "The page embeds the city's published Outlook calendar (iframe); its calendar.ics sibling is the public iCalendar feed of the same calendar. Inspected November 5, 2026: 904 VEVENTs, no RRULEs, Central time zone ids. A curated selection of venue and city events, not every Houston event.",
+  },
+  // houston.com: Event JSON-LD on /events/<slug> pages (UTC instants), found
+  // through the listing and the published events sitemap.
+  "url-047": {
+    adapter: "houston-com",
+    apiFormat: "sitemap",
+    localizeUtcInstants: true,
+    discoveryOnly: true,
+    entrypoints: [
+      "https://houston.com/events",
+      { url: "https://houston.com/events-sitemap.xml", kind: "api", depth: 0 },
+    ],
+    detailPattern: "^/events/[a-z0-9][a-z0-9-]*-[a-z0-9]{8}$",
+    notes:
+      "Next.js listing without pagination; each /events/<slug> page carries schema.org Event JSON-LD whose startDate is a UTC instant (converted to America/Chicago and checked against the listing's printed local time). The published events sitemap adds pages the listing does not show. Inspected November 5, 2026.",
+  },
+  // UChicago: public Live calendar JSON API linked from the feeds page.
+  "url-096": {
+    adapter: "live-calendar",
+    apiFormat: "live-json",
+    entrypoints: [
+      {
+        url: "https://events.uchicago.edu/live/json/events/response_fields/location,event_types,event_types_audience,event_types_campus,tags",
+        kind: "api",
+        depth: 0,
+      },
+    ],
+    discoverDetails: false,
+    notes:
+      "Public JSON API linked from the calendar's feed page (/live/json/events). Default window is the next ~3 months of occurrences, 100 per page, links.next pagination, explicit local ISO timestamps and IANA time zone. Includes internal campus events; audience is kept as raw metadata. Inspected November 5, 2026.",
+  },
 };
 const timeZones = {
   "Las Vegas": "America/Los_Angeles",
@@ -248,6 +302,8 @@ const configs = assessed.map((row) => {
     validationStatus: "needs-validation",
     script: `scrapers/${row.id}.mjs`,
   };
+  // Source-specific overrides win over the derived notes and allowed hosts.
+  Object.assign(c, sourceOverrides[row.id]);
   if (
     row.role.includes("guide") ||
     row.role.includes("information") ||

@@ -4,6 +4,7 @@ import { createHash, randomUUID } from "node:crypto";
 import { parseDocument } from "./adapters/document.mjs";
 import { parseTribePage } from "../examples/parsers.mjs";
 import { validDate, eventRecord } from "./records.mjs";
+import { feedParsers } from "./adapters/feeds.mjs";
 import { fieldSummary, matchDetailBindings } from "./event-fields.mjs";
 import { assessQuality } from "./quality.mjs";
 import { Transport, sleep } from "./runtime/transport.mjs";
@@ -65,6 +66,21 @@ export function optionsFor(config, options, build) {
   return out;
 }
 export function parseApi(body, url, config, task) {
+  const feed = feedParsers[config.apiFormat];
+  if (config.apiFormat && !feed)
+    throw Object.assign(new Error(`Unknown API format ${config.apiFormat}`), {
+      code: "contract_changed",
+    });
+  if (feed) {
+    const parsed = feed(body, url, config, task);
+    return {
+      ...parsed,
+      records: parsed.records.map((r) => ({
+        ...r,
+        validationStatus: "parser-validated",
+      })),
+    };
+  }
   let data;
   try {
     data = JSON.parse(body);
@@ -340,6 +356,7 @@ export async function work(
         const config = {
           ...run.config,
           maxDepth: run.options.probe ? 0 : run.config.maxDepth,
+          asOf: run.options.asOf,
         };
         const parsed =
           task.kind === "api"

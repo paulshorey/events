@@ -35,7 +35,15 @@ for (const [id, name, start, end] of [
       },
     });
     assert.equal(r.records.length, id === "042" ? 1 : 2);
-    assert.equal(r.rejected, id === "042" ? 1 : 0);
+    // The yearless Chicago Parks card is no longer rejected: its detail page
+    // states the year, so it is queued instead (see feeds.test.mjs).
+    assert.equal(r.rejected, 0);
+    if (id === "042")
+      assert.ok(
+        r.nextRequests.some(
+          (n) => n.kind === "detail" && n.meta?.undatedListing === true,
+        ),
+      );
     assert.equal(r.records[0].startDate, start);
     assert.equal(r.records[0].endDate, end);
     for (const e of r.records) {
