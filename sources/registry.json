@@ -338,8 +338,9 @@
   {
     "id": "url-010",
     "url": "https://www.tsnn.com/trade-show-calendar",
+    "entrypoints": ["https://thetradeshowcalendar.com/tsnn/"],
     "sourceKey": "tsnn.com",
-    "rateKey": "tsnn.com",
+    "rateKey": "thetradeshowcalendar.com",
     "group": "Conventions and trade shows",
     "origin": "primary-list",
     "cityMarket": null,
@@ -350,7 +351,7 @@
     "enabled": false,
     "adapterVersion": "framework-v1",
     "timeZone": "America/New_York",
-    "adapter": "discovery",
+    "adapter": "trade-table",
     "coverage": "unverified",
     "detailPattern": "/events?/[^/?#]+|/calendar/[^/?#]+|/shows/|/festivals?/[^/?#]+",
     "cardSelectors": [
@@ -363,14 +364,21 @@
       "article"
     ],
     "readySelector": null,
-    "notes": "Inspect event containers, detail pages, identity, pagination, date scope, and any published feed; then implement a bounded adapter probe.",
+    "notes": "Inspected November 5, 2026: the TSNN page only embeds an iframe of https://thetradeshowcalendar.com/tsnn/ (same publisher and backend as url-014, 4,200 exhibitions at 30 per page via the vPos offset). Collection starts at the embed. Rows carry a combined venue/city/country cell that is kept whole.",
     "role": "collection candidate",
     "allowedHosts": [
-      "www.tsnn.com"
+      "www.tsnn.com",
+      "thetradeshowcalendar.com"
     ],
-    "maxDepth": 2,
+    "maxDepth": 0,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-010.mjs"
+    "script": "scrapers/url-010.mjs",
+    "discoverDetails": false,
+    "pagination": {
+      "mode": "offset-table",
+      "parameter": "vPos",
+      "maxRows": 20000
+    }
   },
   {
     "id": "url-011",
@@ -412,6 +420,7 @@
   {
     "id": "url-012",
     "url": "https://tradefest.io/",
+    "entrypoints": ["https://tradefest.io/en/search"],
     "sourceKey": "tradefest.io",
     "rateKey": "tradefest.io",
     "group": "Conventions and trade shows",
@@ -424,7 +433,7 @@
     "enabled": false,
     "adapterVersion": "framework-v1",
     "timeZone": "America/New_York",
-    "adapter": "discovery",
+    "adapter": "tradefest",
     "coverage": "unverified",
     "detailPattern": "/events?/[^/?#]+|/calendar/[^/?#]+|/shows/|/festivals?/[^/?#]+",
     "cardSelectors": [
@@ -442,10 +451,11 @@
     "allowedHosts": [
       "tradefest.io"
     ],
-    "maxDepth": 2,
+    "maxDepth": 0,
     "validationStatus": "needs-validation",
     "script": "scrapers/url-012.mjs",
-    "enrichDetails": true
+    "enrichDetails": false,
+    "discoverDetails": false
   },
   {
     "id": "url-013",
@@ -521,11 +531,19 @@
     ],
     "maxDepth": 2,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-014.mjs"
+    "script": "scrapers/url-014.mjs",
+    "discoverDetails": false,
+    "pagination": {
+      "mode": "offset-table",
+      "parameter": "vPos",
+      "maxRows": 20000
+    }
   },
   {
     "id": "url-015",
     "url": "https://conventioncalendar.com/",
+    "entrypoints": ["https://conventioncalendar.com/destinations"],
+    "followDestinations": true,
     "sourceKey": "conventioncalendar.com",
     "rateKey": "conventioncalendar.com",
     "group": "Conventions and trade shows",
@@ -538,7 +556,7 @@
     "enabled": false,
     "adapterVersion": "framework-v1",
     "timeZone": "America/New_York",
-    "adapter": "discovery",
+    "adapter": "conventioncalendar",
     "coverage": "unverified",
     "detailPattern": "/events?/[^/?#]+|/calendar/[^/?#]+|/shows/|/festivals?/[^/?#]+",
     "cardSelectors": [
@@ -551,14 +569,15 @@
       "article"
     ],
     "readySelector": null,
-    "notes": "Develop one ConventionCalendar adapter, then configure venue collections for New York and Orlando.",
+    "notes": "One ConventionCalendar adapter serves this hub and the venue collections (url-028 Javits, url-090 Orange County Convention Center). The hub starts at /destinations (paginated), follows every city page and each month in its month menu; venue pages are not followed because city pages list the same events. Run the three entries one at a time.",
     "role": "discovery hub",
     "allowedHosts": [
       "conventioncalendar.com"
     ],
-    "maxDepth": 2,
+    "maxDepth": 0,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-015.mjs"
+    "script": "scrapers/url-015.mjs",
+    "discoverDetails": false
   },
   {
     "id": "url-016",
@@ -1054,7 +1073,7 @@
     "enabled": false,
     "adapterVersion": "framework-v1",
     "timeZone": "America/New_York",
-    "adapter": "discovery",
+    "adapter": "conventioncalendar",
     "coverage": "unverified",
     "detailPattern": "/events?/[^/?#]+|/calendar/[^/?#]+|/shows/|/festivals?/[^/?#]+",
     "cardSelectors": [
@@ -1072,9 +1091,10 @@
     "allowedHosts": [
       "conventioncalendar.com"
     ],
-    "maxDepth": 2,
+    "maxDepth": 0,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-028.mjs"
+    "script": "scrapers/url-028.mjs",
+    "discoverDetails": false
   },
   {
     "id": "url-029",
@@ -3011,7 +3031,7 @@
     "enabled": false,
     "adapterVersion": "framework-v1",
     "timeZone": "America/New_York",
-    "adapter": "discovery",
+    "adapter": "tradefest",
     "coverage": "unverified",
     "detailPattern": "/events?/[^/?#]+|/calendar/[^/?#]+|/shows/|/festivals?/[^/?#]+",
     "cardSelectors": [
@@ -3029,10 +3049,11 @@
     "allowedHosts": [
       "tradefest.io"
     ],
-    "maxDepth": 2,
+    "maxDepth": 0,
     "validationStatus": "needs-validation",
     "script": "scrapers/url-083.mjs",
-    "enrichDetails": true
+    "enrichDetails": false,
+    "discoverDetails": false
   },
   {
     "id": "url-084",
@@ -3254,7 +3275,7 @@
     "enabled": false,
     "adapterVersion": "framework-v1",
     "timeZone": "America/New_York",
-    "adapter": "discovery",
+    "adapter": "conventioncalendar",
     "coverage": "unverified",
     "detailPattern": "/events?/[^/?#]+|/calendar/[^/?#]+|/shows/|/festivals?/[^/?#]+",
     "cardSelectors": [
@@ -3272,9 +3293,10 @@
     "allowedHosts": [
       "conventioncalendar.com"
     ],
-    "maxDepth": 2,
+    "maxDepth": 0,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-090.mjs"
+    "script": "scrapers/url-090.mjs",
+    "discoverDetails": false
   },
   {
     "id": "url-091",

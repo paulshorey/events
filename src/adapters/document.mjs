@@ -74,6 +74,7 @@ export function parseDocument({
     observedCount = 0,
     method = "jsonld",
     rejected = 0,
+    pagingTotal,
     excluded;
   if (config.discoveryOnly) {
     method = "discovery-only";
@@ -92,6 +93,7 @@ export function parseDocument({
     nextRequests.push(...(parsed.nextRequests ?? []));
     coverage = parsed.coverage;
     terminal = parsed.terminal;
+    pagingTotal = parsed.expectedTotal;
     excluded = parsed.excluded;
   } else if (config.adapter === "la") {
     const parsed = parseLaCalendar(html, url);
@@ -457,6 +459,7 @@ export function parseDocument({
     );
     coverage = paging.coverage;
     terminal = paging.terminal;
+    pagingTotal = paging.expectedTotal;
   }
   if (config.listingContract && !$(config.listingContract).length)
     throw Object.assign(
@@ -552,6 +555,7 @@ export function parseDocument({
     issues,
     coverage,
     terminal,
+    ...(pagingTotal != null ? { expectedTotal: pagingTotal } : {}),
     ...(excluded ? { excluded } : {}),
     discoveryLinks: [...new Set(discovered.map((r) => r.url))].slice(0, 100),
   };

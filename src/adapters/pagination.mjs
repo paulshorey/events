@@ -81,5 +81,62 @@ export function inspectedPagination($, url, config, task) {
       totalPages: total,
     };
   }
+  if (p.mode === "offset-table") {
+    // thetradeshowcalendar.com: "now showing A-B out of N exhibitions" with a
+    // `vPos` row offset; the Next control is a div whose onclick carries the
+    // next offset. The requested offset, the displayed range, the row count and
+    // the Next target must all agree, otherwise enumeration is not claimed.
+    const info = $("td.bottom-nav-text").first().text();
+    const match = info.match(
+      /now showing\s+([\d,]+)\s*-\s*([\d,]+)\s+out of\s+([\d,]+)\s+exhibitions/i,
+    );
+    if (!match) fail("Offset table range/total contract missing");
+    const [first, last, total] = match
+      .slice(1)
+      .map((v) => Number(v.replace(/,/g, "")));
+    const requested = Number(new URL(url).searchParams.get(p.parameter) ?? 0);
+    const rows = $("tr.row").length;
+    if (
+      first !== requested + 1 ||
+      last < first ||
+      last > total ||
+      rows !== last - first + 1 ||
+      total > (p.maxRows ?? 20000)
+    )
+      fail(
+        `Offset table disagreement: requested ${requested}, showing ${first}-${last} of ${total}, rows ${rows}`,
+      );
+    const click = $("td.next > div[onclick]").attr("onclick") ?? "";
+    const target = click.match(/location\.href='([^']+)'/)?.[1];
+    const terminal = last === total;
+    if (terminal && ($("td.next").length || !$("td.next-na").length))
+      fail("Offset table final page still offers Next");
+    let nextUrl = null;
+    if (!terminal) {
+      nextUrl = target ? new URL(target, url) : null;
+      if (
+        !nextUrl ||
+        nextUrl.hostname !== new URL(url).hostname ||
+        Number(nextUrl.searchParams.get(p.parameter)) !== last
+      )
+        fail("Offset table Next control disagrees with the displayed range");
+    }
+    return {
+      terminal,
+      expectedTotal: total,
+      nextRequests: terminal
+        ? []
+        : [
+            {
+              url: nextUrl.href,
+              kind: "listing",
+              depth: 0,
+              meta: { pagination: true },
+            },
+          ],
+      coverage: "verified-list",
+      currentPage: Math.ceil(first / (last - first + 1)),
+    };
+  }
   fail("Unsupported inspected pagination mode");
 }
