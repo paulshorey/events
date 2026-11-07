@@ -190,7 +190,9 @@ export function evaluate(journal, run, stopReason) {
       transport: run.options.transport,
       basis:
         run.options.transport === "api"
-          ? "all pages of the recorded start_date query"
+          ? run.config.apiQuery
+            ? `all pages of the recorded start_date query filtered by ${new URLSearchParams(run.config.apiQuery)}`
+            : "all pages of the recorded start_date query"
           : "declared listing interface",
       validation:
         "core listing fields; not a guarantee of all events on the publisher domain",

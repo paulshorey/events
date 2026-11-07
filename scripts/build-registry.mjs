@@ -306,7 +306,11 @@ const sourceOverrides = {
     readySelector: null,
   },
   "url-019": { coverage: "verified-list" },
-  "url-020": { coverage: "verified-list", apiEndpoint: null },
+  "url-020": {
+    coverage: "verified-list",
+    apiEndpoint: "https://network.vegas/wp-json/tribe/events/v1/events",
+    apiQuery: { categories: "convention" },
+  },
   "url-084": { coverage: "historical-view" },
   "url-088": {
     adapter: "expofp-venue",
@@ -327,6 +331,30 @@ const sourceOverrides = {
     adapter: "jsonld",
     coverage: "unverified",
     detailEventIdentity: "page-title",
+  },
+  "url-023": {
+    adapter: "eventbrite-search",
+    coverage: "unverified",
+    entrypoints: ["https://www.eventbrite.com/d/nv--las-vegas/all-events/"],
+    readySelector: null,
+    discoverDetails: false,
+    enrichDetails: false,
+    searchMaxPages: 100,
+  },
+  "url-034": {
+    adapter: "eventbrite-search",
+    coverage: "unverified",
+    entrypoints: ["https://www.eventbrite.com/d/ny--new-york/all-events/"],
+    readySelector: null,
+    discoverDetails: false,
+    enrichDetails: false,
+    searchMaxPages: 100,
+  },
+  "url-017": {
+    adapter: "vegas-festival-guide",
+    coverage: "unverified",
+    readySelector: "h3[id]",
+    discoverDetails: false,
   },
 };
 const timeZones = {

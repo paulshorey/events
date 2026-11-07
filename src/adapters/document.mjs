@@ -2,6 +2,7 @@ import { load } from "cheerio";
 import { inspectedAdapters, parseInspected } from "./inspected.mjs";
 import { parseDetail } from "./detail.mjs";
 import { parseDcListing } from "./washington.mjs";
+import { parseEventbriteSearch } from "./eventbrite.mjs";
 import { inspectedPagination } from "./pagination.mjs";
 import {
   parseLaCalendar,
@@ -174,6 +175,68 @@ export function parseDocument({
         { url, selector: ".event-wrapper" },
       );
       r ? all.push(r) : rejected++;
+    });
+  } else if (config.adapter === "eventbrite-search") {
+    const parsed = parseEventbriteSearch({ html, url, config });
+    all.push(...parsed.records);
+    observedCount = parsed.observedCount;
+    rejected = parsed.rejected;
+    nextRequests.length = 0;
+    nextRequests.push(...parsed.nextRequests);
+    coverage = parsed.coverage;
+    terminal = parsed.terminal;
+    method = "eventbrite-search-results";
+    if (parsed.capped)
+      issues.push({
+        code: "search_view_capped",
+        objectCount: parsed.objectCount,
+        message: "Eventbrite serves fewer pages than the advertised total",
+      });
+  } else if (config.adapter === "vegas-festival-guide") {
+    // Editorial guide: each festival is an <h3 id> followed by a paragraph of
+    // "<strong>When|Date(s):</strong> value" lines. Only fully dated entries
+    // (day and year stated) become observations; "TBD"/"Postponed" entries
+    // are counted as undated and never given invented dates.
+    method = "vegas-festival-guide";
+    $("h3[id]").each((_, e) => {
+      const h = $(e),
+        meta = h.nextAll("p").first(),
+        html = meta.html() ?? "";
+      if (!/<strong>\s*(?:When|Dates?)\s*:/i.test(html)) return;
+      const lines = html.split(/<br\s*\/?>/i).map((l) => load(`<p>${l}</p>`));
+      const where = lines
+        .map(($l) => text($l("p").text()))
+        .map((l) => l.match(/^Where:\s*(.+)$/i)?.[1])
+        .find(Boolean);
+      for (const $l of lines) {
+        const line = text($l("p").text()),
+          m = line.match(/(?:^|\|\s*)(?:When|Dates?):\s*(.+)$/i);
+        if (!m) continue;
+        observedCount++;
+        const sub = line.match(/^(.+?)\s*\|\s*(?:When|Dates?):/i)?.[1];
+        if (!dates(m[1]).startDate) continue;
+        const id = `${h.attr("id")}${
+          sub
+            ? `-${text(sub)
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, "-")}`
+            : ""
+        }`;
+        const r = eventRecord(
+          config,
+          {
+            id,
+            title: sub ? `${text(h.text())} - ${text(sub)}` : h.text(),
+            url: `${url.split("#")[0]}#${id}`,
+            rawDate: m[1],
+            location: where
+              ? { venue: where, basis: "guide section 'Where' line" }
+              : undefined,
+          },
+          { url, selector: "h3[id] + p" },
+        );
+        r ? all.push(r) : rejected++;
+      }
     });
   } else if (config.adapter === "javits") {
     method = "javits-calendar-cards";
