@@ -194,6 +194,20 @@ export function parseSitemapEntries({ body, url, config }) {
     });
   const seen = new Set(),
     nextRequests = [];
+  // A sitemap index points at child sitemaps; same-host children are queued as
+  // further sitemap tasks so discovery reaches the event-detail sitemaps.
+  const host = new URL(url).hostname;
+  for (const loc of nested) {
+    const u = safeUrl(loc, url);
+    if (!u || new URL(u).hostname !== host || seen.has(u)) continue;
+    seen.add(u);
+    nextRequests.push({
+      url: u,
+      kind: "api",
+      depth: 0,
+      meta: { discoveredOn: url, sitemapIndex: true },
+    });
+  }
   for (const loc of locs) {
     const u = safeUrl(loc, url);
     if (!u || !pattern.test(new URL(u).pathname) || seen.has(u)) continue;
@@ -209,7 +223,7 @@ export function parseSitemapEntries({ body, url, config }) {
     records: [],
     nextRequests,
     method: "sitemap-detail-discovery",
-    observedCount: nextRequests.length,
+    observedCount: nextRequests.filter((r) => r.kind === "detail").length,
     rejected: 0,
     issues: nextRequests.length
       ? []
@@ -262,7 +276,8 @@ export function parseSharePointCalendar({ body, url, config }) {
     issues = [];
   let rejected = 0;
   const origin = new URL(url).origin,
-    detailBase = config.detailBase ?? `${origin}/calendar/Pages/Event-Details.aspx`;
+    detailBase =
+      config.detailBase ?? `${origin}/calendar/Pages/Event-Details.aspx`;
   for (const item of data.value) {
     const start = new Date(item.EventDate),
       end = item.EndDate ? new Date(item.EndDate) : null;
@@ -285,7 +300,9 @@ export function parseSharePointCalendar({ body, url, config }) {
     if (item.fRecurrence === true)
       warnings.push("recurring_series_item_not_expanded");
     if (item.EventStatus && item.EventStatus !== "Active")
-      warnings.push(`source_event_status_${String(item.EventStatus).toLowerCase()}`);
+      warnings.push(
+        `source_event_status_${String(item.EventStatus).toLowerCase()}`,
+      );
     if (item.IsApproved && item.IsApproved !== "Approved")
       warnings.push("source_approval_state_not_approved");
     const record = eventRecord(
@@ -301,15 +318,19 @@ export function parseSharePointCalendar({ body, url, config }) {
           allDay || !e || e.date < s.date ? undefined : `${e.date}T${e.time}`,
         allDay,
         dateTimeBasis: {
-          start: "source EventDate UTC instant converted to the collection time zone",
-          end: e ? "source EndDate UTC instant converted to the collection time zone" : null,
+          start:
+            "source EventDate UTC instant converted to the collection time zone",
+          end: e
+            ? "source EndDate UTC instant converted to the collection time zone"
+            : null,
         },
         location: {
           venue: item.Location,
           streetAddress: address || undefined,
           locality: item.City,
           region: item.State,
-          postalCode: item.Zip == null ? undefined : String(Math.trunc(item.Zip)),
+          postalCode:
+            item.Zip == null ? undefined : String(Math.trunc(item.Zip)),
           basis: "upstream list item location fields",
         },
         geoCoordinates:
@@ -365,7 +386,9 @@ export function refineSimpleviewEvent($, event) {
   const refined = { ...event };
   const day = (value) => String(value ?? "").slice(0, 10);
   if (
-    /^\d{4}-\d\d-\d\dT00:00:00(?:Z|[+-]\d\d:\d\d)?$/.test(event.startDate ?? "") &&
+    /^\d{4}-\d\d-\d\dT00:00:00(?:Z|[+-]\d\d:\d\d)?$/.test(
+      event.startDate ?? "",
+    ) &&
     /^\d{4}-\d\d-\d\dT23:59:59(?:Z|[+-]\d\d:\d\d)?$/.test(event.endDate ?? "")
   ) {
     refined.startDate = day(event.startDate);

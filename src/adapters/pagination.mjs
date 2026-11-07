@@ -281,6 +281,8 @@ export function inspectedPagination($, url, config, task) {
       })),
       coverage: "verified-list",
       expectedTotal: declared,
+      // A declared count of zero with an empty list is an explicit empty result.
+      ...(declared === 0 ? { verifiedEmpty: true } : {}),
     };
   }
   if (p.mode === "festivalnet-list") {
@@ -315,6 +317,12 @@ export function inspectedPagination($, url, config, task) {
     if (nextPage) nextUrl.searchParams.set("page", String(nextPage));
     return {
       terminal,
+      // Only a first page with the listing container, no cards and no pager is
+      // a verified empty list (a region with no dated festivals); an empty page
+      // later in a paged list is not proof that the list ended.
+      ...(requested === 1 && !pager.length && !$(p.cardSelector).length
+        ? { verifiedEmpty: true }
+        : {}),
       nextRequests: terminal
         ? []
         : [

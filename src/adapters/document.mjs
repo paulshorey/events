@@ -657,14 +657,14 @@ export function parseDocument({
           },
         });
   }
-  // A page whose verified pager contract says the dated list has ended is an
-  // expected empty result, not a missing event contract.
+  // Only an explicitly verified empty page (adapter or pager contract) is an
+  // expected empty result; a terminal pager alone is not.
   if (
     !all.length &&
     !nextRequests.length &&
     !emptyTerminalPage &&
     !verifiedEmpty &&
-    !paging?.terminal &&
+    !paging?.verifiedEmpty &&
     !(observedCount && excluded)
   )
     issues.push({

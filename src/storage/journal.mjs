@@ -160,7 +160,13 @@ export class Journal {
         now,
         slot,
       );
-    if (options.transport === "api" && !c.config.apiFormat) {
+    // Feed-style formats (iCalendar, sitemap, Live JSON, per-state JSON,
+    // SharePoint) declare their own api-kind entrypoints; every other API
+    // transport is seeded from apiEndpoint and its format-specific request.
+    const apiEntrypoints = (c.config.entrypoints ?? []).some(
+      (e) => typeof e === "object" && e.kind === "api",
+    );
+    if (options.transport === "api" && !apiEntrypoints) {
       if (!c.config.apiEndpoint)
         throw new Error(
           "This collection has no verified API endpoint configuration",

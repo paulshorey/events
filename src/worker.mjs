@@ -229,9 +229,13 @@ export function evaluate(journal, run, stopReason) {
         run.options.transport === "api"
           ? run.config.apiFormat === "geodirectory"
             ? "all pages of the default GeoDirectory events query"
-            : run.config.apiQuery
-              ? `all pages of the recorded start_date query filtered by ${new URLSearchParams(run.config.apiQuery)}`
-              : "all pages of the recorded start_date query"
+            : run.config.apiFormat === "algolia"
+              ? "the configured Algolia index query, filtered on indexed end dates from the as-of date"
+              : run.config.apiFormat === "eventfinder"
+                ? "all pages of the POST search with startDateFrom = as-of date, sorted by start date"
+                : run.config.apiQuery
+                  ? `all pages of the recorded start_date query filtered by ${new URLSearchParams(run.config.apiQuery)}`
+                  : "all pages of the recorded start_date query"
           : "declared listing interface",
       validation:
         "core listing fields; not a guarantee of all events on the publisher domain",
@@ -437,6 +441,9 @@ export async function work(
           kind: task.kind,
           contentHash: input.capture.hash,
           ...(input.interaction ? { interaction: input.interaction } : {}),
+          // Response-header totals (e.g. X-WP-Total) drive pagination; keep
+          // them so replay reproduces the original decision.
+          ...(input.apiTotals ? { apiTotals: input.apiTotals } : {}),
         };
         for (const r of parsed.records) {
           if (

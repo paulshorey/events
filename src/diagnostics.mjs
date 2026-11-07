@@ -57,7 +57,13 @@ export async function replayPage(journal, runId, pageId, config) {
   const replayConfig = { ...config, asOf: config.asOf ?? run.options?.asOf };
   const result =
     page.kind === "api"
-      ? parseApi(body, url, replayConfig, page)
+      ? parseApi(
+          body,
+          url,
+          replayConfig,
+          page,
+          page.result?.acquisition?.apiTotals,
+        )
       : parseDocument({
           html: body,
           url,
