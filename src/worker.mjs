@@ -2,6 +2,7 @@ import { mkdir, writeFile, rename, readFile, readdir } from "node:fs/promises";
 import { resolve, join } from "node:path";
 import { createHash, randomUUID } from "node:crypto";
 import { parseDocument } from "./adapters/document.mjs";
+import { parseAlgolia } from "./adapters/algolia.mjs";
 import { parseTribePage } from "../examples/parsers.mjs";
 import { parseEventsDcApi } from "./adapters/eventsdc.mjs";
 import { parseSfGovApi } from "./adapters/sfgov.mjs";
@@ -68,9 +69,12 @@ export function optionsFor(config, options, build) {
   return out;
 }
 export function parseApi(body, url, config, task) {
-  if (config.apiParser === "eventsdc") return parseEventsDcApi(body, url, config);
+  if (config.apiParser === "eventsdc")
+    return parseEventsDcApi(body, url, config);
   if (config.apiParser === "sfgov") return parseSfGovApi(body, url, config);
   if (config.apiParser === "lacity") return parseLaCityApi(body, url, config);
+  if (config.apiFormat === "algolia")
+    return parseAlgolia(body, url, config, task);
   let data;
   try {
     data = JSON.parse(body);

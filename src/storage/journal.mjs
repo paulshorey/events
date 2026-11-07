@@ -4,6 +4,7 @@ import { dirname } from "node:path";
 import { randomUUID, createHash } from "node:crypto";
 import { eventsDcApiUrl } from "../adapters/eventsdc.mjs";
 import { laCityApiUrl } from "../adapters/lacity.mjs";
+import { algoliaRequestUrl } from "../adapters/algolia.mjs";
 
 export const hash = (value) =>
   createHash("sha256")
@@ -164,23 +165,31 @@ export class Journal {
         throw new Error(
           "This collection has no verified API endpoint configuration",
         );
-      const url = new URL(c.config.apiEndpoint);
-      url.search = new URLSearchParams({
-        per_page: String(options.perPage ?? 50),
-        page: "1",
-        start_date: options.asOf,
-        ...(c.config.apiQuery ?? {}),
-      });
-      this._addPage(runId, {
-        url:
-          c.config.apiParser === "eventsdc"
-            ? eventsDcApiUrl(c.config, options.asOf)
-            : c.config.apiParser === "lacity"
-              ? laCityApiUrl(c.config, options.asOf)
-              : url.href,
-        kind: "api",
-        depth: 0,
-      });
+      if (c.config.apiFormat === "algolia") {
+        this._addPage(runId, {
+          url: algoliaRequestUrl(c.config, options),
+          kind: "api",
+          depth: 0,
+        });
+      } else {
+        const url = new URL(c.config.apiEndpoint);
+        url.search = new URLSearchParams({
+          per_page: String(options.perPage ?? 50),
+          page: "1",
+          start_date: options.asOf,
+          ...(c.config.apiQuery ?? {}),
+        });
+        this._addPage(runId, {
+          url:
+            c.config.apiParser === "eventsdc"
+              ? eventsDcApiUrl(c.config, options.asOf)
+              : c.config.apiParser === "lacity"
+                ? laCityApiUrl(c.config, options.asOf)
+                : url.href,
+          kind: "api",
+          depth: 0,
+        });
+      }
     } else
       for (const seed of c.config.entrypoints ?? [c.config.url])
         this._addPage(

@@ -866,7 +866,7 @@
     "categoryHints": [],
     "intervalHours": 24,
     "enabled": false,
-    "adapterVersion": "source-validation-v2",
+    "adapterVersion": "algolia-index-v1",
     "timeZone": "America/New_York",
     "adapter": "nyc-tourism",
     "coverage": "unverified",
@@ -884,7 +884,8 @@
     "notes": "Compare overlap with the NYC events/festivals guide; discover actual query and pagination. Inspected four-page client calendar; browser next controls and active page must reconcile. Default unfiltered interface only; hours may be unavailable.",
     "role": "collection candidate",
     "allowedHosts": [
-      "www.nyctourism.com"
+      "www.nyctourism.com",
+      "v9aisqojeb-dsn.algolia.net"
     ],
     "maxDepth": 2,
     "validationStatus": "needs-validation",
@@ -897,7 +898,7 @@
     },
     "discoverDetails": false,
     "quality": {
-      "scope": "url-024-default-calendar-v2",
+      "scope": "url-024-algolia-events-festivals-v1",
       "minRecords": 1,
       "minCoverage": {
         "startDate": 1,
@@ -915,7 +916,17 @@
     },
     "enrichDetails": true,
     "detailReadySelector": "[class*=\"BroadwaySummary_textContent\"]",
-    "minIntervalMs": 5000
+    "minIntervalMs": 5000,
+    "apiEndpoint": "https://v9aisqojeb-dsn.algolia.net/1/indexes/prod_nyctourism_v3-en-US",
+    "apiFormat": "algolia",
+    "algolia": {
+      "applicationId": "V9AISQOJEB",
+      "searchKey": "35756659d21eeb59facb8d4535a165cd",
+      "index": "prod_nyctourism_v3-en-US",
+      "filters": "NOT 'businessStatus':'out of business' AND NOT noIndex:true AND NOT b2bOnly:true AND (type:'calendarEvents' OR cardGrid:4NJ8qCBS6xbkxCuS5nN0Vj) AND ('Lookup - Taxonomy':'Events & Festivals' OR (type:sponsoredListing)) AND (endDate >= {asOfEpoch} OR hasEndDate = 0)",
+      "hitsPerPage": 100
+    },
+    "defaultTransport": "api"
   },
   {
     "id": "url-025",
@@ -928,7 +939,7 @@
     "categoryHints": [],
     "intervalHours": 168,
     "enabled": false,
-    "adapterVersion": "source-validation-v2",
+    "adapterVersion": "algolia-index-v1",
     "timeZone": "America/New_York",
     "adapter": "nyc-tourism",
     "coverage": "discovery",
@@ -946,7 +957,8 @@
     "notes": "Use as event/detail-page discovery; do not assume all guide entries are dated occurrences. Field audit: follow sparse event cards to same-host detail pages; retain listing and detail evidence separately. Full enumeration remains unverified for partial sources. Inspected four-page client calendar; browser next controls and active page must reconcile. Default unfiltered interface only; hours may be unavailable.",
     "role": "editorial / discovery guide",
     "allowedHosts": [
-      "www.nyctourism.com"
+      "www.nyctourism.com",
+      "v9aisqojeb-dsn.algolia.net"
     ],
     "maxDepth": 2,
     "validationStatus": "needs-validation",
@@ -960,7 +972,7 @@
     },
     "discoverDetails": false,
     "quality": {
-      "scope": "url-025-default-calendar-v2",
+      "scope": "url-025-algolia-events-festivals-v1",
       "minRecords": 1,
       "minCoverage": {
         "startDate": 1,
@@ -977,7 +989,17 @@
       "maxPages": 20
     },
     "detailReadySelector": "[class*=\"BroadwaySummary_textContent\"]",
-    "minIntervalMs": 5000
+    "minIntervalMs": 5000,
+    "apiEndpoint": "https://v9aisqojeb-dsn.algolia.net/1/indexes/prod_nyctourism_v3-en-US",
+    "apiFormat": "algolia",
+    "algolia": {
+      "applicationId": "V9AISQOJEB",
+      "searchKey": "35756659d21eeb59facb8d4535a165cd",
+      "index": "prod_nyctourism_v3-en-US",
+      "filters": "NOT 'businessStatus':'out of business' AND NOT noIndex:true AND NOT b2bOnly:true AND (type:'calendarEvents' OR cardGrid:4NJ8qCBS6xbkxCuS5nN0Vj) AND ('Lookup - Taxonomy':'Events & Festivals' OR (type:sponsoredListing)) AND (endDate >= {asOfEpoch} OR hasEndDate = 0)",
+      "hitsPerPage": 100
+    },
+    "defaultTransport": "api"
   },
   {
     "id": "url-026",
@@ -1025,7 +1047,7 @@
     "categoryHints": [],
     "intervalHours": 24,
     "enabled": false,
-    "adapterVersion": "framework-v1",
+    "adapterVersion": "javits-months-v1",
     "timeZone": "America/New_York",
     "adapter": "javits",
     "coverage": "unverified",
@@ -1040,14 +1062,32 @@
       "article"
     ],
     "readySelector": "h3.uppercase",
-    "notes": "Ordinary Playwright navigation returned HTTP 200 after raw HTTP 429; no extractor implemented yet.",
+    "notes": "Next.js calendar. Current month is in the server-rendered payload (initialEvents); each other month button makes the site JSON request /api/momentus/events?startDate&endDate. A non-browser client gets a Vercel security checkpoint (HTTP 429), so months are acquired only by clicking in the browser. Page-hidden, internal, blackout and unconfirmed events are excluded.",
     "role": "browser collection candidate",
     "allowedHosts": [
       "www.javitscenter.com"
     ],
     "maxDepth": 2,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-027.mjs"
+    "script": "scrapers/url-027.mjs",
+    "pagination": {
+      "mode": "javits-months",
+      "maxPages": 20
+    },
+    "minIntervalMs": 4000,
+    "quality": {
+      "scope": "url-027-javits-month-calendar-v1",
+      "minRecords": 1,
+      "minCoverage": {
+        "startDate": 1,
+        "endDate": 1,
+        "textLocation": 1
+      },
+      "maxRejectedRate": 0.02,
+      "maxReviewRate": 0.1,
+      "maxCoverageDrop": 0.2,
+      "baselineMinRecords": 20
+    }
   },
   {
     "id": "url-028",
@@ -1130,9 +1170,9 @@
     "categoryHints": [],
     "intervalHours": 24,
     "enabled": false,
-    "adapterVersion": "framework-v1",
+    "adapterVersion": "cityguide-cards-v1",
     "timeZone": "America/New_York",
-    "adapter": "discovery",
+    "adapter": "cityguide",
     "coverage": "unverified",
     "detailPattern": "/events?/[^/?#]+|/calendar/[^/?#]+|/shows/|/festivals?/[^/?#]+",
     "cardSelectors": [
@@ -1145,14 +1185,27 @@
       "article"
     ],
     "readySelector": null,
-    "notes": "Inspect event containers, detail pages, identity, pagination, date scope, and any published feed; then implement a bounded adapter probe.",
+    "notes": "Listing cards only (detail pages rate-limit after a few requests). Card links end with ISO start/end dates that are accepted only when the card weekday and month/day labels agree; PAST-labelled cards are excluded. The heading total (33) exceeds the 26 rendered cards, so coverage stays unverified.",
     "role": "collection candidate",
     "allowedHosts": [
       "www.cityguideny.com"
     ],
     "maxDepth": 2,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-030.mjs"
+    "script": "scrapers/url-030.mjs",
+    "discoverDetails": false,
+    "minIntervalMs": 5000,
+    "quality": {
+      "scope": "url-030-category-182-cards-v1",
+      "minRecords": 1,
+      "minCoverage": {
+        "startDate": 1,
+        "endDate": 1,
+        "textLocation": 0.9
+      },
+      "maxRejectedRate": 0.1,
+      "maxReviewRate": 0.1
+    }
   },
   {
     "id": "url-031",
@@ -1180,7 +1233,7 @@
       "article"
     ],
     "readySelector": null,
-    "notes": "Access investigation first. Discover dated occurrences; verify year and source links. Do not generate future dates from an annual tradition.",
+    "notes": "Access investigation first. Discover dated occurrences; verify year and source links. Do not generate future dates from an annual tradition. Nov 5 2026 inspection: the home page lists no events; /event-schedule/ publishes the vendor schedule only as an embedded PDF (wp-content/uploads/2026/11/2026-Vendor-Schedule-8TH-EDITION.pdf). The framework has no PDF acquisition/parsing, so the source is stopped until one is added.",
     "role": "annual / editorial guide",
     "allowedHosts": [
       "nycstreetfairs.com"
@@ -1235,10 +1288,10 @@
     "categoryHints": [],
     "intervalHours": 168,
     "enabled": false,
-    "adapterVersion": "framework-v1",
+    "adapterVersion": "dothis-street-fairs-v1",
     "timeZone": "America/New_York",
-    "adapter": "jsonld",
-    "coverage": "discovery",
+    "adapter": "dothis-street-fairs",
+    "coverage": "verified-list",
     "detailPattern": "street-fairs-nyc|#e=",
     "cardSelectors": [
       ".event-card",
@@ -1249,15 +1302,26 @@
       ".views-row",
       "article"
     ],
-    "readySelector": null,
-    "notes": "Discover dated occurrences; verify year and source links. Do not generate future dates from an annual tradition.",
+    "readySelector": ".cl-cal-month",
+    "notes": "Server-rendered seven-day street fair calendar. Each day group has an ISO date; the page states its fair count and every day button repeats its count, which must agree with the parsed rows. Curated fairs carry posted hours; permit rows are street-closure windows and keep date precision only.",
     "role": "annual / editorial guide",
     "allowedHosts": [
       "dothisnyc.com"
     ],
     "maxDepth": 2,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-033.mjs"
+    "script": "scrapers/url-033.mjs",
+    "quality": {
+      "scope": "url-033-street-fair-week-v1",
+      "minRecords": 1,
+      "minCoverage": {
+        "startDate": 1,
+        "endDate": 1,
+        "textLocation": 1
+      },
+      "maxRejectedRate": 0.02,
+      "maxReviewRate": 0.1
+    }
   },
   {
     "id": "url-034",
@@ -3194,7 +3258,7 @@
     "categoryHints": [],
     "intervalHours": 24,
     "enabled": false,
-    "adapterVersion": "framework-v1",
+    "adapterVersion": "nycparks-aggregate-v1",
     "timeZone": "America/New_York",
     "adapter": "microdata",
     "coverage": "unverified",
@@ -3209,14 +3273,29 @@
       "article"
     ],
     "readySelector": null,
-    "notes": "Access investigation first. An aggregate path returned HTML successfully; validate pagination and dates instead of assuming a documented API.",
+    "notes": "Festivals aggregate: p1 holds all current events (page states \"Currently viewing N events\", reconciled with the cards); p2 is empty (\"no upcoming events\"). Pages are followed until an empty page, which establishes the end of the default date window only. The festivals category page itself returns 403 to a plain client and is not used.",
     "role": "supplemental endpoint candidate",
     "allowedHosts": [
       "www.nycgovparks.org"
     ],
     "maxDepth": 2,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-085.mjs"
+    "script": "scrapers/url-085.mjs",
+    "pagination": {
+      "mode": "nycparks-aggregate",
+      "maxPages": 30
+    },
+    "quality": {
+      "scope": "url-085-festivals-aggregate-v1",
+      "minRecords": 1,
+      "minCoverage": {
+        "startDate": 1,
+        "endDate": 1,
+        "textLocation": 0.9
+      },
+      "maxRejectedRate": 0.02,
+      "maxReviewRate": 0.1
+    }
   },
   {
     "id": "url-086",

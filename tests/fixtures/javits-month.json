@@ -1,0 +1,72 @@
+{
+ "events": [
+  {
+   "id": "event-60883",
+   "name": "AI SUMMIT NEW YORK",
+   "accountId": "x",
+   "description": null,
+   "status": "Confirmed",
+   "startDate": "2026-12-09",
+   "endDate": "2026-12-10",
+   "venueIds": [],
+   "venueNames": [],
+   "genreName": "TECHN",
+   "isBlackout": false,
+   "isInternal": false,
+   "eventType": "TRD",
+   "website": null,
+   "uniqueNumber": "60883"
+  },
+  {
+   "id": "event-61230",
+   "name": "HIDDEN BY PAGE CONFIG",
+   "accountId": "x",
+   "description": null,
+   "status": "Confirmed",
+   "startDate": "2026-12-11",
+   "endDate": "2026-12-11",
+   "venueIds": [],
+   "venueNames": [],
+   "genreName": "TECHN",
+   "isBlackout": false,
+   "isInternal": false,
+   "eventType": "TRD",
+   "website": null,
+   "uniqueNumber": "61230"
+  },
+  {
+   "id": "event-61999",
+   "name": "INTERNAL MEETING",
+   "accountId": "x",
+   "description": null,
+   "status": "Confirmed",
+   "startDate": "2026-12-12",
+   "endDate": "2026-12-12",
+   "venueIds": [],
+   "venueNames": [],
+   "genreName": "TECHN",
+   "isBlackout": false,
+   "isInternal": true,
+   "eventType": "TRD",
+   "website": null,
+   "uniqueNumber": "61999"
+  },
+  {
+   "id": "event-62000",
+   "name": "TENTATIVE SHOW",
+   "accountId": "x",
+   "description": null,
+   "status": "Tentative",
+   "startDate": "2026-12-13",
+   "endDate": "2026-12-13",
+   "venueIds": [],
+   "venueNames": [],
+   "genreName": "TECHN",
+   "isBlackout": false,
+   "isInternal": false,
+   "eventType": "TRD",
+   "website": null,
+   "uniqueNumber": "62000"
+  }
+ ]
+}

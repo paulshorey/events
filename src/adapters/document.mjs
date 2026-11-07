@@ -3,6 +3,9 @@ import { inspectedAdapters, parseInspected } from "./inspected.mjs";
 import { parseDetail } from "./detail.mjs";
 import { parseDcListing } from "./washington.mjs";
 import { parseEventbriteSearch } from "./eventbrite.mjs";
+import { parseJavitsMonth } from "./javits.mjs";
+import { parseStreetFairs } from "./street-fairs.mjs";
+import { parseCityGuide } from "./cityguide.mjs";
 import { inspectedPagination } from "./pagination.mjs";
 import {
   parseLaCalendar,
@@ -67,6 +70,15 @@ export function parseDocument({
   interaction,
 }) {
   if (task.kind === "detail") return parseDetail({ html, url, config });
+  if (config.adapter === "cityguide")
+    return parseCityGuide({ html, url, config });
+  if (config.adapter === "dothis-street-fairs")
+    return parseStreetFairs({ html, url, config });
+  if (
+    config.adapter === "javits" &&
+    config.pagination?.mode === "javits-months"
+  )
+    return parseJavitsMonth({ html, url, config, task });
   const $ = load(html),
     issues = [],
     all = [],
@@ -76,6 +88,7 @@ export function parseDocument({
     observedCount = 0,
     method = "jsonld",
     rejected = 0,
+    emptyTerminalPage = false,
     excluded;
   if (config.discoveryOnly) {
     method = "discovery-only";
@@ -312,6 +325,42 @@ export function parseDocument({
       );
       r ? all.push(r) : rejected++;
     });
+    // NYC Parks aggregate pages state their total ("Currently viewing N
+    // events") and are fetched page by page until an empty page. The stated
+    // total must equal the cards actually collected before coverage is known.
+    if (config.pagination?.mode === "nycparks-aggregate") {
+      const page = Number(url.match(/\/p(\d+)\/?(?:[?#].*)?$/)?.[1]);
+      const stated = Number(
+        text($.root().text()).match(/Currently viewing (\d+) events?/i)?.[1],
+      );
+      if (
+        !Number.isInteger(page) ||
+        page < 1 ||
+        page > config.pagination.maxPages
+      )
+        throw Object.assign(new Error("NYC Parks page contract missing"), {
+          code: "pagination_changed",
+        });
+      coverage = "verified-list";
+      if (cards.length) {
+        if (page === 1 && stated !== cards.length)
+          issues.push({
+            code: "listed_total_not_reconciled",
+            stated: Number.isFinite(stated) ? stated : null,
+            cards: cards.length,
+          });
+        nextRequests.push({
+          url: url.replace(/\/p\d+(\/?(?:[?#].*)?)$/, `/p${page + 1}$1`),
+          kind: "listing",
+          depth: 0,
+          meta: { pagination: true },
+        });
+      } else {
+        terminal = true;
+        coverage = "verified-list";
+        emptyTerminalPage = true;
+      }
+    }
   } else {
     const ld = jsonLdEvents(html);
     observedCount = ld.events.length;
@@ -584,7 +633,7 @@ export function parseDocument({
           },
         });
   }
-  if (!all.length && !nextRequests.length)
+  if (!all.length && !nextRequests.length && !emptyTerminalPage)
     issues.push({
       code: "no_event_contract_found",
       message:

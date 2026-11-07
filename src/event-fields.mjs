@@ -62,6 +62,9 @@ export function locationFields(value, geoInput) {
     formattedAddress: full,
     basis: clean(object.basis) ?? "scraped event location",
   };
+  // A publisher's neighborhood label is kept only when supplied.
+  const neighborhood = clean(object.neighborhood);
+  if (neighborhood) result.neighborhood = neighborhood;
   const geo =
     geoInput ??
     object.geoCoordinates ??

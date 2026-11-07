@@ -5,6 +5,8 @@ export function inspectedPagination($, url, config, task) {
   const fail = (message) => {
     throw Object.assign(new Error(message), { code: "pagination_changed" });
   };
+  // Handled by the adapter itself (its pages are plain URLs).
+  if (p.mode === "nycparks-aggregate") return null;
   if (p.mode === "nyc-browser") {
     const root = $('ul[class*="SearchPagination_pagination"]');
     if (
