@@ -134,6 +134,10 @@ export class Transport {
       throw Object.assign(new Error("Out-of-scope navigation host"), {
         code: "scope_violation",
       });
+    // Experimental collection may opt out of robots.txt per run; the choice is
+    // recorded in the run's frozen options. Scope, pacing and HTTP denial
+    // handling still apply.
+    if (this.run.options?.ignoreRobots) return;
     if (!this.robots.has(u.origin)) {
       let entry = { body: "", state: "unavailable" };
       try {

@@ -30,7 +30,10 @@ and PRs unless the user explicitly authorizes direct commits.
 
 Use only `DB_EVENTS_URL`, over public TCP with TLS; never fall back to `DATABASE_URL`.
 Keep `.env.local` credentials private and production commented during local work.
-Run `npm test`; bound browser checks and respect rate/access/robots results.
+Run `npm test`; bound browser checks and respect rate and access results.
+Respect robots.txt by default. The owner authorized (November 5, 2026) an explicit,
+recorded per-run `--ignore-robots` opt-out for experimental collection only;
+scope, pacing, 429 cooldowns and 403/challenge stops still apply.
 Do not add stealth, CAPTCHA bypass, stored login profiles, or proxy rotation.
 
 # Research and report

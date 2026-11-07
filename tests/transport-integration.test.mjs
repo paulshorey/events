@@ -876,3 +876,44 @@ test("reveal probe distinguishes unhiding rows from loading rows", async (t) => 
   assert.deepEqual(widget.interaction.requests, []);
   assert.ok(widget.interaction.ignoredRequests >= 1);
 });
+
+test("ignoreRobots is an explicit per-run opt-out; the default still refuses disallowed paths", async (t) => {
+  const dir = await mkdtemp(join(tmpdir(), "events-ignore-robots-"));
+  t.after(() => rm(dir, { recursive: true, force: true }));
+  let robotsHits = 0;
+  const server = createServer((req, res) => {
+    if (req.url === "/robots.txt") {
+      robotsHits++;
+      return res.end("User-agent: *\nDisallow: /");
+    }
+    res.setHeader("content-type", "text/html");
+    res.end("<html><body>content</body></html>");
+  });
+  await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
+  t.after(() => new Promise((resolve) => server.close(resolve)));
+  const url = `http://127.0.0.1:${server.address().port}/events`;
+  const journal = new Journal(join(dir, "journal.sqlite"));
+  t.after(() => journal.close());
+  const run = (options) => ({
+    id: "robots",
+    attemptId: "one",
+    source_key: "loopback",
+    options,
+    config: { url, timeZone: "UTC", minIntervalMs: 1 },
+  });
+  const strict = new Transport({ root: dir, journal, run: run({}) });
+  t.after(() => strict.close());
+  await assert.rejects(strict.fetch({ id: "a", url, kind: "listing" }), {
+    code: "robots_disallowed",
+  });
+  const hitsAfterStrict = robotsHits;
+  const relaxed = new Transport({
+    root: dir,
+    journal,
+    run: run({ ignoreRobots: true }),
+  });
+  t.after(() => relaxed.close());
+  const page = await relaxed.fetch({ id: "b", url, kind: "listing" });
+  assert.match(page.body, /content/);
+  assert.equal(robotsHits, hitsAfterStrict, "robots.txt not requested");
+});
