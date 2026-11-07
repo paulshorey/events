@@ -2265,12 +2265,12 @@
     "timeZone": "America/New_York",
     "adapter": "cards",
     "coverage": "unverified",
-    "detailPattern": "/event/",
+    "detailPattern": "^/event/[^/]+/\\d+$",
     "cardSelectors": [
       "article.ys-card"
     ],
     "readySelector": null,
-    "notes": "Inspect event containers, detail pages, identity, pagination, date scope, and any published feed; then implement a bounded adapter probe.",
+    "notes": "/events is a Vue/Algolia search whose key is restricted to the site's own origin (403 otherwise), so event pages (Event JSON-LD) are enumerated from the publisher's sitemap; the sitemap is not proven to be a complete catalogue.",
     "role": "collection candidate",
     "allowedHosts": [
       "www.miamiandbeaches.com"
@@ -2278,7 +2278,18 @@
     "maxDepth": 2,
     "validationStatus": "needs-validation",
     "script": "scrapers/url-056.mjs",
-    "enrichDetails": true
+    "enrichDetails": false,
+    "entrypoints": [
+      {
+        "url": "https://www.miamiandbeaches.com/sitemap.xml",
+        "kind": "api",
+        "depth": 0
+      }
+    ],
+    "apiMode": "sitemap",
+    "discoverDetails": false,
+    "minIntervalMs": 1000,
+    "detailTransport": "http"
   },
   {
     "id": "url-057",
@@ -2323,7 +2334,7 @@
     "enabled": false,
     "adapterVersion": "framework-v1",
     "timeZone": "America/Los_Angeles",
-    "adapter": "cards",
+    "adapter": "visitseattle",
     "coverage": "unverified",
     "detailPattern": "/events/[^/?]+",
     "cardSelectors": [
@@ -2333,14 +2344,16 @@
       ".search-result-preview"
     ],
     "readySelector": null,
-    "notes": "Compare archive with main Seattle event search and choose one authoritative enumeration route.",
+    "notes": "Server-rendered /events/ archive (24 cards per page, alphabetical). Same 89 events as the main search at /?s=&frm=events; 'Ongoing' and 'Now through' rows have no start date and are counted, not recorded. Archive lists no total, so coverage stays unverified; url-059's search route reconciles the publisher's own total.",
     "role": "overlapping listing",
     "allowedHosts": [
       "visitseattle.org"
     ],
     "maxDepth": 2,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-058.mjs"
+    "script": "scrapers/url-058.mjs",
+    "discoverDetails": false,
+    "minIntervalMs": 2000
   },
   {
     "id": "url-059",
@@ -2355,7 +2368,7 @@
     "enabled": false,
     "adapterVersion": "framework-v1",
     "timeZone": "America/Los_Angeles",
-    "adapter": "cards",
+    "adapter": "visitseattle",
     "coverage": "unverified",
     "detailPattern": "/events/[^/?]+",
     "cardSelectors": [
@@ -2365,14 +2378,19 @@
       ".search-result-preview"
     ],
     "readySelector": null,
-    "notes": "Inspect event containers, detail pages, identity, pagination, date scope, and any published feed; then implement a bounded adapter probe.",
+    "notes": "The landing page is editorial; the authoritative enumeration is the site's own events search /?s=&frm=events (date-sorted, 'Events (N)' total reconciled across pages).",
     "role": "collection candidate",
     "allowedHosts": [
       "visitseattle.org"
     ],
     "maxDepth": 2,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-059.mjs"
+    "script": "scrapers/url-059.mjs",
+    "discoverDetails": false,
+    "minIntervalMs": 2000,
+    "entrypoints": [
+      "https://visitseattle.org/?s=&frm=events"
+    ]
   },
   {
     "id": "url-060",
@@ -2387,7 +2405,7 @@
     "enabled": false,
     "adapterVersion": "framework-v1",
     "timeZone": "America/Los_Angeles",
-    "adapter": "cards",
+    "adapter": "visitseattle",
     "coverage": "unverified",
     "detailPattern": "/events/[^/?]+",
     "cardSelectors": [
@@ -2397,14 +2415,19 @@
       ".search-result-preview"
     ],
     "readySelector": null,
-    "notes": "Inspect event containers, detail pages, identity, pagination, date scope, and any published feed; then implement a bounded adapter probe.",
+    "notes": "Festivals landing page is editorial (monthly festival text without years). Enumerates the site's Festivals & Special Events search filter linked from it.",
     "role": "collection candidate",
     "allowedHosts": [
       "visitseattle.org"
     ],
     "maxDepth": 2,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-060.mjs"
+    "script": "scrapers/url-060.mjs",
+    "discoverDetails": false,
+    "minIntervalMs": 2000,
+    "entrypoints": [
+      "https://visitseattle.org/?s=&frm=events&event_begin=&event_end=&event_type%5B%5D=festivals-special-events&partner_parent_cat="
+    ]
   },
   {
     "id": "url-061",
@@ -2429,7 +2452,7 @@
       ".search-result-preview"
     ],
     "readySelector": null,
-    "notes": "May have a different audience and date horizon from public events; keep a separate collection if verified.",
+    "notes": "Page content is password protected (WordPress post password form); no login profiles are used, so this source cannot be collected.",
     "role": "convention collection candidate",
     "allowedHosts": [
       "visitseattle.org"
@@ -2743,19 +2766,31 @@
     "timeZone": "America/Chicago",
     "adapter": "cards",
     "coverage": "unverified",
-    "detailPattern": "/events/[^/?]+",
+    "detailPattern": "^/events/[^/]+/?$",
     "cardSelectors": [
       "article.card--listing"
     ],
     "readySelector": null,
-    "notes": "Inspect event containers, detail pages, identity, pagination, date scope, and any published feed; then implement a bounded adapter probe.",
+    "notes": "/events/ is an editorial hub. Event pages (Event JSON-LD, Simpleview CRM) are enumerated from the publisher's event sitemap; the sitemap is not proven to be a complete catalogue.",
     "role": "collection candidate",
     "allowedHosts": [
       "www.visitdallas.com"
     ],
     "maxDepth": 2,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-070.mjs"
+    "script": "scrapers/url-070.mjs",
+    "entrypoints": [
+      {
+        "url": "https://www.visitdallas.com/sitemaps-1-event-default-1-sitemap.xml",
+        "kind": "api",
+        "depth": 0
+      }
+    ],
+    "apiMode": "sitemap",
+    "discoverDetails": false,
+    "minIntervalMs": 1500,
+    "detailTransport": "http",
+    "detailProfile": "simpleview"
   },
   {
     "id": "url-071",
@@ -2784,7 +2819,8 @@
     ],
     "maxDepth": 2,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-071.mjs"
+    "script": "scrapers/url-071.mjs",
+    "detailProfile": "simpleview"
   },
   {
     "id": "url-072",
@@ -2800,7 +2836,7 @@
     "adapterVersion": "framework-v1",
     "timeZone": "America/Chicago",
     "adapter": "discovery",
-    "coverage": "unverified",
+    "coverage": "api-query",
     "detailPattern": "/events?/[^/?#]+|/calendar/[^/?#]+|/shows/|/festivals?/[^/?#]+",
     "cardSelectors": [
       ".event-card",
@@ -2812,14 +2848,26 @@
       "article"
     ],
     "readySelector": null,
-    "notes": "Inspect rendered calendar and any supported public feed; validate instance expansion.",
+    "notes": "The rendered page reads the public SharePoint list 'City Calendar' through _api; the same query is used (EventDate on or after the as-of date). Recurring list items are not expanded.",
     "role": "SharePoint calendar candidate",
     "allowedHosts": [
       "dallascityhall.com"
     ],
     "maxDepth": 2,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-072.mjs"
+    "script": "scrapers/url-072.mjs",
+    "entrypoints": [
+      {
+        "url": "https://dallascityhall.com/calendar/_api/Web/Lists/GetByTitle('City%20Calendar')/items?$filter=EventDate%20ge%20datetime'{asOf}T00:00:00'&$orderby=EventDate&$top=1000",
+        "kind": "api",
+        "depth": 0
+      }
+    ],
+    "apiMode": "sharepoint-calendar",
+    "apiHeaders": {
+      "Accept": "application/json;odata=nometadata"
+    },
+    "discoverDetails": false
   },
   {
     "id": "url-073",
@@ -3333,7 +3381,7 @@
     "enabled": false,
     "adapterVersion": "framework-v1",
     "timeZone": "America/Los_Angeles",
-    "adapter": "cards",
+    "adapter": "visitseattle",
     "coverage": "unverified",
     "detailPattern": "/events/[^/?]+",
     "cardSelectors": [
@@ -3343,14 +3391,19 @@
       ".search-result-preview"
     ],
     "readySelector": null,
-    "notes": "Inspect event containers, detail pages, identity, pagination, date scope, and any published feed; then implement a bounded adapter probe.",
+    "notes": "The /events/ archive ignores event_type; the filter is applied by the main search /?s=&frm=events&event_type=..., which this entrypoint enumerates.",
     "role": "collection candidate",
     "allowedHosts": [
       "visitseattle.org"
     ],
     "maxDepth": 2,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-086.mjs"
+    "script": "scrapers/url-086.mjs",
+    "discoverDetails": false,
+    "minIntervalMs": 2000,
+    "entrypoints": [
+      "https://visitseattle.org/?s=&frm=events&event_type=festivals-special-events"
+    ]
   },
   {
     "id": "url-087",

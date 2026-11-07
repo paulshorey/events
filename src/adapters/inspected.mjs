@@ -1,6 +1,7 @@
 // Additional contracts derived from captured publisher HTML, not guessed from platform names.
 import { load } from "cheerio";
 import { dates, eventRecord, text } from "../records.mjs";
+import { parseVisitSeattle } from "./regional.mjs";
 export const inspectedAdapters = new Set([
   "nyc-tourism",
   "opencities",
@@ -11,6 +12,7 @@ export const inspectedAdapters = new Set([
   "discover-la",
   "expofp-venue",
   "hotel-event-list",
+  "visitseattle",
 ]);
 const slug = (value) =>
   text(value)
@@ -108,7 +110,9 @@ function otherPagingControls($, url) {
   return [...listControls, ...pageControls];
 }
 
-export function parseInspected({ html, url, config, interaction }) {
+export function parseInspected({ html, url, config, interaction, task }) {
+  if (config.adapter === "visitseattle")
+    return parseVisitSeattle({ html, url, config, task });
   const $ = load(html),
     records = [],
     issues = [],

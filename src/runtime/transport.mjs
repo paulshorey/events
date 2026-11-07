@@ -300,9 +300,16 @@ export class Transport {
     await this.pace();
     await this.permit(task.url);
     this.leaseCheck();
-    if (task.kind === "api") {
+    // Server-rendered detail pages may use the plain HTTP client (same declared
+    // user agent, pacing, robots policy and capture) when the registry says the
+    // event data is in the HTML response, which avoids loading a full browser page.
+    const httpDetail =
+      task.kind === "detail" && this.run.config.detailTransport === "http";
+    if (task.kind === "api" || httpDetail) {
       const api = await this.initApi(),
-        response = await api.get(task.url),
+        response = await api.get(task.url, {
+          headers: this.run.config.apiHeaders ?? undefined,
+        }),
         body = await response.text();
       const capture = await saveCapture(
         this.root,
@@ -310,7 +317,7 @@ export class Transport {
         task,
         body,
         response.url(),
-        "json",
+        httpDetail ? "html" : "json",
       );
       try {
         // Playwright follows HTTP redirects. The effective page must still

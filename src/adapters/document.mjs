@@ -94,7 +94,7 @@ export function parseDocument({
     method = "discovery-only";
     coverage = "discovery";
   } else if (inspectedAdapters.has(config.adapter)) {
-    const parsed = parseInspected({ html, url, config, interaction });
+    const parsed = parseInspected({ html, url, config, interaction, task });
     all.push(...parsed.records);
     issues.push(
       ...parsed.issues.filter(
@@ -633,7 +633,12 @@ export function parseDocument({
           },
         });
   }
-  if (!all.length && !nextRequests.length && !emptyTerminalPage)
+  if (
+    !all.length &&
+    !nextRequests.length &&
+    !emptyTerminalPage &&
+    !(observedCount && excluded)
+  )
     issues.push({
       code: "no_event_contract_found",
       message:

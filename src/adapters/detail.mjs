@@ -8,6 +8,7 @@ import {
   recordFromJsonLd,
 } from "../records.mjs";
 import { parseTimeRange } from "../../examples/parsers.mjs";
+import { refineSimpleviewEvent } from "./regional.mjs";
 import {
   mergeDetail,
   fieldQuality,
@@ -157,13 +158,16 @@ export function parseDetail({ html, url, config }) {
       config.localizeUtcInstants && config.timeZone
         ? localizeUtcEvent(event, config.timeZone)
         : event;
+    const source = titled
+      ? withVisibleDetails($, prepared)
+      : fallback
+        ? { ...prepared, url }
+        : prepared;
     const record = recordFromJsonLd(
       config,
-      titled
-        ? withVisibleDetails($, prepared)
-        : fallback
-          ? { ...prepared, url }
-          : prepared,
+      config.detailProfile === "simpleview"
+        ? refineSimpleviewEvent($, source)
+        : source,
       { url, jsonPath: path },
       ld.references,
     );
