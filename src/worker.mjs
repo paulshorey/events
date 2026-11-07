@@ -56,7 +56,14 @@ export function optionsFor(config, options, build) {
     maxRuntimeMs: options.maxRuntimeMs ?? config.defaultMaxRuntimeMs ?? 180000,
     maxRetries: options.maxRetries ?? 3,
     probe: options.probe ?? false,
-    transport: options.transport ?? config.defaultTransport ?? "browser",
+    // A collection whose entrypoints are all API/feed requests is an API run.
+    transport:
+      options.transport ??
+      config.defaultTransport ??
+      ((config.entrypoints ?? []).length &&
+      config.entrypoints.every((e) => typeof e === "object" && e.kind === "api")
+        ? "api"
+        : "browser"),
     buildId: build,
     perPage: options.perPage ?? 50,
     acceptCountChange: options.acceptCountChange ?? null,

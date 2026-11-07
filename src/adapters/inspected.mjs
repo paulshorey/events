@@ -470,12 +470,29 @@ export function parseInspected({ html, url, config, interaction, task }) {
     const cityPath = /^\/[a-z]{2}\/[a-z0-9-]+\/[a-z0-9-]+$/;
     if (isDestinations) {
       // An index of cities: each city page is a listing to enumerate.
+      // Every destination card must resolve to exactly one same-host city
+      // page; a card that does not would silently drop that city.
       const cities = new Set();
-      $(".entity-grid-card a[href]").each((_, e) => {
-        const target = new URL($(e).attr("href"), url);
-        if (target.hostname === here.hostname && cityPath.test(target.pathname))
-          cities.add(target.origin + target.pathname);
+      let unaccounted = 0;
+      $(".entity-grid-card").each((_, card) => {
+        const own = new Set();
+        $(card)
+          .find("a[href]")
+          .each((_, e) => {
+            const target = safeUrl($(e).attr("href"), url);
+            if (!target) return;
+            const t = new URL(target);
+            if (t.hostname === here.hostname && cityPath.test(t.pathname))
+              own.add(t.origin + t.pathname);
+          });
+        if (own.size !== 1) unaccounted++;
+        for (const city of own) cities.add(city);
       });
+      if (unaccounted)
+        throw Object.assign(
+          new Error(`${unaccounted} destination card(s) without one city page`),
+          { code: "contract_changed" },
+        );
       count += cities.size;
       if (config.followDestinations)
         for (const city of cities)

@@ -70,3 +70,40 @@ test("a sitemap index queues its same-host child sitemaps", () => {
   assert.equal(r.observedCount, 0);
   assert.deepEqual(r.issues, []);
 });
+
+test("API-entrypoint-only collections default to the api transport", () => {
+  for (const id of ["url-045", "url-096", "url-072"])
+    assert.equal(
+      optionsFor(byId(id), { asOf: "2026-11-05" }, "b").transport,
+      "api",
+      id,
+    );
+  // Mixed listing + sitemap entrypoints stay browser.
+  assert.equal(
+    optionsFor(byId("url-047"), { asOf: "2026-11-05" }, "b").transport,
+    "browser",
+  );
+});
+
+test("a destinations card without exactly one city page fails the hub contract", () => {
+  const c = byId("url-015");
+  const card = (href) =>
+    `<div class="entity-grid-card"><a href="${href}">City</a></div>`;
+  const html = (cards) => `<html><body>${cards.join("")}</body></html>`;
+  const url = "https://conventioncalendar.com/destinations";
+  const ok = parseDocument({
+    html: html([card("/us/ny/new-york-city"), card("/us/fl/orlando")]),
+    url,
+    config: c,
+  });
+  assert.equal(ok.nextRequests.filter((r) => r.meta?.destination).length, 2);
+  assert.throws(
+    () =>
+      parseDocument({
+        html: html([card("/us/ny/new-york-city"), card("/promo")]),
+        url,
+        config: c,
+      }),
+    (e) => e.code === "contract_changed",
+  );
+});
