@@ -81,5 +81,39 @@ export function inspectedPagination($, url, config, task) {
       totalPages: total,
     };
   }
+  if (p.mode === "drupal-pager") {
+    // Drupal views pager (?page=N, zero-based) as observed on washington.org:
+    // exactly one pager, one active item that agrees with the requested page,
+    // and a rel=next link on every page except the last. A missing active item
+    // or a disagreement is a contract failure, never an end of listing.
+    const root = $("nav.pager .pager__items");
+    if (root.length !== 1) fail("Drupal pager contract missing");
+    const active = root.find(".pager__item.is-active");
+    const current = Number(active.text().trim().match(/(\d+)$/)?.[1]);
+    const requested =
+      Number(new URL(url).searchParams.get(p.parameter ?? "page") ?? 0) + 1;
+    if (active.length !== 1 || !Number.isInteger(current) || current !== requested)
+      fail(`Drupal pager requested page ${requested}, active ${current}`);
+    if (current > p.maxPages) fail("Drupal pager exceeds inspected safety bound");
+    const next = root.find(".pager__item--next a[rel=next]");
+    const terminal = next.length === 0;
+    const nextUrl = new URL(url);
+    nextUrl.searchParams.set(p.parameter ?? "page", String(current));
+    return {
+      terminal,
+      nextRequests: terminal
+        ? []
+        : [
+            {
+              url: nextUrl.href,
+              kind: "listing",
+              depth: 0,
+              meta: { pagination: true },
+            },
+          ],
+      coverage: "verified-list",
+      currentPage: current,
+    };
+  }
   fail("Unsupported inspected pagination mode");
 }
