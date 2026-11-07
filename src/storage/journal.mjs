@@ -160,7 +160,7 @@ export class Journal {
         now,
         slot,
       );
-    if (options.transport === "api") {
+    if (options.transport === "api" && !c.config.apiFormat) {
       if (!c.config.apiEndpoint)
         throw new Error(
           "This collection has no verified API endpoint configuration",

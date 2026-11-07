@@ -338,7 +338,8 @@ export function parseInspected({ html, url, config, interaction }) {
       // "Venue Type" is sometimes a category (Hotel) rather than a venue name.
       const genericVenue = /^(?:hotel|other|various|tbd|tba)$/i.test(venue);
       const organizer = text(
-        c.find("strong").first().nextAll("br").first()[0]?.nextSibling?.data ?? "",
+        c.find("strong").first().nextAll("br").first()[0]?.nextSibling?.data ??
+          "",
       );
       add(
         {
@@ -350,7 +351,8 @@ export function parseInspected({ html, url, config, interaction }) {
             venue && !genericVenue
               ? {
                   venue,
-                  basis: "upstream venue row; city market is separate provenance",
+                  basis:
+                    "upstream venue row; city market is separate provenance",
                 }
               : null,
           raw: {
@@ -404,21 +406,50 @@ export function parseInspected({ html, url, config, interaction }) {
       );
     });
   } else if (config.adapter === "chicago-parks") {
+    let cards = 0;
     $(".node--type-event.node--view-mode-card").each((_, el) => {
+      cards++;
       const c = $(el),
         a = c.find(".event--title a").first(),
         times = c.find("time[datetime]");
-      if (!a.length) return;
+      if (!a.length) {
+        count++;
+        rejected++;
+        return;
+      }
       const locationText = text(c.find(".event--location").text());
       const address = locationText.match(
         /^(.*?)\s+(Chicago),\s*(IL)\s+(\d{5}(?:-\d{4})?)$/,
       );
+      // Multi-day cards print full dates. The datetime attribute is a UTC
+      // instant whose date can differ from the printed day, so the printed
+      // text is the evidence. Single-day cards print only month and day:
+      // their detail page states the year, and the year is never guessed.
+      const printed = times.map((_, e) => dates($(e).text()).startDate).get();
+      if (!printed.length || printed.some((d) => !d)) {
+        count++;
+        nextRequests.push({
+          url: new URL(a.attr("href"), url).href,
+          kind: "detail",
+          depth: 1,
+          meta: {
+            undatedListing: true,
+            listingTitle: text(a.text()),
+            listingDate: text(c.find(".event--date").text()),
+          },
+        });
+        return;
+      }
       add(
         {
           title: a.text(),
           url: a.attr("href"),
-          startDate: times.first().attr("datetime"),
-          endDate: times.last().attr("datetime"),
+          startDate: printed[0],
+          endDate: printed.at(-1),
+          dateTimeBasis: {
+            start: "printed listing date",
+            end: "printed listing date",
+          },
           location: {
             formattedAddress: locationText,
             streetAddress: address?.[1],
@@ -432,6 +463,21 @@ export function parseInspected({ html, url, config, interaction }) {
         ".node--type-event.node--view-mode-card time",
       );
     });
+    // Drupal pager: the requested page must be the active one, every card must
+    // be accounted for, and the last page is the one without a next link.
+    const pager = $("nav.pager .pagination"),
+      active = pager.find("li.is-active a").first().attr("href"),
+      requested = new URL(url).searchParams.get("page") ?? "0";
+    if (
+      cards &&
+      !rejected &&
+      pager.length === 1 &&
+      pager.find("li.is-active").length === 1 &&
+      active?.match(/[?&]page=(\d+)/)?.[1] === requested
+    ) {
+      coverage = "verified-list";
+      terminal = pager.find("li.pager__item--next a[rel=next]").length === 0;
+    } else if (cards) issues.push({ code: "pager_contract_unverified" });
   } else if (config.adapter === "expofp-venue") {
     // Inspected November 5, 2026: server-rendered venue page with two lists.
     // `tr.event-row` rows carry a visible date range (with year), a title and

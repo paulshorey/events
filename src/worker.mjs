@@ -8,6 +8,7 @@ import { parseEventsDcApi } from "./adapters/eventsdc.mjs";
 import { parseSfGovApi } from "./adapters/sfgov.mjs";
 import { parseLaCityApi } from "./adapters/lacity.mjs";
 import { validDate, eventRecord } from "./records.mjs";
+import { feedParsers } from "./adapters/feeds.mjs";
 import { fieldSummary, matchDetailBindings } from "./event-fields.mjs";
 import { assessQuality } from "./quality.mjs";
 import { Transport, sleep } from "./runtime/transport.mjs";
@@ -75,6 +76,21 @@ export function parseApi(body, url, config, task) {
   if (config.apiParser === "lacity") return parseLaCityApi(body, url, config);
   if (config.apiFormat === "algolia")
     return parseAlgolia(body, url, config, task);
+  const feed = feedParsers[config.apiFormat];
+  if (config.apiFormat && !feed)
+    throw Object.assign(new Error(`Unknown API format ${config.apiFormat}`), {
+      code: "contract_changed",
+    });
+  if (feed) {
+    const parsed = feed(body, url, config, task);
+    return {
+      ...parsed,
+      records: parsed.records.map((r) => ({
+        ...r,
+        validationStatus: "parser-validated",
+      })),
+    };
+  }
   let data;
   try {
     data = JSON.parse(body);

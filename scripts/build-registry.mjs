@@ -178,126 +178,119 @@ const sourceOverrides = {
   // Collected 2026-11-05 from the endpoints observed behind each page; see
   // src/adapters/{washington,eventsdc,sfgov,lacity}.mjs and sources/registry.json.
   "url-036": {
-    "adapter": "lacity-api",
-    "apiParser": "lacity",
-    "apiEndpoint": "https://api.lacity.org/city_calendar",
-    "defaultTransport": "api",
-    "allowedHosts": [
-      "lacity.gov",
-      "api.lacity.org",
-      "calendar.lacity.org"
-    ],
-    "coverage": "verified-list",
-    "notes": "lacity.gov/calendar is a directory of other calendars. Its meeting pages embed calendarui.lacity.org, which reads the City calendar feed at api.lacity.org/city_calendar (public meetings plus community events); this entry collects that feed from the as-of date."
+    adapter: "lacity-api",
+    apiParser: "lacity",
+    apiEndpoint: "https://api.lacity.org/city_calendar",
+    defaultTransport: "api",
+    allowedHosts: ["lacity.gov", "api.lacity.org", "calendar.lacity.org"],
+    coverage: "verified-list",
+    notes:
+      "lacity.gov/calendar is a directory of other calendars. Its meeting pages embed calendarui.lacity.org, which reads the City calendar feed at api.lacity.org/city_calendar (public meetings plus community events); this entry collects that feed from the as-of date.",
   },
   "url-049": {
-    "entrypoints": [
-      "https://washington.org/find-dc-listings/events"
-    ],
-    "readySelector": ".dcevent-wrapper",
-    "pagination": {
-      "mode": "drupal-pager",
-      "parameter": "page",
-      "maxPages": 300
+    entrypoints: ["https://washington.org/find-dc-listings/events"],
+    readySelector: ".dcevent-wrapper",
+    pagination: {
+      mode: "drupal-pager",
+      parameter: "page",
+      maxPages: 300,
     },
-    "discoverDetails": false
+    discoverDetails: false,
   },
   "url-051": {
-    "adapter": "eventsdc-api",
-    "apiParser": "eventsdc",
-    "apiEndpoint": "https://eventsdc.com/api/events",
-    "defaultTransport": "api",
-    "coverage": "verified-list",
-    "venueOptions": [
+    adapter: "eventsdc-api",
+    apiParser: "eventsdc",
+    apiEndpoint: "https://eventsdc.com/api/events",
+    defaultTransport: "api",
+    coverage: "verified-list",
+    venueOptions: [
       {
-        "id": "2",
-        "name": "Walter E. Washington Convention Center"
+        id: "2",
+        name: "Walter E. Washington Convention Center",
       },
       {
-        "id": "11",
-        "name": "Carnegie Library at Mt. Vernon Square"
+        id: "11",
+        name: "Carnegie Library at Mt. Vernon Square",
       },
       {
-        "id": "12",
-        "name": "RFK Stadium"
+        id: "12",
+        name: "RFK Stadium",
       },
       {
-        "id": "13",
-        "name": "The Fields at RFK Campus"
+        id: "13",
+        name: "The Fields at RFK Campus",
       },
       {
-        "id": "14",
-        "name": "Festival Grounds at RFK Campus"
+        id: "14",
+        name: "Festival Grounds at RFK Campus",
       },
       {
-        "id": "15",
-        "name": "Skate Park at RFK Campus"
+        id: "15",
+        name: "Skate Park at RFK Campus",
       },
       {
-        "id": "16",
-        "name": "DC Armory"
+        id: "16",
+        name: "DC Armory",
       },
       {
-        "id": "17",
-        "name": "Nationals Park"
+        id: "17",
+        name: "Nationals Park",
       },
       {
-        "id": "18",
-        "name": "CareFirst Arena"
+        id: "18",
+        name: "CareFirst Arena",
       },
       {
-        "id": "19",
-        "name": "Gateway DC"
+        id: "19",
+        name: "Gateway DC",
       },
       {
-        "id": "20",
-        "name": "R.I.S.E. Demonstration Center"
+        id: "20",
+        name: "R.I.S.E. Demonstration Center",
       },
       {
-        "id": "289",
-        "name": "GATHER by Events DC"
-      }
+        id: "289",
+        name: "GATHER by Events DC",
+      },
     ],
-    "eventTypeOptions": [
+    eventTypeOptions: [
       {
-        "id": "5",
-        "name": "Conventions & Meetings"
+        id: "5",
+        name: "Conventions & Meetings",
       },
       {
-        "id": "6",
-        "name": "Cultural Programs"
+        id: "6",
+        name: "Cultural Programs",
       },
       {
-        "id": "29",
-        "name": "Entertainment"
+        id: "29",
+        name: "Entertainment",
       },
       {
-        "id": "28",
-        "name": "Sports"
+        id: "28",
+        name: "Sports",
       },
       {
-        "id": "7",
-        "name": "Sports & Entertainment"
-      }
-    ]
+        id: "7",
+        name: "Sports & Entertainment",
+      },
+    ],
   },
   "url-066": {
-    "adapter": "sfgov-api",
-    "apiParser": "sfgov",
-    "apiPageSize": 10,
-    "entrypoints": [
+    adapter: "sfgov-api",
+    apiParser: "sfgov",
+    apiPageSize: 10,
+    entrypoints: [
       {
-        "url": "https://api.sf.gov/api/related-events/?list=upcoming&locale=en&page=1&groupby=date",
-        "kind": "api",
-        "depth": 0
-      }
+        url: "https://api.sf.gov/api/related-events/?list=upcoming&locale=en&page=1&groupby=date",
+        kind: "api",
+        depth: 0,
+      },
     ],
-    "allowedHosts": [
-      "www.sf.gov",
-      "api.sf.gov"
-    ],
-    "coverage": "verified-list",
-    "notes": "Mayor's calendar route shows almost no events. The page is a Next.js app over api.sf.gov related-events (list=upcoming), which backs the citywide Upcoming calendar (meetings and events from all agencies); this entry collects that citywide query."
+    allowedHosts: ["www.sf.gov", "api.sf.gov"],
+    coverage: "verified-list",
+    notes:
+      "Mayor's calendar route shows almost no events. The page is a Next.js app over api.sf.gov related-events (list=upcoming), which backs the citywide Upcoming calendar (meetings and events from all agencies); this entry collects that citywide query.",
   },
   "url-054": { adapter: "boston", coverage: "verified-list" },
   "url-055": {
@@ -355,6 +348,63 @@ const sourceOverrides = {
     coverage: "unverified",
     readySelector: "h3[id]",
     discoverDetails: false,
+  },
+  // Chicago Parks: single-day cards print no year, so detail pages are the
+  // observations; multi-day cards are enriched from theirs. Inspected Nov 5, 2026.
+  "url-042": {
+    enrichDetails: true,
+    // The listing already queues every event card's detail page; link
+    // discovery would also follow site furniture such as /events/map.
+    discoverDetails: false,
+    notes:
+      "Drupal event finder: pages follow the pager's next link; single-day cards print only month/day, so each detail page (which prints the year and clock) is its own observation. Multi-day cards print full dates and are enriched from their detail page. Inspected November 5, 2026.",
+  },
+  // Houston city calendar: the page embeds a published Outlook calendar; its
+  // calendar.ics sibling is the public iCalendar feed (904 VEVENTs, no RRULEs).
+  "url-045": {
+    adapter: "icalendar",
+    apiFormat: "ics",
+    entrypoints: [
+      {
+        url: "https://outlook.office365.com/owa/calendar/378a27e8d0ee477ebd4c9db5ce3a600f@houstontx.gov/9d0692828d624e8bb74ce935644940f417387657915531835411/calendar.ics",
+        kind: "api",
+        depth: 0,
+      },
+    ],
+    allowedHosts: ["www.houstontx.gov", "outlook.office365.com"],
+    discoverDetails: false,
+    notes:
+      "The page embeds the city's published Outlook calendar (iframe); its calendar.ics sibling is the public iCalendar feed of the same calendar. Inspected November 5, 2026: 904 VEVENTs, no RRULEs, Central time zone ids. A curated selection of venue and city events, not every Houston event.",
+  },
+  // houston.com: Event JSON-LD on /events/<slug> pages (UTC instants), found
+  // through the listing and the published events sitemap.
+  "url-047": {
+    adapter: "houston-com",
+    apiFormat: "sitemap",
+    localizeUtcInstants: true,
+    discoveryOnly: true,
+    entrypoints: [
+      "https://houston.com/events",
+      { url: "https://houston.com/events-sitemap.xml", kind: "api", depth: 0 },
+    ],
+    detailPattern: "^/events/[a-z0-9][a-z0-9-]*-[a-z0-9]{8}$",
+    notes:
+      "Next.js listing without pagination; each /events/<slug> page carries schema.org Event JSON-LD whose startDate is a UTC instant (converted to America/Chicago and checked against the listing's printed local time). The published events sitemap adds pages the listing does not show. Inspected November 5, 2026.",
+  },
+  // UChicago: public Live calendar JSON API linked from the feeds page.
+  "url-096": {
+    adapter: "live-calendar",
+    apiFormat: "live-json",
+    entrypoints: [
+      {
+        url: "https://events.uchicago.edu/live/json/events/response_fields/location,event_types,event_types_audience,event_types_campus,tags",
+        kind: "api",
+        depth: 0,
+      },
+    ],
+    discoverDetails: false,
+    notes:
+      "Public JSON API linked from the calendar's feed page (/live/json/events). Default window is the next ~3 months of occurrences, 100 per page, links.next pagination, explicit local ISO timestamps and IANA time zone. Includes internal campus events; audience is kept as raw metadata. Inspected November 5, 2026.",
   },
 };
 const timeZones = {
@@ -420,6 +470,8 @@ const configs = assessed.map((row) => {
     validationStatus: "needs-validation",
     script: `scrapers/${row.id}.mjs`,
   };
+  // Source-specific overrides win over the derived notes and allowed hosts.
+  Object.assign(c, sourceOverrides[row.id]);
   if (
     row.role.includes("guide") ||
     row.role.includes("information") ||
