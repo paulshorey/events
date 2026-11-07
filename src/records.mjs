@@ -297,6 +297,28 @@ export function recordFromJsonLd(config, event, evidence, references = {}) {
     evidence,
   );
 }
+// Records sharing an identity but disagreeing on core event fields are
+// different events that one identity would silently merge.
+const coreOf = (r) =>
+  JSON.stringify([
+    r.title,
+    r.startDate,
+    r.endDate,
+    r.startLocal,
+    r.endLocal,
+    r.location?.venue,
+    r.location?.formattedAddress,
+  ]);
+export function identityCollisions(records) {
+  const seen = new Map();
+  let collisions = 0;
+  for (const r of records) {
+    const core = coreOf(r);
+    if (!seen.has(r.sourceRecordId)) seen.set(r.sourceRecordId, core);
+    else if (seen.get(r.sourceRecordId) !== core) collisions++;
+  }
+  return collisions;
+}
 export function dedupe(records) {
   return [...new Map(records.map((r) => [r.sourceRecordId, r])).values()];
 }

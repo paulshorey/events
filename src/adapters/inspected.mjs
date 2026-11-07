@@ -506,6 +506,23 @@ export function parseInspected({ html, url, config, interaction, task }) {
         throw Object.assign(new Error("Destination cards missing"), {
           code: "contract_changed",
         });
+      // Paged hub (inspected Nov 5, 2026): page N links rel=next to N+1 and
+      // the last page has none. A stale page served under another page's URL
+      // breaks that relation.
+      const requestedPage = Number(here.searchParams.get("page") ?? 1);
+      const relNext = $("a[rel=next], link[rel=next]").first().attr("href");
+      if (relNext) {
+        const nextPage = Number(
+          new URL(relNext, url).searchParams.get("page") ?? NaN,
+        );
+        if (nextPage !== requestedPage + 1)
+          throw Object.assign(
+            new Error(
+              `Destinations page ${requestedPage} links next to page ${nextPage}`,
+            ),
+            { code: "pagination_changed" },
+          );
+      }
       coverage = "verified-list";
       terminal = true;
     } else {
@@ -871,7 +888,9 @@ export function parseInspected({ html, url, config, interaction, task }) {
       add(
         {
           title,
-          url: `${url}#event=${encodeURIComponent(title)}&date=${rawDate.startDate}`,
+          // Title and date alone can collide; venue and organizer distinguish
+          // same-named rows.
+          url: `${url}#event=${encodeURIComponent(title)}&date=${rawDate.startDate}&venue=${encodeURIComponent(venue)}&org=${encodeURIComponent(organizer)}`,
           startDate: rawDate.startDate,
           endDate: rawDate.endDate,
           location:

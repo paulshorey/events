@@ -20,6 +20,7 @@ import {
   jsonLdEvents,
   recordFromJsonLd,
   dedupe,
+  identityCollisions,
 } from "../records.mjs";
 
 const paginationSelectors =
@@ -704,6 +705,9 @@ export function parseDocument({
       uniqueRequests.set(request.url, request);
   return {
     records: dedupe(all),
+    ...(identityCollisions(all)
+      ? { identityCollisions: identityCollisions(all) }
+      : {}),
     nextRequests: [...uniqueRequests.values()],
     method,
     observedCount,

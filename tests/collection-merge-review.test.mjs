@@ -178,3 +178,73 @@ test("same-named unlinked street permits on one day keep distinct identities", a
     .map((e) => e.sourceRecordId);
   assert.equal(new Set(ids).size, 2);
 });
+
+import { parseEventfinderPage } from "../src/adapters/eventfinder.mjs";
+import { identityCollisions } from "../src/records.mjs";
+
+test("Eventfinder takes location fields from one authoritative object and checks page sizes", async () => {
+  const c = byId("url-004");
+  const body = await fx("eventfinder-search.json");
+  const data = JSON.parse(body);
+  const task = {
+    meta: {
+      request: {
+        body: { page: data.pagination.page, limit: data.events.length },
+      },
+    },
+  };
+  const r = parseEventfinderPage(body, c.apiEndpoint, c, task);
+  const statesboro = r.records.find((e) => e.sourceRecordId === "254324");
+  assert.equal(statesboro.location.locality ?? null, null);
+  assert.match(statesboro.location.formattedAddress, /Savannah/);
+  assert.ok(statesboro.warnings.includes("venue_and_event_location_disagree"));
+  const chicago = r.records.find((e) => e.sourceRecordId === "241158");
+  assert.equal(chicago.location.venue ?? null, null);
+  assert.equal(chicago.location.locality, "Chicago");
+  // A response shorter than the requested limit is not a complete page.
+  const short = parseEventfinderPage(body, c.apiEndpoint, c, {
+    meta: {
+      request: {
+        body: { page: data.pagination.page, limit: data.events.length + 5 },
+      },
+    },
+  });
+  if (data.pagination.page < data.pagination.totalPages)
+    assert.ok(
+      short.issues.some((i) => i.code === "page_result_count_mismatch"),
+    );
+});
+
+test("a stale destinations page served under a later URL fails the hub contract", () => {
+  const c = byId("url-015");
+  const html = `<html><body><div class="entity-grid-card"><a href="/us/ny/new-york-city">NYC</a></div>
+    <a rel="next" href="/destinations?page=2">Next</a></body></html>`;
+  assert.throws(
+    () =>
+      parseDocument({
+        html,
+        url: "https://conventioncalendar.com/destinations?page=2",
+        config: c,
+      }),
+    (e) => e.code === "pagination_changed",
+  );
+  assert.ok(
+    parseDocument({
+      html,
+      url: "https://conventioncalendar.com/destinations",
+      config: c,
+    }),
+  );
+});
+
+test("records sharing an identity but different core fields are counted as collisions", () => {
+  const a = { sourceRecordId: "x", title: "A", startDate: "2026-11-07" };
+  assert.equal(
+    identityCollisions([a, { ...a, evidence: { selector: "other" } }]),
+    0,
+  );
+  assert.equal(
+    identityCollisions([a, { ...a, location: { venue: "Hall 2" } }]),
+    1,
+  );
+});

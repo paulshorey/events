@@ -53,7 +53,19 @@ export function parseEventfinderPage(body, url, config, task) {
     ).href;
     const place = event.location ?? event.venue?.location ?? {},
       venueName = nonEmpty(event.venue?.name),
-      coordinates = event.coordinates;
+      coordinates = event.coordinates,
+      fromVenue = coordinates?.source === "venue" && !!event.venue;
+    const locationWarnings = [];
+    // The event's own city disagreeing with the venue address is surfaced.
+    if (
+      fromVenue &&
+      nonEmpty(place.city) &&
+      nonEmpty(event.venue?.formattedAddress) &&
+      !event.venue.formattedAddress
+        .toLowerCase()
+        .includes(String(place.city).toLowerCase())
+    )
+      locationWarnings.push("venue_and_event_location_disagree");
     const record = eventRecord(
       config,
       {
@@ -66,22 +78,29 @@ export function parseEventfinderPage(body, url, config, task) {
           start: "source startDate calendar day",
           end: day(event.endDate) ? "source endDate calendar day" : null,
         },
+        // One object is authoritative, as named by coordinates.source: the
+        // venue (name, address) or the event location (city fields). Fields
+        // from the other object are never mixed in.
         location: event.isVirtual
           ? null
-          : {
-              venue:
-                venueName && venueName.toUpperCase() !== "VIRTUAL"
-                  ? venueName
-                  : undefined,
-              formattedAddress: nonEmpty(
-                event.venue?.formattedAddress ?? place.formattedAddress,
-              ),
-              locality: nonEmpty(event.city ?? place.city),
-              region: nonEmpty(event.state ?? place.state),
-              country: nonEmpty(event.country ?? place.country),
-              postalCode: nonEmpty(event.venue?.postalCode ?? place.postalCode),
-              basis: "source event location fields",
-            },
+          : fromVenue
+            ? {
+                venue:
+                  venueName && venueName.toUpperCase() !== "VIRTUAL"
+                    ? venueName
+                    : undefined,
+                formattedAddress: nonEmpty(event.venue?.formattedAddress),
+                postalCode: nonEmpty(event.venue?.postalCode),
+                basis: "source venue fields (coordinates.source = venue)",
+              }
+            : {
+                formattedAddress: nonEmpty(place.formattedAddress),
+                locality: nonEmpty(place.city ?? event.city),
+                region: nonEmpty(place.state ?? event.state),
+                country: nonEmpty(place.country ?? event.country),
+                postalCode: nonEmpty(place.postalCode),
+                basis: "source event location fields",
+              },
         geoCoordinates:
           !event.isVirtual &&
           coordinates?.latitude != null &&
@@ -95,8 +114,13 @@ export function parseEventfinderPage(body, url, config, task) {
           .map((label) => nonEmpty(label))
           .filter(Boolean)
           .map((label) => ({ label, basis: "upstream classification" })),
-        warnings: event.isVirtual ? ["virtual_location_present"] : [],
+        warnings: event.isVirtual
+          ? ["virtual_location_present"]
+          : locationWarnings,
         raw: {
+          // A venue name is kept here, not claimed, when the event location
+          // is the authoritative object.
+          venueName: fromVenue ? undefined : (venueName ?? undefined),
           startDate: event.startDate,
           endDate: event.endDate,
           isVirtual: event.isVirtual,
@@ -117,6 +141,24 @@ export function parseEventfinderPage(body, url, config, task) {
     next = new URL(url);
   next.searchParams.set("page", String(pagination.page + 1));
   const request = task?.meta?.request;
+  // Each page must hold the requested limit, and the final page the remainder
+  // of totalItems; a short response is not a complete page.
+  const limit = Number(request?.body?.limit);
+  const expectedOnPage = Number.isInteger(limit)
+    ? last
+      ? pagination.totalItems - (pagination.totalPages - 1) * limit
+      : limit
+    : null;
+  const pageIssues =
+    expectedOnPage != null && data.events.length !== expectedOnPage
+      ? [
+          {
+            code: "page_result_count_mismatch",
+            expected: expectedOnPage,
+            received: data.events.length,
+          },
+        ]
+      : [];
   return {
     records,
     nextRequests:
@@ -140,9 +182,12 @@ export function parseEventfinderPage(body, url, config, task) {
     terminal: last,
     coverage: "api-query",
     method: "eventfinder-search",
-    issues: rejected
-      ? [{ code: "records_require_parse_review", count: rejected }]
-      : [],
+    issues: [
+      ...pageIssues,
+      ...(rejected
+        ? [{ code: "records_require_parse_review", count: rejected }]
+        : []),
+    ],
     rejected,
     observedCount: data.events.length,
     scopeWarning:

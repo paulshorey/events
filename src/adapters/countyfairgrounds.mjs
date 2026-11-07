@@ -84,6 +84,9 @@ export function parseCountyfairgroundsState(body, url, config) {
     terminal: true,
     coverage: "api-query",
     method: "countyfairgrounds-state-json",
+    // Some states legitimately list no upcoming fairs (ME, NH, RI on Nov 5,
+    // 2026); an empty state is recorded for review rather than hidden.
+    ...(data.length ? {} : { emptyState: true }),
     issues,
     rejected,
     observedCount: data.length,

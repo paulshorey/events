@@ -10,7 +10,7 @@ import { parseTribePage } from "../examples/parsers.mjs";
 import { parseEventsDcApi } from "./adapters/eventsdc.mjs";
 import { parseSfGovApi } from "./adapters/sfgov.mjs";
 import { parseLaCityApi } from "./adapters/lacity.mjs";
-import { validDate, eventRecord } from "./records.mjs";
+import { validDate, eventRecord, identityCollisions } from "./records.mjs";
 import { feedParsers } from "./adapters/feeds.mjs";
 import { fieldSummary, matchDetailBindings } from "./event-fields.mjs";
 import { assessQuality } from "./quality.mjs";
@@ -443,6 +443,16 @@ export async function work(
                 task,
                 interaction: input.interaction,
               });
+        // A page that emits two different events under one identity would
+        // lose one silently (parsers dedupe, the journal insert is idempotent).
+        const collisions =
+          (parsed.identityCollisions ?? 0) +
+          identityCollisions(parsed.records ?? []);
+        if (collisions)
+          (parsed.issues ??= []).push({
+            code: "duplicate_record_identity",
+            count: collisions,
+          });
         parsed.acquisition = {
           url: input.url,
           status: input.status,
