@@ -673,6 +673,18 @@ const configs = assessed.map((row) => {
     c.coverage = "discovery";
   return c;
 });
+// Entries maintained directly in sources/registry.json (ordinary parser repairs,
+// validation contracts) are pinned verbatim so regeneration cannot revert them.
+// Refresh with `npm run registry:pin` after editing sources/registry.json.
+const pins = JSON.parse(
+  await readFile("sources/registry-pins.json", "utf8").catch(() => "[]"),
+);
+for (const pin of pins) {
+  const i = configs.findIndex((c) => c.id === pin.id);
+  if (i < 0)
+    throw new Error(`Pinned registry entry ${pin.id} is not generated`);
+  configs[i] = pin;
+}
 await mkdir("scrapers", { recursive: true });
 for (const c of configs)
   await writeFile(

@@ -50,9 +50,10 @@ export function optionsFor(config, options, build) {
   if (!validDate(asOf)) throw new Error("Invalid --as-of YYYY-MM-DD");
   const out = {
     asOf,
-    maxPages: options.maxPages ?? 100,
+    // Large catalogues declare a default budget sized from observed runs.
+    maxPages: options.maxPages ?? config.defaultMaxPages ?? 100,
     maxRecords: options.maxRecords ?? 10000,
-    maxRuntimeMs: options.maxRuntimeMs ?? 180000,
+    maxRuntimeMs: options.maxRuntimeMs ?? config.defaultMaxRuntimeMs ?? 180000,
     maxRetries: options.maxRetries ?? 3,
     probe: options.probe ?? false,
     transport: options.transport ?? config.defaultTransport ?? "browser",

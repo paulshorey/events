@@ -25,6 +25,7 @@ export function parseGeoDirectoryPage(body, url, config, totals) {
     page = Number(requestUrl.searchParams.get("page") ?? 1),
     perPage = Number(requestUrl.searchParams.get("per_page") ?? 10),
     issues = [],
+    recurringExpanded = [],
     records = [];
   let rejected = 0;
   for (const event of data) {
@@ -61,8 +62,10 @@ export function parseGeoDirectoryPage(body, url, config, totals) {
               allDay,
             },
           ];
-    if (dates.recurring)
-      issues.push({ code: "recurring_event_expanded", id: String(event.id) });
+    // Expansion is expected behaviour, not a failure: it is counted (and stops
+    // the header total from being compared with occurrence records) but is not
+    // a page issue that would hold the run partial.
+    if (dates.recurring) recurringExpanded.push(String(event.id));
     for (const o of occurrences) {
       const startLocal = isoLocal(o.startDate, o.startTime),
         // A 00:00 end is the API's placeholder for "no end time".
@@ -130,7 +133,12 @@ export function parseGeoDirectoryPage(body, url, config, totals) {
       ? []
       : [{ url: next.href, kind: "api", depth: 0, meta: { pagination: true } }],
     expectedTotal:
-      issues.length || rejected ? undefined : (totals?.total ?? undefined),
+      issues.length || rejected || recurringExpanded.length
+        ? undefined
+        : (totals?.total ?? undefined),
+    ...(recurringExpanded.length
+      ? { recurringExpanded: recurringExpanded.length }
+      : {}),
     terminal,
     coverage: "api-query",
     method: "geodirectory-rest",

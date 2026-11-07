@@ -109,5 +109,8 @@ test("Festival Trekker rejects changed API shapes and surfaces recurring expansi
   assert.equal(parsed.records.length, 2);
   assert.equal(parsed.records[1].endLocal, "2026-11-12T21:00:00");
   assert.equal(parsed.expectedTotal, undefined);
-  assert.ok(parsed.issues.some((i) => i.code === "recurring_event_expanded"));
+  // Expansion is counted, not a run-failing page issue.
+  assert.ok(parsed.recurringExpanded >= 1);
+  assert.ok(!parsed.issues.some((i) => i.code === "recurring_event_expanded"));
+  assert.equal(parsed.expectedTotal, undefined);
 });

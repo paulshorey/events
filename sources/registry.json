@@ -103,7 +103,9 @@
       "mode": "page-query-links",
       "parameter": "page",
       "maxPages": 400
-    }
+    },
+    "defaultMaxPages": 1780,
+    "defaultMaxRuntimeMs": 5340000
   },
   {
     "id": "url-003",
@@ -182,7 +184,9 @@
     "apiFormat": "eventfinder",
     "apiEndpoint": "https://www.eventfinder.site/api/getEvents",
     "apiPageSize": 250,
-    "defaultTransport": "api"
+    "defaultTransport": "api",
+    "defaultMaxPages": 240,
+    "defaultMaxRuntimeMs": 720000
   },
   {
     "id": "url-005",
@@ -302,7 +306,9 @@
       "listSelector": ".festiv-list",
       "cardSelector": ".festiv-block[itemtype$=\"schema.org/Festival\"]",
       "maxPages": 200
-    }
+    },
+    "defaultMaxPages": 600,
+    "defaultMaxRuntimeMs": 1800000
   },
   {
     "id": "url-006",
@@ -724,12 +730,16 @@
       "mode": "itemlist-total",
       "maxItems": 2000
     },
-    "detailSeriesAsEvent": true
+    "detailSeriesAsEvent": true,
+    "defaultMaxPages": 720,
+    "defaultMaxRuntimeMs": 2160000
   },
   {
     "id": "url-010",
     "url": "https://www.tsnn.com/trade-show-calendar",
-    "entrypoints": ["https://thetradeshowcalendar.com/tsnn/"],
+    "entrypoints": [
+      "https://thetradeshowcalendar.com/tsnn/"
+    ],
     "sourceKey": "tsnn.com",
     "rateKey": "thetradeshowcalendar.com",
     "group": "Conventions and trade shows",
@@ -769,7 +779,9 @@
       "mode": "offset-table",
       "parameter": "vPos",
       "maxRows": 20000
-    }
+    },
+    "defaultMaxPages": 180,
+    "defaultMaxRuntimeMs": 540000
   },
   {
     "id": "url-011",
@@ -811,7 +823,9 @@
   {
     "id": "url-012",
     "url": "https://tradefest.io/",
-    "entrypoints": ["https://tradefest.io/en/search"],
+    "entrypoints": [
+      "https://tradefest.io/en/search"
+    ],
     "sourceKey": "tradefest.io",
     "rateKey": "tradefest.io",
     "group": "Conventions and trade shows",
@@ -848,7 +862,9 @@
     "enrichDetails": false,
     "discoverDetails": false,
     "windowedSearch": false,
-    "windowHorizon": "2031-12-31"
+    "windowHorizon": "2031-12-31",
+    "defaultMaxPages": 250,
+    "defaultMaxRuntimeMs": 750000
   },
   {
     "id": "url-013",
@@ -887,7 +903,9 @@
     "validationStatus": "needs-validation",
     "script": "scrapers/url-013.mjs",
     "enrichDetails": true,
-    "discoverDetails": false
+    "discoverDetails": false,
+    "defaultMaxPages": 1480,
+    "defaultMaxRuntimeMs": 4440000
   },
   {
     "id": "url-014",
@@ -935,7 +953,9 @@
   {
     "id": "url-015",
     "url": "https://conventioncalendar.com/",
-    "entrypoints": ["https://conventioncalendar.com/destinations"],
+    "entrypoints": [
+      "https://conventioncalendar.com/destinations"
+    ],
     "followDestinations": true,
     "sourceKey": "conventioncalendar.com",
     "rateKey": "conventioncalendar.com",
@@ -970,7 +990,9 @@
     "maxDepth": 0,
     "validationStatus": "needs-validation",
     "script": "scrapers/url-015.mjs",
-    "discoverDetails": false
+    "discoverDetails": false,
+    "defaultMaxPages": 420,
+    "defaultMaxRuntimeMs": 1260000
   },
   {
     "id": "url-016",
@@ -2092,7 +2114,9 @@
     "validationStatus": "needs-validation",
     "script": "scrapers/url-042.mjs",
     "enrichDetails": true,
-    "discoverDetails": false
+    "discoverDetails": false,
+    "defaultMaxPages": 360,
+    "defaultMaxRuntimeMs": 1080000
   },
   {
     "id": "url-043",
@@ -2367,7 +2391,9 @@
       "parameter": "page",
       "maxPages": 300
     },
-    "discoverDetails": false
+    "discoverDetails": false,
+    "defaultMaxPages": 150,
+    "defaultMaxRuntimeMs": 450000
   },
   {
     "id": "url-050",
@@ -2703,7 +2729,9 @@
     "apiMode": "sitemap",
     "discoverDetails": false,
     "minIntervalMs": 1000,
-    "detailTransport": "http"
+    "detailTransport": "http",
+    "defaultMaxPages": 1790,
+    "defaultMaxRuntimeMs": 5370000
   },
   {
     "id": "url-057",
@@ -3204,7 +3232,9 @@
     "discoverDetails": false,
     "minIntervalMs": 1500,
     "detailTransport": "http",
-    "detailProfile": "simpleview"
+    "detailProfile": "simpleview",
+    "defaultMaxPages": 470,
+    "defaultMaxRuntimeMs": 1410000
   },
   {
     "id": "url-071",
