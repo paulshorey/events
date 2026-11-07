@@ -417,6 +417,47 @@ test("a department discovery page cannot publish its misleading Event metadata",
   assert.equal(detail.records[0].startDate, "2026-10-18");
 });
 
+test("a detail heading that only adds the edition year still binds, but only on the same date", () => {
+  const make = (title, startDate) =>
+    eventRecord(
+      config,
+      { ...input, title, startDate, endDate: startDate },
+      evidence,
+    );
+  const listing = make("EASTEC", "2027-05-11");
+  assert.ok(mergeDetail(listing, make("EASTEC 2027", "2027-05-11")));
+  assert.equal(mergeDetail(listing, make("EASTEC 2027", "2027-05-12")), null);
+  assert.equal(
+    mergeDetail(listing, make("EASTEC Asia 2027", "2027-05-11")),
+    null,
+  );
+  // A trailing "(formerly ...)" note on one side is not part of the name.
+  assert.ok(
+    mergeDetail(
+      make(
+        "ADLM Annual Meeting (formerly AACC Annual Scientific Meeting)",
+        "2027-07-25",
+      ),
+      make("ADLM Annual Meeting 2027", "2027-07-25"),
+    ),
+  );
+  assert.equal(
+    mergeDetail(
+      make("ADLM Annual Meeting (formerly AACC)", "2027-07-25"),
+      make("AACC Annual Meeting 2027", "2027-07-25"),
+    ),
+    null,
+  );
+  // A listing that already names a year is not loosened.
+  assert.equal(
+    mergeDetail(
+      make("EASTEC 2026", "2027-05-11"),
+      make("EASTEC 2027", "2027-05-11"),
+    ),
+    null,
+  );
+});
+
 test("reviewed title aliases retain the date guard rather than enabling generic fuzzy matching", () => {
   const listing = eventRecord(
     config,
@@ -456,19 +497,55 @@ test("reviewed title aliases retain the date guard rather than enabling generic 
   );
 });
 
-test("ConventionGrid event names exclude the adjacent date/city metadata", async () => {
+test("ConventionGrid list view takes each card's year from its month heading and verifies the stated total", async () => {
   const c = configs.find((c) => c.id === "url-013");
-  const parsed = parseDocument({
-    html: await fixture("conventiongrid-card"),
-    url: c.url,
-    config: { ...c, maxDepth: 0 },
-  });
-  assert.equal(parsed.records.length, 1);
+  const html = await fixture("conventiongrid-calendar");
+  const parsed = parseDocument({ html, url: c.url, config: c });
+  assert.equal(parsed.records.length, 4);
+  assert.equal(parsed.rejected, 0);
+  assert.equal(parsed.coverage, "verified-list");
+  assert.equal(parsed.terminal, true);
+  // Featured-show mega-menu links and series pages are not follow-up work.
+  assert.deepEqual(parsed.nextRequests.map((r) => r.kind).sort(), [
+    "detail",
+    "detail",
+    "detail",
+    "detail",
+  ]);
+  const byTitle = Object.fromEntries(parsed.records.map((r) => [r.title, r]));
+  assert.equal(byTitle["World Travel Market London"].startDate, "2026-11-03");
+  assert.equal(byTitle["World Travel Market London"].endDate, "2026-11-05");
   assert.equal(
-    parsed.records[0].title,
-    "ATA Management Conference & Exhibition",
+    byTitle["World Travel Market London"].location.country,
+    "United Kingdom",
   );
-  assert.equal(parsed.records[0].startDate, "2026-10-17");
+  assert.deepEqual(
+    byTitle["World Travel Market London"].categoryTags.map((t) => t.label),
+    ["Travel", "Tourism"],
+  );
+  assert.equal(byTitle["Example Year-End Expo"].startDate, "2026-12-30");
+  assert.equal(byTitle["Example Year-End Expo"].endDate, "2027-01-02");
+  assert.equal(byTitle["Example December Show"].endDate, "2026-12-08");
+  // A changed stated total, or a card outside its month heading, is not a
+  // verified complete list.
+  const changed = parseDocument({
+    html: html.replace("4 upcoming", "5 upcoming"),
+    url: c.url,
+    config: c,
+  });
+  assert.equal(changed.coverage, c.coverage);
+  assert.ok(
+    changed.issues.some((i) => i.code === "single_page_contract_unverified"),
+  );
+  const misfiled = parseDocument({
+    html: html.replace(
+      "Dec 8<!-- --> - <!-- -->Dec 8",
+      "Nov 8<!-- --> - <!-- -->Nov 8",
+    ),
+    url: c.url,
+    config: c,
+  });
+  assert.notEqual(misfiled.coverage, "verified-list");
 });
 
 test("inspected location elements retain explicit address components without inventing a city from the market", async () => {

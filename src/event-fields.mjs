@@ -186,6 +186,7 @@ export function mergeDetail(
     value
       .toLowerCase()
       .replace(/(?:\.{3}|…).*$/, "")
+      .replace(/\s*\((?:formerly|previously|aka)\b[^)]*\)\s*$/i, "")
       .replace(/[^\p{L}\p{N}]+/gu, " ")
       .trim();
   const alias =
@@ -195,9 +196,20 @@ export function mergeDetail(
       : listing.title;
   const a = title(alias),
     b = title(detail.title);
+  // A detail heading may add the edition year to the listing's name
+  // ("EASTEC" / "EASTEC 2027"); the occurrence date below still has to agree.
+  const yearless = (value) => value.replace(/ (?:19|20)\d{2}$/, "");
   // The requested page identity is checked by the worker. Also require the
   // event title and occurrence date, so recommendation cards cannot enrich it.
-  if (!a || !b || !(a === b || (a.length >= 18 && b.startsWith(a))))
+  if (
+    !a ||
+    !b ||
+    !(
+      a === b ||
+      (a.length >= 18 && b.startsWith(a)) ||
+      (!/ (?:19|20)\d{2}$/.test(a) && yearless(b) === a)
+    )
+  )
     return null;
   if (
     listing.startDate !== detail.startDate &&

@@ -75,11 +75,25 @@ const overrides = {
   },
   "conventiongrid.com": {
     adapter: "conventiongrid",
-    detailPattern: "/shows/|/calendar/\\d{4}/",
+    detailPattern: "/shows/[^/?#]+/\\d{4}/[^/?#]+/?$",
+    discoverDetails: false,
+  },
+  "tradefest.io": {
+    adapter: "tradefest",
+    discoverDetails: false,
+    enrichDetails: false,
+    maxDepth: 0,
+  },
+  "conventioncalendar.com": {
+    adapter: "conventioncalendar",
+    discoverDetails: false,
+    maxDepth: 0,
   },
   "thetradeshowcalendar.com": {
     adapter: "trade-table",
     detailPattern: "/ttn/index.php",
+    discoverDetails: false,
+    pagination: { mode: "offset-table", parameter: "vPos", maxRows: 20000 },
   },
   "nyctourism.com": {
     adapter: "nyc-tourism",
