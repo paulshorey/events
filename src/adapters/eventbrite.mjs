@@ -137,13 +137,26 @@ export function parseEventbriteSearch({ html, url, config }) {
   const capped =
     pagination.page_count * pagination.page_size <
     (pagination.object_count ?? 0);
+  // A non-final page must be full; the final one holds the remainder. A short
+  // page means a partial response, so coverage is not claimed.
+  const expectedOnPage =
+    current < last
+      ? pagination.page_size
+      : (pagination.object_count ?? 0) - (last - 1) * pagination.page_size;
+  const shortPage = !capped && events.results.length !== expectedOnPage;
   return {
     records,
     observedCount: events.results.length,
     rejected,
     terminal: current >= last,
     // A capped search view is not the whole catalogue.
-    coverage: capped ? "unverified" : "verified-list",
+    coverage: capped || shortPage ? "unverified" : "verified-list",
+    shortPage,
+    expectedOnPage,
+    // Uncapped searches reconcile the accumulated records with object_count.
+    ...(!capped && pagination.object_count != null
+      ? { expectedTotal: pagination.object_count }
+      : {}),
     nextRequests:
       current >= last
         ? []

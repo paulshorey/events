@@ -203,6 +203,13 @@ export function parseDocument({
     coverage = parsed.coverage;
     terminal = parsed.terminal;
     method = "eventbrite-search-results";
+    if (parsed.expectedTotal != null) pagingTotal = parsed.expectedTotal;
+    if (parsed.shortPage)
+      issues.push({
+        code: "page_result_count_mismatch",
+        expected: parsed.expectedOnPage,
+        received: parsed.observedCount,
+      });
     if (parsed.capped)
       issues.push({
         code: "search_view_capped",

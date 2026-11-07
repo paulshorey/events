@@ -13,7 +13,7 @@ const clock = (value) => {
     );
   if (!m) return null;
   const to24 = (h, min, ap) => {
-    const hour = Number(h) % 12 + (ap.toLowerCase() === "pm" ? 12 : 0);
+    const hour = (Number(h) % 12) + (ap.toLowerCase() === "pm" ? 12 : 0);
     if (Number(h) < 1 || Number(h) > 12 || Number(min ?? 0) > 59) return null;
     return `${String(hour).padStart(2, "0")}:${min ?? "00"}`;
   };
@@ -78,7 +78,9 @@ export function parseStreetFairs({ html, url, config }) {
           type = row.attr("data-type") || "fair",
           cells = row.find("td"),
           label = text(cells.eq(0).text()),
-          street = text(cells.eq(1).clone().children("small").remove().end().text()),
+          street = text(
+            cells.eq(1).clone().children("small").remove().end().text(),
+          ),
           place = text(cells.eq(1).find("small").first().text()),
           hours = text(cells.eq(2).text());
         const warnings = [];
@@ -116,11 +118,13 @@ export function parseStreetFairs({ html, url, config }) {
         const record = eventRecord(
           config,
           {
-            id: `${slug || title}|${day}`,
+            // Unlinked permits are identified by title, street and place too,
+            // so two same-named permits on one day stay distinct.
+            id: slug ? `${slug}|${day}` : `${title}|${day}|${street}|${place}`,
             title,
             // A permit row can have no link of its own; it is identified by
             // its title on the calendar page.
-            url: `${url.split("#")[0]}#${slug ? `e=${slug}` : `permit-${encodeURIComponent(title)}`}`,
+            url: `${url.split("#")[0]}#${slug ? `e=${slug}` : `permit-${encodeURIComponent(`${title}|${street}`)}`}`,
             startDate: !isPermit && times ? `${day}T${times.start}:00` : day,
             endDate: !isPermit && times ? `${day}T${times.end}:00` : day,
             dateTimeBasis: {
@@ -193,10 +197,7 @@ export function parseStreetFairs({ html, url, config }) {
     buttons.length === groups.length &&
     buttons.every((b) => (perGroup[b.day] ?? 0) === b.n);
   // "N street fairs in the next 7 days" covers the first seven calendar days.
-  const first = groups
-      .first()
-      .attr("data-period-group")
-      ?.replace(/^w:/, ""),
+  const first = groups.first().attr("data-period-group")?.replace(/^w:/, ""),
     windowEnd = validDate(first)
       ? new Date(new Date(`${first}T12:00:00Z`).getTime() + 6 * 86400000)
           .toISOString()

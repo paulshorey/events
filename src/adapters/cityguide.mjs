@@ -64,7 +64,15 @@ function clock(value) {
   };
   const start = to24(m[1], m[2], m[3]),
     end = m[4] ? to24(m[4], m[5], m[6]) : null;
-  return start ? { start, end: end && end > start ? end : null } : null;
+  // An end clock before the start (e.g. "10 pm - 2 am") is an overnight range;
+  // the next-day end is not invented, but the record is flagged for review.
+  return start
+    ? {
+        start,
+        end: end && end > start ? end : null,
+        overnight: !!(end && end <= start),
+      }
+    : null;
 }
 
 export function parseCityGuide({ html, url, config }) {
@@ -86,7 +94,14 @@ export function parseCityGuide({ html, url, config }) {
     const c = $(a),
       href = c.attr("href"),
       dateText = text(
-        c.find(".date-wrapper").first().clone().find(".category-icon").remove().end().text(),
+        c
+          .find(".date-wrapper")
+          .first()
+          .clone()
+          .find(".category-icon")
+          .remove()
+          .end()
+          .text(),
       ),
       title = text(c.find("h3").first().text());
     if (/^PAST\b/i.test(dateText)) {
@@ -122,13 +137,15 @@ export function parseCityGuide({ html, url, config }) {
       address = text(c.find("address").first().text());
     const warnings = [];
     if (multiDay && hours) warnings.push("daily_hours_listed_for_multi_day");
+    if (times?.overnight) warnings.push("overnight_end_time_not_applied");
     const record = eventRecord(
       config,
       {
         id: href.replace(/^\/event\//, ""),
         title,
         url: new URL(href, url).href,
-        startDate: !multiDay && times ? `${startDate}T${times.start}:00` : startDate,
+        startDate:
+          !multiDay && times ? `${startDate}T${times.start}:00` : startDate,
         endDate:
           !multiDay && times?.end ? `${endDate}T${times.end}:00` : endDate,
         dateTimeBasis: {

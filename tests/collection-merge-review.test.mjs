@@ -107,3 +107,74 @@ test("a destinations card without exactly one city page fails the hub contract",
     (e) => e.code === "contract_changed",
   );
 });
+
+import { readFile } from "node:fs/promises";
+import { parseSharePointCalendar } from "../src/adapters/regional.mjs";
+const fx = (name) =>
+  readFile(new URL(`fixtures/${name}`, import.meta.url), "utf8");
+
+test("an unexpanded SharePoint recurrence keeps the run from completing", async () => {
+  const r = parseSharePointCalendar({
+    body: await fx("sharepoint-city-calendar.json"),
+    url: "https://dallascityhall.com/calendar/_api/Web/Lists/GetByTitle('City%20Calendar')/items",
+    config: byId("url-072"),
+  });
+  assert.ok(r.issues.some((i) => i.code === "recurring_series_not_expanded"));
+});
+
+test("an uncapped Eventbrite page with fewer results than promised is not verified", async () => {
+  const c = byId("url-023");
+  const html = (await fx("eventbrite-search.html")).replace(
+    '"object_count":2410',
+    '"object_count":980',
+  );
+  const r = parseDocument({
+    html,
+    url: c.entrypoints[0],
+    config: { ...c, maxDepth: 0 },
+    task: { depth: 0, kind: "listing", meta: {} },
+  });
+  assert.notEqual(r.coverage, "verified-list");
+  assert.ok(r.issues.some((i) => i.code === "page_result_count_mismatch"));
+  assert.equal(r.expectedTotal, 980);
+});
+
+test("City Guide flags an overnight time range instead of dropping its end silently", async () => {
+  const c = byId("url-030");
+  const html = (await fx("cityguide-cards.html")).replace("7pm", "10pm-2am");
+  const r = parseDocument({
+    html,
+    url: c.url,
+    config: c,
+    task: { depth: 0, kind: "listing", meta: {} },
+  });
+  assert.ok(
+    r.records.some((e) =>
+      e.warnings?.includes("overnight_end_time_not_applied"),
+    ),
+  );
+});
+
+test("same-named unlinked street permits on one day keep distinct identities", async () => {
+  const c = byId("url-033");
+  const html = await fx("dothis-street-fairs-days.html");
+  const row = html.match(
+    /<tr data-type="fair" data-image="permit-recordando[\s\S]*?<\/tr>/,
+  )[0];
+  const twin = row.replace(
+    "44 Street between 5 Avenue and 6 Avenue",
+    "45 Street between 5 Avenue and 6 Avenue",
+  );
+  const r = parseDocument({
+    html: html
+      .replace(row, row + twin)
+      .replace("13 street fairs", "14 street fairs"),
+    url: c.url,
+    config: c,
+    task: { depth: 0, kind: "listing", meta: {} },
+  });
+  const ids = r.records
+    .filter((e) => e.title.startsWith("Recordando"))
+    .map((e) => e.sourceRecordId);
+  assert.equal(new Set(ids).size, 2);
+});

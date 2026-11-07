@@ -274,6 +274,7 @@ export function parseSharePointCalendar({ body, url, config }) {
     });
   const records = [],
     issues = [];
+  let unexpanded = 0;
   let rejected = 0;
   const origin = new URL(url).origin,
     detailBase =
@@ -297,8 +298,10 @@ export function parseSharePointCalendar({ body, url, config }) {
       e = end ? localParts(end, config.timeZone) : null;
     const address = [item.Address1, item.Address2].filter(Boolean).join(", ");
     const warnings = [];
-    if (item.fRecurrence === true)
+    if (item.fRecurrence === true) {
       warnings.push("recurring_series_item_not_expanded");
+      unexpanded++;
+    }
     if (item.EventStatus && item.EventStatus !== "Active")
       warnings.push(
         `source_event_status_${String(item.EventStatus).toLowerCase()}`,
@@ -359,6 +362,9 @@ export function parseSharePointCalendar({ body, url, config }) {
   }
   if (rejected)
     issues.push({ code: "records_require_parse_review", count: rejected });
+  // Future instances of a recurring series were not collected: not complete.
+  if (unexpanded)
+    issues.push({ code: "recurring_series_not_expanded", count: unexpanded });
   const next = data["odata.nextLink"];
   const nextUrl = next ? safeUrl(next, url) : null;
   return {
