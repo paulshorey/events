@@ -3,6 +3,9 @@ import { resolve, join } from "node:path";
 import { createHash, randomUUID } from "node:crypto";
 import { parseDocument } from "./adapters/document.mjs";
 import { parseAlgolia } from "./adapters/algolia.mjs";
+import { parseGeoDirectoryPage } from "./adapters/geodirectory.mjs";
+import { parseCountyfairgroundsState } from "./adapters/countyfairgrounds.mjs";
+import { parseEventfinderPage } from "./adapters/eventfinder.mjs";
 import { parseTribePage } from "../examples/parsers.mjs";
 import { parseEventsDcApi } from "./adapters/eventsdc.mjs";
 import { parseSfGovApi } from "./adapters/sfgov.mjs";
@@ -73,7 +76,13 @@ export function optionsFor(config, options, build) {
     throw new Error("Unknown transport");
   return out;
 }
-export function parseApi(body, url, config, task) {
+export function parseApi(body, url, config, task, totals) {
+  if (config.apiFormat === "geodirectory")
+    return parseGeoDirectoryPage(body, url, config, totals);
+  if (config.apiFormat === "countyfairgrounds")
+    return parseCountyfairgroundsState(body, url, config);
+  if (config.apiFormat === "eventfinder")
+    return parseEventfinderPage(body, url, config, task);
   if (config.apiMode === "sitemap")
     return parseSitemapEntries({ body, url, config });
   if (config.apiMode === "sharepoint-calendar")
@@ -218,9 +227,11 @@ export function evaluate(journal, run, stopReason) {
       transport: run.options.transport,
       basis:
         run.options.transport === "api"
-          ? run.config.apiQuery
-            ? `all pages of the recorded start_date query filtered by ${new URLSearchParams(run.config.apiQuery)}`
-            : "all pages of the recorded start_date query"
+          ? run.config.apiFormat === "geodirectory"
+            ? "all pages of the default GeoDirectory events query"
+            : run.config.apiQuery
+              ? `all pages of the recorded start_date query filtered by ${new URLSearchParams(run.config.apiQuery)}`
+              : "all pages of the recorded start_date query"
           : "declared listing interface",
       validation:
         "core listing fields; not a guarantee of all events on the publisher domain",
@@ -412,7 +423,7 @@ export async function work(
               method: "detail-off-host-skip",
             }
           : task.kind === "api"
-            ? parseApi(input.body, input.url, config, task)
+            ? parseApi(input.body, input.url, config, task, input.apiTotals)
             : parseDocument({
                 html: input.body,
                 url: input.url,

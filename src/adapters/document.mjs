@@ -284,7 +284,7 @@ export function parseDocument({
     });
   } else if (config.adapter === "microdata") {
     method = "microdata-event";
-    const cards = $('[itemtype*="schema.org/Event"]');
+    const cards = $(config.itemSelector ?? '[itemtype*="schema.org/Event"]');
     observedCount = cards.length;
     cards.each((_, e) => {
       const c = $(e),
@@ -306,11 +306,30 @@ export function parseDocument({
       venueText.find('[itemprop="address"]').remove();
       const latitude = locationProp("latitude"),
         longitude = locationProp("longitude");
+      // With an identity pattern, the event's own link is the first anchor
+      // that carries it (organizer and phone links also sit inside a card).
+      const itemUrl = config.itemIdPattern
+        ? c
+            .find("a[href]")
+            .map((_, a) => $(a).attr("href"))
+            .get()
+            .find((href) =>
+              new RegExp(config.itemIdPattern).test(safeUrl(href, url) ?? ""),
+            )
+        : prop("url") || c.find("a[href]").first().attr("href");
       const r = eventRecord(
         config,
         {
+          ...(config.itemIdPattern
+            ? (() => {
+                const m = String(itemUrl ?? "").match(
+                  new RegExp(config.itemIdPattern),
+                );
+                return m ? { id: m[1] } : {};
+              })()
+            : {}),
           title: prop("name"),
-          url: prop("url") || c.find("a[href]").first().attr("href"),
+          url: itemUrl,
           startDate: prop("startDate"),
           endDate: prop("endDate"),
           location: {
@@ -638,11 +657,14 @@ export function parseDocument({
           },
         });
   }
+  // A page whose verified pager contract says the dated list has ended is an
+  // expected empty result, not a missing event contract.
   if (
     !all.length &&
     !nextRequests.length &&
     !emptyTerminalPage &&
     !verifiedEmpty &&
+    !paging?.terminal &&
     !(observedCount && excluded)
   )
     issues.push({

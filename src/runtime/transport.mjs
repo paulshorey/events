@@ -307,9 +307,20 @@ export class Transport {
       task.kind === "detail" && this.run.config.detailTransport === "http";
     if (task.kind === "api" || httpDetail) {
       const api = await this.initApi(),
-        response = await api.get(task.url, {
-          headers: this.run.config.apiHeaders ?? undefined,
-        }),
+        // A source whose public search endpoint is a POST (config.apiFormat
+        // "eventfinder") queues its JSON request body in the task metadata.
+        post = task.meta?.request?.method === "POST",
+        response = post
+          ? await api.post(task.url, {
+              data: task.meta.request.body,
+              headers: {
+                "Content-Type": "application/json",
+                ...(this.run.config.apiHeaders ?? {}),
+              },
+            })
+          : await api.get(task.url, {
+              headers: this.run.config.apiHeaders ?? undefined,
+            }),
         body = await response.text();
       const capture = await saveCapture(
         this.root,
@@ -335,7 +346,17 @@ export class Transport {
           );
         throw error;
       }
-      return { body, url: response.url(), capture, status: response.status() };
+      const total = Number(response.headers()["x-wp-total"]),
+        totalPages = Number(response.headers()["x-wp-totalpages"]);
+      return {
+        body,
+        url: response.url(),
+        capture,
+        status: response.status(),
+        ...(Number.isInteger(total) && Number.isInteger(totalPages)
+          ? { apiTotals: { total, totalPages } }
+          : {}),
+      };
     }
     if (
       task.kind === "listing" &&

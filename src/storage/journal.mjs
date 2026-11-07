@@ -171,12 +171,41 @@ export class Journal {
           kind: "api",
           depth: 0,
         });
+      } else if (c.config.apiFormat === "eventfinder") {
+        const url = new URL(c.config.apiEndpoint);
+        // POST search from the as-of day; each page is a distinct queued URL.
+        const limit = c.config.apiPageSize ?? 250,
+          request = {
+            method: "POST",
+            body: {
+              filters: { startDateFrom: options.asOf },
+              page: 1,
+              limit,
+              sortBy: "StartDate",
+              sortDirection: "ASC",
+            },
+          };
+        url.search = new URLSearchParams({
+          startDateFrom: options.asOf,
+          page: "1",
+          limit: String(limit),
+        });
+        this._addPage(runId, {
+          url: url.href,
+          kind: "api",
+          depth: 0,
+          meta: { request },
+        });
+        this.action(runId, "enqueued", { id, options, slot });
+        return { runId, created: true };
       } else {
         const url = new URL(c.config.apiEndpoint);
         url.search = new URLSearchParams({
           per_page: String(options.perPage ?? 50),
           page: "1",
-          start_date: options.asOf,
+          ...(c.config.apiFormat === "geodirectory"
+            ? {}
+            : { start_date: options.asOf }),
           ...(c.config.apiQuery ?? {}),
         });
         this._addPage(runId, {

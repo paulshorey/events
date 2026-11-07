@@ -499,7 +499,105 @@ const sourceOverrides = {
     enrichDetails: false,
     detailTransport: "http",
   },
+  ...festivalSourceOverrides(),
 };
+// Festival and general-discovery collectors added 2026-11-05 (collect/festivals).
+// Each entry records the contract observed on the publisher; see tests/festival-*.test.mjs.
+function festivalSourceOverrides() {
+  const cities =
+    "new-york los-angeles chicago houston london toronto san-francisco miami dallas atlanta boston seattle sydney melbourne mumbai singapore dubai paris berlin las-vegas philadelphia denver".split(
+      " ",
+    );
+  const usStates =
+    "AL AK AZ AR CA CO CT DE FL GA HI ID IL IN IA KS KY LA ME MD MA MI MN MS MO MT NE NV NH NJ NM NY NC ND OH OK OR PA RI SC SD TN TX UT VT VA WA WV WI WY".split(
+      " ",
+    );
+  const festivalNetJurisdictions =
+    "Alabama Alaska Arizona Arkansas Armed-Forces-Americas Armed-Forces-Europe Armed-Forces-Pacific American-Samoa California Colorado Connecticut Delaware Washington-DC Florida Georgia Guam Hawaii Idaho Illinois Indiana Iowa Kansas Kentucky Louisiana Maine Maryland Massachusetts Michigan Minnesota Mississippi Missouri Montana Nebraska Nevada New-Hampshire New-Jersey New-Mexico New-York North-Carolina North-Dakota Northern-Mariana-Islands Ohio Oklahoma Oregon Pennsylvania Puerto-Rico Rhode-Island South-Carolina South-Dakota Tennessee Texas Utah Vermont Virgin-Islands Virginia Washington West-Virginia Wisconsin Wyoming Alberta British-Columbia Manitoba New-Brunswick Newfoundland-and-Labrador Northwest-Territories Nova-Scotia Nunavut Ontario Prince-Edward-Island Qu%C3%A9bec Saskatchewan Yukon-Territory".split(
+      " ",
+    );
+  const festivalCard = '.festiv-block[itemtype$="schema.org/Festival"]';
+  return {
+    // AllEvents: city list pages, "?page=N" via <link rel=next>; no detail follow.
+    "url-002": {
+      entrypoints: cities.map((c) => `https://allevents.in/${c}/all`),
+      // Event JSON-LD is server-rendered; a missing .event-card must not stop a run.
+      readySelector: null,
+      enrichDetails: false,
+      discoverDetails: false,
+      maxDepth: 0,
+      pagination: {
+        mode: "page-query-links",
+        parameter: "page",
+        maxPages: 400,
+      },
+    },
+    // Eventfinder: POST /api/getEvents search from the as-of day (see journal seeding).
+    "url-004": {
+      adapter: "eventfinder",
+      apiFormat: "eventfinder",
+      apiEndpoint: "https://www.eventfinder.site/api/getEvents",
+      apiPageSize: 250,
+      defaultTransport: "api",
+      coverage: "api-query",
+      allowedHosts: ["eventfinder.site", "www.eventfinder.site"],
+    },
+    // FestivalNet: one state/province list each; dated cards only.
+    "url-005": {
+      adapter: "microdata",
+      itemSelector: festivalCard,
+      itemIdPattern: "^https?://[^/]+/(\\d+)/",
+      entrypoints: festivalNetJurisdictions.map(
+        (s) => `https://festivalnet.com/fairs-festivals/${s}`,
+      ),
+      discoverDetails: false,
+      maxDepth: 0,
+      pagination: {
+        mode: "festivalnet-list",
+        listSelector: ".festiv-list",
+        cardSelector: festivalCard,
+        maxPages: 200,
+      },
+    },
+    // Festival Trekker: GeoDirectory REST events (default upcoming query).
+    "url-006": {
+      adapter: "geodirectory",
+      apiFormat: "geodirectory",
+      apiEndpoint: "https://festivaltrekker.com/wp-json/geodir/v2/events",
+      defaultTransport: "api",
+    },
+    // FestivalIndex: /explore pages "Page N / M" with a declared event total.
+    "url-007": {
+      entrypoints: ["https://festivalindex.com/en-us/explore"],
+      discoverDetails: false,
+      enrichDetails: false,
+      pagination: { mode: "festivalindex-explore", maxPages: 40, pageSize: 12 },
+    },
+    // Countyfairgrounds: one public JSON request per state page.
+    "url-008": {
+      adapter: "countyfairgrounds",
+      apiFormat: "countyfairgrounds",
+      coverage: "api-query",
+      entrypoints: usStates.toSorted().map((state) => ({
+        url: `https://www.countyfairgrounds.net/ajax/ajax_state.php?state=${state}&eventtype=all`,
+        kind: "api",
+        depth: 0,
+      })),
+      discoverDetails: false,
+      maxDepth: 0,
+    },
+    // Meet Me at the Fair: /events/all ItemList (declared count) plus event pages.
+    "url-009": {
+      detailPattern:
+        "^(?:https://meetmeatthefair\\.com)?/events/(?!(?:all|past|undefined|null|maine|vermont|new-hampshire|massachusetts|connecticut|rhode-island)(?:[/?#]|$))[^/?#]+/?$",
+      maxDepth: 1,
+      detailEventUrlAlias: true,
+      detailSeriesAsEvent: true,
+      tentativeMarker: "This event has not yet been verified by our team",
+      pagination: { mode: "itemlist-total", maxItems: 2000 },
+    },
+  };
+}
 const timeZones = {
   "Las Vegas": "America/Los_Angeles",
   "New York City": "America/New_York",
