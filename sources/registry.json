@@ -3183,8 +3183,8 @@
     "enabled": false,
     "adapterVersion": "framework-v1",
     "timeZone": "America/New_York",
-    "adapter": "discovery",
-    "coverage": "discovery",
+    "adapter": "expofp-venue",
+    "coverage": "unverified",
     "detailPattern": "/events?/[^/?#]+|/calendar/[^/?#]+|/shows/|/festivals?/[^/?#]+",
     "cardSelectors": [
       ".event-card",
@@ -3195,7 +3195,7 @@
       ".views-row",
       "article"
     ],
-    "readySelector": null,
+    "readySelector": "tr.event-row",
     "notes": "Use for venue/source discovery; verify whether it contains independently maintainable dated events.",
     "role": "venue reference",
     "allowedHosts": [
@@ -3218,8 +3218,8 @@
     "enabled": false,
     "adapterVersion": "framework-v1",
     "timeZone": "America/New_York",
-    "adapter": "discovery",
-    "coverage": "discovery",
+    "adapter": "hotel-event-list",
+    "coverage": "unverified",
     "detailPattern": "/events?/[^/?#]+|/calendar/[^/?#]+|/shows/|/festivals?/[^/?#]+",
     "cardSelectors": [
       ".event-card",
@@ -3230,7 +3230,7 @@
       ".views-row",
       "article"
     ],
-    "readySelector": null,
+    "readySelector": "table.events-table",
     "notes": "Secondary reference; prioritize the venue calendar and verify freshness.",
     "role": "hotel / venue guide",
     "allowedHosts": [
@@ -3323,8 +3323,8 @@
     "enabled": false,
     "adapterVersion": "framework-v1",
     "timeZone": "America/New_York",
-    "adapter": "discovery",
-    "coverage": "discovery",
+    "adapter": "hotel-event-list",
+    "coverage": "unverified",
     "detailPattern": "/events?/[^/?#]+|/calendar/[^/?#]+|/shows/|/festivals?/[^/?#]+",
     "cardSelectors": [
       ".event-card",
@@ -3335,7 +3335,7 @@
       ".views-row",
       "article"
     ],
-    "readySelector": null,
+    "readySelector": ".panel-body p",
     "notes": "Secondary venue reference; not a primary calendar without further inspection.",
     "role": "hotel / venue guide",
     "allowedHosts": [
@@ -3445,7 +3445,8 @@
     ],
     "maxDepth": 2,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-095.mjs"
+    "script": "scrapers/url-095.mjs",
+    "detailEventIdentity": "page-title"
   },
   {
     "id": "url-096",

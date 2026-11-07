@@ -9,7 +9,22 @@ export const inspectedAdapters = new Set([
   "trade-table",
   "chicago-parks",
   "discover-la",
+  "expofp-venue",
+  "hotel-event-list",
 ]);
+const slug = (value) =>
+  text(value)
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+// Convention-centre location stated by the single-venue guide pages.
+const occcLocation = (basis) => ({
+  venue: "Orange County Convention Center",
+  locality: "Orlando",
+  region: "FL",
+  country: "US",
+  basis,
+});
 // Any navigation-like control other than the probed reveal control: the probe
 // never exercises it, so its presence means the document may not be the list.
 // Allowlist inside the list (the one container holding every item may contain
@@ -385,6 +400,107 @@ export function parseInspected({ html, url, config, interaction }) {
         ".node--type-event.node--view-mode-card time",
       );
     });
+  } else if (config.adapter === "expofp-venue") {
+    // Inspected November 5, 2026: server-rendered venue page with two lists.
+    // `tr.event-row` rows carry a visible date range (with year), a title and
+    // an ExpoFP detail link; `tr.venue-expo-item` cards carry a title, the
+    // organiser's website, a date range and the ExpoFP floor-plan link. The
+    // Hall column was empty for every row, so no hall is claimed.
+    $("tr.event-row").each((_, el) => {
+      const c = $(el),
+        a = c.find("a.event-link").first(),
+        rawDate = text(c.find("td").first().text());
+      if (!a.length) return;
+      add(
+        {
+          title: a.text(),
+          url: a.attr("href"),
+          rawDate,
+          location: occcLocation("single-venue page"),
+          raw: {
+            date: rawDate,
+            hall: text(c.find("td").last().text()) || null,
+          },
+        },
+        "tr.event-row td date; a.event-link",
+      );
+    });
+    $("tr.venue-expo-item").each((_, el) => {
+      const c = $(el),
+        title = text(c.find(".venue-expo-item__text-name span").first().text()),
+        site = c.find("a.venue-expo-item__text-link-title").first(),
+        plan = c.find("a.venue-expo-item__text-link-floor-plan").first(),
+        rawDate = text(
+          c.find(".venue-expo-item__text-date span").last().text(),
+        );
+      const planUrl = plan.attr("href");
+      add(
+        {
+          title,
+          url: planUrl ?? site.attr("href"),
+          rawDate,
+          location: occcLocation("single-venue page"),
+          raw: {
+            date: rawDate,
+            website: text(site.text()) || null,
+            floorPlan: planUrl ?? null,
+          },
+        },
+        "tr.venue-expo-item name/date/floor-plan link",
+      );
+    });
+  } else if (config.adapter === "hotel-event-list") {
+    // Hotel guides listing the convention centre's dates. Neither page has a
+    // per-event URL, so identity is the guide URL plus a title fragment and the
+    // listed dates. Both were inspected November 5, 2026: Ramada uses
+    // `table.events-table` rows (title, "Mon D-D, YYYY"); Wyndham uses a bold
+    // title paragraph followed by "Start Date: ... | End Date: ...". A multi-month
+    // event repeated under several month headings is one listed occurrence.
+    const seen = new Set();
+    let duplicates = 0;
+    const addRow = (title, rawDate, selector) => {
+      const range = dates(rawDate),
+        key = `${slug(title)}|${range.startDate}|${range.endDate}`;
+      if (seen.has(key)) {
+        duplicates++;
+        return;
+      }
+      seen.add(key);
+      add(
+        {
+          title,
+          url: `${url.split("#")[0]}#${slug(title)}`,
+          rawDate,
+          location: occcLocation("hotel guide for the convention centre"),
+          raw: { date: rawDate },
+        },
+        selector,
+      );
+    };
+    $("table.events-table tr").each((_, el) => {
+      const cells = $(el).find("td");
+      if (cells.length === 2)
+        addRow(
+          text(cells.first().text()),
+          text(cells.last().text()),
+          "table.events-table tr td title/date",
+        );
+    });
+    $(".panel-body p").each((_, el) => {
+      const p = $(el),
+        title = text(p.find("strong").first().text());
+      if (!title) return;
+      // 2026 panels use a title paragraph followed by a date paragraph; 2027
+      // panels hold both in one paragraph.
+      const own = text(p.text()),
+        marker = own.search(/Start Date:/i),
+        next = text(p.next("p").text());
+      if (marker >= 0)
+        addRow(title, own.slice(marker), ".panel-body p strong 'Start Date:'");
+      else if (/^Start Date:/i.test(next))
+        addRow(title, next, ".panel-body p strong + p 'Start Date:'");
+    });
+    if (duplicates) excluded.repeatedMonthRows = duplicates;
   }
   if (rejected)
     issues.push({ code: "records_require_parse_review", count: rejected });

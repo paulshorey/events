@@ -184,6 +184,26 @@ const sourceOverrides = {
   "url-019": { coverage: "verified-list" },
   "url-020": { coverage: "verified-list", apiEndpoint: null },
   "url-084": { coverage: "historical-view" },
+  "url-088": {
+    adapter: "expofp-venue",
+    coverage: "unverified",
+    readySelector: "tr.event-row",
+  },
+  "url-089": {
+    adapter: "hotel-event-list",
+    coverage: "unverified",
+    readySelector: "table.events-table",
+  },
+  "url-092": {
+    adapter: "hotel-event-list",
+    coverage: "unverified",
+    readySelector: ".panel-body p",
+  },
+  "url-095": {
+    adapter: "jsonld",
+    coverage: "unverified",
+    detailEventIdentity: "page-title",
+  },
 };
 const timeZones = {
   "Las Vegas": "America/Los_Angeles",

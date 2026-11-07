@@ -19,6 +19,64 @@ const canonical = (value) => {
   u.hash = "";
   return u.href.replace(/\/$/, "");
 };
+const labelled = ($, name) =>
+  text(
+    $("p")
+      .filter((_, e) => text($(e).text()) === name)
+      .first()
+      .next("p")
+      .text(),
+  );
+// A labelled "Time" value such as "7:30 p.m." or "10 a.m. - 8 p.m." supplies
+// clocks for a single-day, date-only structured Event. Several sessions or a
+// multi-day range are left at day precision. A visible "City, ST ZIP" label
+// that shares the structured postal code but names another city replaces the
+// structured locality, which the aggregator was seen to default to Orlando.
+function withVisibleDetails($, event) {
+  const start = String(event.startDate ?? ""),
+    end = String(event.endDate ?? start);
+  let result = event;
+  const place = labelled($, "Location").match(
+    /^(.+?),\s*([A-Z]{2})\s+(\d{5})$/,
+  );
+  const loc = event.location;
+  if (
+    place &&
+    loc &&
+    !Array.isArray(loc) &&
+    typeof loc === "object" &&
+    loc.address?.postalCode === place[3] &&
+    loc.address.addressLocality !== place[1]
+  )
+    result = {
+      ...result,
+      location: {
+        ...loc,
+        address: {
+          ...loc.address,
+          addressLocality: place[1],
+          addressRegion: place[2],
+        },
+      },
+    };
+  if (!/^\d{4}-\d\d-\d\d$/.test(start) || end.slice(0, 10) !== start)
+    return result;
+  const label = labelled($, "Time").replace(/\b([ap])\.m\./gi, "$1m");
+  const clock = "\\d{1,2}(?::\\d{2})?\\s*[ap]m";
+  if (!new RegExp(`^${clock}(?:\\s*[-\u2013]\\s*${clock})?$`, "i").test(label))
+    return result;
+  const clocks = parseTimeRange(label);
+  if (!clocks.startTime) return result;
+  return {
+    ...result,
+    startDate: `${start}T${clocks.startTime}`,
+    endDate: clocks.endTime ? `${start}T${clocks.endTime}` : result.endDate,
+    dateTimeBasis: {
+      start: "visible detail time label",
+      end: clocks.endTime ? "visible detail time label" : "structured date",
+    },
+  };
+}
 export function parseDetail({ html, url, config }) {
   const $ = load(html),
     ld = jsonLdEvents(html),
@@ -37,10 +95,23 @@ export function parseDetail({ html, url, config }) {
       !own &&
       ld.events.length === 1 &&
       text(event.name).toLowerCase() === title.toLowerCase();
-    if (!fallback && (!own || canonical(own) !== canonical(url))) continue;
+    // An aggregator may declare the upstream publisher's own URL in its Event.
+    // With this opt-in, the sole Event whose name agrees with the page heading
+    // is the page's Event, and keeps the upstream URL as its stable identity.
+    const titled =
+      config.detailEventIdentity === "page-title" &&
+      own &&
+      ld.events.length === 1 &&
+      text(event.name).toLowerCase() === title.toLowerCase();
+    if (!fallback && !titled && (!own || canonical(own) !== canonical(url)))
+      continue;
     const record = recordFromJsonLd(
       config,
-      fallback ? { ...event, url } : event,
+      titled
+        ? withVisibleDetails($, event)
+        : fallback
+          ? { ...event, url }
+          : event,
       { url, jsonPath: path },
       ld.references,
     );
