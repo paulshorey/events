@@ -137,8 +137,12 @@ test("LA City calendar feed: offset paging and recurring occurrences keep distin
   const meeting = r.records.find((x) => x.sourceRecordId.startsWith("509771"));
   // Meetings repeat the start as the end; that is not an end.
   assert.equal(meeting.endLocal, null);
-  // Fewer than one full page ends the listing.
-  assert.equal(r.terminal, true);
+  // A short page is not proof of the end (no total is published): paging
+  // continues, and only an empty page is terminal.
+  assert.equal(r.terminal, false);
+  const empty = parseApi("[]", laCityApiUrl(c, "2026-11-05", 45), c, {});
+  assert.equal(empty.terminal, true);
+  assert.equal(empty.nextRequests.length, 0);
   const full = parseApi(
     JSON.stringify(Array(15).fill(JSON.parse(body)[1])),
     laCityApiUrl(c, "2026-11-05"),

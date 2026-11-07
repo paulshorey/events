@@ -93,16 +93,20 @@ export function parseLiveJson(body, url, config) {
     if (record) records.push(record);
     else rejected++;
   }
-  if (rejected) issues.push({ code: "records_require_parse_review", count: rejected });
+  if (rejected)
+    issues.push({ code: "records_require_parse_review", count: rejected });
   const next = data.links?.next ? new URL(data.links.next, url) : null;
   const sameOrigin = next && next.origin === new URL(url).origin;
-  if (next && !sameOrigin) throw contractChanged("Live calendar next link left the publisher origin");
+  if (next && !sameOrigin)
+    throw contractChanged("Live calendar next link left the publisher origin");
   const nextRequests =
     meta.page < meta.total_pages && next
       ? [{ url: next.href, kind: "api", depth: 0, meta: { pagination: true } }]
       : [];
   if (meta.page < meta.total_pages && !next)
-    throw contractChanged("Live calendar next link missing before the last page");
+    throw contractChanged(
+      "Live calendar next link missing before the last page",
+    );
   return {
     records,
     nextRequests,
@@ -123,9 +127,7 @@ function unfold(body) {
   return body.replace(/\r?\n[ \t]/g, "").split(/\r?\n/);
 }
 const unescapeText = (value) =>
-  value
-    .replace(/\\n/gi, "\n")
-    .replace(/\\([,;\\])/g, "$1");
+  value.replace(/\\n/gi, "\n").replace(/\\([,;\\])/g, "$1");
 function parseLine(line) {
   const colon = (() => {
     let quoted = false;
@@ -177,8 +179,14 @@ function addDays(date, days) {
   return d.toISOString().slice(0, 10);
 }
 export function parseIcs(body, url, config) {
-  if (!/^BEGIN:VCALENDAR/m.test(body))
-    throw contractChanged("iCalendar feed envelope missing");
+  if (!/^BEGIN:VCALENDAR/m.test(body) || !/^END:VCALENDAR\s*$/m.test(body))
+    throw contractChanged("iCalendar feed envelope missing or truncated");
+  const begins = (body.match(/^BEGIN:VEVENT\r?$/gm) ?? []).length,
+    ends = (body.match(/^END:VEVENT\r?$/gm) ?? []).length;
+  if (begins !== ends)
+    throw contractChanged(
+      `iCalendar feed has ${begins} VEVENT starts and ${ends} ends`,
+    );
   const events = [];
   let current = null;
   for (const line of unfold(body)) {
@@ -218,7 +226,8 @@ export function parseIcs(body, url, config) {
     let endDate = null,
       endLocal = null;
     if (end?.date) {
-      if (allDay) endDate = addDays(end.date, -1); // DTEND is exclusive for dates
+      if (allDay)
+        endDate = addDays(end.date, -1); // DTEND is exclusive for dates
       else {
         endDate = end.date;
         endLocal = end.local ?? null;
@@ -236,7 +245,10 @@ export function parseIcs(body, url, config) {
       // converted by guesswork.
       if (!zones.unknown && !start?.instant) {
         rejected++;
-        examples.push({ title: summary?.slice(0, 60), dtstart: startProp?.value });
+        examples.push({
+          title: summary?.slice(0, 60),
+          dtstart: startProp?.value,
+        });
       } else unmapped++;
       continue;
     }
@@ -268,9 +280,13 @@ export function parseIcs(body, url, config) {
         allDay: allDay ? true : allDayFlag === "FALSE" ? false : null,
         timeZone: start.zone ?? undefined,
         timeZoneLabel: startProp.params.TZID,
-        timeZoneBasis: start.zone ? "iCalendar TZID mapped to IANA zone" : undefined,
+        timeZoneBasis: start.zone
+          ? "iCalendar TZID mapped to IANA zone"
+          : undefined,
         dateTimeBasis: {
-          start: allDay ? "iCalendar DATE value" : "iCalendar DTSTART with TZID",
+          start: allDay
+            ? "iCalendar DATE value"
+            : "iCalendar DTSTART with TZID",
           end: endDate ? "iCalendar DTEND" : null,
         },
         location: withoutMap
@@ -281,7 +297,9 @@ export function parseIcs(body, url, config) {
             }
           : undefined,
         warnings: [
-          ...(status && /^CANCEL/i.test(status) ? ["source_marks_event_canceled"] : []),
+          ...(status && /^CANCEL/i.test(status)
+            ? ["source_marks_event_canceled"]
+            : []),
         ],
         raw: {
           uid,
@@ -289,7 +307,9 @@ export function parseIcs(body, url, config) {
           dtend: endProp?.value ?? null,
           status: status ?? null,
           mapUrl: mapUrl ?? null,
-          description: description ? unescapeText(description).slice(0, 2000) : null,
+          description: description
+            ? unescapeText(description).slice(0, 2000)
+            : null,
         },
       },
       { url, jsonPath: `VEVENT[${sha(uid)}]` },
@@ -297,11 +317,21 @@ export function parseIcs(body, url, config) {
     if (record) records.push(record);
     else {
       rejected++;
-      examples.push({ title: summary?.slice(0, 60), dtstart: startProp.value, dtend: endProp?.value });
+      examples.push({
+        title: summary?.slice(0, 60),
+        dtstart: startProp.value,
+        dtend: endProp?.value,
+      });
     }
   }
-  if (rejected) issues.push({ code: "records_require_parse_review", count: rejected, examples: examples.slice(0, 5) });
-  if (unmapped) issues.push({ code: "events_with_unmapped_time_zone", count: unmapped });
+  if (rejected)
+    issues.push({
+      code: "records_require_parse_review",
+      count: rejected,
+      examples: examples.slice(0, 5),
+    });
+  if (unmapped)
+    issues.push({ code: "events_with_unmapped_time_zone", count: unmapped });
   return {
     records,
     nextRequests: [],

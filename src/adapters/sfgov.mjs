@@ -31,7 +31,8 @@ function places(item) {
         postalCode: clean(v.zip),
         basis: "upstream address block",
       });
-    } else if (block.type === "online") out.push({ "@type": "VirtualLocation" });
+    } else if (block.type === "online")
+      out.push({ "@type": "VirtualLocation" });
   }
   return out;
 }
@@ -62,7 +63,18 @@ export function parseSfGovApi(body, url, config) {
     for (const item of group.events) {
       observed++;
       const slug = item.meta?.slug;
-      const when = (item.date_time ?? []).find((d) => d.type === "date_time");
+      const blocks = (item.date_time ?? []).filter(
+        (d) => d.type === "date_time",
+      );
+      const when = blocks[0];
+      // Further blocks are further dates; their UTC offsets are not published
+      // per block, so they are not guessed: the run cannot be complete.
+      if (blocks.length > 1)
+        issues.push({
+          code: "multiple_date_blocks_not_expanded",
+          id: item.id,
+          blocks: blocks.length,
+        });
       const v = when?.value;
       if (!slug || !v?.start_date) {
         rejected++;
@@ -72,7 +84,8 @@ export function parseSfGovApi(body, url, config) {
       const hasEnd = v.include_end_date_time === "yes" && v.end_date;
       // The API's top-level end_datetime is padded to 23:59:59 when the source
       // supplies no end, so it is used only for its UTC offset.
-      const offset = (value) => String(value ?? "").match(/[+-]\d\d:\d\d$|Z$/)?.[0];
+      const offset = (value) =>
+        String(value ?? "").match(/[+-]\d\d:\d\d$|Z$/)?.[0];
       const startOffset = offset(item.start_datetime),
         endOffset = offset(item.end_datetime);
       const start = allDay
@@ -141,9 +154,13 @@ export function parseSfGovApi(body, url, config) {
       meta: { pagination: true },
     });
   }
-  if (rejected) issues.push({ code: "records_require_parse_review", count: rejected });
+  if (rejected)
+    issues.push({ code: "records_require_parse_review", count: rejected });
   return {
-    records: records.map((r) => ({ ...r, validationStatus: "parser-validated" })),
+    records: records.map((r) => ({
+      ...r,
+      validationStatus: "parser-validated",
+    })),
     nextRequests,
     expectedTotal: data.total,
     terminal,

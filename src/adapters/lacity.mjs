@@ -107,7 +107,9 @@ export function parseLaCityApi(body, url, config) {
   if (rejected)
     issues.push({ code: "records_require_parse_review", count: rejected });
   const offset = Number(new URL(url).searchParams.get("offset") ?? 0),
-    full = data.length >= LA_PAGE_SIZE,
+    // No total is published, so a short page is not proof of the end: paging
+    // continues until an empty page, which is the only terminal response.
+    full = data.length > 0,
     nextRequests = [];
   if (full) {
     const next = new URL(url);
@@ -120,7 +122,10 @@ export function parseLaCityApi(body, url, config) {
     });
   }
   return {
-    records: records.map((r) => ({ ...r, validationStatus: "parser-validated" })),
+    records: records.map((r) => ({
+      ...r,
+      validationStatus: "parser-validated",
+    })),
     nextRequests,
     terminal: !full,
     coverage: "api-query",

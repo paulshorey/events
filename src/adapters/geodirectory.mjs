@@ -65,7 +65,15 @@ export function parseGeoDirectoryPage(body, url, config, totals) {
     // Expansion is expected behaviour, not a failure: it is counted (and stops
     // the header total from being compared with occurrence records) but is not
     // a page issue that would hold the run partial.
-    if (dates.recurring) recurringExpanded.push(String(event.id));
+    if (dates.recurring && event.event_schedules?.length)
+      recurringExpanded.push(String(event.id));
+    // A recurring item without schedules yields only its master date; the
+    // future occurrences were not collected.
+    else if (dates.recurring)
+      issues.push({
+        code: "recurring_series_not_expanded",
+        id: String(event.id),
+      });
     for (const o of occurrences) {
       const startLocal = isoLocal(o.startDate, o.startTime),
         // A 00:00 end is the API's placeholder for "no end time".

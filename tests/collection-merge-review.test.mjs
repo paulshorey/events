@@ -248,3 +248,52 @@ test("records sharing an identity but different core fields are counted as colli
     1,
   );
 });
+
+import { parseApi, apiScopeBasis } from "../src/worker.mjs";
+
+test("API scope descriptions name the query each source actually ran", () => {
+  assert.match(apiScopeBasis(byId("url-045")), /iCalendar feed/);
+  assert.match(apiScopeBasis(byId("url-072")), /SharePoint/);
+  assert.match(apiScopeBasis(byId("url-096")), /default upcoming window/);
+  assert.match(apiScopeBasis(byId("url-008")), /per-state/);
+  assert.match(apiScopeBasis(byId("url-039")), /start_date/);
+});
+
+test("a truncated iCalendar feed is rejected rather than parsed as complete", async () => {
+  const c = byId("url-045");
+  const body = await fx("houston-city.ics");
+  const cut = body.slice(0, body.lastIndexOf("END:VEVENT") - 5);
+  assert.throws(
+    () => parseApi(cut, c.entrypoints[0].url, c, {}),
+    (e) => e.code === "contract_changed",
+  );
+});
+
+import { parseGeoDirectoryPage } from "../src/adapters/geodirectory.mjs";
+
+test("a recurring GeoDirectory item without schedules is an unexpanded series", async () => {
+  const c = byId("url-006");
+  const data = JSON.parse(await fx("festivaltrekker-geodir.json"));
+  const item = data.find((e) => e.event_dates?.recurring) ?? data[0];
+  item.event_dates.recurring = true;
+  item.event_schedules = [];
+  const r = parseGeoDirectoryPage(JSON.stringify(data), c.apiEndpoint, c, null);
+  assert.ok(r.issues.some((i) => i.code === "recurring_series_not_expanded"));
+});
+
+test("an sf.gov item with several date blocks keeps the run from completing", async () => {
+  const c = byId("url-066");
+  const data = JSON.parse(await fx("sfgov-api.json"));
+  const item = data.events[0].events[0];
+  const block = item.date_time.find((d) => d.type === "date_time");
+  item.date_time = [block, structuredClone(block)];
+  const r = parseApi(
+    JSON.stringify(data),
+    c.entrypoints?.[0]?.url ?? c.apiEndpoint ?? c.url,
+    c,
+    {},
+  );
+  assert.ok(
+    r.issues.some((i) => i.code === "multiple_date_blocks_not_expanded"),
+  );
+});

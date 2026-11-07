@@ -84,6 +84,36 @@ export function optionsFor(config, options, build) {
     throw new Error("Unknown transport");
   return out;
 }
+// What an API run actually enumerated, per request format; a collection may
+// state its own `scopeBasis`.
+const API_SCOPES = {
+  geodirectory: "all pages of the default GeoDirectory events query",
+  algolia:
+    "the configured Algolia index query, filtered on indexed end dates from the as-of date",
+  eventfinder:
+    "all pages of the POST search with startDateFrom = as-of date, sorted by start date",
+  countyfairgrounds:
+    "one per-state JSON request per entrypoint (eventtype=all)",
+  ics: "the entire published iCalendar feed (past events dropped at parse)",
+  "live-json": "all pages of the feed's default upcoming window",
+  sitemap: "detail pages listed in the published sitemap",
+  "sharepoint-calendar":
+    "SharePoint list items with EventDate on or after the as-of date",
+  sfgov: "all pages of the sf.gov related-events upcoming list",
+  eventsdc: "the Events DC API window from the as-of date",
+  lacity: "all offsets of the city calendar API from the as-of date",
+};
+export function apiScopeBasis(config) {
+  if (config.scopeBasis) return config.scopeBasis;
+  const scope =
+    API_SCOPES[config.apiFormat] ??
+    API_SCOPES[config.apiMode] ??
+    API_SCOPES[config.apiParser];
+  if (scope) return scope;
+  return config.apiQuery
+    ? `all pages of the recorded start_date query filtered by ${new URLSearchParams(config.apiQuery)}`
+    : "all pages of the recorded start_date query";
+}
 export function parseApi(body, url, config, task, totals) {
   if (config.apiFormat === "geodirectory")
     return parseGeoDirectoryPage(body, url, config, totals);
@@ -235,15 +265,7 @@ export function evaluate(journal, run, stopReason) {
       transport: run.options.transport,
       basis:
         run.options.transport === "api"
-          ? run.config.apiFormat === "geodirectory"
-            ? "all pages of the default GeoDirectory events query"
-            : run.config.apiFormat === "algolia"
-              ? "the configured Algolia index query, filtered on indexed end dates from the as-of date"
-              : run.config.apiFormat === "eventfinder"
-                ? "all pages of the POST search with startDateFrom = as-of date, sorted by start date"
-                : run.config.apiQuery
-                  ? `all pages of the recorded start_date query filtered by ${new URLSearchParams(run.config.apiQuery)}`
-                  : "all pages of the recorded start_date query"
+          ? apiScopeBasis(run.config)
           : "declared listing interface",
       validation:
         "core listing fields; not a guarantee of all events on the publisher domain",
