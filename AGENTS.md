@@ -4,6 +4,12 @@ Deterministic event collection from registered websites, with shared parsers,
 validation, journals, and evidence-based repairs. Read [README.md](README.md) and
 [the framework plan](_working/framework_implementation.md) before changing collection.
 
+## Workspace
+
+Prefer the primary local checkout when free; use a worktree when another task is
+using it. After merging a PR, return the primary checkout to `main` and run
+`git pull --ff-only` when free, leaving it clean.
+
 ## Collection rules
 
 - Keep LLM calls out of miners. Reuse `src/` runtime and platform parsers; each
