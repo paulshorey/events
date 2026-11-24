@@ -39,7 +39,7 @@ Views: `run_records` applies the same expansion/enrichment projection as `Journa
 
 ## Query Las Vegas listings and verify their evidence
 
-Run [the discovery query](db/queries/las_vegas_publisher_claims.sql) with read-only access to dev. It selects the latest complete listing run for each of four scopes and returns the next 90 days of events with source-attested Las Vegas locations. Each claim includes its publisher, local dates and times, venue, source page and capture hash. The Plaza’s named Expo page covers one annual edition. Its printed opening hours remain separate from the dated boundaries published by the independent calendar. The [two-scope query](db/queries/las_vegas_upcoming.sql) retains its original columns for Network.Vegas reports.
+Run [the discovery query](db/queries/las_vegas_publisher_claims.sql) with read-only access to dev. It selects the latest complete listing run for each of four scopes and returns the next 90 days of events with source-attested Las Vegas locations. Each claim includes its publisher, local dates and times, source location, city evidence, source page and capture hash. The report groups reviewed publisher IDs and URLs by edition. A claim missing its location can accompany a reviewed edition when another claim establishes Las Vegas. Disputed end dates stay open in the summary and remain visible on the individual claims. The Plaza’s named Expo page covers one annual edition. Its printed opening hours remain separate from the dated boundaries published by the independent calendar. The [two-scope query](db/queries/las_vegas_upcoming.sql) retains its original columns for Network.Vegas reports.
 
 ```sh
 ~/.agents/bin/agents-sql query events-dev -f db/queries/las_vegas_publisher_claims.sql
@@ -47,6 +47,8 @@ node scripts/restore-evidence-sample.mjs COMPLETE_RUN_UUID
 ```
 
 The drill reads one listing and its dependencies from the active dev connection in `.env.local`. It creates a private local PostgreSQL cluster, stages the sample, dumps it in custom format, restores it into a second database and verifies all copied rows and the uncompressed capture hash. Install matching PostgreSQL server and client tools locally. Use `PG_BIN` to specify their directory. The temporary archive and cluster are removed on normal exit. [November 24 evidence and next steps](_working/vegas-publisher-validation.md).
+
+For a full dev recovery rehearsal on macOS or Linux, run `node scripts/rehearse-database-restore.mjs` with the PostgreSQL server and client binaries on PATH or in `PG_BIN`. Allow local space for the complete archive and restored database. The command takes a consistent logical dump using the dev credentials in `.env.local`, restores it over a private local Unix socket, compares public table counts and checks every stored capture against its SHA-256. It omits original roles and grants in the local cluster. The command removes the archive during cleanup. If shutdown cannot be confirmed, it reports the path of the private cluster directory for recovery. [TISE comparison and recovery results](_working/tise-and-recovery.md).
 
 ## Start here
 

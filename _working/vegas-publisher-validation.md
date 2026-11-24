@@ -26,10 +26,10 @@ The final Plaza candidate on extraction build `6dd62ba552dd6d47570bceb1a1ed7cffa
 
 Both read-only queries reproduced the counts above after delivery. The cross-publisher comparison selected the newer Plaza run and retained both publishers’ capture hashes and their distinct time claims.
 
-The [restore drill](../scripts/restore-evidence-sample.mjs) read a consistent dev snapshot for page 2 of the second run, staged its seven related rows in local PostgreSQL, and restored a custom-format dump into a fresh database. All seven rows matched. Decompressing the recovered capture produced 193,282 bytes with SHA-256 `21137dedf3bab528a0cff87392acbcdc420e5e0dd2fc3c01c97ed5ba8bcbff0f`, equal to the page’s recorded hash and the hash reported by the discovery query. A full service-backup restore and worker restart remain open.
+The [restore drill](../scripts/restore-evidence-sample.mjs) read a consistent dev snapshot for page 2 of the second run, staged its seven related rows in local PostgreSQL, and restored a custom-format dump into a fresh database. All seven rows matched. Decompressing the recovered capture produced 193,282 bytes with SHA-256 `21137dedf3bab528a0cff87392acbcdc420e5e0dd2fc3c01c97ed5ba8bcbff0f`, equal to the page’s recorded hash and the hash reported by the discovery query. The subsequent [full logical restore and worker restart](tise-and-recovery.md) extended this sample drill.
 
 The earlier build `9ee9fc12b93cb1ff2d90adf01fd40556698bf990d7695edbd5c87952d289c223` also passed runs `f70d7f77-1f31-493c-84e3-e8984e86ba79` and `f5cad819-00d0-4908-a41b-c586ad7f5966`. Its second run previously restored a 184,426-byte capture with SHA-256 `5e7491a349bbec6d57fd6d67f16b3130fef8789eae09a26a521223c872596f29`.
 
 The first integrated build `76cc7615b0527356820dd5471971e74f9870fd97d3162ff5d1f912a7212dddcd` also passed runs `38119121-42f0-4da4-8e8a-719aa6013d4b` and `3049b7f6-ecaf-436f-933a-a94edd93f960` with dev receipts 706 and 707. Its second run restored a 184,656-byte capture with SHA-256 `925f246b632dd0488f8d28e4c19a8549f7b58b8d603fa2c56c454a38cc1c9bfd`.
 
-For the next matching experiment, select a second shared occurrence, retain one similar listing as a negative example, and compare each publisher’s dates, venue, and evidence before broadening the matching rule.
+The [TISE matching experiment](tise-and-recovery.md) added a second shared occurrence and used Pink27 as a same-date negative example.
