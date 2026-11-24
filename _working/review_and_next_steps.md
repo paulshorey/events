@@ -6,9 +6,11 @@ Reviewed October 17, 2026. Scope: the deterministic collector, local operational
 
 Dev PostgreSQL stores delivered observations, per-run receipts and the compressed capture bytes. The collector keeps its working journal on the collecting machine. Boston and both NYC Tourism scopes passed repeated validation on November 24. The first cross-publisher Las Vegas query and isolated sample restore are documented in [the discovery and restore results](vegas-publisher-validation.md).
 
-1. Validate a second reviewed cross-publisher occurrence, including a nearby event that must stay separate. Use source evidence for locality and each claimed date.
-2. Rehearse recovery from a service backup into an isolated database and measure the time to recover before activating a supervised worker.
-3. Add further market queries and source validations as evidence permits. Scheduling and production promotion require separate authorization.
+The [TISE comparison and recovery rehearsal](tise-and-recovery.md) tested a second cross-publisher edition, preserved its disputed end date, and kept Pink27 separate. The full logical dev restore and isolated worker restart have been exercised.
+
+1. Pilot the same reviewed-edition query in a second market with validated sources. Require publisher identity, evidence of venue locality and a same-date negative example before grouping listings.
+2. Before enabling unattended collection, rehearse a supervised worker restart on its intended persistent host. An actual Railway volume cutover needs a recovery window.
+3. Keep production promotion and schedule activation under separate authorization.
 
 ## October 17 assessment
 
