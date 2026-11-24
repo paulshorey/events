@@ -625,25 +625,53 @@ export class Transport {
     const month = task.meta?.monthIndex ?? 0,
       context = await this.initBrowser(),
       page = (this.listingPage ??= await context.newPage());
+    const monthApi = (url) => url.pathname === "/api/momentus/events";
+    let block;
+    const blocked = new Promise((_, reject) => {
+      block = reject;
+    });
+    // Browser-generated API calls must pass the same policy before dispatch
+    // as the listing navigation. The synthetic month task URL is not the API.
+    const guardMonth = async (route) => {
+      try {
+        this.leaseCheck();
+        await this.permit(route.request().url());
+        this.leaseCheck();
+      } catch (error) {
+        block(error);
+        await route.abort("blockedbyclient").catch(() => {});
+        return;
+      }
+      await route.fallback();
+    };
     let used = false;
     try {
+      await page.route(monthApi, guardMonth);
       if (!this.javitsLoaded || month === 0) {
         const entry = new URL(this.run.config.url);
         entry.hash = "";
-        const response = await page.goto(entry.href, {
-          waitUntil: "domcontentloaded",
-          timeout: this.timeoutMs,
-        });
+        const response = await Promise.race([
+          blocked,
+          page.goto(entry.href, {
+            waitUntil: "domcontentloaded",
+            timeout: this.timeoutMs,
+          }),
+        ]);
         await this.checkBrowserResponse(response);
-        await page
-          .locator(this.run.config.readySelector)
-          .first()
-          .waitFor({ state: "attached", timeout: 10000 })
-          .catch(() => {
-            throw Object.assign(new Error("Expected selector missing"), {
-              code: "contract_changed",
-            });
-          });
+        const initial = await snapshotPage(page);
+        classifyResponse(response?.status() ?? 0, initial.body);
+        await Promise.race([
+          blocked,
+          page
+            .locator(this.run.config.readySelector)
+            .first()
+            .waitFor({ state: "attached", timeout: 10000 })
+            .catch(() => {
+              throw Object.assign(new Error("Expected selector missing"), {
+                code: "contract_changed",
+              });
+            }),
+        ]);
         this.javitsLoaded = true;
         used = true;
         this.journal.deferRate(
@@ -681,11 +709,14 @@ export class Transport {
           ),
           { code: "pagination_changed" },
         );
-      const [response] = await Promise.all([
-        page.waitForResponse((r) => /\/api\/momentus\/events\?/.test(r.url()), {
-          timeout: 20000,
-        }),
-        button.click({ timeout: 7000 }),
+      const [response] = await Promise.race([
+        blocked,
+        Promise.all([
+          page.waitForResponse((r) => monthApi(new URL(r.url())), {
+            timeout: 20000,
+          }),
+          button.click({ timeout: 7000 }),
+        ]),
       ]);
       const body = await response.text();
       const capture = await saveCapture(
@@ -730,6 +761,8 @@ export class Transport {
       }
       this.javitsLoaded = false;
       throw error;
+    } finally {
+      await page.unroute(monthApi, guardMonth);
     }
   }
   async close() {

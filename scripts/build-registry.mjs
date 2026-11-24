@@ -657,7 +657,7 @@ const configs = assessed.map((row) => {
     notes: sourceOverrides[row.id]?.notes ?? row.nextStep,
     role: row.role,
     allowedHosts: [new URL(row.url).hostname],
-    maxDepth: 2,
+    maxDepth: overrides[row.sourceHost]?.maxDepth ?? 2,
     validationStatus: "needs-validation",
     script: `scrapers/${row.id}.mjs`,
   };

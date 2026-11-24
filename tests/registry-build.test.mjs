@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { mkdtemp, cp, readFile, rm, mkdir } from "node:fs/promises";
+import { mkdtemp, cp, readFile, writeFile, rm, mkdir } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { execFileSync } from "node:child_process";
@@ -28,4 +28,15 @@ test("the registry builder reproduces the committed registry exactly", async (t)
     await readFile(join(dir, "sources/registry.json"), "utf8"),
     await readFile(join(root, "sources/registry.json"), "utf8"),
   );
+  await writeFile(join(dir, "sources/registry-pins.json"), "[]\n");
+  execFileSync(process.execPath, [join(dir, "build-registry.mjs")], {
+    cwd: dir,
+    stdio: "ignore",
+  });
+  const unpinned = JSON.parse(
+    await readFile(join(dir, "sources/registry.json"), "utf8"),
+  );
+  for (const id of ["url-012", "url-015", "url-028", "url-083", "url-090"]) {
+    assert.equal(unpinned.find((entry) => entry.id === id)?.maxDepth, 0, id);
+  }
 });
