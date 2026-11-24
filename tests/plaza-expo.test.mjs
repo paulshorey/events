@@ -20,6 +20,7 @@ test("Plaza's named expo retains venue, edition and printed hours", () => {
   assert.equal(r.raw.hours, "9am - 4:30pm");
   assert.equal(r.startLocal, null);
   assert.equal(r.endLocal, null);
+  assert.equal(r.validationStatus, "parser-validated");
   assert.equal(result.terminal, true);
 });
 test("Plaza edition, location and field labels must remain explicit and unambiguous", () => {

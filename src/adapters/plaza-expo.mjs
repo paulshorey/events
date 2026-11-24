@@ -70,7 +70,7 @@ export function parsePlazaExpo(html, url, config) {
   );
   if (!record) fail();
   return {
-    records: [record],
+    records: [{ ...record, validationStatus: "parser-validated" }],
     issues: [],
     nextRequests: [],
     observedCount: 1,
