@@ -38,6 +38,10 @@ test("washington.org listing cards: titles, ongoing 'Now' ranges and verified pa
     ),
   );
   assert.match(ongoing.dateTimeBasis.start, /Now/);
+  const later = parseDocument({ html, url, config: { ...c, asOf: "2026-11-06" } });
+  const sameEvent = later.records.find((record) => record.url === ongoing.url);
+  assert.equal(sameEvent.startDate, "2026-11-06");
+  assert.equal(sameEvent.sourceRecordId, ongoing.sourceRecordId);
   // Pagination: the active item must agree with ?page=, and rel=next continues.
   assert.equal(r.coverage, "verified-list");
   assert.equal(r.terminal, false);

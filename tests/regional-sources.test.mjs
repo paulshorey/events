@@ -192,6 +192,15 @@ test("SharePoint calendar follows the odata next link and rejects unexpected bod
   assert.throws(
     () =>
       parseSharePointCalendar({
+        body: JSON.stringify({ value: [], "odata.nextLink": "https://[" }),
+        url: "https://dallascityhall.com/calendar/_api/x",
+        config: c,
+      }),
+    { code: "contract_changed" },
+  );
+  assert.throws(
+    () =>
+      parseSharePointCalendar({
         body: "<feed/>",
         url: "https://dallascityhall.com/calendar/_api/x",
         config: c,

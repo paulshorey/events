@@ -539,6 +539,9 @@ function festivalSourceOverrides() {
       apiEndpoint: "https://www.eventfinder.site/api/getEvents",
       apiPageSize: 250,
       defaultTransport: "api",
+      defaultMaxPages: 240,
+      defaultMaxRecords: 60000,
+      defaultMaxRuntimeMs: 720000,
       coverage: "api-query",
       allowedHosts: ["eventfinder.site", "www.eventfinder.site"],
     },
@@ -657,7 +660,7 @@ const configs = assessed.map((row) => {
     notes: sourceOverrides[row.id]?.notes ?? row.nextStep,
     role: row.role,
     allowedHosts: [new URL(row.url).hostname],
-    maxDepth: 2,
+    maxDepth: overrides[row.sourceHost]?.maxDepth ?? 2,
     validationStatus: "needs-validation",
     script: `scrapers/${row.id}.mjs`,
   };

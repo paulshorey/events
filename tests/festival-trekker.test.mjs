@@ -2,7 +2,8 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { registry } from "../src/registry.mjs";
-import { parseApi } from "../src/worker.mjs";
+import { evaluate, optionsFor, parseApi } from "../src/worker.mjs";
+import { Journal } from "../src/storage/journal.mjs";
 const configs = await registry();
 const config = configs.find((c) => c.id === "url-006");
 const body = await readFile(
@@ -64,7 +65,7 @@ test("Festival Trekker enumeration ends on the declared last page, or a short pa
   assert.equal(parseApi(body, url, config, {}).expectedTotal, undefined);
 });
 
-test("Festival Trekker rejects changed API shapes and surfaces recurring expansion", () => {
+test("Festival Trekker rejects changed API shapes and reconciles expanded schedules across pages", (t) => {
   assert.throws(
     () => parseApi("{}", url, config, {}),
     /GeoDirectory event array/,
@@ -96,21 +97,44 @@ test("Festival Trekker rejects changed API shapes and surfaces recurring expansi
       all_day: "0",
     },
   ];
-  const parsed = parseApi(
-    JSON.stringify(recurring),
-    url,
+  const journal = new Journal(":memory:");
+  t.after(() => journal.close());
+  journal.register([config]);
+  const options = optionsFor(config, { asOf: "2026-11-05" }, "test-build");
+  const { runId } = journal.enqueue(config.id, options);
+  const { token } = journal.claim("test", 60_000, runId);
+  const totals = { total: 2, totalPages: 2 };
+  const firstPage = journal.nextPage(runId, token);
+  const first = parseApi(
+    JSON.stringify([events[1]]),
+    firstPage.url,
     config,
-    {},
-    {
-      total: 1,
-      totalPages: 1,
-    },
+    firstPage,
+    totals,
   );
-  assert.equal(parsed.records.length, 2);
-  assert.equal(parsed.records[1].endLocal, "2026-11-12T21:00:00");
-  assert.equal(parsed.expectedTotal, undefined);
-  // Expansion is counted, not a run-failing page issue.
-  assert.ok(parsed.recurringExpanded >= 1);
-  assert.ok(!parsed.issues.some((i) => i.code === "recurring_event_expanded"));
-  assert.equal(parsed.expectedTotal, undefined);
+  journal.commitPage(runId, token, firstPage, first, {
+    path: "first",
+    hash: "first",
+  });
+  const secondPage = journal.nextPage(runId, token);
+  const second = parseApi(
+    JSON.stringify(recurring),
+    secondPage.url,
+    config,
+    secondPage,
+    totals,
+  );
+  journal.commitPage(runId, token, secondPage, second, {
+    path: "second",
+    hash: "second",
+  });
+  assert.equal(second.records.length, 2);
+  assert.equal(second.records[1].endLocal, "2026-11-12T21:00:00");
+  assert.equal(second.expectedTotal, 2);
+  assert.equal(second.recurringExpanded, 1);
+  assert.deepEqual(second.issues, []);
+  const result = evaluate(journal, journal.run(runId));
+  assert.equal(result.observedRecords, 3);
+  assert.equal(result.observedSourceItems, 2);
+  assert.equal(result.complete, true);
 });

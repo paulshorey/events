@@ -366,7 +366,11 @@ export function parseSharePointCalendar({ body, url, config }) {
   if (unexpanded)
     issues.push({ code: "recurring_series_not_expanded", count: unexpanded });
   const next = data["odata.nextLink"];
-  const nextUrl = next ? safeUrl(next, url) : null;
+  const nextUrl = next == null ? null : safeUrl(next, url);
+  if (next != null && !nextUrl)
+    throw Object.assign(new Error("Invalid SharePoint continuation link"), {
+      code: "contract_changed",
+    });
   return {
     records,
     nextRequests: nextUrl

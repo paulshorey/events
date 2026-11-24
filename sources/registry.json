@@ -186,6 +186,7 @@
     "apiPageSize": 250,
     "defaultTransport": "api",
     "defaultMaxPages": 240,
+    "defaultMaxRecords": 60000,
     "defaultMaxRuntimeMs": 720000
   },
   {
