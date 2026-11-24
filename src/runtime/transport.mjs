@@ -15,7 +15,11 @@ export function redactUrl(value) {
 export async function saveCapture(root, run, task, body, url, kind) {
   const dir = resolve(root, "runs", run.id, run.attemptId);
   await mkdir(dir, { recursive: true });
-  const path = `${dir}/page-${task.id}.${kind === "json" ? "json" : "html"}`;
+  const extension =
+    kind === "json"
+      ? ({ ics: "ics", sitemap: "xml" }[run.config?.apiFormat] ?? "json")
+      : "html";
+  const path = `${dir}/page-${task.id}.${extension}`;
   await writeFile(path, body, { flag: "wx" });
   return { path, hash: hash(body), url: redactUrl(url), kind };
 }
@@ -296,9 +300,27 @@ export class Transport {
     await this.pace();
     await this.permit(task.url);
     this.leaseCheck();
-    if (task.kind === "api") {
+    // Server-rendered detail pages may use the plain HTTP client (same declared
+    // user agent, pacing, robots policy and capture) when the registry says the
+    // event data is in the HTML response, which avoids loading a full browser page.
+    const httpDetail =
+      task.kind === "detail" && this.run.config.detailTransport === "http";
+    if (task.kind === "api" || httpDetail) {
       const api = await this.initApi(),
-        response = await api.get(task.url),
+        // A source whose public search endpoint is a POST (config.apiFormat
+        // "eventfinder") queues its JSON request body in the task metadata.
+        post = task.meta?.request?.method === "POST",
+        response = post
+          ? await api.post(task.url, {
+              data: task.meta.request.body,
+              headers: {
+                "Content-Type": "application/json",
+                ...(this.run.config.apiHeaders ?? {}),
+              },
+            })
+          : await api.get(task.url, {
+              headers: this.run.config.apiHeaders ?? undefined,
+            }),
         body = await response.text();
       const capture = await saveCapture(
         this.root,
@@ -306,7 +328,7 @@ export class Transport {
         task,
         body,
         response.url(),
-        "json",
+        httpDetail ? "html" : "json",
       );
       try {
         // Playwright follows HTTP redirects. The effective page must still
@@ -324,8 +346,23 @@ export class Transport {
           );
         throw error;
       }
-      return { body, url: response.url(), capture, status: response.status() };
+      const total = Number(response.headers()["x-wp-total"]),
+        totalPages = Number(response.headers()["x-wp-totalpages"]);
+      return {
+        body,
+        url: response.url(),
+        capture,
+        status: response.status(),
+        ...(Number.isInteger(total) && Number.isInteger(totalPages)
+          ? { apiTotals: { total, totalPages } }
+          : {}),
+      };
     }
+    if (
+      task.kind === "listing" &&
+      this.run.config.pagination?.mode === "javits-months"
+    )
+      return this.fetchJavitsMonth(task);
     const context = await this.initBrowser(),
       browserPaging =
         task.kind === "listing" &&
@@ -578,6 +615,164 @@ export class Transport {
         this.context = null;
         this.listingPage = null;
       }
+    }
+  }
+  // Javits calendar: the first month is the server-rendered page; every other
+  // month is obtained by clicking its button, which makes the site's own JSON
+  // request. Buttons are independent, so a lost browser reloads the page and
+  // clicks only the target month (one extra paced, fenced request).
+  async fetchJavitsMonth(task) {
+    const month = task.meta?.monthIndex ?? 0,
+      context = await this.initBrowser(),
+      page = (this.listingPage ??= await context.newPage());
+    const monthApi = (url) => url.pathname === "/api/momentus/events";
+    let block;
+    const blocked = new Promise((_, reject) => {
+      block = reject;
+    });
+    // A background request can reach the guard before a task waits for it.
+    blocked.catch(() => {});
+    // Browser-generated API calls must pass the same policy before dispatch
+    // as the listing navigation. The synthetic month task URL is not the API.
+    const guardMonth = async (route) => {
+      try {
+        this.leaseCheck();
+        await this.permit(route.request().url());
+        this.leaseCheck();
+      } catch (error) {
+        block(error);
+        await route.abort("blockedbyclient").catch(() => {});
+        return;
+      }
+      await route.fallback();
+    };
+    let used = false;
+    try {
+      await page.route(monthApi, guardMonth);
+      if (!this.javitsLoaded || month === 0) {
+        const entry = new URL(this.run.config.url);
+        entry.hash = "";
+        const response = await Promise.race([
+          blocked,
+          page.goto(entry.href, {
+            waitUntil: "domcontentloaded",
+            timeout: this.timeoutMs,
+          }),
+        ]);
+        await this.checkBrowserResponse(response);
+        const initial = await snapshotPage(page);
+        classifyResponse(response?.status() ?? 0, initial.body);
+        await Promise.race([
+          blocked,
+          page
+            .locator(this.run.config.readySelector)
+            .first()
+            .waitFor({ state: "attached", timeout: 10000 })
+            .catch(() => {
+              throw Object.assign(new Error("Expected selector missing"), {
+                code: "contract_changed",
+              });
+            }),
+        ]);
+        this.javitsLoaded = true;
+        used = true;
+        this.journal.deferRate(
+          this.run.source_key,
+          this.run.config.minIntervalMs ?? 1000,
+        );
+      }
+      if (month === 0) {
+        const snapshot = await snapshotPage(page);
+        await this.permit(snapshot.url);
+        const capture = await saveCapture(
+          this.root,
+          this.run,
+          task,
+          snapshot.body,
+          snapshot.url,
+          "html",
+        );
+        return { body: snapshot.body, url: snapshot.url, capture, status: 200 };
+      }
+      if (used) {
+        this.runtimeCheck();
+        this.journal.reserveAdditionalRequest(this.run.id, this.run.token);
+        await this.pace(true);
+      }
+      this.leaseCheck();
+      const button = page.locator(".month-selector-scroll button").nth(month);
+      const label = String(
+        await Promise.race([blocked, button.textContent({ timeout: 7000 })]),
+      )
+        .replace(/\s+/g, " ")
+        .trim();
+      if (label !== task.meta.monthLabel)
+        throw Object.assign(
+          new Error(
+            `Javits month ${month} is "${label}", expected "${task.meta.monthLabel}"`,
+          ),
+          { code: "pagination_changed" },
+        );
+      const [response] = await Promise.race([
+        blocked,
+        Promise.all([
+          page.waitForResponse((r) => monthApi(new URL(r.url())), {
+            timeout: 20000,
+          }),
+          button.click({ timeout: 7000 }),
+        ]),
+      ]);
+      const body = await response.text();
+      const capture = await saveCapture(
+        this.root,
+        this.run,
+        task,
+        body,
+        response.url(),
+        "json",
+      );
+      this.journal.deferRate(
+        this.run.source_key,
+        this.run.config.minIntervalMs ?? 1000,
+      );
+      try {
+        await this.permit(response.url());
+        classifyResponse(response.status(), body);
+      } catch (error) {
+        error.capture = capture;
+        const retry = response.headers()["retry-after"];
+        if (retry) error.retryAfterMs = retryDelay(retry);
+        if (error.code === "rate_limited")
+          this.journal.deferRate(
+            this.run.source_key,
+            error.retryAfterMs ?? 60000,
+          );
+        throw error;
+      }
+      return { body, url: response.url(), capture, status: response.status() };
+    } catch (error) {
+      if (!error.capture) {
+        const failure = await snapshotPage(page).catch(() => null);
+        if (failure)
+          error.capture = await saveCapture(
+            this.root,
+            this.run,
+            task,
+            failure.body,
+            failure.url,
+            "html",
+          ).catch(() => undefined);
+      }
+      this.javitsLoaded = false;
+      throw error;
+    } finally {
+      await page.unroute(monthApi, guardMonth).catch(async () => {
+        // Keep the original failure and retire the page if its guard could
+        // not be removed.
+        this.javitsLoaded = false;
+        this.listingPage = null;
+        await page.close().catch(() => {});
+      });
     }
   }
   async close() {

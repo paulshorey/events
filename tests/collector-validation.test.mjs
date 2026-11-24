@@ -14,6 +14,87 @@ const configs = await registry();
 const fixture = (name) =>
   readFile(new URL(`fixtures/${name}.html`, import.meta.url), "utf8");
 
+test("Eventbrite search results use upstream dates, clock times, venue and a verified page chain", async () => {
+  const config = configs.find((c) => c.id === "url-023"),
+    html = await fixture("eventbrite-search"),
+    url = config.entrypoints[0];
+  const parsed = parseDocument({ html, url, config });
+  assert.equal(parsed.records.length, 3);
+  assert.equal(parsed.observedCount, 3);
+  assert.equal(parsed.nextRequests.length, 1);
+  assert.equal(parsed.nextRequests[0].url, `${url}?page=2`);
+  assert.equal(parsed.terminal, false);
+  assert.equal(
+    parsed.nextRequests.some((r) => r.kind === "detail"),
+    false,
+  );
+  // 49 pages of 20 cannot hold 2410 objects: the capped view is never "complete".
+  assert.equal(parsed.coverage, "unverified");
+  assert.ok(parsed.issues.some((i) => i.code === "search_view_capped"));
+  const anime = parsed.records.find((r) => /Sin City Anime/.test(r.title));
+  assert.equal(anime.startLocal, "2026-11-20T12:00");
+  assert.equal(anime.endLocal, "2026-11-22T21:00");
+  assert.equal(anime.timeZone, "America/Los_Angeles");
+  assert.equal(anime.timeZoneBasis, "source time zone");
+  assert.equal(anime.location.venue, "The Orleans Hotel & Casino");
+  assert.equal(anime.location.locality, "Las Vegas");
+  assert.ok(anime.geoCoordinates.latitude > 36);
+  assert.ok(anime.categoryTags.length > 0);
+  // Page chain: the requested page must match the delivered page, and the last page is terminal.
+  assert.throws(
+    () => parseDocument({ html, url: `${url}?page=3`, config }),
+    (e) => e.code === "pagination_changed",
+  );
+  const end = parseDocument({
+    html: html.replaceAll('"page_number":1', '"page_number":49'),
+    url: `${url}?page=49`,
+    config,
+  });
+  assert.equal(end.terminal, true);
+  assert.equal(end.nextRequests.length, 0);
+  // A missing results contract is a contract change, not an empty success.
+  assert.throws(
+    () =>
+      parseDocument({
+        html: html.replace('"results"', '"gone"'),
+        url,
+        config,
+      }),
+    (e) => e.code === "contract_changed",
+  );
+});
+test("Vegas.com festival guide records only fully dated entries and never invents dates", async () => {
+  const config = configs.find((c) => c.id === "url-017"),
+    html = await fixture("vegas-festival-guide");
+  const parsed = parseDocument({ html, url: config.url, config });
+  const byId = Object.fromEntries(
+    parsed.records.map((r) => [r.sourceRecordId, r]),
+  );
+  assert.deepEqual(Object.keys(byId).sort(), [
+    "edc-las-vegas-edc-dawn",
+    "edc-las-vegas-edc-dusk",
+    "iheartradio-music-festival",
+    "pride-parade-festival-pride-festival",
+    "pride-parade-festival-pride-parade",
+    "sema-fest",
+  ]);
+  assert.equal(byId["sema-fest"].startDate, "2026-11-06");
+  assert.equal(byId["sema-fest"].location.venue, "Las Vegas Convention Center");
+  assert.equal(byId["iheartradio-music-festival"].endDate, "2026-09-19");
+  assert.equal(byId["edc-las-vegas-edc-dawn"].startDate, "2026-05-21");
+  assert.equal(
+    byId["edc-las-vegas-edc-dawn"].title,
+    "EDC Las Vegas - EDC DAWN",
+  );
+  assert.equal(
+    byId["pride-parade-festival-pride-parade"].startDate,
+    "2026-10-09",
+  );
+  // "October 2026, exact dates TBD" and "Postponed until October 2027" are observed but undated.
+  assert.equal(parsed.observedCount, 8);
+  assert.equal(parsed.nextRequests.length, 0);
+  assert.equal(parsed.terminal, false);
+});
 test("NYC inspected controls require the correct active page and an explicit terminal control", async () => {
   const config = configs.find((c) => c.id === "url-024"),
     html = await fixture("nyc-pagination");

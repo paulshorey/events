@@ -273,6 +273,8 @@ for (const budget of [4, 5]) {
     const url = `http://127.0.0.1:${server.address().port}/events/`;
     const config = {
       ...(await registry()).find((c) => c.id === "url-024"),
+      // The browser pagination contract is exercised; the live default is the search API.
+      defaultTransport: "browser",
       url,
       allowedHosts: ["127.0.0.1"],
       sourceKey: "fixture",
@@ -352,6 +354,8 @@ test("browser recovery stops at the runtime boundary and preserves its pending t
   const url = `http://127.0.0.1:${server.address().port}/events/`;
   const config = {
     ...(await registry()).find((c) => c.id === "url-024"),
+      // The browser pagination contract is exercised; the live default is the search API.
+      defaultTransport: "browser",
     url,
     allowedHosts: ["127.0.0.1"],
     sourceKey: "fixture",
@@ -479,6 +483,8 @@ test("ordinary NYC task finishes when pacing crosses the runtime boundary", asyn
   t.after(() => new Promise((resolve) => server.close(resolve)));
   const config = {
     ...(await registry()).find((c) => c.id === "url-024"),
+      // The browser pagination contract is exercised; the live default is the search API.
+      defaultTransport: "browser",
     url: `http://127.0.0.1:${server.address().port}/events/`,
     allowedHosts: ["127.0.0.1"],
     sourceKey: "fixture",
@@ -557,6 +563,8 @@ for (const mode of ["fetch", "xhr", "navigation"]) {
       t.after(() => new Promise((resolve) => server.close(resolve)));
       const config = {
         ...(await registry()).find((c) => c.id === "url-024"),
+      // The browser pagination contract is exercised; the live default is the search API.
+      defaultTransport: "browser",
         url: `http://127.0.0.1:${server.address().port}/events/`,
         allowedHosts: ["127.0.0.1"],
         sourceKey: "fixture",
@@ -635,6 +643,8 @@ for (const mode of ["fetch", "fetch-stalled", "navigation"]) {
       t.after(() => new Promise((resolve) => server.close(resolve)));
       const config = {
         ...(await registry()).find((c) => c.id === "url-024"),
+      // The browser pagination contract is exercised; the live default is the search API.
+      defaultTransport: "browser",
         url: `http://127.0.0.1:${server.address().port}/events/`,
         allowedHosts: ["127.0.0.1"],
         sourceKey: "fixture",
@@ -691,6 +701,82 @@ for (const mode of ["fetch", "fetch-stalled", "navigation"]) {
       }
     });
   }
+}
+
+for (const mode of ["allowed", "denied", "denied before click"]) {
+  test(`Javits checks robots before sending the month request (${mode})`, async (t) => {
+    const allowed = mode === "allowed";
+    const dir = await mkdtemp(join(tmpdir(), "events-javits-"));
+    t.after(() => rm(dir, { recursive: true, force: true }));
+    const monthPath = "/api/momentus/events";
+    let monthRequests = 0;
+    const server = createServer((req, res) => {
+      if (req.url === "/robots.txt") {
+        return res.end(`User-agent: *\n${allowed ? "Allow" : "Disallow"}: ${monthPath}`);
+      }
+      if (req.url === `${monthPath}?month=2`) {
+        monthRequests++;
+        res.setHeader("content-type", "application/json");
+        return res.end('{"events":[]}');
+      }
+      res.setHeader("content-type", "text/html");
+      res.end(`<!doctype html><div class="month-selector-scroll">
+        <button>November</button>
+        <button onclick="fetch('${monthPath}?month=2').catch(() => {})">December</button>
+        </div>`);
+    });
+    await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
+    t.after(() => new Promise((resolve) => server.close(resolve)));
+    const url = `http://127.0.0.1:${server.address().port}/calendar`;
+    const journal = new Journal(join(dir, "journal.sqlite"));
+    t.after(() => journal.close());
+    const transport = new Transport({
+      root: dir,
+      journal,
+      run: {
+        id: "javits",
+        attemptId: "one",
+        source_key: "publisher",
+        config: {
+          url,
+          timeZone: "UTC",
+          minIntervalMs: 1,
+          readySelector: ".month-selector-scroll",
+          pagination: { mode: "javits-months" },
+        },
+      },
+    });
+    t.after(() => transport.close());
+    await transport.fetch({ id: "first", url, kind: "listing" });
+    if (mode === "denied before click") {
+      const page = transport.listingPage;
+      const registerRoute = page.route.bind(page);
+      page.route = async (...args) => {
+        await registerRoute(...args);
+        // A background request can be intercepted while the guard is installed.
+        await page.evaluate((path) => fetch(path).catch(() => {}), `${monthPath}?month=2`);
+      };
+      page.unroute = async () => {
+        throw new Error("Simulated failure removing the route");
+      };
+    }
+    const second = transport.fetch({
+      id: "second",
+      url: `${url}#events-miner-month=1`,
+      kind: "listing",
+      meta: { monthIndex: 1, monthLabel: "December" },
+    });
+    if (allowed) {
+      const result = await second;
+      assert.equal(result.status, 200);
+      assert.equal(await readFile(result.capture.path, "utf8"), '{"events":[]}');
+      assert.equal(monthRequests, 1);
+    } else {
+      await assert.rejects(second, { code: "robots_disallowed" });
+      assert.equal(monthRequests, 0);
+      if (mode === "denied before click") assert.equal(transport.listingPage, null);
+    }
+  });
 }
 
 // Real Chromium against a loopback server: the reveal probe observes what a

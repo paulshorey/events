@@ -2,6 +2,9 @@ import { DatabaseSync } from "node:sqlite";
 import { mkdirSync } from "node:fs";
 import { dirname } from "node:path";
 import { randomUUID, createHash } from "node:crypto";
+import { eventsDcApiUrl } from "../adapters/eventsdc.mjs";
+import { laCityApiUrl } from "../adapters/lacity.mjs";
+import { algoliaRequestUrl } from "../adapters/algolia.mjs";
 
 export const hash = (value) =>
   createHash("sha256")
@@ -157,26 +160,81 @@ export class Journal {
         now,
         slot,
       );
-    if (options.transport === "api") {
+    // Feed-style formats (iCalendar, sitemap, Live JSON, per-state JSON,
+    // SharePoint) declare their own api-kind entrypoints; every other API
+    // transport is seeded from apiEndpoint and its format-specific request.
+    const apiEntrypoints = (c.config.entrypoints ?? []).some(
+      (e) => typeof e === "object" && e.kind === "api",
+    );
+    if (options.transport === "api" && !apiEntrypoints) {
       if (!c.config.apiEndpoint)
         throw new Error(
           "This collection has no verified API endpoint configuration",
         );
-      const url = new URL(c.config.apiEndpoint);
-      url.search = new URLSearchParams({
-        per_page: String(options.perPage ?? 50),
-        page: "1",
-        start_date: options.asOf,
-      });
-      this._addPage(runId, { url: url.href, kind: "api", depth: 0 });
+      if (c.config.apiFormat === "algolia") {
+        this._addPage(runId, {
+          url: algoliaRequestUrl(c.config, options),
+          kind: "api",
+          depth: 0,
+        });
+      } else if (c.config.apiFormat === "eventfinder") {
+        const url = new URL(c.config.apiEndpoint);
+        // POST search from the as-of day; each page is a distinct queued URL.
+        const limit = c.config.apiPageSize ?? 250,
+          request = {
+            method: "POST",
+            body: {
+              filters: { startDateFrom: options.asOf },
+              page: 1,
+              limit,
+              sortBy: "StartDate",
+              sortDirection: "ASC",
+            },
+          };
+        url.search = new URLSearchParams({
+          startDateFrom: options.asOf,
+          page: "1",
+          limit: String(limit),
+        });
+        this._addPage(runId, {
+          url: url.href,
+          kind: "api",
+          depth: 0,
+          meta: { request },
+        });
+        this.action(runId, "enqueued", { id, options, slot });
+        return { runId, created: true };
+      } else {
+        const url = new URL(c.config.apiEndpoint);
+        url.search = new URLSearchParams({
+          per_page: String(options.perPage ?? 50),
+          page: "1",
+          ...(c.config.apiFormat === "geodirectory"
+            ? {}
+            : { start_date: options.asOf }),
+          ...(c.config.apiQuery ?? {}),
+        });
+        this._addPage(runId, {
+          url:
+            c.config.apiParser === "eventsdc"
+              ? eventsDcApiUrl(c.config, options.asOf)
+              : c.config.apiParser === "lacity"
+                ? laCityApiUrl(c.config, options.asOf)
+                : url.href,
+          kind: "api",
+          depth: 0,
+        });
+      }
     } else
-      for (const seed of c.config.entrypoints ?? [c.config.url])
-        this._addPage(
-          runId,
+      for (const seed of c.config.entrypoints ?? [c.config.url]) {
+        const page =
           typeof seed === "string"
             ? { url: seed, kind: "listing", depth: 0 }
-            : seed,
-        );
+            : { ...seed };
+        // An entrypoint may template the run's as-of date (YYYY-MM-DD).
+        page.url = page.url.replaceAll("{asOf}", options.asOf);
+        this._addPage(runId, page);
+      }
     this.action(runId, "enqueued", { id, options, slot });
     return { runId, created: true };
   }

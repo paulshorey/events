@@ -1,0 +1,53 @@
+[
+ {
+  "StartDate": "2026-10-30",
+  "EventNum": 2027,
+  "EventName": "Greater Gulf State Fair",
+  "EndDate": "2026-11-08",
+  "EventHours": "",
+  "Theme": "",
+  "LocationStreet1": "",
+  "LocationCity": "Mobile",
+  "LocationState": "AL",
+  "LocationCounty": "Mobile County",
+  "WebSite": "https://www.greatergulfstatefair.com/",
+  "Descriptionsmall": "multicultural entertainment, activities and exhibits plus great, Fair Food, Fun Rides and livestock exhibits.",
+  "eventType": "State Fair",
+  "eventType2": "",
+  "eventType3": ""
+ },
+ {
+  "StartDate": "2026-11-06",
+  "EventNum": 2013,
+  "EventName": "National Peanut Festival",
+  "EndDate": "2026-11-14",
+  "EventHours": "",
+  "Theme": "",
+  "LocationStreet1": "National Peanut Fairgrounds",
+  "LocationCity": "Dothan",
+  "LocationState": "AL",
+  "LocationCounty": "Houston County",
+  "WebSite": "http://www.nationalpeanutfestival.com/",
+  "Descriptionsmall": "the nation largest peanut festival, is held each fall in to honor peanut growers and to celebrate the harvest season.",
+  "eventType": "Festival",
+  "eventType2": "",
+  "eventType3": ""
+ },
+ {
+  "StartDate": "2026-11-06",
+  "EventNum": 22176,
+  "EventName": "Muscle Shoals Songwriters Festival",
+  "EndDate": "2026-11-08",
+  "EventHours": "",
+  "Theme": "",
+  "LocationStreet1": "",
+  "LocationCity": "Muscle Shoals",
+  "LocationState": "AL",
+  "LocationCounty": "Colbert County",
+  "WebSite": "https://mssongfest.com/",
+  "Descriptionsmall": "",
+  "eventType": "Festival",
+  "eventType2": "none",
+  "eventType3": "none"
+ }
+]

@@ -1,0 +1,180 @@
+{
+ "hits": [
+  {
+   "Lookup - Location": [
+    "Midtown West",
+    "New York City",
+    "Manhattan",
+    "Midtown"
+   ],
+   "noIndex": false,
+   "displayTitle": "New York International Auto Show",
+   "hasOffer": false,
+   "shortTitle": "NY Auto Show",
+   "isMember": true,
+   "isFeatured": false,
+   "Lookup - Seasonal": [
+    "Spring"
+   ],
+   "Lookup - Special Designation": [
+    "Member Organization"
+   ],
+   "Lookup - Accessibility": [
+    "Wheelchair Accessible"
+   ],
+   "website": "https://www.autoshowny.com",
+   "primaryLocation": "Midtown West",
+   "url": "/events/new-york-international-auto-show",
+   "type": "calendarEvents",
+   "Lookup - Taxonomy": [
+    "Attractions & Tours",
+    "Things to Do",
+    "Shopping",
+    "Events & Festivals"
+   ],
+   "objectID": "60XMWmItuSSdsTr4fCmpTS",
+   "updatedAt": 1790568000,
+   "Lookup - Neighborhoods": [
+    "Midtown West",
+    "Midtown"
+   ],
+   "isSponsored": false,
+   "startDate": 1806033600,
+   "Lookup - Borough": [
+    "Manhattan"
+   ],
+   "hasEndDate": true,
+   "endDate": 1806811200,
+   "venueName": "Javits Center",
+   "createdAt": 1677042000,
+   "summary": "See tomorrow’s hottest cars before they hit the streets at this annual show at the Javits Center.",
+   "primaryCategory": "Attractions & Tours",
+   "hasImage": true
+  },
+  {
+   "summary": "Get access to hundreds of venues not ordinarily open to the public.",
+   "url": "/events/open-house-new-york",
+   "Lookup - Seasonal": [
+    "Fall"
+   ],
+   "dateLabelOverride": null,
+   "allOccurrences": [
+    1823572800
+   ],
+   "createdAt": 1677042000,
+   "repeatType": null,
+   "isFeatured": false,
+   "Lookup - Location": [
+    "Citywide"
+   ],
+   "Lookup - Special Designation": [
+    "Member Organization"
+   ],
+   "Lookup - Taxonomy": [
+    "Events & Festivals",
+    "Things to Do",
+    "Attractions & Tours"
+   ],
+   "startDate": 1823572800,
+   "repeatEvent": false,
+   "type": "calendarEvents",
+   "noIndex": false,
+   "displayTitle": "Open House New York",
+   "hasImage": true,
+   "Lookup - Experience": [
+    "Free In NYC"
+   ],
+   "repeatEveryN": null,
+   "updatedAt": 1792814400,
+   "hasEndDate": true,
+   "isSponsored": false,
+   "Lookup - Promotion": [
+    "It’s Time for Culture",
+    "Founded By"
+   ],
+   "endDate": 1823745600,
+   "website": "https://ohny.org/weekend/",
+   "hasOffer": false,
+   "repeatDays": null,
+   "shortTitle": "Open House New York",
+   "primaryLocation": "Citywide",
+   "primaryCategory": "Events & Festivals",
+   "isMember": true,
+   "nextOccurrence": 1823572800,
+   "objectID": "2KZ8QorgdEcEXbZz7oyhxe"
+  },
+  {
+   "venueName": "Macy's Herald Square",
+   "displayTitle": "Macy's Thanksgiving Day Parade",
+   "updatedAt": 1790740800,
+   "isMember": false,
+   "Lookup - Experience": [
+    "Free In NYC"
+   ],
+   "website": "https://www.macys.com/s/parade/",
+   "hasOffer": false,
+   "summary": "The world-famous Macy’s Thanksgiving Day Parade celebrates its 100th year.",
+   "url": "/events/macys-thanksgiving-day-parade",
+   "Lookup - Taxonomy": [
+    "Events & Festivals",
+    "Things to Do",
+    "Outdoors & Recreation",
+    "Attractions & Tours"
+   ],
+   "Lookup - Location": [
+    "Herald Square",
+    "New York City",
+    "Manhattan",
+    "Midtown",
+    "Midtown West",
+    "Upper West Side"
+   ],
+   "dateLabelOverride": null,
+   "noIndex": false,
+   "shortTitle": "Macy's Thanksgiving Day Parade",
+   "primaryLocation": "Herald Square",
+   "Lookup - Borough": [
+    "Manhattan"
+   ],
+   "isFeatured": false,
+   "endDate": 1795669200,
+   "startDate": 1795669200,
+   "repeatType": null,
+   "Lookup - Cost": [
+    "Free"
+   ],
+   "repeatEveryN": null,
+   "repeatDays": null,
+   "allOccurrences": [
+    1795669200
+   ],
+   "hasEndDate": true,
+   "objectID": "3YWdiqpfExNgpFDG7WWji8",
+   "createdAt": 1677042000,
+   "type": "calendarEvents",
+   "isSponsored": false,
+   "Lookup - Seasonal": [
+    "Fall",
+    "Thanksgiving",
+    "Holidays"
+   ],
+   "nextOccurrence": 1795669200,
+   "primaryCategory": "Events & Festivals",
+   "Lookup - Neighborhoods": [
+    "Herald Square",
+    "Midtown",
+    "Midtown West",
+    "Upper West Side"
+   ],
+   "hasImage": true,
+   "Lookup - Promotion": [
+    "Founded By"
+   ],
+   "repeatEvent": false
+  }
+ ],
+ "nbHits": 3,
+ "page": 0,
+ "nbPages": 1,
+ "hitsPerPage": 100
+}

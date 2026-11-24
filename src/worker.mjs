@@ -2,10 +2,22 @@ import { mkdir, writeFile, rename, readFile, readdir } from "node:fs/promises";
 import { resolve, join } from "node:path";
 import { createHash, randomUUID } from "node:crypto";
 import { parseDocument } from "./adapters/document.mjs";
+import { parseAlgolia } from "./adapters/algolia.mjs";
+import { parseGeoDirectoryPage } from "./adapters/geodirectory.mjs";
+import { parseCountyfairgroundsState } from "./adapters/countyfairgrounds.mjs";
+import { parseEventfinderPage } from "./adapters/eventfinder.mjs";
 import { parseTribePage } from "../examples/parsers.mjs";
-import { validDate, eventRecord } from "./records.mjs";
+import { parseEventsDcApi } from "./adapters/eventsdc.mjs";
+import { parseSfGovApi } from "./adapters/sfgov.mjs";
+import { parseLaCityApi } from "./adapters/lacity.mjs";
+import { validDate, eventRecord, identityCollisions } from "./records.mjs";
+import { feedParsers } from "./adapters/feeds.mjs";
 import { fieldSummary, matchDetailBindings } from "./event-fields.mjs";
 import { assessQuality } from "./quality.mjs";
+import {
+  parseSharePointCalendar,
+  parseSitemapEntries,
+} from "./adapters/regional.mjs";
 import { Transport, sleep } from "./runtime/transport.mjs";
 import { LeaseLost } from "./storage/journal.mjs";
 
@@ -38,12 +50,20 @@ export function optionsFor(config, options, build) {
   if (!validDate(asOf)) throw new Error("Invalid --as-of YYYY-MM-DD");
   const out = {
     asOf,
-    maxPages: options.maxPages ?? 100,
-    maxRecords: options.maxRecords ?? 10000,
-    maxRuntimeMs: options.maxRuntimeMs ?? 180000,
+    // Large catalogues declare a default budget sized from observed runs.
+    maxPages: options.maxPages ?? config.defaultMaxPages ?? 100,
+    maxRecords: options.maxRecords ?? config.defaultMaxRecords ?? 10000,
+    maxRuntimeMs: options.maxRuntimeMs ?? config.defaultMaxRuntimeMs ?? 180000,
     maxRetries: options.maxRetries ?? 3,
     probe: options.probe ?? false,
-    transport: options.transport ?? config.defaultTransport ?? "browser",
+    // A collection whose entrypoints are all API/feed requests is an API run.
+    transport:
+      options.transport ??
+      config.defaultTransport ??
+      ((config.entrypoints ?? []).length &&
+      config.entrypoints.every((e) => typeof e === "object" && e.kind === "api")
+        ? "api"
+        : "browser"),
     buildId: build,
     perPage: options.perPage ?? 50,
     acceptCountChange: options.acceptCountChange ?? null,
@@ -64,7 +84,68 @@ export function optionsFor(config, options, build) {
     throw new Error("Unknown transport");
   return out;
 }
-export function parseApi(body, url, config, task) {
+// What an API run actually enumerated, per request format; a collection may
+// state its own `scopeBasis`.
+const API_SCOPES = {
+  geodirectory: "all pages of the default GeoDirectory events query",
+  algolia:
+    "the configured Algolia index query, filtered on indexed end dates from the as-of date",
+  eventfinder:
+    "all pages of the POST search with startDateFrom = as-of date, sorted by start date",
+  countyfairgrounds:
+    "one per-state JSON request per entrypoint (eventtype=all)",
+  ics: "the entire published iCalendar feed (past events dropped at parse)",
+  "live-json": "all pages of the feed's default upcoming window",
+  sitemap: "detail pages listed in the published sitemap",
+  "sharepoint-calendar":
+    "SharePoint list items with EventDate on or after the as-of date",
+  sfgov: "all pages of the sf.gov related-events upcoming list",
+  eventsdc: "the Events DC API window from the as-of date",
+  lacity: "all offsets of the city calendar API from the as-of date",
+};
+export function apiScopeBasis(config) {
+  if (config.scopeBasis) return config.scopeBasis;
+  const scope =
+    API_SCOPES[config.apiFormat] ??
+    API_SCOPES[config.apiMode] ??
+    API_SCOPES[config.apiParser];
+  if (scope) return scope;
+  return config.apiQuery
+    ? `all pages of the recorded start_date query filtered by ${new URLSearchParams(config.apiQuery)}`
+    : "all pages of the recorded start_date query";
+}
+export function parseApi(body, url, config, task, totals) {
+  if (config.apiFormat === "geodirectory")
+    return parseGeoDirectoryPage(body, url, config, totals);
+  if (config.apiFormat === "countyfairgrounds")
+    return parseCountyfairgroundsState(body, url, config);
+  if (config.apiFormat === "eventfinder")
+    return parseEventfinderPage(body, url, config, task);
+  if (config.apiMode === "sitemap")
+    return parseSitemapEntries({ body, url, config });
+  if (config.apiMode === "sharepoint-calendar")
+    return parseSharePointCalendar({ body, url, config });
+  if (config.apiParser === "eventsdc")
+    return parseEventsDcApi(body, url, config);
+  if (config.apiParser === "sfgov") return parseSfGovApi(body, url, config);
+  if (config.apiParser === "lacity") return parseLaCityApi(body, url, config);
+  if (config.apiFormat === "algolia")
+    return parseAlgolia(body, url, config, task);
+  const feed = feedParsers[config.apiFormat];
+  if (config.apiFormat && !feed)
+    throw Object.assign(new Error(`Unknown API format ${config.apiFormat}`), {
+      code: "contract_changed",
+    });
+  if (feed) {
+    const parsed = feed(body, url, config, task);
+    return {
+      ...parsed,
+      records: parsed.records.map((r) => ({
+        ...r,
+        validationStatus: "parser-validated",
+      })),
+    };
+  }
   let data;
   try {
     data = JSON.parse(body);
@@ -129,9 +210,20 @@ export function evaluate(journal, run, stopReason) {
     enumerationResults.every((p) =>
       ["verified-list", "api-query"].includes(p.coverage),
     );
-  const terminal = enumerationResults.some((p) => p.terminal),
-    countMatches =
-      run.expected_total == null || run.expected_total === records.length;
+  const terminal = enumerationResults.some((p) => p.terminal);
+  // Some publishers report source items, each of which may expand into
+  // multiple occurrence records. Page results retain their publisher IDs.
+  const sourceItemIds = enumerationResults.flatMap((p) => p.sourceItemIds ?? []);
+  const countsSourceItems =
+    enumerationResults.length > 0 &&
+    enumerationResults.every((p) => Array.isArray(p.sourceItemIds));
+  const observedTotal = countsSourceItems
+    ? new Set(sourceItemIds).size
+    : records.length;
+  if (countsSourceItems && observedTotal !== sourceItemIds.length)
+    issues.push({ code: "duplicate_source_item_identity" });
+  const countMatches =
+    run.expected_total == null || run.expected_total === observedTotal;
   const previousId = journal.collection(run.collection_id).last_complete;
   const previous =
     previousId && previousId !== run.id ? journal.run(previousId) : null;
@@ -184,7 +276,7 @@ export function evaluate(journal, run, stopReason) {
       transport: run.options.transport,
       basis:
         run.options.transport === "api"
-          ? "all pages of the recorded start_date query"
+          ? apiScopeBasis(run.config)
           : "declared listing interface",
       validation:
         "core listing fields; not a guarantee of all events on the publisher domain",
@@ -197,6 +289,7 @@ export function evaluate(journal, run, stopReason) {
     fieldQuality: fieldSummary(records),
     recordCount: upcoming.length,
     expectedTotal: run.expected_total,
+    ...(countsSourceItems ? { observedSourceItems: observedTotal } : {}),
     countMatches,
     issues,
     stopReason:
@@ -335,15 +428,48 @@ export async function work(
         }
         task = journal.nextPage(run.id, run.token);
         if (!task) break;
-        input = await transport.fetch(task);
+        let offHost = null;
+        try {
+          input = await transport.fetch(task);
+        } catch (error) {
+          // A listing's detail link may legitimately leave the publisher (a
+          // city page that forwards to a venue). Record it and keep going; the
+          // listing observation stays un-enriched and the issue is visible.
+          if (
+            error.code === "scope_violation" &&
+            task.kind === "detail" &&
+            error.capture
+          ) {
+            offHost = error.capture.url;
+            input = {
+              body: "",
+              url: error.capture.url ?? task.url,
+              capture: error.capture,
+              status: 0,
+            };
+          } else throw error;
+        }
         leaseCheck();
         const config = {
           ...run.config,
           maxDepth: run.options.probe ? 0 : run.config.maxDepth,
+          asOf: run.options.asOf,
         };
-        const parsed =
-          task.kind === "api"
-            ? parseApi(input.body, input.url, config, task)
+        const parsed = offHost
+          ? {
+              records: [],
+              nextRequests: [],
+              issues: [
+                {
+                  code: "detail_redirected_off_host",
+                  requested: task.url,
+                  host: new URL(offHost).hostname,
+                },
+              ],
+              method: "detail-off-host-skip",
+            }
+          : task.kind === "api"
+            ? parseApi(input.body, input.url, config, task, input.apiTotals)
             : parseDocument({
                 html: input.body,
                 url: input.url,
@@ -351,12 +477,25 @@ export async function work(
                 task,
                 interaction: input.interaction,
               });
+        // A page that emits two different events under one identity would
+        // lose one silently (parsers dedupe, the journal insert is idempotent).
+        const collisions =
+          (parsed.identityCollisions ?? 0) +
+          identityCollisions(parsed.records ?? []);
+        if (collisions)
+          (parsed.issues ??= []).push({
+            code: "duplicate_record_identity",
+            count: collisions,
+          });
         parsed.acquisition = {
           url: input.url,
           status: input.status,
           kind: task.kind,
           contentHash: input.capture.hash,
           ...(input.interaction ? { interaction: input.interaction } : {}),
+          // Response-header totals (e.g. X-WP-Total) drive pagination; keep
+          // them so replay reproduces the original decision.
+          ...(input.apiTotals ? { apiTotals: input.apiTotals } : {}),
         };
         for (const r of parsed.records) {
           if (
@@ -384,7 +523,7 @@ export async function work(
               ]),
             );
         }
-        if (task.meta.enrichRecordIds) {
+        if (task.meta.enrichRecordIds && !offHost) {
           const targets = journal
             .records(run.id)
             .filter((r) =>

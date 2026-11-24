@@ -8,20 +8,127 @@ import {
   recordFromJsonLd,
 } from "../records.mjs";
 import { parseTimeRange } from "../../examples/parsers.mjs";
+import { refineSimpleviewEvent } from "./regional.mjs";
 import {
   mergeDetail,
   fieldQuality,
   sameOccurrenceTime,
 } from "../event-fields.mjs";
 
+// Some structured data states an instant in UTC while the page shows venue-local
+// time. Convert only when the adapter declares it, using the collection zone,
+// and drop an end identical to the start (no real end was supplied).
+function localTimestamp(instant, timeZone) {
+  const ms = Date.parse(instant);
+  if (!Number.isFinite(ms) || !/Z$/.test(instant)) return null;
+  const parts = Object.fromEntries(
+    new Intl.DateTimeFormat("en-CA", {
+      timeZone,
+      hourCycle: "h23",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    })
+      .formatToParts(new Date(ms))
+      .map((p) => [p.type, p.value]),
+  );
+  return `${parts.year}-${parts.month}-${parts.day}T${parts.hour}:${parts.minute}:${parts.second}`;
+}
+function localizeUtcEvent(event, timeZone) {
+  const start = localTimestamp(String(event.startDate ?? ""), timeZone);
+  if (!start) return event;
+  const sameEnd = event.endDate === event.startDate;
+  const end = sameEnd
+    ? null
+    : localTimestamp(String(event.endDate ?? ""), timeZone);
+  const { endDate: _dropped, ...rest } = event;
+  return {
+    ...rest,
+    startDate: start,
+    ...(end ? { endDate: end } : {}),
+    sourceUtc: { startDate: event.startDate, endDate: event.endDate ?? null },
+    timeZone,
+    timeZoneBasis:
+      "structured UTC instant converted to the collection time zone",
+    dateTimeBasis: {
+      start: "structured UTC instant converted to venue-local time",
+      end: end ? "structured UTC instant converted to venue-local time" : null,
+    },
+    warnings: [
+      "utc_instant_converted_to_collection_time_zone",
+      ...(sameEnd ? ["source_end_equals_start_ignored"] : []),
+    ],
+  };
+}
 const canonical = (value) => {
   const u = new URL(value);
   u.hash = "";
   return u.href.replace(/\/$/, "");
 };
+const labelled = ($, name) =>
+  text(
+    $("p")
+      .filter((_, e) => text($(e).text()) === name)
+      .first()
+      .next("p")
+      .text(),
+  );
+// A labelled "Time" value such as "7:30 p.m." or "10 a.m. - 8 p.m." supplies
+// clocks for a single-day, date-only structured Event. Several sessions or a
+// multi-day range are left at day precision. A visible "City, ST ZIP" label
+// that shares the structured postal code but names another city replaces the
+// structured locality, which the aggregator was seen to default to Orlando.
+function withVisibleDetails($, event) {
+  const start = String(event.startDate ?? ""),
+    end = String(event.endDate ?? start);
+  let result = event;
+  const place = labelled($, "Location").match(
+    /^(.+?),\s*([A-Z]{2})\s+(\d{5})$/,
+  );
+  const loc = event.location;
+  if (
+    place &&
+    loc &&
+    !Array.isArray(loc) &&
+    typeof loc === "object" &&
+    loc.address?.postalCode === place[3] &&
+    loc.address.addressLocality !== place[1]
+  )
+    result = {
+      ...result,
+      location: {
+        ...loc,
+        address: {
+          ...loc.address,
+          addressLocality: place[1],
+          addressRegion: place[2],
+        },
+      },
+    };
+  if (!/^\d{4}-\d\d-\d\d$/.test(start) || end.slice(0, 10) !== start)
+    return result;
+  const label = labelled($, "Time").replace(/\b([ap])\.m\./gi, "$1m");
+  const clock = "\\d{1,2}(?::\\d{2})?\\s*[ap]m";
+  if (!new RegExp(`^${clock}(?:\\s*[-\u2013]\\s*${clock})?$`, "i").test(label))
+    return result;
+  const clocks = parseTimeRange(label);
+  if (!clocks.startTime) return result;
+  return {
+    ...result,
+    startDate: `${start}T${clocks.startTime}`,
+    endDate: clocks.endTime ? `${start}T${clocks.endTime}` : result.endDate,
+    dateTimeBasis: {
+      start: "visible detail time label",
+      end: clocks.endTime ? "visible detail time label" : "structured date",
+    },
+  };
+}
 export function parseDetail({ html, url, config }) {
   const $ = load(html),
-    ld = jsonLdEvents(html),
+    ld = jsonLdEvents(html, { series: config.detailSeriesAsEvent === true }),
     records = [],
     issues = [];
   const title = text($("main h1,h1").first().text());
@@ -33,14 +140,37 @@ export function parseDetail({ html, url, config }) {
     const own = safeUrl(event.url, url) ?? safeUrl(event["@id"], url);
     // On a detail page, an Event without a URL can use the page's own identity
     // only when it is the sole Event and agrees with the main heading.
+    // Some publishers render a different canonical URL inside the Event markup
+    // than the page address (config.detailEventUrlAlias); accept that alias only
+    // for the sole Event whose name equals the heading, never a related Event.
     const fallback =
-      !own &&
+      (!own || config.detailEventUrlAlias === true) &&
       ld.events.length === 1 &&
       text(event.name).toLowerCase() === title.toLowerCase();
-    if (!fallback && (!own || canonical(own) !== canonical(url))) continue;
+    // An aggregator may declare the upstream publisher's own URL in its Event.
+    // With this opt-in, the sole Event whose name agrees with the page heading
+    // is the page's Event, and keeps the upstream URL as its stable identity.
+    const titled =
+      config.detailEventIdentity === "page-title" &&
+      own &&
+      ld.events.length === 1 &&
+      text(event.name).toLowerCase() === title.toLowerCase();
+    if (!fallback && !titled && (!own || canonical(own) !== canonical(url)))
+      continue;
+    const prepared =
+      config.localizeUtcInstants && config.timeZone
+        ? localizeUtcEvent(event, config.timeZone)
+        : event;
+    const source = titled
+      ? withVisibleDetails($, prepared)
+      : fallback
+        ? { ...prepared, url }
+        : prepared;
     const record = recordFromJsonLd(
       config,
-      fallback ? { ...event, url } : event,
+      config.detailProfile === "simpleview"
+        ? refineSimpleviewEvent($, source)
+        : source,
       { url, jsonPath: path },
       ld.references,
     );
@@ -284,6 +414,91 @@ export function parseDetail({ html, url, config }) {
       ".event-detail-page .date-title; .evt-sb-i; [itemprop=address]",
     );
     method = "boston-detail";
+  } else if (config.adapter === "chicago-parks") {
+    const root = $("article.node--type-event.node--view-mode-full").first(),
+      when = root.find(".event--date-time .field__item").first(),
+      lines = (when.html() ?? "")
+        .split(/<br\s*\/?>/i)
+        .map((part) => text(part))
+        .filter(Boolean);
+    const range = dates(lines[0] ?? ""),
+      clocks = parseTimeRange(lines.slice(1).join(" "));
+    const multiDay = range.endDate && range.endDate !== range.startDate;
+    const warnings = [];
+    let startLocal = null,
+      endLocal = null;
+    if (!multiDay && range.startDate && clocks.startTime) {
+      startLocal = `${range.startDate}T${clocks.startTime}`;
+      if (clocks.endTime && clocks.endTime >= clocks.startTime)
+        endLocal = `${range.startDate}T${clocks.endTime}`;
+      else if (clocks.endTime) warnings.push("end_time_requires_date_review");
+    } else if (multiDay && clocks.startTime)
+      warnings.push("multi_day_clock_semantics_unverified");
+    // The page's own "Add to calendar" link restates the occurrence; a
+    // disagreement is retained as a warning, never silently corrected.
+    const link = root
+      .find('a[href*="calendar.google.com/calendar/render"]')
+      .first()
+      .attr("href");
+    const linked = link?.match(/[?&]dates=(\d{8})T(\d{6})\/(\d{8})T(\d{6})/);
+    if (linked && startLocal) {
+      const iso = (d, t) =>
+        `${d.slice(0, 4)}-${d.slice(4, 6)}-${d.slice(6, 8)}T${t.slice(0, 2)}:${t.slice(2, 4)}:${t.slice(4, 6)}`;
+      if (iso(linked[1], linked[2]) !== startLocal)
+        warnings.push("calendar_link_conflicts_with_visible_datetime");
+    }
+    const street = text(root.find(".facility .address").first().text()),
+      parsedAddress = street.match(
+        /^(.*?)\s+(Chicago),\s*(IL)\s+(\d{5}(?:-\d{4})?)$/,
+      );
+    const categories = text(
+      root.find(".field--name-field-event-category").first().text(),
+    )
+      .replace(/^Categories:\s*/i, "")
+      .split(",")
+      .map((label) => text(label))
+      .filter(Boolean);
+    add(
+      {
+        startDate: range.startDate,
+        endDate: multiDay
+          ? range.endDate
+          : endLocal
+            ? range.startDate
+            : undefined,
+        startLocal: startLocal ?? undefined,
+        endLocal: endLocal ?? undefined,
+        dateTimeBasis: {
+          start: "visible detail date and clock",
+          end: endLocal || multiDay ? "visible detail date and clock" : null,
+        },
+        location: {
+          venue: text(root.find(".facility--address > a").first().text()),
+          formattedAddress: street,
+          streetAddress: parsedAddress?.[1],
+          locality: parsedAddress?.[2],
+          region: parsedAddress?.[3],
+          postalCode: parsedAddress?.[4],
+          basis: "event detail facility address",
+        },
+        categoryTags: categories.map((label) => ({
+          label,
+          basis: "upstream event category",
+        })),
+        warnings,
+        raw: {
+          dateTime: lines,
+          fee: text(
+            root.find(".field--name-field-event-fee .field__item").text(),
+          ),
+          ageRange: text(
+            root.find(".field--name-field-age-range .field__item").text(),
+          ),
+        },
+      },
+      "article.node--type-event .event--date-time; .facility; .field--name-field-event-category",
+    );
+    method = "chicago-parks-detail";
   } else if (!records.length && config.adapter === "la") {
     const rawDate = text($(".sidebar_event_date > span").first().text());
     add(
@@ -336,6 +551,14 @@ export function parseDetail({ html, url, config }) {
       }
       return record;
     });
+  }
+  if (config.tentativeMarker && selected.length) {
+    const marker = String(config.tentativeMarker).toLowerCase();
+    if (text($("body").text()).toLowerCase().includes(marker))
+      for (const record of selected)
+        record.warnings = [
+          ...new Set([...record.warnings, "source_marks_event_tentative"]),
+        ];
   }
   if (!selected.length)
     issues.push({ code: "detail_event_fields_unavailable" });

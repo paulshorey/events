@@ -1,6 +1,11 @@
 import { load } from "cheerio";
 import { inspectedAdapters, parseInspected } from "./inspected.mjs";
 import { parseDetail } from "./detail.mjs";
+import { parseDcListing } from "./washington.mjs";
+import { parseEventbriteSearch } from "./eventbrite.mjs";
+import { parseJavitsMonth } from "./javits.mjs";
+import { parseStreetFairs } from "./street-fairs.mjs";
+import { parseCityGuide } from "./cityguide.mjs";
 import { inspectedPagination } from "./pagination.mjs";
 import {
   parseLaCalendar,
@@ -15,6 +20,7 @@ import {
   jsonLdEvents,
   recordFromJsonLd,
   dedupe,
+  identityCollisions,
 } from "../records.mjs";
 
 const paginationSelectors =
@@ -65,6 +71,15 @@ export function parseDocument({
   interaction,
 }) {
   if (task.kind === "detail") return parseDetail({ html, url, config });
+  if (config.adapter === "cityguide")
+    return parseCityGuide({ html, url, config });
+  if (config.adapter === "dothis-street-fairs")
+    return parseStreetFairs({ html, url, config });
+  if (
+    config.adapter === "javits" &&
+    config.pagination?.mode === "javits-months"
+  )
+    return parseJavitsMonth({ html, url, config, task });
   const $ = load(html),
     issues = [],
     all = [],
@@ -74,12 +89,15 @@ export function parseDocument({
     observedCount = 0,
     method = "jsonld",
     rejected = 0,
+    emptyTerminalPage = false,
+    pagingTotal,
+    verifiedEmpty = false,
     excluded;
   if (config.discoveryOnly) {
     method = "discovery-only";
     coverage = "discovery";
   } else if (inspectedAdapters.has(config.adapter)) {
-    const parsed = parseInspected({ html, url, config, interaction });
+    const parsed = parseInspected({ html, url, config, interaction, task });
     all.push(...parsed.records);
     issues.push(
       ...parsed.issues.filter(
@@ -92,6 +110,8 @@ export function parseDocument({
     nextRequests.push(...(parsed.nextRequests ?? []));
     coverage = parsed.coverage;
     terminal = parsed.terminal;
+    pagingTotal = parsed.expectedTotal;
+    verifiedEmpty = parsed.verifiedEmpty === true;
     excluded = parsed.excluded;
   } else if (config.adapter === "la") {
     const parsed = parseLaCalendar(html, url);
@@ -145,6 +165,12 @@ export function parseDocument({
         rejected++;
       }
     });
+  } else if (config.adapter === "dc-tourism" && $(".dcevent-wrapper").length) {
+    const parsed = parseDcListing($, url, config);
+    method = "dc-listing-cards";
+    all.push(...parsed.records);
+    observedCount = parsed.observedCount;
+    rejected += parsed.rejected;
   } else if (config.adapter === "dc-tourism") {
     method = "dc-calendar-cards";
     const cards = $(".event-wrapper");
@@ -167,6 +193,75 @@ export function parseDocument({
         { url, selector: ".event-wrapper" },
       );
       r ? all.push(r) : rejected++;
+    });
+  } else if (config.adapter === "eventbrite-search") {
+    const parsed = parseEventbriteSearch({ html, url, config });
+    all.push(...parsed.records);
+    observedCount = parsed.observedCount;
+    rejected = parsed.rejected;
+    nextRequests.length = 0;
+    nextRequests.push(...parsed.nextRequests);
+    coverage = parsed.coverage;
+    terminal = parsed.terminal;
+    method = "eventbrite-search-results";
+    if (parsed.expectedTotal != null) pagingTotal = parsed.expectedTotal;
+    if (parsed.shortPage)
+      issues.push({
+        code: "page_result_count_mismatch",
+        expected: parsed.expectedOnPage,
+        received: parsed.observedCount,
+      });
+    if (parsed.capped)
+      issues.push({
+        code: "search_view_capped",
+        objectCount: parsed.objectCount,
+        message: "Eventbrite serves fewer pages than the advertised total",
+      });
+  } else if (config.adapter === "vegas-festival-guide") {
+    // Editorial guide: each festival is an <h3 id> followed by a paragraph of
+    // "<strong>When|Date(s):</strong> value" lines. Only fully dated entries
+    // (day and year stated) become observations; "TBD"/"Postponed" entries
+    // are counted as undated and never given invented dates.
+    method = "vegas-festival-guide";
+    $("h3[id]").each((_, e) => {
+      const h = $(e),
+        meta = h.nextAll("p").first(),
+        html = meta.html() ?? "";
+      if (!/<strong>\s*(?:When|Dates?)\s*:/i.test(html)) return;
+      const lines = html.split(/<br\s*\/?>/i).map((l) => load(`<p>${l}</p>`));
+      const where = lines
+        .map(($l) => text($l("p").text()))
+        .map((l) => l.match(/^Where:\s*(.+)$/i)?.[1])
+        .find(Boolean);
+      for (const $l of lines) {
+        const line = text($l("p").text()),
+          m = line.match(/(?:^|\|\s*)(?:When|Dates?):\s*(.+)$/i);
+        if (!m) continue;
+        observedCount++;
+        const sub = line.match(/^(.+?)\s*\|\s*(?:When|Dates?):/i)?.[1];
+        if (!dates(m[1]).startDate) continue;
+        const id = `${h.attr("id")}${
+          sub
+            ? `-${text(sub)
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, "-")}`
+            : ""
+        }`;
+        const r = eventRecord(
+          config,
+          {
+            id,
+            title: sub ? `${text(h.text())} - ${text(sub)}` : h.text(),
+            url: `${url.split("#")[0]}#${id}`,
+            rawDate: m[1],
+            location: where
+              ? { venue: where, basis: "guide section 'Where' line" }
+              : undefined,
+          },
+          { url, selector: "h3[id] + p" },
+        );
+        r ? all.push(r) : rejected++;
+      }
     });
   } else if (config.adapter === "javits") {
     method = "javits-calendar-cards";
@@ -197,7 +292,7 @@ export function parseDocument({
     });
   } else if (config.adapter === "microdata") {
     method = "microdata-event";
-    const cards = $('[itemtype*="schema.org/Event"]');
+    const cards = $(config.itemSelector ?? '[itemtype*="schema.org/Event"]');
     observedCount = cards.length;
     cards.each((_, e) => {
       const c = $(e),
@@ -219,11 +314,30 @@ export function parseDocument({
       venueText.find('[itemprop="address"]').remove();
       const latitude = locationProp("latitude"),
         longitude = locationProp("longitude");
+      // With an identity pattern, the event's own link is the first anchor
+      // that carries it (organizer and phone links also sit inside a card).
+      const itemUrl = config.itemIdPattern
+        ? c
+            .find("a[href]")
+            .map((_, a) => $(a).attr("href"))
+            .get()
+            .find((href) =>
+              new RegExp(config.itemIdPattern).test(safeUrl(href, url) ?? ""),
+            )
+        : prop("url") || c.find("a[href]").first().attr("href");
       const r = eventRecord(
         config,
         {
+          ...(config.itemIdPattern
+            ? (() => {
+                const m = String(itemUrl ?? "").match(
+                  new RegExp(config.itemIdPattern),
+                );
+                return m ? { id: m[1] } : {};
+              })()
+            : {}),
           title: prop("name"),
-          url: prop("url") || c.find("a[href]").first().attr("href"),
+          url: itemUrl,
           startDate: prop("startDate"),
           endDate: prop("endDate"),
           location: {
@@ -242,6 +356,42 @@ export function parseDocument({
       );
       r ? all.push(r) : rejected++;
     });
+    // NYC Parks aggregate pages state their total ("Currently viewing N
+    // events") and are fetched page by page until an empty page. The stated
+    // total must equal the cards actually collected before coverage is known.
+    if (config.pagination?.mode === "nycparks-aggregate") {
+      const page = Number(url.match(/\/p(\d+)\/?(?:[?#].*)?$/)?.[1]);
+      const stated = Number(
+        text($.root().text()).match(/Currently viewing (\d+) events?/i)?.[1],
+      );
+      if (
+        !Number.isInteger(page) ||
+        page < 1 ||
+        page > config.pagination.maxPages
+      )
+        throw Object.assign(new Error("NYC Parks page contract missing"), {
+          code: "pagination_changed",
+        });
+      coverage = "verified-list";
+      if (cards.length) {
+        if (page === 1 && stated !== cards.length)
+          issues.push({
+            code: "listed_total_not_reconciled",
+            stated: Number.isFinite(stated) ? stated : null,
+            cards: cards.length,
+          });
+        nextRequests.push({
+          url: url.replace(/\/p\d+(\/?(?:[?#].*)?)$/, `/p${page + 1}$1`),
+          kind: "listing",
+          depth: 0,
+          meta: { pagination: true },
+        });
+      } else {
+        terminal = true;
+        coverage = "verified-list";
+        emptyTerminalPage = true;
+      }
+    }
   } else {
     const ld = jsonLdEvents(html);
     observedCount = ld.events.length;
@@ -457,6 +607,7 @@ export function parseDocument({
     );
     coverage = paging.coverage;
     terminal = paging.terminal;
+    pagingTotal = paging.expectedTotal;
   }
   if (config.listingContract && !$(config.listingContract).length)
     throw Object.assign(
@@ -514,7 +665,16 @@ export function parseDocument({
           },
         });
   }
-  if (!all.length && !nextRequests.length)
+  // Only an explicitly verified empty page (adapter or pager contract) is an
+  // expected empty result; a terminal pager alone is not.
+  if (
+    !all.length &&
+    !nextRequests.length &&
+    !emptyTerminalPage &&
+    !verifiedEmpty &&
+    !paging?.verifiedEmpty &&
+    !(observedCount && excluded)
+  )
     issues.push({
       code: "no_event_contract_found",
       message:
@@ -545,6 +705,9 @@ export function parseDocument({
       uniqueRequests.set(request.url, request);
   return {
     records: dedupe(all),
+    ...(identityCollisions(all)
+      ? { identityCollisions: identityCollisions(all) }
+      : {}),
     nextRequests: [...uniqueRequests.values()],
     method,
     observedCount,
@@ -552,6 +715,7 @@ export function parseDocument({
     issues,
     coverage,
     terminal,
+    ...(pagingTotal != null ? { expectedTotal: pagingTotal } : {}),
     ...(excluded ? { excluded } : {}),
     discoveryLinks: [...new Set(discovered.map((r) => r.url))].slice(0, 100),
   };

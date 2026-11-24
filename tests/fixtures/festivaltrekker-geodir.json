@@ -1,0 +1,233 @@
+[
+ {
+  "id": "2925",
+  "title": {
+   "raw": "KATSEYE: THE WILDWORLD TOUR",
+   "rendered": "KATSEYE: THE WILDWORLD TOUR"
+  },
+  "slug": "katseye-the-wildworld-tour-4",
+  "link": "https://festivaltrekker.com/events/katseye-the-wildworld-tour-4/",
+  "status": "publish",
+  "type": "gd_event",
+  "post_category": [
+   {
+    "id": 119,
+    "name": "Music",
+    "slug": "music"
+   }
+  ],
+  "street": "1901 W Madison",
+  "country": "United States",
+  "region": "IL",
+  "city": "Chicago",
+  "zip": "60612",
+  "latitude": "41.88124412",
+  "longitude": "-87.67427375",
+  "website": "",
+  "ticket__registration_url": "https://www.ticketmaster.com/katseye-the-wildworld-tour-chicago-illinois-11-05-2026/event/040064ABAC947B12",
+  "event_dates": {
+   "recurring": false,
+   "start_date": "2026-11-05",
+   "end_date": "2026-11-05",
+   "all_day": false,
+   "start_time": "20:00",
+   "end_time": "",
+   "duration_x": 1,
+   "repeat_type": "",
+   "repeat_x": "",
+   "repeat_end_type": "",
+   "max_repeat": "",
+   "repeat_end": "",
+   "recurring_dates": "",
+   "different_times": false,
+   "start_times": "",
+   "end_times": "",
+   "repeat_days": [],
+   "repeat_weeks": []
+  },
+  "event_schedules": [
+   {
+    "schedule_id": "5126",
+    "start_date": {
+     "raw": "2026-11-05",
+     "rendered": "November 5, 2026"
+    },
+    "start_time": {
+     "raw": "20:00",
+     "rendered": "8:00 pm"
+    },
+    "end_date": {
+     "raw": "2026-11-05",
+     "rendered": "November 5, 2026"
+    },
+    "end_time": {
+     "raw": "00:00",
+     "rendered": "12:00 am"
+    },
+    "all_day": "0",
+    "start_datetime": {
+     "raw": "2026-11-05T20:00:00",
+     "rendered": "November 5, 2026, 8:00 pm"
+    },
+    "end_datetime": {
+     "raw": "2026-11-05T00:00:00",
+     "rendered": "November 5, 2026, 12:00 am"
+    }
+   }
+  ],
+  "venue_name_": null,
+  "recurring": "0"
+ },
+ {
+  "id": "2874",
+  "title": {
+   "raw": "KATSEYE: THE WILDWORLD TOUR",
+   "rendered": "KATSEYE: THE WILDWORLD TOUR"
+  },
+  "slug": "katseye-the-wildworld-tour-3",
+  "link": "https://festivaltrekker.com/events/katseye-the-wildworld-tour-3/",
+  "status": "publish",
+  "type": "gd_event",
+  "post_category": [
+   {
+    "id": 119,
+    "name": "Music",
+    "slug": "music"
+   }
+  ],
+  "street": "1901 W Madison",
+  "country": "United States",
+  "region": "IL",
+  "city": "Chicago",
+  "zip": "60612",
+  "latitude": "41.88124412",
+  "longitude": "-87.67427375",
+  "website": "",
+  "ticket__registration_url": "https://www.ticketmaster.com/katseye-the-wildworld-tour-chicago-illinois-11-05-2026/event/040064ABAC947B12",
+  "event_dates": {
+   "recurring": false,
+   "start_date": "2026-11-05",
+   "end_date": "2026-11-05",
+   "all_day": false,
+   "start_time": "20:00",
+   "end_time": "",
+   "duration_x": 1,
+   "repeat_type": "",
+   "repeat_x": "",
+   "repeat_end_type": "",
+   "max_repeat": "",
+   "repeat_end": "",
+   "recurring_dates": "",
+   "different_times": false,
+   "start_times": "",
+   "end_times": "",
+   "repeat_days": [],
+   "repeat_weeks": []
+  },
+  "event_schedules": [
+   {
+    "schedule_id": "4026",
+    "start_date": {
+     "raw": "2026-11-05",
+     "rendered": "November 5, 2026"
+    },
+    "start_time": {
+     "raw": "20:00",
+     "rendered": "8:00 pm"
+    },
+    "end_date": {
+     "raw": "2026-11-05",
+     "rendered": "November 5, 2026"
+    },
+    "end_time": {
+     "raw": "00:00",
+     "rendered": "12:00 am"
+    },
+    "all_day": "0",
+    "start_datetime": {
+     "raw": "2026-11-05T20:00:00",
+     "rendered": "November 5, 2026, 8:00 pm"
+    },
+    "end_datetime": {
+     "raw": "2026-11-05T00:00:00",
+     "rendered": "November 5, 2026, 12:00 am"
+    }
+   }
+  ],
+  "venue_name_": null,
+  "recurring": "0"
+ },
+ {
+  "id": "2735",
+  "title": {
+   "raw": "KATSEYE: THE WILDWORLD TOUR",
+   "rendered": "KATSEYE: THE WILDWORLD TOUR"
+  },
+  "slug": "katseye-the-wildworld-tour-2",
+  "link": "https://festivaltrekker.com/events/katseye-the-wildworld-tour-2/",
+  "status": "publish",
+  "type": "gd_event",
+  "post_category": [],
+  "street": "1901 W Madison",
+  "country": "United States",
+  "region": "IL",
+  "city": "Chicago",
+  "zip": "60612",
+  "latitude": "39.9523894183957",
+  "longitude": "-75.16359824536897",
+  "website": "",
+  "ticket__registration_url": "",
+  "event_dates": {
+   "recurring": false,
+   "start_date": "2026-11-05",
+   "end_date": "2026-11-05",
+   "all_day": false,
+   "start_time": "20:00",
+   "end_time": "",
+   "duration_x": 1,
+   "repeat_type": "",
+   "repeat_x": "",
+   "repeat_end_type": "",
+   "max_repeat": "",
+   "repeat_end": "",
+   "recurring_dates": "",
+   "different_times": false,
+   "start_times": "",
+   "end_times": "",
+   "repeat_days": [],
+   "repeat_weeks": []
+  },
+  "event_schedules": [
+   {
+    "schedule_id": "906",
+    "start_date": {
+     "raw": "2026-11-05",
+     "rendered": "November 5, 2026"
+    },
+    "start_time": {
+     "raw": "20:00",
+     "rendered": "8:00 pm"
+    },
+    "end_date": {
+     "raw": "2026-11-05",
+     "rendered": "November 5, 2026"
+    },
+    "end_time": {
+     "raw": "00:00",
+     "rendered": "12:00 am"
+    },
+    "all_day": "0",
+    "start_datetime": {
+     "raw": "2026-11-05T20:00:00",
+     "rendered": "November 5, 2026, 8:00 pm"
+    },
+    "end_datetime": {
+     "raw": "2026-11-05T00:00:00",
+     "rendered": "November 5, 2026, 12:00 am"
+    }
+   }
+  ],
+  "venue_name_": null,
+  "recurring": "0"
+ }
+]

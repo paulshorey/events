@@ -23,6 +23,20 @@ export async function registry() {
     new RegExp(c.detailPattern);
     validateQualityPolicy(c.quality);
     if (
+      c.apiQuery != null &&
+      (typeof c.apiQuery !== "object" ||
+        Array.isArray(c.apiQuery) ||
+        !c.apiEndpoint ||
+        Object.entries(c.apiQuery).some(
+          ([k, v]) =>
+            !/^[a-z_]+$/.test(k) ||
+            ["per_page", "page", "start_date"].includes(k) ||
+            typeof v !== "string" ||
+            !v,
+        ))
+    )
+      throw new Error(`Invalid apiQuery ${c.id}`);
+    if (
       c.minIntervalMs != null &&
       (!Number.isSafeInteger(c.minIntervalMs) ||
         c.minIntervalMs < 1000 ||

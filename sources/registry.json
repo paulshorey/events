@@ -63,17 +63,49 @@
       ".views-row",
       "article"
     ],
-    "readySelector": ".event-card",
+    "readySelector": null,
     "notes": "Inspect event containers, detail pages, identity, pagination, date scope, and any published feed; then implement a bounded adapter probe. Field audit: follow sparse event cards to same-host detail pages; retain listing and detail evidence separately. Full enumeration remains unverified for partial sources. Verified AllEvents-owned all.events redirect; its displayed zone and UTC-marked structured times can conflict. Preserve the visible clock and zone label, flag for review.",
     "role": "collection candidate",
     "allowedHosts": [
       "allevents.in",
       "all.events"
     ],
-    "maxDepth": 2,
+    "maxDepth": 0,
     "validationStatus": "needs-validation",
     "script": "scrapers/url-002.mjs",
-    "enrichDetails": true
+    "enrichDetails": false,
+    "entrypoints": [
+      "https://allevents.in/new-york/all",
+      "https://allevents.in/los-angeles/all",
+      "https://allevents.in/chicago/all",
+      "https://allevents.in/houston/all",
+      "https://allevents.in/london/all",
+      "https://allevents.in/toronto/all",
+      "https://allevents.in/san-francisco/all",
+      "https://allevents.in/miami/all",
+      "https://allevents.in/dallas/all",
+      "https://allevents.in/atlanta/all",
+      "https://allevents.in/boston/all",
+      "https://allevents.in/seattle/all",
+      "https://allevents.in/sydney/all",
+      "https://allevents.in/melbourne/all",
+      "https://allevents.in/mumbai/all",
+      "https://allevents.in/singapore/all",
+      "https://allevents.in/dubai/all",
+      "https://allevents.in/paris/all",
+      "https://allevents.in/berlin/all",
+      "https://allevents.in/las-vegas/all",
+      "https://allevents.in/philadelphia/all",
+      "https://allevents.in/denver/all"
+    ],
+    "discoverDetails": false,
+    "pagination": {
+      "mode": "page-query-links",
+      "parameter": "page",
+      "maxPages": 400
+    },
+    "defaultMaxPages": 1780,
+    "defaultMaxRuntimeMs": 5340000
   },
   {
     "id": "url-003",
@@ -127,8 +159,8 @@
     "enabled": false,
     "adapterVersion": "framework-v1",
     "timeZone": "America/New_York",
-    "adapter": "discovery",
-    "coverage": "unverified",
+    "adapter": "eventfinder",
+    "coverage": "api-query",
     "detailPattern": "/events?/[^/?#]+|/calendar/[^/?#]+|/shows/|/festivals?/[^/?#]+",
     "cardSelectors": [
       ".event-card",
@@ -143,11 +175,19 @@
     "notes": "Inspect event containers, detail pages, identity, pagination, date scope, and any published feed; then implement a bounded adapter probe.",
     "role": "collection candidate",
     "allowedHosts": [
-      "eventfinder.site"
+      "eventfinder.site",
+      "www.eventfinder.site"
     ],
     "maxDepth": 2,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-004.mjs"
+    "script": "scrapers/url-004.mjs",
+    "apiFormat": "eventfinder",
+    "apiEndpoint": "https://www.eventfinder.site/api/getEvents",
+    "apiPageSize": 250,
+    "defaultTransport": "api",
+    "defaultMaxPages": 240,
+    "defaultMaxRecords": 60000,
+    "defaultMaxRuntimeMs": 720000
   },
   {
     "id": "url-005",
@@ -164,7 +204,7 @@
     "enabled": false,
     "adapterVersion": "framework-v1",
     "timeZone": "America/New_York",
-    "adapter": "discovery",
+    "adapter": "microdata",
     "coverage": "unverified",
     "detailPattern": "/events?/[^/?#]+|/calendar/[^/?#]+|/shows/|/festivals?/[^/?#]+",
     "cardSelectors": [
@@ -182,9 +222,94 @@
     "allowedHosts": [
       "festivalnet.com"
     ],
-    "maxDepth": 2,
+    "maxDepth": 0,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-005.mjs"
+    "script": "scrapers/url-005.mjs",
+    "itemSelector": ".festiv-block[itemtype$=\"schema.org/Festival\"]",
+    "itemIdPattern": "^https?://[^/]+/(\\d+)/",
+    "entrypoints": [
+      "https://festivalnet.com/fairs-festivals/Alabama",
+      "https://festivalnet.com/fairs-festivals/Alaska",
+      "https://festivalnet.com/fairs-festivals/Arizona",
+      "https://festivalnet.com/fairs-festivals/Arkansas",
+      "https://festivalnet.com/fairs-festivals/Armed-Forces-Americas",
+      "https://festivalnet.com/fairs-festivals/Armed-Forces-Europe",
+      "https://festivalnet.com/fairs-festivals/Armed-Forces-Pacific",
+      "https://festivalnet.com/fairs-festivals/American-Samoa",
+      "https://festivalnet.com/fairs-festivals/California",
+      "https://festivalnet.com/fairs-festivals/Colorado",
+      "https://festivalnet.com/fairs-festivals/Connecticut",
+      "https://festivalnet.com/fairs-festivals/Delaware",
+      "https://festivalnet.com/fairs-festivals/Washington-DC",
+      "https://festivalnet.com/fairs-festivals/Florida",
+      "https://festivalnet.com/fairs-festivals/Georgia",
+      "https://festivalnet.com/fairs-festivals/Guam",
+      "https://festivalnet.com/fairs-festivals/Hawaii",
+      "https://festivalnet.com/fairs-festivals/Idaho",
+      "https://festivalnet.com/fairs-festivals/Illinois",
+      "https://festivalnet.com/fairs-festivals/Indiana",
+      "https://festivalnet.com/fairs-festivals/Iowa",
+      "https://festivalnet.com/fairs-festivals/Kansas",
+      "https://festivalnet.com/fairs-festivals/Kentucky",
+      "https://festivalnet.com/fairs-festivals/Louisiana",
+      "https://festivalnet.com/fairs-festivals/Maine",
+      "https://festivalnet.com/fairs-festivals/Maryland",
+      "https://festivalnet.com/fairs-festivals/Massachusetts",
+      "https://festivalnet.com/fairs-festivals/Michigan",
+      "https://festivalnet.com/fairs-festivals/Minnesota",
+      "https://festivalnet.com/fairs-festivals/Mississippi",
+      "https://festivalnet.com/fairs-festivals/Missouri",
+      "https://festivalnet.com/fairs-festivals/Montana",
+      "https://festivalnet.com/fairs-festivals/Nebraska",
+      "https://festivalnet.com/fairs-festivals/Nevada",
+      "https://festivalnet.com/fairs-festivals/New-Hampshire",
+      "https://festivalnet.com/fairs-festivals/New-Jersey",
+      "https://festivalnet.com/fairs-festivals/New-Mexico",
+      "https://festivalnet.com/fairs-festivals/New-York",
+      "https://festivalnet.com/fairs-festivals/North-Carolina",
+      "https://festivalnet.com/fairs-festivals/North-Dakota",
+      "https://festivalnet.com/fairs-festivals/Northern-Mariana-Islands",
+      "https://festivalnet.com/fairs-festivals/Ohio",
+      "https://festivalnet.com/fairs-festivals/Oklahoma",
+      "https://festivalnet.com/fairs-festivals/Oregon",
+      "https://festivalnet.com/fairs-festivals/Pennsylvania",
+      "https://festivalnet.com/fairs-festivals/Puerto-Rico",
+      "https://festivalnet.com/fairs-festivals/Rhode-Island",
+      "https://festivalnet.com/fairs-festivals/South-Carolina",
+      "https://festivalnet.com/fairs-festivals/South-Dakota",
+      "https://festivalnet.com/fairs-festivals/Tennessee",
+      "https://festivalnet.com/fairs-festivals/Texas",
+      "https://festivalnet.com/fairs-festivals/Utah",
+      "https://festivalnet.com/fairs-festivals/Vermont",
+      "https://festivalnet.com/fairs-festivals/Virgin-Islands",
+      "https://festivalnet.com/fairs-festivals/Virginia",
+      "https://festivalnet.com/fairs-festivals/Washington",
+      "https://festivalnet.com/fairs-festivals/West-Virginia",
+      "https://festivalnet.com/fairs-festivals/Wisconsin",
+      "https://festivalnet.com/fairs-festivals/Wyoming",
+      "https://festivalnet.com/fairs-festivals/Alberta",
+      "https://festivalnet.com/fairs-festivals/British-Columbia",
+      "https://festivalnet.com/fairs-festivals/Manitoba",
+      "https://festivalnet.com/fairs-festivals/New-Brunswick",
+      "https://festivalnet.com/fairs-festivals/Newfoundland-and-Labrador",
+      "https://festivalnet.com/fairs-festivals/Northwest-Territories",
+      "https://festivalnet.com/fairs-festivals/Nova-Scotia",
+      "https://festivalnet.com/fairs-festivals/Nunavut",
+      "https://festivalnet.com/fairs-festivals/Ontario",
+      "https://festivalnet.com/fairs-festivals/Prince-Edward-Island",
+      "https://festivalnet.com/fairs-festivals/Qu%C3%A9bec",
+      "https://festivalnet.com/fairs-festivals/Saskatchewan",
+      "https://festivalnet.com/fairs-festivals/Yukon-Territory"
+    ],
+    "discoverDetails": false,
+    "pagination": {
+      "mode": "festivalnet-list",
+      "listSelector": ".festiv-list",
+      "cardSelector": ".festiv-block[itemtype$=\"schema.org/Festival\"]",
+      "maxPages": 200
+    },
+    "defaultMaxPages": 600,
+    "defaultMaxRuntimeMs": 1800000
   },
   {
     "id": "url-006",
@@ -200,8 +325,7 @@
     "intervalHours": 168,
     "enabled": false,
     "adapterVersion": "framework-v1",
-    "timeZone": "America/New_York",
-    "adapter": "discovery",
+    "adapter": "geodirectory",
     "coverage": "discovery",
     "detailPattern": "/events?/[^/?#]+|/calendar/[^/?#]+|/shows/|/festivals?/[^/?#]+",
     "cardSelectors": [
@@ -221,7 +345,11 @@
     ],
     "maxDepth": 2,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-006.mjs"
+    "script": "scrapers/url-006.mjs",
+    "apiFormat": "geodirectory",
+    "apiEndpoint": "https://festivaltrekker.com/wp-json/geodir/v2/events",
+    "defaultTransport": "api",
+    "timeZone": "America/New_York"
   },
   {
     "id": "url-007",
@@ -259,7 +387,16 @@
     "maxDepth": 2,
     "validationStatus": "needs-validation",
     "script": "scrapers/url-007.mjs",
-    "enrichDetails": true
+    "enrichDetails": false,
+    "entrypoints": [
+      "https://festivalindex.com/en-us/explore"
+    ],
+    "discoverDetails": false,
+    "pagination": {
+      "mode": "festivalindex-explore",
+      "maxPages": 40,
+      "pageSize": 12
+    }
   },
   {
     "id": "url-008",
@@ -276,8 +413,8 @@
     "enabled": false,
     "adapterVersion": "framework-v1",
     "timeZone": "America/New_York",
-    "adapter": "discovery",
-    "coverage": "unverified",
+    "adapter": "countyfairgrounds",
+    "coverage": "api-query",
     "detailPattern": "/events?/[^/?#]+|/calendar/[^/?#]+|/shows/|/festivals?/[^/?#]+",
     "cardSelectors": [
       ".event-card",
@@ -294,9 +431,263 @@
     "allowedHosts": [
       "www.countyfairgrounds.net"
     ],
-    "maxDepth": 2,
+    "maxDepth": 0,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-008.mjs"
+    "script": "scrapers/url-008.mjs",
+    "apiFormat": "countyfairgrounds",
+    "entrypoints": [
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=AK&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=AL&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=AR&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=AZ&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=CA&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=CO&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=CT&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=DE&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=FL&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=GA&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=HI&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=IA&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=ID&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=IL&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=IN&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=KS&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=KY&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=LA&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=MA&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=MD&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=ME&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=MI&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=MN&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=MO&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=MS&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=MT&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=NC&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=ND&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=NE&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=NH&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=NJ&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=NM&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=NV&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=NY&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=OH&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=OK&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=OR&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=PA&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=RI&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=SC&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=SD&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=TN&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=TX&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=UT&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=VA&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=VT&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=WA&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=WI&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=WV&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      },
+      {
+        "url": "https://www.countyfairgrounds.net/ajax/ajax_state.php?state=WY&eventtype=all",
+        "kind": "api",
+        "depth": 0
+      }
+    ],
+    "discoverDetails": false
   },
   {
     "id": "url-009",
@@ -315,7 +706,7 @@
     "timeZone": "America/New_York",
     "adapter": "discovery",
     "coverage": "unverified",
-    "detailPattern": "/events/(?!all(?:[/?#]|$)|past(?:[/?#]|$)|undefined(?:[/?#]|$)|null(?:[/?#]|$))[^/?#]+",
+    "detailPattern": "^(?:https://meetmeatthefair\\.com)?/events/(?!(?:all|past|undefined|null|maine|vermont|new-hampshire|massachusetts|connecticut|rhode-island)(?:[/?#]|$))[^/?#]+/?$",
     "cardSelectors": [
       ".event-card",
       ".event-item",
@@ -331,15 +722,27 @@
     "allowedHosts": [
       "meetmeatthefair.com"
     ],
-    "maxDepth": 2,
+    "maxDepth": 1,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-009.mjs"
+    "script": "scrapers/url-009.mjs",
+    "detailEventUrlAlias": true,
+    "tentativeMarker": "This event has not yet been verified by our team",
+    "pagination": {
+      "mode": "itemlist-total",
+      "maxItems": 2000
+    },
+    "detailSeriesAsEvent": true,
+    "defaultMaxPages": 720,
+    "defaultMaxRuntimeMs": 2160000
   },
   {
     "id": "url-010",
     "url": "https://www.tsnn.com/trade-show-calendar",
+    "entrypoints": [
+      "https://thetradeshowcalendar.com/tsnn/"
+    ],
     "sourceKey": "tsnn.com",
-    "rateKey": "tsnn.com",
+    "rateKey": "thetradeshowcalendar.com",
     "group": "Conventions and trade shows",
     "origin": "primary-list",
     "cityMarket": null,
@@ -350,7 +753,7 @@
     "enabled": false,
     "adapterVersion": "framework-v1",
     "timeZone": "America/New_York",
-    "adapter": "discovery",
+    "adapter": "trade-table",
     "coverage": "unverified",
     "detailPattern": "/events?/[^/?#]+|/calendar/[^/?#]+|/shows/|/festivals?/[^/?#]+",
     "cardSelectors": [
@@ -363,14 +766,23 @@
       "article"
     ],
     "readySelector": null,
-    "notes": "Inspect event containers, detail pages, identity, pagination, date scope, and any published feed; then implement a bounded adapter probe.",
+    "notes": "Inspected November 5, 2026: the TSNN page only embeds an iframe of https://thetradeshowcalendar.com/tsnn/ (same publisher and backend as url-014, 4,200 exhibitions at 30 per page via the vPos offset). Collection starts at the embed. Rows carry a combined venue/city/country cell that is kept whole.",
     "role": "collection candidate",
     "allowedHosts": [
-      "www.tsnn.com"
+      "www.tsnn.com",
+      "thetradeshowcalendar.com"
     ],
-    "maxDepth": 2,
+    "maxDepth": 0,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-010.mjs"
+    "script": "scrapers/url-010.mjs",
+    "discoverDetails": false,
+    "pagination": {
+      "mode": "offset-table",
+      "parameter": "vPos",
+      "maxRows": 20000
+    },
+    "defaultMaxPages": 180,
+    "defaultMaxRuntimeMs": 540000
   },
   {
     "id": "url-011",
@@ -412,6 +824,9 @@
   {
     "id": "url-012",
     "url": "https://tradefest.io/",
+    "entrypoints": [
+      "https://tradefest.io/en/search"
+    ],
     "sourceKey": "tradefest.io",
     "rateKey": "tradefest.io",
     "group": "Conventions and trade shows",
@@ -424,7 +839,7 @@
     "enabled": false,
     "adapterVersion": "framework-v1",
     "timeZone": "America/New_York",
-    "adapter": "discovery",
+    "adapter": "tradefest",
     "coverage": "unverified",
     "detailPattern": "/events?/[^/?#]+|/calendar/[^/?#]+|/shows/|/festivals?/[^/?#]+",
     "cardSelectors": [
@@ -442,10 +857,15 @@
     "allowedHosts": [
       "tradefest.io"
     ],
-    "maxDepth": 2,
+    "maxDepth": 0,
     "validationStatus": "needs-validation",
     "script": "scrapers/url-012.mjs",
-    "enrichDetails": true
+    "enrichDetails": false,
+    "discoverDetails": false,
+    "windowedSearch": false,
+    "windowHorizon": "2031-12-31",
+    "defaultMaxPages": 250,
+    "defaultMaxRuntimeMs": 750000
   },
   {
     "id": "url-013",
@@ -464,7 +884,7 @@
     "timeZone": "America/New_York",
     "adapter": "conventiongrid",
     "coverage": "unverified",
-    "detailPattern": "/shows/|/calendar/\\d{4}/",
+    "detailPattern": "/shows/[^/?#]+/\\d{4}/[^/?#]+/?$",
     "cardSelectors": [
       ".event-card",
       ".event-item",
@@ -483,7 +903,10 @@
     "maxDepth": 2,
     "validationStatus": "needs-validation",
     "script": "scrapers/url-013.mjs",
-    "enrichDetails": true
+    "enrichDetails": true,
+    "discoverDetails": false,
+    "defaultMaxPages": 1480,
+    "defaultMaxRuntimeMs": 4440000
   },
   {
     "id": "url-014",
@@ -520,11 +943,21 @@
     ],
     "maxDepth": 2,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-014.mjs"
+    "script": "scrapers/url-014.mjs",
+    "discoverDetails": false,
+    "pagination": {
+      "mode": "offset-table",
+      "parameter": "vPos",
+      "maxRows": 20000
+    }
   },
   {
     "id": "url-015",
     "url": "https://conventioncalendar.com/",
+    "entrypoints": [
+      "https://conventioncalendar.com/destinations"
+    ],
+    "followDestinations": true,
     "sourceKey": "conventioncalendar.com",
     "rateKey": "conventioncalendar.com",
     "group": "Conventions and trade shows",
@@ -537,7 +970,7 @@
     "enabled": false,
     "adapterVersion": "framework-v1",
     "timeZone": "America/New_York",
-    "adapter": "discovery",
+    "adapter": "conventioncalendar",
     "coverage": "unverified",
     "detailPattern": "/events?/[^/?#]+|/calendar/[^/?#]+|/shows/|/festivals?/[^/?#]+",
     "cardSelectors": [
@@ -550,14 +983,17 @@
       "article"
     ],
     "readySelector": null,
-    "notes": "Develop one ConventionCalendar adapter, then configure venue collections for New York and Orlando.",
+    "notes": "One ConventionCalendar adapter serves this hub and the venue collections (url-028 Javits, url-090 Orange County Convention Center). The hub starts at /destinations (paginated), follows every city page and each month in its month menu; venue pages are not followed because city pages list the same events. Run the three entries one at a time.",
     "role": "discovery hub",
     "allowedHosts": [
       "conventioncalendar.com"
     ],
-    "maxDepth": 2,
+    "maxDepth": 0,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-015.mjs"
+    "script": "scrapers/url-015.mjs",
+    "discoverDetails": false,
+    "defaultMaxPages": 420,
+    "defaultMaxRuntimeMs": 1260000
   },
   {
     "id": "url-016",
@@ -607,7 +1043,7 @@
     "enabled": false,
     "adapterVersion": "framework-v1",
     "timeZone": "America/Los_Angeles",
-    "adapter": "discovery",
+    "adapter": "vegas-festival-guide",
     "coverage": "unverified",
     "detailPattern": "/events?/[^/?#]+|/calendar/[^/?#]+|/shows/|/festivals?/[^/?#]+",
     "cardSelectors": [
@@ -619,15 +1055,16 @@
       ".views-row",
       "article"
     ],
-    "readySelector": null,
-    "notes": "Inspect event containers, detail pages, identity, pagination, date scope, and any published feed; then implement a bounded adapter probe.",
+    "readySelector": "h3[id]",
+    "notes": "Editorial festival guide rendered client-side; h3 sections with When/Dates lines. Only fully dated entries become observations; TBD and postponed entries stay undated.",
     "role": "collection candidate",
     "allowedHosts": [
       "www.vegas.com"
     ],
     "maxDepth": 2,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-017.mjs"
+    "script": "scrapers/url-017.mjs",
+    "discoverDetails": false
   },
   {
     "id": "url-018",
@@ -727,8 +1164,8 @@
       "article"
     ],
     "readySelector": ".tribe-events-calendar-list__event",
-    "apiEndpoint": null,
-    "notes": "Use source-level acquisition with upstream category tags; validate category filtering against this view. Field audit: follow sparse event cards to same-host detail pages; retain listing and detail evidence separately. Full enumeration remains unverified for partial sources.",
+    "apiEndpoint": "https://network.vegas/wp-json/tribe/events/v1/events",
+    "notes": "TEC REST categories=convention filter reproduces this category view via --transport api. Field audit: follow sparse event cards to same-host detail pages; retain listing and detail evidence separately. Full enumeration remains unverified for partial sources.",
     "role": "overlapping category view",
     "allowedHosts": [
       "network.vegas"
@@ -736,7 +1173,10 @@
     "maxDepth": 2,
     "validationStatus": "needs-validation",
     "script": "scrapers/url-020.mjs",
-    "enrichDetails": true
+    "enrichDetails": true,
+    "apiQuery": {
+      "categories": "convention"
+    }
   },
   {
     "id": "url-021",
@@ -823,7 +1263,7 @@
     "enabled": false,
     "adapterVersion": "framework-v1",
     "timeZone": "America/Los_Angeles",
-    "adapter": "jsonld",
+    "adapter": "eventbrite-search",
     "coverage": "unverified",
     "detailPattern": "/e/",
     "cardSelectors": [
@@ -835,8 +1275,8 @@
       ".views-row",
       "article"
     ],
-    "readySelector": ".event-card",
-    "notes": "Inspect event containers, detail pages, identity, pagination, date scope, and any published feed; then implement a bounded adapter probe. Field audit: follow sparse event cards to same-host detail pages; retain listing and detail evidence separately. Full enumeration remains unverified for partial sources.",
+    "readySelector": null,
+    "notes": "Eventbrite search results embedded as window.__SERVER_DATA__ (dates, clock times, time zone, venue). Server pages the search at ?page=N and caps the number of pages below the advertised object_count, so the run stays coverage-unverified.",
     "role": "collection candidate",
     "allowedHosts": [
       "www.eventbrite.com"
@@ -844,7 +1284,12 @@
     "maxDepth": 2,
     "validationStatus": "needs-validation",
     "script": "scrapers/url-023.mjs",
-    "enrichDetails": true
+    "enrichDetails": false,
+    "entrypoints": [
+      "https://www.eventbrite.com/d/nv--las-vegas/all-events/"
+    ],
+    "discoverDetails": false,
+    "searchMaxPages": 100
   },
   {
     "id": "url-024",
@@ -857,7 +1302,7 @@
     "categoryHints": [],
     "intervalHours": 24,
     "enabled": false,
-    "adapterVersion": "source-validation-v2",
+    "adapterVersion": "algolia-index-v1",
     "timeZone": "America/New_York",
     "adapter": "nyc-tourism",
     "coverage": "unverified",
@@ -875,7 +1320,8 @@
     "notes": "Compare overlap with the NYC events/festivals guide; discover actual query and pagination. Inspected four-page client calendar; browser next controls and active page must reconcile. Default unfiltered interface only; hours may be unavailable.",
     "role": "collection candidate",
     "allowedHosts": [
-      "www.nyctourism.com"
+      "www.nyctourism.com",
+      "v9aisqojeb-dsn.algolia.net"
     ],
     "maxDepth": 2,
     "validationStatus": "needs-validation",
@@ -888,7 +1334,7 @@
     },
     "discoverDetails": false,
     "quality": {
-      "scope": "url-024-default-calendar-v2",
+      "scope": "url-024-algolia-events-festivals-v1",
       "minRecords": 1,
       "minCoverage": {
         "startDate": 1,
@@ -906,7 +1352,17 @@
     },
     "enrichDetails": true,
     "detailReadySelector": "[class*=\"BroadwaySummary_textContent\"]",
-    "minIntervalMs": 5000
+    "minIntervalMs": 5000,
+    "apiEndpoint": "https://v9aisqojeb-dsn.algolia.net/1/indexes/prod_nyctourism_v3-en-US",
+    "apiFormat": "algolia",
+    "algolia": {
+      "applicationId": "V9AISQOJEB",
+      "searchKey": "35756659d21eeb59facb8d4535a165cd",
+      "index": "prod_nyctourism_v3-en-US",
+      "filters": "NOT 'businessStatus':'out of business' AND NOT noIndex:true AND NOT b2bOnly:true AND (type:'calendarEvents' OR cardGrid:4NJ8qCBS6xbkxCuS5nN0Vj) AND ('Lookup - Taxonomy':'Events & Festivals' OR (type:sponsoredListing)) AND (endDate >= {asOfEpoch} OR hasEndDate = 0)",
+      "hitsPerPage": 100
+    },
+    "defaultTransport": "api"
   },
   {
     "id": "url-025",
@@ -919,7 +1375,7 @@
     "categoryHints": [],
     "intervalHours": 168,
     "enabled": false,
-    "adapterVersion": "source-validation-v2",
+    "adapterVersion": "algolia-index-v1",
     "timeZone": "America/New_York",
     "adapter": "nyc-tourism",
     "coverage": "discovery",
@@ -937,7 +1393,8 @@
     "notes": "Use as event/detail-page discovery; do not assume all guide entries are dated occurrences. Field audit: follow sparse event cards to same-host detail pages; retain listing and detail evidence separately. Full enumeration remains unverified for partial sources. Inspected four-page client calendar; browser next controls and active page must reconcile. Default unfiltered interface only; hours may be unavailable.",
     "role": "editorial / discovery guide",
     "allowedHosts": [
-      "www.nyctourism.com"
+      "www.nyctourism.com",
+      "v9aisqojeb-dsn.algolia.net"
     ],
     "maxDepth": 2,
     "validationStatus": "needs-validation",
@@ -951,7 +1408,7 @@
     },
     "discoverDetails": false,
     "quality": {
-      "scope": "url-025-default-calendar-v2",
+      "scope": "url-025-algolia-events-festivals-v1",
       "minRecords": 1,
       "minCoverage": {
         "startDate": 1,
@@ -968,7 +1425,17 @@
       "maxPages": 20
     },
     "detailReadySelector": "[class*=\"BroadwaySummary_textContent\"]",
-    "minIntervalMs": 5000
+    "minIntervalMs": 5000,
+    "apiEndpoint": "https://v9aisqojeb-dsn.algolia.net/1/indexes/prod_nyctourism_v3-en-US",
+    "apiFormat": "algolia",
+    "algolia": {
+      "applicationId": "V9AISQOJEB",
+      "searchKey": "35756659d21eeb59facb8d4535a165cd",
+      "index": "prod_nyctourism_v3-en-US",
+      "filters": "NOT 'businessStatus':'out of business' AND NOT noIndex:true AND NOT b2bOnly:true AND (type:'calendarEvents' OR cardGrid:4NJ8qCBS6xbkxCuS5nN0Vj) AND ('Lookup - Taxonomy':'Events & Festivals' OR (type:sponsoredListing)) AND (endDate >= {asOfEpoch} OR hasEndDate = 0)",
+      "hitsPerPage": 100
+    },
+    "defaultTransport": "api"
   },
   {
     "id": "url-026",
@@ -1016,7 +1483,7 @@
     "categoryHints": [],
     "intervalHours": 24,
     "enabled": false,
-    "adapterVersion": "framework-v1",
+    "adapterVersion": "javits-months-v1",
     "timeZone": "America/New_York",
     "adapter": "javits",
     "coverage": "unverified",
@@ -1031,14 +1498,32 @@
       "article"
     ],
     "readySelector": "h3.uppercase",
-    "notes": "Ordinary Playwright navigation returned HTTP 200 after raw HTTP 429; no extractor implemented yet.",
+    "notes": "Next.js calendar. Current month is in the server-rendered payload (initialEvents); each other month button makes the site JSON request /api/momentus/events?startDate&endDate. A non-browser client gets a Vercel security checkpoint (HTTP 429), so months are acquired only by clicking in the browser. Page-hidden, internal, blackout and unconfirmed events are excluded.",
     "role": "browser collection candidate",
     "allowedHosts": [
       "www.javitscenter.com"
     ],
     "maxDepth": 2,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-027.mjs"
+    "script": "scrapers/url-027.mjs",
+    "pagination": {
+      "mode": "javits-months",
+      "maxPages": 20
+    },
+    "minIntervalMs": 4000,
+    "quality": {
+      "scope": "url-027-javits-month-calendar-v1",
+      "minRecords": 1,
+      "minCoverage": {
+        "startDate": 1,
+        "endDate": 1,
+        "textLocation": 1
+      },
+      "maxRejectedRate": 0.02,
+      "maxReviewRate": 0.1,
+      "maxCoverageDrop": 0.2,
+      "baselineMinRecords": 20
+    }
   },
   {
     "id": "url-028",
@@ -1053,7 +1538,7 @@
     "enabled": false,
     "adapterVersion": "framework-v1",
     "timeZone": "America/New_York",
-    "adapter": "discovery",
+    "adapter": "conventioncalendar",
     "coverage": "unverified",
     "detailPattern": "/events?/[^/?#]+|/calendar/[^/?#]+|/shows/|/festivals?/[^/?#]+",
     "cardSelectors": [
@@ -1071,9 +1556,10 @@
     "allowedHosts": [
       "conventioncalendar.com"
     ],
-    "maxDepth": 2,
+    "maxDepth": 0,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-028.mjs"
+    "script": "scrapers/url-028.mjs",
+    "discoverDetails": false
   },
   {
     "id": "url-029",
@@ -1121,9 +1607,9 @@
     "categoryHints": [],
     "intervalHours": 24,
     "enabled": false,
-    "adapterVersion": "framework-v1",
+    "adapterVersion": "cityguide-cards-v1",
     "timeZone": "America/New_York",
-    "adapter": "discovery",
+    "adapter": "cityguide",
     "coverage": "unverified",
     "detailPattern": "/events?/[^/?#]+|/calendar/[^/?#]+|/shows/|/festivals?/[^/?#]+",
     "cardSelectors": [
@@ -1136,14 +1622,27 @@
       "article"
     ],
     "readySelector": null,
-    "notes": "Inspect event containers, detail pages, identity, pagination, date scope, and any published feed; then implement a bounded adapter probe.",
+    "notes": "Listing cards only (detail pages rate-limit after a few requests). Card links end with ISO start/end dates that are accepted only when the card weekday and month/day labels agree; PAST-labelled cards are excluded. The heading total (33) exceeds the 26 rendered cards, so coverage stays unverified.",
     "role": "collection candidate",
     "allowedHosts": [
       "www.cityguideny.com"
     ],
     "maxDepth": 2,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-030.mjs"
+    "script": "scrapers/url-030.mjs",
+    "discoverDetails": false,
+    "minIntervalMs": 5000,
+    "quality": {
+      "scope": "url-030-category-182-cards-v1",
+      "minRecords": 1,
+      "minCoverage": {
+        "startDate": 1,
+        "endDate": 1,
+        "textLocation": 0.9
+      },
+      "maxRejectedRate": 0.1,
+      "maxReviewRate": 0.1
+    }
   },
   {
     "id": "url-031",
@@ -1171,7 +1670,7 @@
       "article"
     ],
     "readySelector": null,
-    "notes": "Access investigation first. Discover dated occurrences; verify year and source links. Do not generate future dates from an annual tradition.",
+    "notes": "Access investigation first. Discover dated occurrences; verify year and source links. Do not generate future dates from an annual tradition. Nov 5 2026 inspection: the home page lists no events; /event-schedule/ publishes the vendor schedule only as an embedded PDF (wp-content/uploads/2026/11/2026-Vendor-Schedule-8TH-EDITION.pdf). The framework has no PDF acquisition/parsing, so the source is stopped until one is added.",
     "role": "annual / editorial guide",
     "allowedHosts": [
       "nycstreetfairs.com"
@@ -1226,10 +1725,10 @@
     "categoryHints": [],
     "intervalHours": 168,
     "enabled": false,
-    "adapterVersion": "framework-v1",
+    "adapterVersion": "dothis-street-fairs-v1",
     "timeZone": "America/New_York",
-    "adapter": "jsonld",
-    "coverage": "discovery",
+    "adapter": "dothis-street-fairs",
+    "coverage": "verified-list",
     "detailPattern": "street-fairs-nyc|#e=",
     "cardSelectors": [
       ".event-card",
@@ -1240,15 +1739,26 @@
       ".views-row",
       "article"
     ],
-    "readySelector": null,
-    "notes": "Discover dated occurrences; verify year and source links. Do not generate future dates from an annual tradition.",
+    "readySelector": ".cl-cal-month",
+    "notes": "Server-rendered seven-day street fair calendar. Each day group has an ISO date; the page states its fair count and every day button repeats its count, which must agree with the parsed rows. Curated fairs carry posted hours; permit rows are street-closure windows and keep date precision only.",
     "role": "annual / editorial guide",
     "allowedHosts": [
       "dothisnyc.com"
     ],
     "maxDepth": 2,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-033.mjs"
+    "script": "scrapers/url-033.mjs",
+    "quality": {
+      "scope": "url-033-street-fair-week-v1",
+      "minRecords": 1,
+      "minCoverage": {
+        "startDate": 1,
+        "endDate": 1,
+        "textLocation": 1
+      },
+      "maxRejectedRate": 0.02,
+      "maxReviewRate": 0.1
+    }
   },
   {
     "id": "url-034",
@@ -1263,7 +1773,7 @@
     "enabled": false,
     "adapterVersion": "framework-v1",
     "timeZone": "America/New_York",
-    "adapter": "jsonld",
+    "adapter": "eventbrite-search",
     "coverage": "unverified",
     "detailPattern": "/e/",
     "cardSelectors": [
@@ -1275,8 +1785,8 @@
       ".views-row",
       "article"
     ],
-    "readySelector": ".event-card",
-    "notes": "Inspect event containers, detail pages, identity, pagination, date scope, and any published feed; then implement a bounded adapter probe. Field audit: follow sparse event cards to same-host detail pages; retain listing and detail evidence separately. Full enumeration remains unverified for partial sources.",
+    "readySelector": null,
+    "notes": "Eventbrite search results embedded as window.__SERVER_DATA__ (dates, clock times, time zone, venue). Server pages the search at ?page=N and caps the number of pages below the advertised object_count, so the run stays coverage-unverified.",
     "role": "collection candidate",
     "allowedHosts": [
       "www.eventbrite.com"
@@ -1284,7 +1794,12 @@
     "maxDepth": 2,
     "validationStatus": "needs-validation",
     "script": "scrapers/url-034.mjs",
-    "enrichDetails": true
+    "enrichDetails": false,
+    "entrypoints": [
+      "https://www.eventbrite.com/d/ny--new-york/all-events/"
+    ],
+    "discoverDetails": false,
+    "searchMaxPages": 100
   },
   {
     "id": "url-035",
@@ -1345,8 +1860,8 @@
     "enabled": false,
     "adapterVersion": "framework-v1",
     "timeZone": "America/Los_Angeles",
-    "adapter": "discovery",
-    "coverage": "unverified",
+    "adapter": "lacity-api",
+    "coverage": "verified-list",
     "detailPattern": "/events?/[^/?#]+|/calendar/[^/?#]+|/shows/|/festivals?/[^/?#]+",
     "cardSelectors": [
       ".event-card",
@@ -1358,14 +1873,19 @@
       "article"
     ],
     "readySelector": null,
-    "notes": "Inspect event containers, detail pages, identity, pagination, date scope, and any published feed; then implement a bounded adapter probe.",
+    "notes": "lacity.gov/calendar is a directory of other calendars. Its meeting pages embed calendarui.lacity.org, which reads the City calendar feed at api.lacity.org/city_calendar (public meetings plus community events); this entry collects that feed from the as-of date.",
     "role": "collection candidate",
     "allowedHosts": [
-      "lacity.gov"
+      "lacity.gov",
+      "api.lacity.org",
+      "calendar.lacity.org"
     ],
     "maxDepth": 2,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-036.mjs"
+    "script": "scrapers/url-036.mjs",
+    "apiParser": "lacity",
+    "apiEndpoint": "https://api.lacity.org/city_calendar",
+    "defaultTransport": "api"
   },
   {
     "id": "url-037",
@@ -1586,14 +2106,18 @@
       ".views-row"
     ],
     "readySelector": null,
-    "notes": "Inspect event containers, detail pages, identity, pagination, date scope, and any published feed; then implement a bounded adapter probe.",
+    "notes": "Drupal event finder: pages follow the pager's next link; single-day cards print only month/day, so each detail page (which prints the year and clock) is its own observation. Multi-day cards print full dates and are enriched from their detail page. Inspected November 5, 2026.",
     "role": "collection candidate",
     "allowedHosts": [
       "www.chicagoparkdistrict.com"
     ],
     "maxDepth": 2,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-042.mjs"
+    "script": "scrapers/url-042.mjs",
+    "enrichDetails": true,
+    "discoverDetails": false,
+    "defaultMaxPages": 360,
+    "defaultMaxRuntimeMs": 1080000
   },
   {
     "id": "url-043",
@@ -1678,7 +2202,7 @@
     "enabled": false,
     "adapterVersion": "framework-v1",
     "timeZone": "America/Chicago",
-    "adapter": "discovery",
+    "adapter": "icalendar",
     "coverage": "unverified",
     "detailPattern": "/events?/[^/?#]+|/calendar/[^/?#]+|/shows/|/festivals?/[^/?#]+",
     "cardSelectors": [
@@ -1691,14 +2215,24 @@
       "article"
     ],
     "readySelector": null,
-    "notes": "Title describes selected events/venues; assess actual dates and outbound event pages before treating it as complete.",
+    "notes": "The page embeds the city's published Outlook calendar (iframe); its calendar.ics sibling is the public iCalendar feed of the same calendar. Inspected November 5, 2026: 904 VEVENTs, no RRULEs, Central time zone ids. A curated selection of venue and city events, not every Houston event.",
     "role": "selected-event index",
     "allowedHosts": [
-      "www.houstontx.gov"
+      "www.houstontx.gov",
+      "outlook.office365.com"
     ],
     "maxDepth": 2,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-045.mjs"
+    "script": "scrapers/url-045.mjs",
+    "apiFormat": "ics",
+    "entrypoints": [
+      {
+        "url": "https://outlook.office365.com/owa/calendar/378a27e8d0ee477ebd4c9db5ce3a600f@houstontx.gov/9d0692828d624e8bb74ce935644940f417387657915531835411/calendar.ics",
+        "kind": "api",
+        "depth": 0
+      }
+    ],
+    "discoverDetails": false
   },
   {
     "id": "url-046",
@@ -1748,9 +2282,9 @@
     "enabled": false,
     "adapterVersion": "framework-v1",
     "timeZone": "America/Chicago",
-    "adapter": "discovery",
+    "adapter": "houston-com",
     "coverage": "unverified",
-    "detailPattern": "/events?/[^/?#]+|/calendar/[^/?#]+|/shows/|/festivals?/[^/?#]+",
+    "detailPattern": "^/events/[a-z0-9][a-z0-9-]*-[a-z0-9]{8}$",
     "cardSelectors": [
       ".event-card",
       ".event-item",
@@ -1761,14 +2295,25 @@
       "article"
     ],
     "readySelector": null,
-    "notes": "Inspect event containers, detail pages, identity, pagination, date scope, and any published feed; then implement a bounded adapter probe.",
+    "notes": "Next.js listing without pagination; each /events/<slug> page carries schema.org Event JSON-LD whose startDate is a UTC instant (converted to America/Chicago and checked against the listing's printed local time). The published events sitemap adds pages the listing does not show. Inspected November 5, 2026.",
     "role": "collection candidate",
     "allowedHosts": [
       "houston.com"
     ],
     "maxDepth": 2,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-047.mjs"
+    "script": "scrapers/url-047.mjs",
+    "apiFormat": "sitemap",
+    "localizeUtcInstants": true,
+    "discoveryOnly": true,
+    "entrypoints": [
+      "https://houston.com/events",
+      {
+        "url": "https://houston.com/events-sitemap.xml",
+        "kind": "api",
+        "depth": 0
+      }
+    ]
   },
   {
     "id": "url-048",
@@ -1830,7 +2375,7 @@
       ".views-row",
       "article"
     ],
-    "readySelector": ".event-wrapper",
+    "readySelector": ".dcevent-wrapper",
     "notes": "Inspect event containers, detail pages, identity, pagination, date scope, and any published feed; then implement a bounded adapter probe.",
     "role": "collection candidate",
     "allowedHosts": [
@@ -1838,7 +2383,18 @@
     ],
     "maxDepth": 2,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-049.mjs"
+    "script": "scrapers/url-049.mjs",
+    "entrypoints": [
+      "https://washington.org/find-dc-listings/events"
+    ],
+    "pagination": {
+      "mode": "drupal-pager",
+      "parameter": "page",
+      "maxPages": 300
+    },
+    "discoverDetails": false,
+    "defaultMaxPages": 150,
+    "defaultMaxRuntimeMs": 450000
   },
   {
     "id": "url-050",
@@ -1888,13 +2444,12 @@
     "enabled": false,
     "adapterVersion": "framework-v1",
     "timeZone": "America/New_York",
-    "adapter": "cards",
-    "coverage": "unverified",
+    "adapter": "eventsdc-api",
+    "coverage": "verified-list",
     "detailPattern": "/events/[^/?]+",
     "cardSelectors": [
       ".views-row"
     ],
-    "readySelector": null,
     "notes": "Inspect event containers, detail pages, identity, pagination, date scope, and any published feed; then implement a bounded adapter probe.",
     "role": "collection candidate",
     "allowedHosts": [
@@ -1902,7 +2457,82 @@
     ],
     "maxDepth": 2,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-051.mjs"
+    "script": "scrapers/url-051.mjs",
+    "apiParser": "eventsdc",
+    "apiEndpoint": "https://eventsdc.com/api/events",
+    "defaultTransport": "api",
+    "venueOptions": [
+      {
+        "id": "2",
+        "name": "Walter E. Washington Convention Center"
+      },
+      {
+        "id": "11",
+        "name": "Carnegie Library at Mt. Vernon Square"
+      },
+      {
+        "id": "12",
+        "name": "RFK Stadium"
+      },
+      {
+        "id": "13",
+        "name": "The Fields at RFK Campus"
+      },
+      {
+        "id": "14",
+        "name": "Festival Grounds at RFK Campus"
+      },
+      {
+        "id": "15",
+        "name": "Skate Park at RFK Campus"
+      },
+      {
+        "id": "16",
+        "name": "DC Armory"
+      },
+      {
+        "id": "17",
+        "name": "Nationals Park"
+      },
+      {
+        "id": "18",
+        "name": "CareFirst Arena"
+      },
+      {
+        "id": "19",
+        "name": "Gateway DC"
+      },
+      {
+        "id": "20",
+        "name": "R.I.S.E. Demonstration Center"
+      },
+      {
+        "id": "289",
+        "name": "GATHER by Events DC"
+      }
+    ],
+    "eventTypeOptions": [
+      {
+        "id": "5",
+        "name": "Conventions & Meetings"
+      },
+      {
+        "id": "6",
+        "name": "Cultural Programs"
+      },
+      {
+        "id": "29",
+        "name": "Entertainment"
+      },
+      {
+        "id": "28",
+        "name": "Sports"
+      },
+      {
+        "id": "7",
+        "name": "Sports & Entertainment"
+      }
+    ]
   },
   {
     "id": "url-052",
@@ -2076,12 +2706,12 @@
     "timeZone": "America/New_York",
     "adapter": "cards",
     "coverage": "unverified",
-    "detailPattern": "/event/",
+    "detailPattern": "^/event/[^/]+/\\d+$",
     "cardSelectors": [
       "article.ys-card"
     ],
     "readySelector": null,
-    "notes": "Inspect event containers, detail pages, identity, pagination, date scope, and any published feed; then implement a bounded adapter probe.",
+    "notes": "/events is a Vue/Algolia search whose key is restricted to the site's own origin (403 otherwise), so event pages (Event JSON-LD) are enumerated from the publisher's sitemap; the sitemap is not proven to be a complete catalogue.",
     "role": "collection candidate",
     "allowedHosts": [
       "www.miamiandbeaches.com"
@@ -2089,7 +2719,20 @@
     "maxDepth": 2,
     "validationStatus": "needs-validation",
     "script": "scrapers/url-056.mjs",
-    "enrichDetails": true
+    "enrichDetails": false,
+    "entrypoints": [
+      {
+        "url": "https://www.miamiandbeaches.com/sitemap.xml",
+        "kind": "api",
+        "depth": 0
+      }
+    ],
+    "apiMode": "sitemap",
+    "discoverDetails": false,
+    "minIntervalMs": 1000,
+    "detailTransport": "http",
+    "defaultMaxPages": 1790,
+    "defaultMaxRuntimeMs": 5370000
   },
   {
     "id": "url-057",
@@ -2134,7 +2777,7 @@
     "enabled": false,
     "adapterVersion": "framework-v1",
     "timeZone": "America/Los_Angeles",
-    "adapter": "cards",
+    "adapter": "visitseattle",
     "coverage": "unverified",
     "detailPattern": "/events/[^/?]+",
     "cardSelectors": [
@@ -2144,14 +2787,16 @@
       ".search-result-preview"
     ],
     "readySelector": null,
-    "notes": "Compare archive with main Seattle event search and choose one authoritative enumeration route.",
+    "notes": "Server-rendered /events/ archive (24 cards per page, alphabetical). Same 89 events as the main search at /?s=&frm=events; 'Ongoing' and 'Now through' rows have no start date and are counted, not recorded. Archive lists no total, so coverage stays unverified; url-059's search route reconciles the publisher's own total.",
     "role": "overlapping listing",
     "allowedHosts": [
       "visitseattle.org"
     ],
     "maxDepth": 2,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-058.mjs"
+    "script": "scrapers/url-058.mjs",
+    "discoverDetails": false,
+    "minIntervalMs": 2000
   },
   {
     "id": "url-059",
@@ -2166,7 +2811,7 @@
     "enabled": false,
     "adapterVersion": "framework-v1",
     "timeZone": "America/Los_Angeles",
-    "adapter": "cards",
+    "adapter": "visitseattle",
     "coverage": "unverified",
     "detailPattern": "/events/[^/?]+",
     "cardSelectors": [
@@ -2176,14 +2821,19 @@
       ".search-result-preview"
     ],
     "readySelector": null,
-    "notes": "Inspect event containers, detail pages, identity, pagination, date scope, and any published feed; then implement a bounded adapter probe.",
+    "notes": "The landing page is editorial; the authoritative enumeration is the site's own events search /?s=&frm=events (date-sorted, 'Events (N)' total reconciled across pages).",
     "role": "collection candidate",
     "allowedHosts": [
       "visitseattle.org"
     ],
     "maxDepth": 2,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-059.mjs"
+    "script": "scrapers/url-059.mjs",
+    "discoverDetails": false,
+    "minIntervalMs": 2000,
+    "entrypoints": [
+      "https://visitseattle.org/?s=&frm=events"
+    ]
   },
   {
     "id": "url-060",
@@ -2198,7 +2848,7 @@
     "enabled": false,
     "adapterVersion": "framework-v1",
     "timeZone": "America/Los_Angeles",
-    "adapter": "cards",
+    "adapter": "visitseattle",
     "coverage": "unverified",
     "detailPattern": "/events/[^/?]+",
     "cardSelectors": [
@@ -2208,14 +2858,19 @@
       ".search-result-preview"
     ],
     "readySelector": null,
-    "notes": "Inspect event containers, detail pages, identity, pagination, date scope, and any published feed; then implement a bounded adapter probe.",
+    "notes": "Festivals landing page is editorial (monthly festival text without years). Enumerates the site's Festivals & Special Events search filter linked from it.",
     "role": "collection candidate",
     "allowedHosts": [
       "visitseattle.org"
     ],
     "maxDepth": 2,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-060.mjs"
+    "script": "scrapers/url-060.mjs",
+    "discoverDetails": false,
+    "minIntervalMs": 2000,
+    "entrypoints": [
+      "https://visitseattle.org/?s=&frm=events&event_begin=&event_end=&event_type%5B%5D=festivals-special-events&partner_parent_cat="
+    ]
   },
   {
     "id": "url-061",
@@ -2240,7 +2895,7 @@
       ".search-result-preview"
     ],
     "readySelector": null,
-    "notes": "May have a different audience and date horizon from public events; keep a separate collection if verified.",
+    "notes": "Page content is password protected (WordPress post password form); no login profiles are used, so this source cannot be collected.",
     "role": "convention collection candidate",
     "allowedHosts": [
       "visitseattle.org"
@@ -2402,8 +3057,8 @@
     "enabled": false,
     "adapterVersion": "framework-v1",
     "timeZone": "America/Los_Angeles",
-    "adapter": "discovery",
-    "coverage": "unverified",
+    "adapter": "sfgov-api",
+    "coverage": "verified-list",
     "detailPattern": "/events?/[^/?#]+|/calendar/[^/?#]+|/shows/|/festivals?/[^/?#]+",
     "cardSelectors": [
       ".event-card",
@@ -2415,14 +3070,24 @@
       "article"
     ],
     "readySelector": null,
-    "notes": "Confirm this route still exposes a useful calendar; HTTP 200 alone does not establish event content.",
+    "notes": "Mayor's calendar route shows almost no events. The page is a Next.js app over api.sf.gov related-events (list=upcoming), which backs the citywide Upcoming calendar (meetings and events from all agencies); this entry collects that citywide query.",
     "role": "government page requiring validation",
     "allowedHosts": [
-      "www.sf.gov"
+      "www.sf.gov",
+      "api.sf.gov"
     ],
     "maxDepth": 2,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-066.mjs"
+    "script": "scrapers/url-066.mjs",
+    "apiParser": "sfgov",
+    "entrypoints": [
+      {
+        "url": "https://api.sf.gov/api/related-events/?list=upcoming&locale=en&page=1&groupby=date",
+        "kind": "api",
+        "depth": 0
+      }
+    ],
+    "apiPageSize": 10
   },
   {
     "id": "url-067",
@@ -2544,19 +3209,33 @@
     "timeZone": "America/Chicago",
     "adapter": "cards",
     "coverage": "unverified",
-    "detailPattern": "/events/[^/?]+",
+    "detailPattern": "^/events/[^/]+/?$",
     "cardSelectors": [
       "article.card--listing"
     ],
     "readySelector": null,
-    "notes": "Inspect event containers, detail pages, identity, pagination, date scope, and any published feed; then implement a bounded adapter probe.",
+    "notes": "/events/ is an editorial hub. Event pages (Event JSON-LD, Simpleview CRM) are enumerated from the publisher's event sitemap; the sitemap is not proven to be a complete catalogue.",
     "role": "collection candidate",
     "allowedHosts": [
       "www.visitdallas.com"
     ],
     "maxDepth": 2,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-070.mjs"
+    "script": "scrapers/url-070.mjs",
+    "entrypoints": [
+      {
+        "url": "https://www.visitdallas.com/sitemaps-1-event-default-1-sitemap.xml",
+        "kind": "api",
+        "depth": 0
+      }
+    ],
+    "apiMode": "sitemap",
+    "discoverDetails": false,
+    "minIntervalMs": 1500,
+    "detailTransport": "http",
+    "detailProfile": "simpleview",
+    "defaultMaxPages": 470,
+    "defaultMaxRuntimeMs": 1410000
   },
   {
     "id": "url-071",
@@ -2585,7 +3264,8 @@
     ],
     "maxDepth": 2,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-071.mjs"
+    "script": "scrapers/url-071.mjs",
+    "detailProfile": "simpleview"
   },
   {
     "id": "url-072",
@@ -2601,7 +3281,7 @@
     "adapterVersion": "framework-v1",
     "timeZone": "America/Chicago",
     "adapter": "discovery",
-    "coverage": "unverified",
+    "coverage": "api-query",
     "detailPattern": "/events?/[^/?#]+|/calendar/[^/?#]+|/shows/|/festivals?/[^/?#]+",
     "cardSelectors": [
       ".event-card",
@@ -2613,14 +3293,26 @@
       "article"
     ],
     "readySelector": null,
-    "notes": "Inspect rendered calendar and any supported public feed; validate instance expansion.",
+    "notes": "The rendered page reads the public SharePoint list 'City Calendar' through _api; the same query is used (EventDate on or after the as-of date). Recurring list items are not expanded.",
     "role": "SharePoint calendar candidate",
     "allowedHosts": [
       "dallascityhall.com"
     ],
     "maxDepth": 2,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-072.mjs"
+    "script": "scrapers/url-072.mjs",
+    "entrypoints": [
+      {
+        "url": "https://dallascityhall.com/calendar/_api/Web/Lists/GetByTitle('City%20Calendar')/items?$filter=EventDate%20ge%20datetime'{asOf}T00:00:00'&$orderby=EventDate&$top=1000",
+        "kind": "api",
+        "depth": 0
+      }
+    ],
+    "apiMode": "sharepoint-calendar",
+    "apiHeaders": {
+      "Accept": "application/json;odata=nometadata"
+    },
+    "discoverDetails": false
   },
   {
     "id": "url-073",
@@ -2977,7 +3669,10 @@
       "maxClicks": 20,
       "settleMs": 800,
       "quietMs": 2500,
-      "ignoreHosts": ["api.userway.org", "cdn.userway.org"]
+      "ignoreHosts": [
+        "api.userway.org",
+        "cdn.userway.org"
+      ]
     },
     "detailPattern": "/event/|/calendar/[^/?]+",
     "cardSelectors": [
@@ -3010,7 +3705,7 @@
     "enabled": false,
     "adapterVersion": "framework-v1",
     "timeZone": "America/New_York",
-    "adapter": "discovery",
+    "adapter": "tradefest",
     "coverage": "unverified",
     "detailPattern": "/events?/[^/?#]+|/calendar/[^/?#]+|/shows/|/festivals?/[^/?#]+",
     "cardSelectors": [
@@ -3028,10 +3723,11 @@
     "allowedHosts": [
       "tradefest.io"
     ],
-    "maxDepth": 2,
+    "maxDepth": 0,
     "validationStatus": "needs-validation",
     "script": "scrapers/url-083.mjs",
-    "enrichDetails": true
+    "enrichDetails": false,
+    "discoverDetails": false
   },
   {
     "id": "url-084",
@@ -3079,7 +3775,7 @@
     "categoryHints": [],
     "intervalHours": 24,
     "enabled": false,
-    "adapterVersion": "framework-v1",
+    "adapterVersion": "nycparks-aggregate-v1",
     "timeZone": "America/New_York",
     "adapter": "microdata",
     "coverage": "unverified",
@@ -3094,14 +3790,29 @@
       "article"
     ],
     "readySelector": null,
-    "notes": "Access investigation first. An aggregate path returned HTML successfully; validate pagination and dates instead of assuming a documented API.",
+    "notes": "Festivals aggregate: p1 holds all current events (page states \"Currently viewing N events\", reconciled with the cards); p2 is empty (\"no upcoming events\"). Pages are followed until an empty page, which establishes the end of the default date window only. The festivals category page itself returns 403 to a plain client and is not used.",
     "role": "supplemental endpoint candidate",
     "allowedHosts": [
       "www.nycgovparks.org"
     ],
     "maxDepth": 2,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-085.mjs"
+    "script": "scrapers/url-085.mjs",
+    "pagination": {
+      "mode": "nycparks-aggregate",
+      "maxPages": 30
+    },
+    "quality": {
+      "scope": "url-085-festivals-aggregate-v1",
+      "minRecords": 1,
+      "minCoverage": {
+        "startDate": 1,
+        "endDate": 1,
+        "textLocation": 0.9
+      },
+      "maxRejectedRate": 0.02,
+      "maxReviewRate": 0.1
+    }
   },
   {
     "id": "url-086",
@@ -3116,7 +3827,7 @@
     "enabled": false,
     "adapterVersion": "framework-v1",
     "timeZone": "America/Los_Angeles",
-    "adapter": "cards",
+    "adapter": "visitseattle",
     "coverage": "unverified",
     "detailPattern": "/events/[^/?]+",
     "cardSelectors": [
@@ -3126,14 +3837,19 @@
       ".search-result-preview"
     ],
     "readySelector": null,
-    "notes": "Inspect event containers, detail pages, identity, pagination, date scope, and any published feed; then implement a bounded adapter probe.",
+    "notes": "The /events/ archive ignores event_type; the filter is applied by the main search /?s=&frm=events&event_type=..., which this entrypoint enumerates.",
     "role": "collection candidate",
     "allowedHosts": [
       "visitseattle.org"
     ],
     "maxDepth": 2,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-086.mjs"
+    "script": "scrapers/url-086.mjs",
+    "discoverDetails": false,
+    "minIntervalMs": 2000,
+    "entrypoints": [
+      "https://visitseattle.org/?s=&frm=events&event_type=festivals-special-events"
+    ]
   },
   {
     "id": "url-087",
@@ -3183,8 +3899,8 @@
     "enabled": false,
     "adapterVersion": "framework-v1",
     "timeZone": "America/New_York",
-    "adapter": "discovery",
-    "coverage": "discovery",
+    "adapter": "expofp-venue",
+    "coverage": "unverified",
     "detailPattern": "/events?/[^/?#]+|/calendar/[^/?#]+|/shows/|/festivals?/[^/?#]+",
     "cardSelectors": [
       ".event-card",
@@ -3195,7 +3911,7 @@
       ".views-row",
       "article"
     ],
-    "readySelector": null,
+    "readySelector": "tr.event-row",
     "notes": "Use for venue/source discovery; verify whether it contains independently maintainable dated events.",
     "role": "venue reference",
     "allowedHosts": [
@@ -3218,8 +3934,8 @@
     "enabled": false,
     "adapterVersion": "framework-v1",
     "timeZone": "America/New_York",
-    "adapter": "discovery",
-    "coverage": "discovery",
+    "adapter": "hotel-event-list",
+    "coverage": "unverified",
     "detailPattern": "/events?/[^/?#]+|/calendar/[^/?#]+|/shows/|/festivals?/[^/?#]+",
     "cardSelectors": [
       ".event-card",
@@ -3230,7 +3946,7 @@
       ".views-row",
       "article"
     ],
-    "readySelector": null,
+    "readySelector": "table.events-table",
     "notes": "Secondary reference; prioritize the venue calendar and verify freshness.",
     "role": "hotel / venue guide",
     "allowedHosts": [
@@ -3253,7 +3969,7 @@
     "enabled": false,
     "adapterVersion": "framework-v1",
     "timeZone": "America/New_York",
-    "adapter": "discovery",
+    "adapter": "conventioncalendar",
     "coverage": "unverified",
     "detailPattern": "/events?/[^/?#]+|/calendar/[^/?#]+|/shows/|/festivals?/[^/?#]+",
     "cardSelectors": [
@@ -3271,9 +3987,10 @@
     "allowedHosts": [
       "conventioncalendar.com"
     ],
-    "maxDepth": 2,
+    "maxDepth": 0,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-090.mjs"
+    "script": "scrapers/url-090.mjs",
+    "discoverDetails": false
   },
   {
     "id": "url-091",
@@ -3323,8 +4040,8 @@
     "enabled": false,
     "adapterVersion": "framework-v1",
     "timeZone": "America/New_York",
-    "adapter": "discovery",
-    "coverage": "discovery",
+    "adapter": "hotel-event-list",
+    "coverage": "unverified",
     "detailPattern": "/events?/[^/?#]+|/calendar/[^/?#]+|/shows/|/festivals?/[^/?#]+",
     "cardSelectors": [
       ".event-card",
@@ -3335,7 +4052,7 @@
       ".views-row",
       "article"
     ],
-    "readySelector": null,
+    "readySelector": ".panel-body p",
     "notes": "Secondary venue reference; not a primary calendar without further inspection.",
     "role": "hotel / venue guide",
     "allowedHosts": [
@@ -3445,7 +4162,8 @@
     ],
     "maxDepth": 2,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-095.mjs"
+    "script": "scrapers/url-095.mjs",
+    "detailEventIdentity": "page-title"
   },
   {
     "id": "url-096",
@@ -3460,7 +4178,7 @@
     "enabled": false,
     "adapterVersion": "framework-v1",
     "timeZone": "America/Chicago",
-    "adapter": "discovery",
+    "adapter": "live-calendar",
     "coverage": "unverified",
     "detailPattern": "/events?/[^/?#]+|/calendar/[^/?#]+|/shows/|/festivals?/[^/?#]+",
     "cardSelectors": [
@@ -3473,14 +4191,23 @@
       "article"
     ],
     "readySelector": null,
-    "notes": "Inspect structured calendar/feed, public-attendance scope, and pagination.",
+    "notes": "Public JSON API linked from the calendar's feed page (/live/json/events). Default window is the next ~3 months of occurrences, 100 per page, links.next pagination, explicit local ISO timestamps and IANA time zone. Includes internal campus events; audience is kept as raw metadata. Inspected November 5, 2026.",
     "role": "university calendar candidate",
     "allowedHosts": [
       "events.uchicago.edu"
     ],
     "maxDepth": 2,
     "validationStatus": "needs-validation",
-    "script": "scrapers/url-096.mjs"
+    "script": "scrapers/url-096.mjs",
+    "apiFormat": "live-json",
+    "entrypoints": [
+      {
+        "url": "https://events.uchicago.edu/live/json/events/response_fields/location,event_types,event_types_audience,event_types_campus,tags",
+        "kind": "api",
+        "depth": 0
+      }
+    ],
+    "discoverDetails": false
   },
   {
     "id": "url-097",

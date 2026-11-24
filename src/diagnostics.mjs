@@ -54,13 +54,20 @@ export async function replayPage(journal, runId, pageId, config) {
     throw new Error(`Capture integrity failed for page ${page.id}`);
   const url =
     page.result?.acquisition?.url ?? page.error?.capture?.url ?? page.url;
+  const replayConfig = { ...config, asOf: config.asOf ?? run.options?.asOf };
   const result =
     page.kind === "api"
-      ? parseApi(body, url, config, page)
+      ? parseApi(
+          body,
+          url,
+          replayConfig,
+          page,
+          page.result?.acquisition?.apiTotals,
+        )
       : parseDocument({
           html: body,
           url,
-          config,
+          config: replayConfig,
           task: page,
           interaction: page.result?.acquisition?.interaction,
         });
