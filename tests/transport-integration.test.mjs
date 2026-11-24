@@ -703,8 +703,9 @@ for (const mode of ["fetch", "fetch-stalled", "navigation"]) {
   }
 }
 
-for (const allowed of [false, true]) {
-  test(`Javits checks robots before sending the month request (allow=${allowed})`, async (t) => {
+for (const mode of ["allowed", "denied", "denied before click"]) {
+  test(`Javits checks robots before sending the month request (${mode})`, async (t) => {
+    const allowed = mode === "allowed";
     const dir = await mkdtemp(join(tmpdir(), "events-javits-"));
     t.after(() => rm(dir, { recursive: true, force: true }));
     const monthPath = "/api/momentus/events";
@@ -747,6 +748,18 @@ for (const allowed of [false, true]) {
     });
     t.after(() => transport.close());
     await transport.fetch({ id: "first", url, kind: "listing" });
+    if (mode === "denied before click") {
+      const page = transport.listingPage;
+      const registerRoute = page.route.bind(page);
+      page.route = async (...args) => {
+        await registerRoute(...args);
+        // A background request can be intercepted while the guard is installed.
+        await page.evaluate((path) => fetch(path).catch(() => {}), `${monthPath}?month=2`);
+      };
+      page.unroute = async () => {
+        throw new Error("Simulated failure removing the route");
+      };
+    }
     const second = transport.fetch({
       id: "second",
       url: `${url}#events-miner-month=1`,
@@ -761,6 +774,7 @@ for (const allowed of [false, true]) {
     } else {
       await assert.rejects(second, { code: "robots_disallowed" });
       assert.equal(monthRequests, 0);
+      if (mode === "denied before click") assert.equal(transport.listingPage, null);
     }
   });
 }

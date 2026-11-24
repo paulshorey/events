@@ -52,7 +52,7 @@ export function optionsFor(config, options, build) {
     asOf,
     // Large catalogues declare a default budget sized from observed runs.
     maxPages: options.maxPages ?? config.defaultMaxPages ?? 100,
-    maxRecords: options.maxRecords ?? 10000,
+    maxRecords: options.maxRecords ?? config.defaultMaxRecords ?? 10000,
     maxRuntimeMs: options.maxRuntimeMs ?? config.defaultMaxRuntimeMs ?? 180000,
     maxRetries: options.maxRetries ?? 3,
     probe: options.probe ?? false,
@@ -210,9 +210,20 @@ export function evaluate(journal, run, stopReason) {
     enumerationResults.every((p) =>
       ["verified-list", "api-query"].includes(p.coverage),
     );
-  const terminal = enumerationResults.some((p) => p.terminal),
-    countMatches =
-      run.expected_total == null || run.expected_total === records.length;
+  const terminal = enumerationResults.some((p) => p.terminal);
+  // Some publishers report source items, each of which may expand into
+  // multiple occurrence records. Page results retain their publisher IDs.
+  const sourceItemIds = enumerationResults.flatMap((p) => p.sourceItemIds ?? []);
+  const countsSourceItems =
+    enumerationResults.length > 0 &&
+    enumerationResults.every((p) => Array.isArray(p.sourceItemIds));
+  const observedTotal = countsSourceItems
+    ? new Set(sourceItemIds).size
+    : records.length;
+  if (countsSourceItems && observedTotal !== sourceItemIds.length)
+    issues.push({ code: "duplicate_source_item_identity" });
+  const countMatches =
+    run.expected_total == null || run.expected_total === observedTotal;
   const previousId = journal.collection(run.collection_id).last_complete;
   const previous =
     previousId && previousId !== run.id ? journal.run(previousId) : null;
@@ -278,6 +289,7 @@ export function evaluate(journal, run, stopReason) {
     fieldQuality: fieldSummary(records),
     recordCount: upcoming.length,
     expectedTotal: run.expected_total,
+    ...(countsSourceItems ? { observedSourceItems: observedTotal } : {}),
     countMatches,
     issues,
     stopReason:

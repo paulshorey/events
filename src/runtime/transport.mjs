@@ -630,6 +630,8 @@ export class Transport {
     const blocked = new Promise((_, reject) => {
       block = reject;
     });
+    // A background request can reach the guard before a task waits for it.
+    blocked.catch(() => {});
     // Browser-generated API calls must pass the same policy before dispatch
     // as the listing navigation. The synthetic month task URL is not the API.
     const guardMonth = async (route) => {
@@ -699,7 +701,9 @@ export class Transport {
       }
       this.leaseCheck();
       const button = page.locator(".month-selector-scroll button").nth(month);
-      const label = String(await button.textContent({ timeout: 7000 }))
+      const label = String(
+        await Promise.race([blocked, button.textContent({ timeout: 7000 })]),
+      )
         .replace(/\s+/g, " ")
         .trim();
       if (label !== task.meta.monthLabel)
@@ -762,7 +766,13 @@ export class Transport {
       this.javitsLoaded = false;
       throw error;
     } finally {
-      await page.unroute(monthApi, guardMonth);
+      await page.unroute(monthApi, guardMonth).catch(async () => {
+        // Keep the original failure and retire the page if its guard could
+        // not be removed.
+        this.javitsLoaded = false;
+        this.listingPage = null;
+        await page.close().catch(() => {});
+      });
     }
   }
   async close() {

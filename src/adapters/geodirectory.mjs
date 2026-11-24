@@ -62,9 +62,7 @@ export function parseGeoDirectoryPage(body, url, config, totals) {
               allDay,
             },
           ];
-    // Expansion is expected behaviour, not a failure: it is counted (and stops
-    // the header total from being compared with occurrence records) but is not
-    // a page issue that would hold the run partial.
+    // Count expanded series separately from the publisher items and occurrences.
     if (dates.recurring && event.event_schedules?.length)
       recurringExpanded.push(String(event.id));
     // A recurring item without schedules yields only its master date; the
@@ -140,10 +138,8 @@ export function parseGeoDirectoryPage(body, url, config, totals) {
     nextRequests: terminal
       ? []
       : [{ url: next.href, kind: "api", depth: 0, meta: { pagination: true } }],
-    expectedTotal:
-      issues.length || rejected || recurringExpanded.length
-        ? undefined
-        : (totals?.total ?? undefined),
+    expectedTotal: totals?.total ?? undefined,
+    sourceItemIds: data.map((event) => String(event.id)),
     ...(recurringExpanded.length
       ? { recurringExpanded: recurringExpanded.length }
       : {}),

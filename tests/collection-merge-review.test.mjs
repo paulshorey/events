@@ -71,6 +71,17 @@ test("a sitemap index queues its same-host child sitemaps", () => {
   assert.deepEqual(r.issues, []);
 });
 
+test("Eventfinder's default record budget covers its configured page budget", () => {
+  const c = byId("url-004");
+  const defaults = optionsFor(c, { asOf: "2026-11-05" }, "test-build");
+  assert.equal(defaults.maxRecords, defaults.maxPages * c.apiPageSize);
+  assert.equal(
+    optionsFor(c, { asOf: defaults.asOf, maxRecords: 100 }, "test-build")
+      .maxRecords,
+    100,
+  );
+});
+
 test("API-entrypoint-only collections default to the api transport", () => {
   for (const id of ["url-045", "url-096", "url-072"])
     assert.equal(

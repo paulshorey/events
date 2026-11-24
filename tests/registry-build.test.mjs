@@ -39,4 +39,8 @@ test("the registry builder reproduces the committed registry exactly", async (t)
   for (const id of ["url-012", "url-015", "url-028", "url-083", "url-090"]) {
     assert.equal(unpinned.find((entry) => entry.id === id)?.maxDepth, 0, id);
   }
+  assert.equal(
+    unpinned.find((entry) => entry.id === "url-004")?.defaultMaxRecords,
+    60000,
+  );
 });

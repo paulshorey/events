@@ -1,4 +1,4 @@
-import { text, dates, eventRecord } from "../records.mjs";
+import { text, dates, eventRecord, safeUrl } from "../records.mjs";
 
 // washington.org /find-dc-listings/events: a Drupal view of .dcevent-wrapper
 // cards, eight per page, ordered by start date, with a ?page=N pager.
@@ -13,6 +13,7 @@ export function parseDcListing($, url, config) {
         .find("a[href]")
         .filter((_, a) => /\/event\//.test($(a).attr("href")))
         .first(),
+      href = a.attr("href"),
       heading = text(c.find("h6.label").first().text()),
       cardText = text(c.find(".card-text").first().text()),
       area = text(c.find(".dcevent__label").first().text()),
@@ -41,6 +42,7 @@ export function parseDcListing($, url, config) {
       input =
         config.asOf && end
           ? {
+              sourceRecordId: safeUrl(href, url),
               startDate: config.asOf,
               endDate: end,
               dateTimeBasis: {
@@ -56,7 +58,7 @@ export function parseDcListing($, url, config) {
           config,
           {
             title,
-            url: a.attr("href"),
+            url: href,
             ...input,
             location: venue
               ? { venue, basis: "source event card venue reference" }
