@@ -37,6 +37,16 @@ Local delivery state is a separate `delivery.sqlite` beside each journal; delive
 
 Views: `run_records` applies the same expansion/enrichment projection as `Journal.records()`; `current_complete_runs` and `current_source_records` select the latest complete (enumeration and quality gates passed) run per collection, so a later partial or failed run never replaces it. These are source observations, not deduplicated canonical events. The npm scripts use `.env.local`; direct `node scripts/deliver.mjs` reads `DB_EVENTS_URL` from the environment. Tests use a disposable `initdb` cluster (or `EVENTS_TEST_PG_URL` in CI), never `DB_EVENTS_URL`. Current contents are recorded in [_working/database_delivery_results.md](_working/database_delivery_results.md).
 
+## Compare New York listings at Javits
+
+The [Javits Center discovery query](db/queries/new_york_javits_publisher_claims.sql) compares the venue calendar and ConventionCalendar over the next 90 New York calendar days. It groups the reviewed 2027 Boat Show edition and preserves the separate TravMedia listing at the same venue and start date. Source claims include the actual capture URL, hash, and recorded robots opt-out. Run it with read-only access to dev.
+
+```sh
+~/.agents/bin/agents-sql query events-dev -f db/queries/new_york_javits_publisher_claims.sql
+```
+
+The [comparison and replay results](_working/javits-publisher-validation.md) document the venue evidence and the limits of the November snapshots.
+
 ## Query Las Vegas listings and verify their evidence
 
 Run [the discovery query](db/queries/las_vegas_publisher_claims.sql) with read-only access to dev. It selects the latest complete listing run for each of four scopes and returns the next 90 days of events with source-attested Las Vegas locations. Each claim includes its publisher, local dates and times, source location, city evidence, source page and capture hash. The report groups reviewed publisher IDs and URLs by edition. A claim missing its location can accompany a reviewed edition when another claim establishes Las Vegas. Disputed end dates stay open in the summary and remain visible on the individual claims. The Plaza’s named Expo page covers one annual edition. Its printed opening hours remain separate from the dated boundaries published by the independent calendar. The [two-scope query](db/queries/las_vegas_upcoming.sql) retains its original columns for Network.Vegas reports.
