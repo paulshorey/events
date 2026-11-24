@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { registry } from "../src/registry.mjs";
-import { parseApi } from "../src/worker.mjs";
+import { evaluate, parseApi } from "../src/worker.mjs";
 const configs = await registry();
 const config = configs.find((c) => c.id === "url-008");
 const body = await readFile(
@@ -75,4 +75,22 @@ test("Countyfairgrounds flags rejected rows and refuses a changed contract", () 
       ),
     /state parameter/,
   );
+});
+
+test("an uncorroborated empty state leaves the national catalogue partial", () => {
+  const pages = config.entrypoints.map((entry, index) => ({
+    kind: "api",
+    state: "done",
+    result: parseApi(index === 0 ? "[]" : body, entry.url, config, {}),
+  }));
+  const records = pages[1].result.records;
+  const result = evaluate(
+    { pages: () => pages, records: () => records, collection: () => ({}) },
+    { config, options: { asOf: "2026-10-30", transport: "api" } },
+  );
+  assert.equal(result.outcome, "partial");
+  assert.deepEqual(result.issues, [{
+    code: "unverified_empty_state",
+    state: new URL(config.entrypoints[0].url).searchParams.get("state"),
+  }]);
 });

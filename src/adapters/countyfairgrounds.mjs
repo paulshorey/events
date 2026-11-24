@@ -76,6 +76,7 @@ export function parseCountyfairgroundsState(body, url, config) {
       records.push({ ...record, validationStatus: "parser-validated" });
     else rejected++;
   }
+  if (!data.length) issues.push({ code: "unverified_empty_state", state });
   if (rejected)
     issues.push({ code: "records_require_parse_review", count: rejected });
   return {
