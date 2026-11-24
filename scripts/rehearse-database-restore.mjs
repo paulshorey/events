@@ -63,11 +63,38 @@ const localEnv = {
   HOME: process.env.HOME,
   LC_ALL: "C",
 };
-let clusterStarted = false;
+let clusterStartAttempted = false;
+async function stopLocalCluster() {
+  const pgCtl = pgTool("pg_ctl");
+  const options = { env: localEnv };
+  try {
+    await execute(pgCtl, ["-D", data, "-w", "-m", "fast", "stop"], options);
+  } catch (stopError) {
+    try {
+      await execute(pgCtl, ["-D", data, "status"], options);
+    } catch (statusError) {
+      // pg_ctl status exits 3 when the server is not running.
+      if (statusError.code === 3) return;
+    }
+    throw new Error(
+      `Could not confirm PostgreSQL stopped. Private cluster retained at ${data}`,
+      { cause: stopError },
+    );
+  }
+}
 const archive = join(scratch, "events.dump");
+async function cleanLocalRestore() {
+  try {
+    await rm(archive, { force: true });
+  } finally {
+    if (clusterStartAttempted) await stopLocalCluster();
+    await rm(scratch, { recursive: true, force: true });
+  }
+}
 const started = performance.now();
 const cancellation = new AbortController();
 const cancel = () => cancellation.abort();
+let rehearsalError;
 process.on("SIGINT", cancel);
 process.on("SIGTERM", cancel);
 try {
@@ -92,12 +119,12 @@ try {
       socketDir +
       "'\nunix_socket_permissions = 0700\n",
   );
+  clusterStartAttempted = true;
   await execute(
     pgTool("pg_ctl"),
     ["-D", data, "-w", "-l", join(scratch, "postgres.log"), "start"],
     { env: localEnv },
   );
-  clusterStarted = true;
   const upstream = await connect(source.href);
   let original;
   try {
@@ -193,12 +220,21 @@ try {
   } finally {
     await local.end();
   }
+} catch (error) {
+  rehearsalError = error;
+  throw error;
 } finally {
-  if (clusterStarted)
-    await execute(pgTool("pg_ctl"), ["-D", data, "-w", "-m", "fast", "stop"], {
-      env: localEnv,
-    });
-  await rm(scratch, { recursive: true, force: true });
-  process.off("SIGINT", cancel);
-  process.off("SIGTERM", cancel);
+  try {
+    await cleanLocalRestore();
+  } catch (cleanupError) {
+    if (rehearsalError)
+      throw new AggregateError(
+        [rehearsalError, cleanupError],
+        "Restore rehearsal and cleanup both failed",
+      );
+    throw cleanupError;
+  } finally {
+    process.off("SIGINT", cancel);
+    process.off("SIGTERM", cancel);
+  }
 }
