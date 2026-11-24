@@ -2,10 +2,15 @@
 -- Edit from_date to reproduce an earlier report. The upper date is exclusive.
 WITH window_start AS (
   SELECT (CURRENT_TIMESTAMP AT TIME ZONE 'America/Los_Angeles')::date AS from_date
+), latest AS (
+  -- Same selection as current_complete_runs, accessible to the read-only role.
+  SELECT DISTINCT ON (collection_id) id, collection_id FROM extraction_runs
+  WHERE status = 'complete' AND collection_id IN ('url-019','url-020')
+  ORDER BY collection_id, journal_updated_at DESC, created_at DESC, id DESC
 ), claims AS (
   SELECT o.*, o.payload->>'sourceRecordId' AS publisher_id, p.content_hash,
          p.url AS capture_url
-  FROM current_complete_runs r
+  FROM latest r
   JOIN source_observations o ON o.run_id = r.id
   JOIN run_pages p ON p.run_id = o.run_id AND p.page_id = o.page_id
   CROSS JOIN window_start w

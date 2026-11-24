@@ -2,7 +2,15 @@
 
 Reviewed October 17, 2026. Scope: the deterministic collector, local operational journal, source validation evidence, hosting configuration and database prerequisites. This review did not repeat the 97-source live fleet or enable unattended collection.
 
-## Assessment
+## Current priorities, November 24, 2026
+
+Dev PostgreSQL stores delivered observations, per-run receipts and the compressed capture bytes. The collector keeps its working journal on the collecting machine. Boston and both NYC Tourism scopes passed repeated validation on November 24. The first cross-publisher Las Vegas query and isolated sample restore are documented in [the discovery and restore results](vegas-publisher-validation.md).
+
+1. Validate a second reviewed cross-publisher occurrence, including a nearby event that must stay separate. Use source evidence for locality and each claimed date.
+2. Rehearse recovery from a service backup into an isolated database and measure the time to recover before activating a supervised worker.
+3. Add further market queries and source validations as evidence permits. Scheduling and production promotion require separate authorization.
+
+## October 17 assessment
 
 The reusable collection framework is a sound foundation: one registry and shared Playwright/API runtime, persistent page checkpoints, fenced worker leases, per-host dispatch, explicit outcome classes, evidence retention and a repair probation workflow. The implementation tests exercise failures and recovery rather than merely counting successful pages.
 
@@ -33,7 +41,7 @@ PostgreSQL is appropriate for shared observations, run metadata, import receipts
 
 These changes pass offline/controlled tests. They do not revalidate historical live runs or close source repair tickets. The transport still follows redirects before checking the destination; checking every redirect hop before acquisition is a remaining policy-hardening task. The final URL guard prevents accepting that content as a successful collection, but it is not a pre-request redirect firewall.
 
-## Remaining work, in order
+## October implementation milestones
 
 ### 1. Implement the development storage boundary — done in dev, November 4, 2026
 
@@ -60,7 +68,7 @@ Acceptance: import one known complete saved run into dev; compare counts and evi
 
 The current Railway application containers have ephemeral writable storage. PostgreSQL volumes hold database files only. They do not preserve the crawler's local journal or HTML/JSON/screenshots.
 
-Select immutable object storage for captures, with content hashes, run/task provenance, retention and tested retrieval. For the first worker, use one host with a persistent local journal volume and explicit process supervision, or implement a transactional PostgreSQL queue before using multiple hosts. Never share SQLite WAL over a network filesystem. Back up the journal consistently together with its referenced captures.
+The November 6 storage decision places permanent capture bytes and hashes in PostgreSQL. For the first worker, use one host with a persistent local journal volume and explicit process supervision, or implement a transactional PostgreSQL queue before using multiple hosts. Never share SQLite WAL over a network filesystem. Back up the journal consistently together with its referenced captures.
 
 Acceptance: kill/restart a hosted worker and prove checkpoint recovery, stale-owner fencing and evidence retrieval. Run a restore drill against an isolated database/volume before relying on production backups. Keep the passive health endpoint distinct from ingestion readiness.
 

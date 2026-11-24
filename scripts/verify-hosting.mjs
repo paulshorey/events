@@ -212,7 +212,8 @@ try {
     assert.equal(health.collectionMode, "manual-only");
     assert.equal(health.capabilities.chromium, true);
     assert.equal(health.capabilities.sqliteEngine, true);
-    assert.equal(health.capabilities.registeredCollections, 97);
+    const releaseRegistry = JSON.parse(command("git", ["show", `${expected}:sources/registry.json`]));
+    assert.equal(health.capabilities.registeredCollections, releaseRegistry.length);
     results.push({
       environment: name,
       branch: env.branch,

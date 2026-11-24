@@ -1,5 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { registry } from "../src/registry.mjs";
 import { createService, probeRuntime } from "../src/server.mjs";
 
 async function listening(app) {
@@ -68,6 +69,6 @@ test("real readiness launches Chromium, opens SQLite in memory and validates the
   assert.deepEqual(await probeRuntime(), {
     chromium: true,
     sqliteEngine: true,
-    registeredCollections: 97,
+    registeredCollections: (await registry()).length,
   });
 });

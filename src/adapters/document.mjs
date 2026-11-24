@@ -1,5 +1,6 @@
 import { load } from "cheerio";
 import { inspectedAdapters, parseInspected } from "./inspected.mjs";
+import { parsePlazaExpo } from "./plaza-expo.mjs";
 import { parseDetail } from "./detail.mjs";
 import { parseDcListing } from "./washington.mjs";
 import { parseEventbriteSearch } from "./eventbrite.mjs";
@@ -71,6 +72,7 @@ export function parseDocument({
   interaction,
 }) {
   if (task.kind === "detail") return parseDetail({ html, url, config });
+  if (config.adapter === "plaza-expo") return parsePlazaExpo(html, url, config);
   if (config.adapter === "cityguide")
     return parseCityGuide({ html, url, config });
   if (config.adapter === "dothis-street-fairs")

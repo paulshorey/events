@@ -1,6 +1,6 @@
 # Events mining framework
 
-A deterministic Node.js CLI framework for collecting event observations from the supplied websites. Each of the **97 supplied URLs** has a runnable Playwright entry point and a registry record. They share browser operations, parsers, validation, persistence, and repair handling. Many sources still need source-specific development; having an entry point does not mean a complete crawler has been validated.
+A deterministic Node.js CLI framework for collecting event observations from the supplied websites. Each of the **97 supplied URLs** has a runnable Playwright entry point and a registry record. The registry also contains a supplemental venue source, the Plaza’s Downtown Christmas Expo (url-098). All entries share browser operations, parsers, validation, persistence, and repair handling. Many sources still need source-specific development; having an entry point does not mean a complete crawler has been validated.
 
 No model calls occur during extraction. AI agents or engineers improve the code using captured evidence and regression tests. The local SQLite journal remains operational storage. Terminal runs are delivered to the dev Railway PostgreSQL database as append-only source observations with their evidence (see [Deliver observations to PostgreSQL](#deliver-observations-to-postgresql)); production has no schema yet. Canonical events and normalization are not implemented. Railway hosts passive dev and production services, with all collection schedules disabled. See [.railway/README.md](.railway/README.md) for infrastructure operations and [_working/review_and_next_steps.md](_working/review_and_next_steps.md) for the review and next milestones.
 
@@ -37,6 +37,17 @@ Local delivery state is a separate `delivery.sqlite` beside each journal; delive
 
 Views: `run_records` applies the same expansion/enrichment projection as `Journal.records()`; `current_complete_runs` and `current_source_records` select the latest complete (enumeration and quality gates passed) run per collection, so a later partial or failed run never replaces it. These are source observations, not deduplicated canonical events. The npm scripts use `.env.local`; direct `node scripts/deliver.mjs` reads `DB_EVENTS_URL` from the environment. Tests use a disposable `initdb` cluster (or `EVENTS_TEST_PG_URL` in CI), never `DB_EVENTS_URL`. Current contents are recorded in [_working/database_delivery_results.md](_working/database_delivery_results.md).
 
+## Query Las Vegas listings and verify their evidence
+
+Run [the discovery query](db/queries/las_vegas_publisher_claims.sql) with read-only access to dev. It selects the latest complete listing run for each of four scopes and returns the next 90 days of events with source-attested Las Vegas locations. Each claim includes its publisher, local dates and times, venue, source page and capture hash. The Plaza’s named Expo page covers one annual edition. Its printed opening hours remain separate from the dated boundaries published by the independent calendar. The [two-scope query](db/queries/las_vegas_upcoming.sql) retains its original columns for Network.Vegas reports.
+
+```sh
+~/.agents/bin/agents-sql query events-dev -f db/queries/las_vegas_publisher_claims.sql
+node scripts/restore-evidence-sample.mjs COMPLETE_RUN_UUID
+```
+
+The drill reads one listing and its dependencies from the active dev connection in `.env.local`. It creates a private local PostgreSQL cluster, stages the sample, dumps it in custom format, restores it into a second database and verifies all copied rows and the uncompressed capture hash. Install matching PostgreSQL server and client tools locally. Use `PG_BIN` to specify their directory. The temporary archive and cluster are removed on normal exit. [November 24 evidence and next steps](_working/vegas-publisher-validation.md).
+
 ## Start here
 
 The [collector diagnostics and acceptance workflow](_working/source_validation_workflow.md) documents unified source inspection, offline HTML/API replay, parser comparisons, portable evidence packets, source-specific field-quality gates, and the explicit two-run foreground validator. These tools extend the existing journal and repair loop; they do not activate schedules.
@@ -70,7 +81,7 @@ For `run` and `work`, exit codes are 0 for complete execution (or an explicitly 
 ## Dispatch and recovery
 
 ```sh
-# Select a group, the 82 primary URLs, or all 97 entries.
+# Select a group, the 82 primary URLs, or all registered entries.
 npm run framework -- queue --group 'Orlando' --probe --max-pages 1
 npm run framework -- work --max-jobs 10 --concurrency 3
 npm run framework -- show RUN_ID
