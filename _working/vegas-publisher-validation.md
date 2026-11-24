@@ -17,8 +17,17 @@ On November 24 the 90-day query returned 25 rows from 29 listing claims. One row
 
 ## Validation and restore drill
 
-Two default-robots, one-page runs of the same Plaza candidate each passed the configured quality gates and delivered a single observation to dev. A repeat delivery skipped both receipts. The Plaza candidate on extraction build `9ee9fc12b93cb1ff2d90adf01fd40556698bf990d7695edbd5c87952d289c223` produced runs `f70d7f77-1f31-493c-84e3-e8984e86ba79` and `f5cad819-00d0-4908-a41b-c586ad7f5966`.
+The final Plaza candidate on extraction build `76cc7615b0527356820dd5471971e74f9870fd97d3162ff5d1f912a7212dddcd` and config revision `630f374219089fc5e6235b57b9c59265895eee7b4fffa7030db46cc8b6519353` completed two default-robots runs with one page and one observation per run. Both passed quality checks. Dev delivery wrote receipts 706 and 707, and a repeat delivery skipped both.
 
-The [restore drill](../scripts/restore-evidence-sample.mjs) read a consistent dev snapshot for page 2 of the second run, staged its seven related rows in local PostgreSQL, and restored a custom-format dump into a fresh database. All seven rows matched. Decompressing the recovered capture produced 184,426 bytes with SHA-256 `5e7491a349bbec6d57fd6d67f16b3130fef8789eae09a26a521223c872596f29`, equal to the page's recorded hash. This exercised logical sample recovery. A full service-backup restore and worker restart remain open.
+| Pass | Complete run ID | Dev receipt |
+| --- | --- | --- |
+| 1 | `38119121-42f0-4da4-8e8a-719aa6013d4b` | `706` |
+| 2 | `3049b7f6-ecaf-436f-933a-a94edd93f960` | `707` |
+
+Both read-only queries reproduced the counts above after delivery. The cross-publisher comparison selected the newer Plaza run and retained both publishers’ capture hashes and their distinct time claims.
+
+The [restore drill](../scripts/restore-evidence-sample.mjs) read a consistent dev snapshot for page 2 of the second run, staged its seven related rows in local PostgreSQL, and restored a custom-format dump into a fresh database. All seven rows matched. Decompressing the recovered capture produced 184,656 bytes with SHA-256 `925f246b632dd0488f8d28e4c19a8549f7b58b8d603fa2c56c454a38cc1c9bfd`, equal to the page’s recorded hash and the hash reported by the discovery query. A full service-backup restore and worker restart remain open.
+
+The earlier build `9ee9fc12b93cb1ff2d90adf01fd40556698bf990d7695edbd5c87952d289c223` also passed runs `f70d7f77-1f31-493c-84e3-e8984e86ba79` and `f5cad819-00d0-4908-a41b-c586ad7f5966`. Its second run previously restored a 184,426-byte capture with SHA-256 `5e7491a349bbec6d57fd6d67f16b3130fef8789eae09a26a521223c872596f29`.
 
 For the next matching experiment, select a second shared occurrence, retain one similar listing as a negative example, and compare each publisher’s dates, venue, and evidence before broadening the matching rule.
