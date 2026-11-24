@@ -212,7 +212,20 @@ try {
     assert.equal(health.collectionMode, "manual-only");
     assert.equal(health.capabilities.chromium, true);
     assert.equal(health.capabilities.sqliteEngine, true);
-    assert.equal(health.capabilities.registeredCollections, 97);
+    const registryObject = `${expected}:sources/registry.json`;
+    try {
+      command("git", ["cat-file", "-e", registryObject]);
+    } catch {
+      // Verification also runs from checkouts that have yet to fetch a release.
+      command("git", [
+        "fetch", "--no-tags", "--no-write-fetch-head", "origin", expected,
+      ]);
+    }
+    const releaseRegistry = JSON.parse(command("git", ["show", registryObject]));
+    assert.equal(
+      health.capabilities.registeredCollections,
+      releaseRegistry.length,
+    );
     results.push({
       environment: name,
       branch: env.branch,

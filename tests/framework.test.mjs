@@ -58,7 +58,7 @@ test("all 97 seed URLs have a validated registry entry and executable module", a
   const seeds = JSON.parse(
     await readFile(new URL("../sources/seed-urls.json", import.meta.url)),
   );
-  assert.equal(configs.length, 97);
+  assert.deepEqual(configs.slice(0, seeds.length).map((c) => c.url), seeds.map((s) => s.url));
   assert.equal(seeds.length, 97);
   assert.equal(configs.filter((c) => c.origin === "primary-list").length, 82);
   for (const c of configs) {

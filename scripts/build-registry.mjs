@@ -676,6 +676,35 @@ const configs = assessed.map((row) => {
     c.coverage = "discovery";
   return c;
 });
+// Supplemental venue source. The original supplied 97 URLs retain their IDs.
+configs.push({
+  id: "url-098",
+  url: "https://www.plazahotelcasino.com/entertainment/downtown-christmas-expo/",
+  sourceKey: "plazahotelcasino.com",
+  rateKey: "plazahotelcasino.com",
+  group: "Las Vegas",
+  origin: "venue-validation",
+  cityMarket: "Las Vegas",
+  categoryHints: [],
+  intervalHours: 24,
+  enabled: false,
+  timeZone: "America/Los_Angeles",
+  adapter: "plaza-expo",
+  coverage: "verified-list",
+  role: "single venue event",
+  scopeBasis: "one edition on the venue's named Downtown Christmas Expo page",
+  readySelector: ".event-details-bar",
+  detailPattern: "^$",
+  allowedHosts: ["www.plazahotelcasino.com"],
+  maxDepth: 0,
+  quality: {
+    scope: "plaza-downtown-christmas-expo",
+    minRecords: 1,
+    minCoverage: { startDate: 1, endDate: 1, city: 1, textLocation: 1 },
+    maxRejectedRate: 0,
+  },
+  script: "scrapers/url-098.mjs",
+});
 // Entries maintained directly in sources/registry.json (ordinary parser repairs,
 // validation contracts) are pinned verbatim so regeneration cannot revert them.
 // Refresh with `npm run registry:pin` after editing sources/registry.json.

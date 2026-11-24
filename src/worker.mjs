@@ -277,7 +277,7 @@ export function evaluate(journal, run, stopReason) {
       basis:
         run.options.transport === "api"
           ? apiScopeBasis(run.config)
-          : "declared listing interface",
+          : (run.config.scopeBasis ?? "declared listing interface"),
       validation:
         "core listing fields; not a guarantee of all events on the publisher domain",
     },

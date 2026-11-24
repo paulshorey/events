@@ -29,8 +29,9 @@ using it. After merging a PR, return the primary checkout to `main` and run
 
 ## Runtime and validation
 
-SQLite is the crawler journal. Dev/production PostgreSQL have no event schema or
-importer yet; schedules stay disabled unless explicitly authorized. A sample does
+SQLite is the crawler journal. The dev importer delivers terminal runs, source
+observations, receipts and hashed capture bytes to PostgreSQL. Production schema
+promotion is pending. Schedules stay disabled unless explicitly authorized. A sample does
 not authorize unattended collection or publication. Read [.railway/README.md](.railway/README.md)
 for hosting: `main` deploys dev; `prod` deploys production. Use feature branches
 and PRs unless the user explicitly authorizes direct commits.
