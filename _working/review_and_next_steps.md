@@ -8,7 +8,9 @@ Dev PostgreSQL stores delivered observations, per-run receipts and the compresse
 
 The [TISE comparison and recovery rehearsal](tise-and-recovery.md) tested a second cross-publisher edition, preserved its disputed end date, and kept Pink27 separate. The full logical dev restore and isolated worker restart have been exercised.
 
-1. Pilot the same reviewed-edition query in a second market with validated sources. Require publisher identity, evidence of venue locality and a same-date negative example before grouping listings.
+The [Javits comparison](javits-publisher-validation.md) extended the reviewed-edition query to New York and kept TravMedia separate from the Boat Show at the same venue on the same start date.
+
+1. Review the two December 9–10 Javits pairs for ICSC New York and AI Summit New York. Each publisher lists both events. Test all four pairings before adding either match.
 2. Before enabling unattended collection, rehearse a supervised worker restart on its intended persistent host. An actual Railway volume cutover needs a recovery window.
 3. Keep production promotion and schedule activation under separate authorization.
 
