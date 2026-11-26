@@ -1,18 +1,48 @@
 # Framework review and next steps
 
-Reviewed October 17, 2026. Scope: the deterministic collector, local operational journal, source validation evidence, hosting configuration and database prerequisites. This review did not repeat the 97-source live fleet or enable unattended collection.
+## Implementation plan, November 26, 2026
 
-## Current priorities, November 24, 2026
+The next milestone is a repeatable manual dev collection batch. An operator should be able to pick a publisher, explain its value, run a bounded collection, and show exactly which upcoming occurrences reached dev. Measure growth by additional publishers, geographic coverage and evidence-backed occurrences. A second URL for the same publisher can add events, but it does not add a publisher.
 
-Dev PostgreSQL stores delivered observations, per-run receipts and the compressed capture bytes. The collector keeps its working journal on the collecting machine. Boston and both NYC Tourism scopes passed repeated validation on November 24. The first cross-publisher Las Vegas query and isolated sample restore are documented in [the discovery and restore results](vegas-publisher-validation.md).
+On November 26, dev held runs for 98 collection scopes across 67 publisher keys. The latest delivered attempt was complete for 35 scopes, partial for 22, blocked by access for 27, and in need of repair for 14. This is the baseline for the first batch. Historical completion alone does not establish current access or repeatability.
 
-The [TISE comparison and recovery rehearsal](tise-and-recovery.md) tested a second cross-publisher edition, preserved its disputed end date, and kept Pink27 separate. The full logical dev restore and isolated worker restart have been exercised.
+The [Boston and NYC validation](2026-11-24-validation.md) provides the batch record format. The [Las Vegas comparison](vegas-publisher-validation.md) and [Javits comparison](javits-publisher-validation.md) provide examples of retaining publisher evidence across reviewed editions.
 
-The [Javits comparison](javits-publisher-validation.md) extended the reviewed-edition query to New York and kept TravMedia separate from the Boat Show at the same venue on the same start date.
+### 1. Make each batch reproducible
 
-1. Review the two December 9–10 Javits pairs for ICSC New York and AI Summit New York. Each publisher lists both events. Test all four pairings before adding either match.
-2. Before enabling unattended collection, rehearse a supervised worker restart on its intended persistent host. An actual Railway volume cutover needs a recovery window.
-3. Keep production promotion and schedule activation under separate authorization.
+| Step | Work | Evidence required to move on |
+| --- | --- | --- |
+| Select | Add one read-only SQL report under `db/queries/`. Show each scope’s publisher, latest attempt and reason, last complete run and age, recorded robots policy, requests and upcoming occurrences. Include registered scopes awaiting first delivery. Roll up overlapping scopes by publisher. | For a fixed reporting date, the totals reconcile to the registry and dev. A newer partial attempt appears beside the older complete result. An absent policy flag displays as unknown. |
+| Define the source | State the publisher’s actual scope, native occurrence identity, pagination or end condition, venue and date evidence, optional fields, source-specific quality policy, and request and runtime budgets. Record how reuse and attribution apply for a new feed. | A saved response or bounded default-policy probe supports the contract. A second operator can explain what a complete run covers, including known exclusions. |
+| Validate | Reuse an existing adapter where possible. Replay saved captures first. For a repair, add a fixture, inspect changed or lost occurrences, and run `npm test`. Freeze the revision and run the existing foreground validator in a separate campaign directory. | Two complete, quality-passing live runs on the same candidate. Both run IDs, build/configuration revisions, request counts and evidence locations are recorded. A probe or offline replay is diagnostic evidence. |
+| Deliver | Run the dev importer for the campaign journal, including terminal partial and blocked outcomes. Read back receipts, counts, and evidence availability using the dev read-only role. Verify representative capture hashes and repeat delivery. | Receipts reconcile with the terminal runs. Repeat delivery skips the same state. The last complete snapshot remains available after a failed attempt. |
+| Decide | Close the batch with one short record per publisher in the existing validation results format. Include outcome, run IDs, yield, requests, quality gaps, and the owner and next action for any hold. | The next operator can pick up the work from a run ID or repair ticket. Select the next batch using the new measurements. |
+
+Use the registry as the inventory and join the dev report to it by collection ID so a new, undelivered source is visible. For comparisons, use the same as-of date and reporting horizon. Count each publisher occurrence ID once across its overlapping scopes. Compare the accepted snapshot to the previous complete snapshot for newly seen IDs; label the first snapshot as a baseline. Keep cross-publisher totals labeled as claims until edition matches have evidence. Report requests per newly seen occurrence alongside the raw numerator and denominator, and leave the ratio empty when the denominator is zero.
+
+**When a run stops.** A 429 defers that publisher through its cooldown. A robots denial, 403 or challenge stops that acquisition route. A page budget exhausted with a known frontier remains partial; inspect the frontier before granting more budget. Unknown pagination, unexplained empty results or a quality regression go to evidence review. A delivery outage calls for retrying the outbox from the same journal. Continue with independent publishers while a source is held. The existing CLI handles repair claims, probation, fenced recovery and retries. [Collector validation workflow](source_validation_workflow.md) · [Delivery commands](../README.md)
+
+### 2. Run one batch that tests three kinds of growth
+
+| Publisher | First action | Decision |
+| --- | --- | --- |
+| Choose Chicago, `url-039` | Revalidate the existing TEC API adapter under default access rules. Reconcile pagination against the published total for the requested start-date range. Earlier-starting ongoing events can fall outside that scope. | Use its two runs to establish volume, request cost, and reproducibility for a large existing calendar. |
+| City of Houston, `url-045` | Check default access to the city page and its published iCalendar feed. The earlier complete experiment used the robots opt-out. Use saved feed examples to define the missing quality policy before invoking the acceptance validator. Check native identities, time zones, recurrence and date-only boundaries. | Accept only the city’s published calendar scope. If default access is denied, record the hold and move the batch forward. |
+| Helsinki Linked Events, new publisher | Qualify the city’s documented API with a bounded probe. Verify the permitted scope and reuse terms, event and occurrence IDs, pagination, languages, cancellation fields and local time handling. Verify geographic coverage from event locations. | If supported, register the source and its executable, add parser fixtures and a quality policy, then run the same two-pass validation and delivery. Otherwise record the specific missing evidence. [City of Helsinki](https://www.hel.fi/en/business-and-work/helsinki-tourism-and-event-data) |
+
+**First batch deliverable.** One report showing the before/after count of accepted publishers and scopes, upcoming publisher occurrences, newly seen occurrences where a baseline exists, cities supported by location evidence, and requests spent. Show each source’s actual outcome, including holds. Prioritize the next source by added geographic coverage, useful occurrences per request, and a credible path to complete enumeration.
+
+### 3. Fix the discovery regression alongside the batch
+
+Keep collection moving while the report is repaired. In the [Javits query](../db/queries/new_york_javits_publisher_claims.sql), group eligible claims by reviewed edition before applying the date window. Retain the group if any claim overlaps. Add a test in which one publisher ends January 24 and another ends January 25, with the report starting January 25. Both claims must appear and the summary end date must remain open.
+
+When adding ICSC and the AI Summit, put the edition key and year on each reviewed mapping. Use the four December 9–10 pairings as the acceptance case. The two intended pairs must match, the two crossed pairs must stay separate, and the Boat Show and TravMedia regression must still pass. On the fixed November 24 baseline, expect 23 listings from the original 26 claims. These are discovery checks; source acceptance proceeds independently. [Javits evidence](javits-publisher-validation.md)
+
+### 4. Scale after the batch establishes a baseline
+
+Use the first batch to identify whether acquisition, parsing or delivery limits freshness. Start with one supervised worker on its intended persistent host. Give the rehearsal its own journal, a controlled two-page publisher and a known checkpoint. Interrupt the worker after page one commits, allow lease recovery, and restart it through the host supervisor. Verify the same journal reopened, committed work survived, the old lease was fenced, and repeat delivery produced one receipt for the final run state.
+
+Record recovery time, age of the last complete run per publisher, pending delivery age, request cost, and time spent in publisher cooldown. Add concurrency across independent publishers only when measured backlog warrants it. Host pacing and leases are journal-local, so overlapping campaigns against one publisher in separate journals cannot coordinate. A successful hosted rehearsal and a batch with verified delivery are the evidence to bring to the owner for a small scheduling decision. Production promotion and any Railway volume cutover require their own release decision and recovery window. [Previous recovery rehearsal](tise-and-recovery.md)
 
 ## October 17 assessment
 
