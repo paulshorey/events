@@ -6,9 +6,8 @@ validation, journals, and evidence-based repairs. Read [README.md](README.md) an
 
 ## Workspace
 
-Prefer the primary local checkout when free; use a worktree when another task is
-using it. After merging a PR, return the primary checkout to `main` and run
-`git pull --ff-only` when free, leaving it clean.
+Use a new branch in a task worktree for every change. Open a ready PR whose
+description gives the next engineer the context, checks, and remaining work.
 
 ## Collection rules
 
@@ -33,8 +32,7 @@ SQLite is the crawler journal. The dev importer delivers terminal runs, source
 observations, receipts and hashed capture bytes to PostgreSQL. Production schema
 promotion is pending. Schedules stay disabled unless explicitly authorized. A sample does
 not authorize unattended collection or publication. Read [.railway/README.md](.railway/README.md)
-for hosting: `main` deploys dev; `prod` deploys production. Use feature branches
-and PRs unless the user explicitly authorizes direct commits.
+for hosting: `main` deploys dev; `prod` deploys production.
 
 Use only `DB_EVENTS_URL`, over public TCP with TLS; never fall back to `DATABASE_URL`.
 Keep `.env.local` credentials private and production commented during local work.
